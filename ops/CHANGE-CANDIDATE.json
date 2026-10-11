@@ -1,44 +1,36 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-SOL61-CONVERSA-2026-10-11",
-  "title": "Sol 6.1 medium fixo e redacao contextual com fatos aprovados",
-  "status": "published_verified",
-  "baseCommit": "3ff424e903c05dfd5d69a3e9a8930358f101a2d6",
+  "changeId": "BRUNA-RUNTIME-2026-10-11",
+  "title": "Prazos de inferencia e revisao com margem para Sol 6.1 medio",
+  "status": "tested_local",
+  "baseCommit": "4879bf47a8e3fb1d1ca83eb4aa03f769ebebde15",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou publicar (Publique) apos a explicacao de que a publicacao usaria API paga enquanto a integracao do plano aguarda aprovacao. Autorizacao inclui a mudanca preparada e validacao sintetica; nao inclui mensagens reais de teste, replay ou migracao de dados."
+    "note": "Continuidade da publicacao autorizada por Daniel (Publique), seguida do pedido Melhore essas configuracoes para otimizar o desempenho. API paga e validacao sintetica ja autorizadas; sem mensagens reais de teste ou replay."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true
+    "externalWritesPerformed": false
   },
   "scope": {
     "files": [
-      "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json",
-      "auditorias/bruna-sol61-conversa-2026-10-11/PUBLICACAO.json",
-      "auditorias/bruna-sol61-conversa-2026-10-11/RELATORIO.md",
+      "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json",
+      "auditorias/bruna-runtime-2026-10-11/PUBLICACAO.json",
+      "auditorias/bruna-runtime-2026-10-11/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify.toml",
       "netlify/functions/lib/bruna-model-config.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/bruna-sol61.integration.test.mjs",
-      "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/bruna-runtime.test.mjs",
       "netlify/functions/lib/lead-classifier.mjs",
-      "netlify/functions/lib/lead-classifier.test.mjs",
       "netlify/functions/lib/openai-shadow.mjs",
-      "netlify/functions/lib/openai-shadow.test.mjs",
-      "netlify/functions/lib/outbound-reply-gate.mjs",
       "netlify/functions/lib/scheduled-followup-context-review.mjs",
-      "netlify/functions/lib/semantic-reply-policy.mjs",
-      "netlify/functions/lib/semantic-reply-policy.test.mjs",
-      "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json",
       "scripts/check-bruna-model-live.mjs",
@@ -179,117 +171,117 @@
       "scripts/check-bruna-model-live.mjs"
     ],
     "preservedInvariants": [
-      "Somente Sol 6.1 medium nas tres chamadas de IA da Bruna, incluindo classificacao e revisao de retomada; sem fallback de modelo.",
-      "Precos cirurgicos, agenda, pendencias humanas, consentimento, autoria, urgencia, opt-out e envio unico preservados.",
-      "Redacao contextual somente em codigos educativos/institucionais permitidos, com concordancia semantica e gate final; numeros e URLs da previa preservados.",
-      "Somente chamadas sinteticas autorizadas pela API paga no preflight; sem copia de credenciais do Codex, troca de hospedagem, mensagens reais, replay ou escrita em LEADS/CRM.",
-      "API paga autorizada por Daniel; a integracao do plano permanece desativada. Check real dentro do build Netlify bloqueia a publicacao se acesso, formato, latencia ou casos sinteticos falharem."
+      "Sol 6.1 medium, 4096 tokens incluindo raciocinio; sem fallback, service tier pago adicional ou alteracao de cobranca.",
+      "Conversa com prazo total de 20 segundos, incluindo unica revisao; revisao exige pelo menos 8 segundos restantes. Classificacao 15 segundos dentro do envelope existente de 20; revisao de retomada 12 segundos.",
+      "Timeout ou saida incompleta falham fechados; rascunho repetitivo sem margem vai para revisao humana, sem envio, replay nem repeticao automatica da API.",
+      "Historico, prefixo estavel de instrucoes, fatos, precos, agenda, autoria, consentimento, urgencia, opt-out, gates de saida, idempotencia e permissoes de envio preservados.",
+      "Somente cinco cenarios sinteticos no build pago autorizado; sem mensagens reais, escrita em LEADS/CRM ou Apps Script."
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "site-editorial-copy",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "appointment-reminders",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "patient-journey-funnel-followups",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "professional-routing",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "bot-decision-observability",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "ycloud-delivery-cost-observability",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "patient-lifecycle-governance",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "bruna-regression-governance",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "patient-care-milestones",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "durable-storage-conditional-writes",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "website-conversation-continuity",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "reply-continuity",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "followup-message-copy",
-        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "bruna-model-runtime",
-        "system": "Netlify autenticado e cinco cenarios reais no build aprovados; recibo de modelo, tokens, latencia e guardrails em PUBLICACAO.json.",
+        "system": "Netlify autenticado: site/deploy, funcoes/agendas e health atuais; consumidores externos sem mudanca, cobertos por regressao.",
         "status": "passed_read_only",
-        "checkedAt": "2026-10-11T17:29:51.3051068Z",
-        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+        "checkedAt": "2026-10-11T17:48:12.0000000Z",
+        "reference": "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json"
       }
     ]
   },
@@ -346,35 +338,37 @@
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd test",
-      "node --test scripts/check-bruna-model-live.test.mjs"
+      "node --test scripts/check-bruna-model-live.test.mjs",
+      "node --test netlify/functions/lib/bruna-runtime.test.mjs"
     ],
-    "baseline": "4 cenarios sinteticos falham no baseline: tres modelos alteraveis pelo ambiente e novo contrato de redacao contextual nao aceito.",
-    "completedAt": "2026-10-11T17:31:50.631Z",
+    "baseline": "Conversa interrompida em 8 segundos; classificacao em 10; retomada em 8. Revisao podia iniciar com somente 1,5 segundo restante.",
+    "completedAt": "2026-10-11T17:50:21.141Z",
     "results": {
-      "focusedTests": 115,
-      "fullSuiteTests": 1934,
+      "focusedTests": 32,
+      "directConsumerTests": 183,
+      "fullSuiteTests": 1943,
       "additionalRequiredTests": 43,
-      "newRegressions": 18,
-      "requiredTestFilesCovered": 97,
+      "buildGateTests": 5,
+      "distinctTests": 1991,
+      "newRegressions": 9,
+      "requiredTestFilesCovered": 98,
       "changeCheck": "OK",
       "architecture": "OK",
       "siteBuild": "193 files / 54 URLs / no errors",
       "siteCheck": "OK",
       "diff": "OK",
-      "ops": "SYNC_PENDING esperado durante implementacao; fechamento exige ops:check no checkout canonico limpo.",
-      "liveInference": "passed: 5 hosted synthetic scenarios, Sol 6.1 medium, 2067-7612ms",
-      "publication": "production_verified",
-      "buildGateTests": 5
+      "ops": "SYNC_PENDING esperado ate publicacao, Drive e checkout canonico reconciliados",
+      "liveInference": "pending_hosted_production_build"
     },
-    "executionNote": "Todos os 97 arquivos de teste obrigatorios foram cobertos pela suite integral (1934), cinco arquivos adicionais (43) e o gate hospedado (5). Grupos sobrepostos nao foram repetidos; nao se afirma execucao literal dos 51 comandos declarados."
+    "executionNote": "Todos os 98 arquivos obrigatorios cobertos pela suite integral, cinco arquivos adicionais de campanhas e teste do gate hospedado; grupos sobrepostos nao foram repetidos. Nao se afirma execucao literal de cada comando redundante declarado."
   },
   "rollback": {
     "local": "Descartar ou reverter apenas os commits desta branch isolada.",
-    "production": "Restaurar Netlify 6ac2830ee4b0b50008ce8e5a (commit c40e0f47b08d48e86ef0e2d50b237236a3e6046b), preservando Apps Script v161, filas e recibos; sem replay."
+    "production": "Restaurar Netlify 6acbc8ea817d3600075f6270 (commit df5af166b0c61dcc49bba1b769721a45d4f36898), preservando Apps Script v161, filas e recibos; sem replay."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
-    "window": "Primeiras conversas naturais, 48 horas e 7 dias apos eventual ativacao; sem agendamento automatico.",
+    "window": "Primeiras conversas naturais, 48 horas e 7 dias; revisar em 13/10 e 18/10/2026, sem criar agendamento.",
     "signals": [
       "Confirmar Sol 6.1 medium e consumo pela API paga autorizada; integracao do plano permanece desativada.",
       "Naturalidade, perguntas respondidas, repeticao, tokens, latencia, timeout, saida incompleta e revisao humana.",
@@ -382,18 +376,8 @@
     ]
   },
   "release": {
-    "status": "published_verified",
-    "approvedCommit": "df5af166b0c61dcc49bba1b769721a45d4f36898",
-    "netlifyDeployId": "6acbc8ea817d3600075f6270",
-    "appsScriptVersion": 161,
-    "verifiedAt": "2026-10-11T17:37:34.000Z",
+    "status": "pending",
     "billingMode": "api_paid_authorized",
-    "subscriptionIntegration": "requested_not_enabled",
-    "blockers": [],
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "b693e365171b3250a8e8efd42036fab92b5dd855ef3f2d32e3a097ce3bb63091",
-    "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-    "driveManualSha256": "dbd58f5f4b20e04a090ecef75f6622efacb74609faae1599a6dbc33dc1e4395f",
-    "documentationVerifiedAt": "2026-10-11T17:39:07.921Z"
+    "subscriptionIntegration": "requested_not_enabled"
   }
 }

@@ -3,8 +3,10 @@ import { normalizeMarketingPrefillTemplateId } from "./marketing-prefill.mjs";
 import { isAutomatedBusinessReply } from "./patient-turn-context.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
-import { BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS } from "./bruna-model-config.mjs";
-const OPENAI_TIMEOUT_MS = 10_000;
+import {
+  BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS,
+  BRUNA_TEXT_VERBOSITY, BRUNA_CLASSIFICATION_TIMEOUT_MS,
+} from "./bruna-model-config.mjs";
 const MAX_MESSAGES = 24;
 const MAX_MESSAGE_LENGTH = 1_000;
 const MAX_TOTAL_TEXT_LENGTH = 16_000;
@@ -562,7 +564,7 @@ export async function runLeadClassifier(
   const controller = new AbortController();
   const timeout = setTimeout(
     () => controller.abort(),
-    OPENAI_TIMEOUT_MS,
+    BRUNA_CLASSIFICATION_TIMEOUT_MS,
   );
 
   try {
@@ -601,6 +603,7 @@ export async function runLeadClassifier(
           messages: sanitizedMessages,
         }),
         text: {
+          verbosity: BRUNA_TEXT_VERBOSITY,
           format: {
             type: "json_schema",
             name: "liv_lead_classification",

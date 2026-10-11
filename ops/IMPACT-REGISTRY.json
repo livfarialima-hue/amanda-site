@@ -1572,7 +1572,8 @@
         "netlify/functions/classify-leads-background.mjs",
         "netlify/functions/scheduled-followup.mjs",
         "netlify.toml",
-        "scripts/check-bruna-model-live.mjs"
+        "scripts/check-bruna-model-live.mjs",
+        "netlify/functions/classify-leads.mjs"
       ],
       "coveredPaths": [
         "netlify/functions/lib/bruna-model-config.mjs",
@@ -1582,15 +1583,21 @@
         "auditorias/bruna-sol61-conversa-2026-10-11/PUBLICACAO.json",
         "netlify.toml",
         "scripts/check-bruna-model-live.mjs",
-        "scripts/check-bruna-model-live.test.mjs"
+        "scripts/check-bruna-model-live.test.mjs",
+        "auditorias/bruna-runtime-2026-10-11/PREFLIGHT.json",
+        "auditorias/bruna-runtime-2026-10-11/PUBLICACAO.json",
+        "auditorias/bruna-runtime-2026-10-11/RELATORIO.md",
+        "netlify/functions/lib/bruna-runtime.test.mjs"
       ],
       "requiredTestFiles": [
         "netlify/functions/lib/bruna-sol61.integration.test.mjs",
-        "scripts/check-bruna-model-live.test.mjs"
+        "scripts/check-bruna-model-live.test.mjs",
+        "netlify/functions/lib/bruna-runtime.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/bruna-sol61.integration.test.mjs",
-        "node --test scripts/check-bruna-model-live.test.mjs"
+        "node --test scripts/check-bruna-model-live.test.mjs",
+        "node --test netlify/functions/lib/bruna-runtime.test.mjs"
       ],
       "requiresReadOnlyPreflight": true
     }

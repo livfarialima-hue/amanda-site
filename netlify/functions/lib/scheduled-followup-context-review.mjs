@@ -1,8 +1,10 @@
 import { createHash } from "node:crypto";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
-import { BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS } from "./bruna-model-config.mjs";
-const TIMEOUT_MS = 8_000;
+import {
+  BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS,
+  BRUNA_TEXT_VERBOSITY, BRUNA_FOLLOWUP_REVIEW_TIMEOUT_MS,
+} from "./bruna-model-config.mjs";
 
 const REVIEW_SCHEMA = {
   type: "object",
@@ -172,7 +174,7 @@ export async function reviewScheduledFollowupContext(
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const timeout = setTimeout(() => controller.abort(), BRUNA_FOLLOWUP_REVIEW_TIMEOUT_MS);
 
   try {
     const response = await fetchImpl(OPENAI_RESPONSES_URL, {
@@ -196,7 +198,7 @@ export async function reviewScheduledFollowupContext(
           proposedMessage,
         }),
         text: {
-          verbosity: "low",
+          verbosity: BRUNA_TEXT_VERBOSITY,
           format: {
             type: "json_schema",
             name: "scheduled_followup_context_review",

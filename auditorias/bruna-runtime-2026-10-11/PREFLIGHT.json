@@ -1,0 +1,220 @@
+{
+  "checkedAt": "2026-10-11T17:48:12.0000000Z",
+  "baseCommit": "4879bf47a8e3fb1d1ca83eb4aa03f769ebebde15",
+  "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+  "siteName": "inspiring-sprite-b35ca4",
+  "account": "livfarialima",
+  "repo": "https://github.com/livfarialima-hue/amanda-site",
+  "branch": "reestruturacao-site",
+  "publishedDeploy": {
+    "id": "6acbc8ea817d3600075f6270",
+    "state": "ready",
+    "commit_ref": "df5af166b0c61dcc49bba1b769721a45d4f36898",
+    "published_at": "2026-10-11T17:36:31.979Z"
+  },
+  "functions": [
+    {
+      "name": "appointment-reminder",
+      "schedule": null
+    },
+    {
+      "name": "appointment-review",
+      "schedule": null
+    },
+    {
+      "name": "attribution-journey",
+      "schedule": null
+    },
+    {
+      "name": "attribution-journey-purge",
+      "schedule": "17 6 * * *"
+    },
+    {
+      "name": "classify-leads",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "name": "classify-leads-background",
+      "schedule": null
+    },
+    {
+      "name": "human-resume",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "name": "human-resume-background",
+      "schedule": null
+    },
+    {
+      "name": "post-consult-followup",
+      "schedule": null
+    },
+    {
+      "name": "scheduled-followup",
+      "schedule": null
+    },
+    {
+      "name": "synthetic-integration-health",
+      "schedule": "17 12 * * *"
+    },
+    {
+      "name": "ycloud-recovery",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "name": "ycloud-recovery-background",
+      "schedule": null
+    },
+    {
+      "name": "ycloud-webhook",
+      "schedule": null
+    }
+  ],
+  "flags": [
+    {
+      "key": "BRUNA_CONVERSION_EXPERIENCE_V1",
+      "scopes": [
+        "builds",
+        "functions",
+        "post_processing",
+        "runtime"
+      ],
+      "values": [
+        {
+          "value": "",
+          "context": "dev"
+        },
+        {
+          "value": "",
+          "context": "branch-deploy"
+        },
+        {
+          "value": "",
+          "context": "deploy-preview"
+        },
+        {
+          "value": "enabled",
+          "context": "production"
+        },
+        {
+          "value": "",
+          "context": "dev-server"
+        }
+      ]
+    },
+    {
+      "key": "WHATSAPP_HUMAN_RESUME_BACKGROUND_ENABLED",
+      "scopes": [
+        "builds",
+        "functions",
+        "post_processing",
+        "runtime"
+      ],
+      "values": [
+        {
+          "value": "false",
+          "context": "dev"
+        },
+        {
+          "value": "false",
+          "context": "branch-deploy"
+        },
+        {
+          "value": "false",
+          "context": "deploy-preview"
+        },
+        {
+          "value": "true",
+          "context": "production"
+        },
+        {
+          "value": "false",
+          "context": "dev-server"
+        }
+      ]
+    },
+    {
+      "key": "WHATSAPP_INBOUND_BACKGROUND_ENABLED",
+      "scopes": [
+        "builds",
+        "functions",
+        "post_processing",
+        "runtime"
+      ],
+      "values": [
+        {
+          "value": "false",
+          "context": "dev"
+        },
+        {
+          "value": "false",
+          "context": "branch-deploy"
+        },
+        {
+          "value": "false",
+          "context": "deploy-preview"
+        },
+        {
+          "value": "true",
+          "context": "production"
+        },
+        {
+          "value": "false",
+          "context": "dev-server"
+        }
+      ]
+    },
+    {
+      "key": "WHATSAPP_AUTOMATION_MODE",
+      "scopes": [
+        "builds",
+        "functions",
+        "post_processing",
+        "runtime"
+      ],
+      "values": [
+        {
+          "value": "active",
+          "context": "dev"
+        },
+        {
+          "value": "active",
+          "context": "branch-deploy"
+        },
+        {
+          "value": "active",
+          "context": "deploy-preview"
+        },
+        {
+          "value": "active",
+          "context": "production"
+        }
+      ]
+    }
+  ],
+  "health": {
+    "ok": true,
+    "service": "ycloud-webhook",
+    "apiKeyConfigured": true,
+    "signatureProtection": "active",
+    "sheetsWebhookConfigured": true,
+    "sheetsSecretConfigured": true,
+    "openAIConfigured": true,
+    "reviewAlertConfigured": true,
+    "appointmentReviewEnabled": true,
+    "automationMode": "active",
+    "conversionExperience": "bruna-conversion-v1",
+    "processingMode": "durable_background_intake",
+    "contactPreferencesGuard": "active",
+    "internalPhoneExclusionConfigured": true,
+    "leadDeliveryRetry": "single_idempotent_transient",
+    "leadDeliveryFallback": "acquisition_only",
+    "leadFailureEmailAlert": "required_after_retries",
+    "messageCostObservability": "delivered_event_idempotent"
+  },
+  "limitations": [
+    "Somente estado operacional relevante do Netlify; sem leitura de pacientes, Apps Script ou campanhas.",
+    "Health comprova configuracao do backend, nao entrega de WhatsApp.",
+    "Chave de API permanece no build hospedado; nenhum segredo incluido no recibo."
+  ]
+}

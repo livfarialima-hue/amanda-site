@@ -8,7 +8,10 @@ import { buildLiftingFacialInformationReply } from '../netlify/functions/lib/lif
 import { selectConfirmedReplyText } from '../netlify/functions/lib/semantic-reply-policy.mjs';
 import { validateOutboundReply } from '../netlify/functions/lib/outbound-reply-gate.mjs';
 import { decideConversationAction } from '../netlify/functions/lib/conversation-action-controller.mjs';
-import { BRUNA_MODEL, BRUNA_REASONING_EFFORT } from '../netlify/functions/lib/bruna-model-config.mjs';
+import {
+  BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS, BRUNA_TEXT_VERBOSITY,
+  BRUNA_CONVERSATION_TIMEOUT_MS, BRUNA_CLASSIFICATION_TIMEOUT_MS, BRUNA_FOLLOWUP_REVIEW_TIMEOUT_MS,
+} from '../netlify/functions/lib/bruna-model-config.mjs';
 
 // Run only during an explicitly marked release, inside the hosted production
 // build. Netlify injects the secret; it never leaves the runtime except as the
@@ -38,7 +41,8 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     const startedAt = Date.now();
     const auditedFetch = async (url, options) => {
       const body = JSON.parse(options.body);
-      if (url !== 'https://api.openai.com/v1/responses' || body.model !== BRUNA_MODEL || body.reasoning?.effort !== BRUNA_REASONING_EFFORT || body.store !== false) {
+      if (url !== 'https://api.openai.com/v1/responses' || body.model !== BRUNA_MODEL || body.reasoning?.effort !== BRUNA_REASONING_EFFORT || body.store !== false ||
+          body.max_output_tokens !== BRUNA_MAX_OUTPUT_TOKENS || body.text?.verbosity !== BRUNA_TEXT_VERBOSITY) {
         throw new Error('model_request_contract_mismatch');
       }
       const start = Date.now();
@@ -82,12 +86,14 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     const behaviorPassed = scenario.classification ? true : scenario.followup ? result.allowed === false :
       scenario.urgent ? result.decision?.automaticAllowed === false : gate?.allowed === true && result.decision?.replyCode === scenario.code;
     const passed = result.status === 'completed' && modelConfirmed && behaviorPassed;
-    results.push({ name: scenario.name, passed, elapsedMs: Date.now() - startedAt, requests, status: result.status,
+    const timeoutMs = scenario.classification ? BRUNA_CLASSIFICATION_TIMEOUT_MS : scenario.followup ? BRUNA_FOLLOWUP_REVIEW_TIMEOUT_MS : BRUNA_CONVERSATION_TIMEOUT_MS;
+    results.push({ name: scenario.name, passed, elapsedMs: Date.now() - startedAt, timeoutMs, requests, status: result.status,
       errorCode: result.errorCode, decision: result.decision, replyCode: result.decision?.replyCode, replyWording: result.decision?.replyWording, selectedReply, gate });
     if (!passed) break;
   }
   return { status: results.length === scenarios.length && results.every(r => r.passed) ? 'passed' : 'failed',
     checkedAt: new Date().toISOString(), model: BRUNA_MODEL, effort: BRUNA_REASONING_EFFORT,
+    maxOutputTokens: BRUNA_MAX_OUTPUT_TOKENS, verbosity: BRUNA_TEXT_VERBOSITY,
     billingMode: 'api_paid_authorized', syntheticOnly: true, patientMessagesSent: 0, results };
 }
 

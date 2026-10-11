@@ -1,5 +1,12 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+<!-- BRUNA-RUNTIME-2026-10-11 -->
+**Pacote 2026-10-11.2 — EM VALIDAÇÃO LOCAL.** Mantém Sol 6.1 médio e 4.096 tokens, incluindo raciocínio. A conversa passa a ter um prazo total de 20 segundos, compartilhado com a única revisão de redação; ela só começa quando restarem pelo menos 8 segundos. Classificação: 15 segundos dentro do limite externo existente de 20. Revisão de retomada: 12 segundos. Respostas concluídas retornam imediatamente; saídas incompletas ou interrompidas continuam bloqueadas.
+
+A configuração comum passa a pedir saída concisa também na classificação. Histórico, prefixo estável de instruções, fatos, preços e gates de envio são preservados. Aumentar o teto não obriga o uso dos 4.096 tokens nem garante menor latência; o ganho esperado é menos interrupções prematuras e menos revisões iniciadas sem margem. API paga já autorizada; a integração da assinatura segue pendente.
+
+Publicação, cinco cenários sintéticos reais e projeções do Drive pendentes. Produção observada: df5af166b0c61dcc49bba1b769721a45d4f36898 / 6acbc8ea817d3600075f6270; este também é o rollback, preservando Apps Script v161, filas e recibos, sem replay. Monitoramento por Daniel/equipe nas primeiras conversas, em 13/10 e 18/10/2026; sem nova automação. Evidência: auditorias/bruna-runtime-2026-10-11/RELATORIO.md.
+
 <!-- BRUNA-SOL61-CONVERSA-2026-10-11 -->
 **Pacote 2026-10-11.1 — PUBLICADO E VERIFICADO EM PRODUÇÃO em 11/10/2026, 14:36:31 BRT.** Sol 6.1 com raciocínio médio é fixo para conversa, retomada humana, classificação e revisão de retomadas. A redação contextual pode usar fatos de prévias educativas e institucionais confirmadas; os cinco códigos permitidos e o gate final preservam números, URLs e limites do atendimento. Preço cirúrgico, agenda, convênio e pendências humanas conservam as cópias protegidas. Nenhuma fonte clínica, política de preço, fila, assinatura, autoria, pausa humana ou permissão de envio foi ampliada.
 

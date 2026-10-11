@@ -68,5 +68,8 @@ test('all five synthetic scenarios use the real adapters and pass the outbound p
   } });
   assert.equal(result.status, 'passed', JSON.stringify(result));
   assert.equal(result.results.length, 5);
+  assert.deepEqual(result.results.map(r => r.timeoutMs), [20000, 20000, 20000, 15000, 12000]);
+  assert.equal(result.maxOutputTokens, 4096);
+  assert.equal(result.verbosity, 'low');
   assert.equal(result.patientMessagesSent, 0);
 });

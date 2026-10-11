@@ -1,3 +1,7 @@
+## 2026-10-11.2 — margem de inferência, em validação
+
+Conversa com prazo total de 20 segundos, classificação 15 e revisão de retomada 12. Revisão de redação limitada ao prazo original e iniciada somente com 8 segundos restantes. Modelo Sol 6.1 médio, 4.096 tokens e contexto preservados; saída concisa uniforme. Timeout e saída incompleta continuam sem autorização de envio. API paga já autorizada; sem alteração de assinatura ou preço. Nove regressões com relógio controlado e gate hospedado para cinco cenários reais sintéticos.
+
 ## 2026-10-11.1 — Sol 6.1 médio e redação contextual, publicado em 11/10/2026
 
 Modelo/esforço únicos nos três consumidores; teto de saída 4096 incluindo raciocínio, limite de mensagem preservado. Prévia educativa/institucional pode orientar uma redação contextual explícita, preservando números, links, confirmação semântica e gate final. Preços cirúrgicos e operações continuam com texto protegido. Corrigida a rejeição de indicação individual com “é” acentuado; saída incompleta falha fechada. Publicação com API paga autorizada em 11/10/2026; habilitação do plano ChatGPT permanece pendente. Cinco cenários reais passaram antes da publicação, junto com 1.982 testes locais. Commit df5af166b0c61dcc49bba1b769721a45d4f36898; Netlify 6acbc8ea817d3600075f6270. Sem mensagem real de teste; primeira conversa natural ainda não observada.

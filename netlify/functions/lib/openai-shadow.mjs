@@ -24,8 +24,10 @@ import { approvedProcedureInformationFacts } from "./lifting-information.mjs";
 import { assessReplyContinuity, buildReplyContinuityContext } from "./reply-continuity.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
-import { BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS } from "./bruna-model-config.mjs";
-const OPENAI_TIMEOUT_MS = 8_000;
+import {
+  BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS,
+  BRUNA_TEXT_VERBOSITY, BRUNA_CONVERSATION_TIMEOUT_MS, BRUNA_REVISION_MIN_REMAINING_MS,
+} from "./bruna-model-config.mjs";
 const MAX_USER_TEXT_LENGTH = 2_000;
 const MAX_REFERRAL_FIELD_LENGTH = 300;
 const PATIENT_RELATIONSHIP_STATES = new Set([
@@ -967,7 +969,7 @@ export async function runOpenAIShadow(
   const reasoningEffort = BRUNA_REASONING_EFFORT;
   const controller = new AbortController();
   const startedAt = Date.now();
-  const timeout = setTimeout(() => controller.abort(), OPENAI_TIMEOUT_MS);
+  const timeout = setTimeout(() => controller.abort(), BRUNA_CONVERSATION_TIMEOUT_MS);
   let continuityFallback = null;
   const normalizedConversation = normalizeRecentConversation(
     recentConversation,
@@ -1055,7 +1057,7 @@ export async function runOpenAIShadow(
           currentMessage: limitUserText(text),
         }),
         text: {
-          verbosity: "low",
+          verbosity: BRUNA_TEXT_VERBOSITY,
           format: {
             type: "json_schema",
             name: "liv_whatsapp_shadow_decision",
@@ -1116,9 +1118,10 @@ export async function runOpenAIShadow(
       suggestedReply: "", reviewReason: "reply_continuity_no_progress",
       conversationState: { ...parsed.decision.conversationState, owner: "human_team",
         nextExpectedAction: "revisar a resposta repetitiva e responder ao assunto pendente" } } };
-    // One revision shares the original eight-second deadline. Never restart
+    // One revision shares the original total deadline. Never restart
     // the timeout, authorize a send, or replay an inbound event to fix style.
-    if (controller.signal.aborted || Date.now() - startedAt > OPENAI_TIMEOUT_MS - 1500) return continuityFallback;
+    const remainingMs = BRUNA_CONVERSATION_TIMEOUT_MS - (Date.now() - startedAt);
+    if (controller.signal.aborted || remainingMs < BRUNA_REVISION_MIN_REMAINING_MS) return continuityFallback;
     const revisionRequest = JSON.parse(request.body);
     revisionRequest.input = JSON.stringify({ ...JSON.parse(revisionRequest.input), continuityRevision: {
       previousDraft: parsed.decision.suggestedReply,
