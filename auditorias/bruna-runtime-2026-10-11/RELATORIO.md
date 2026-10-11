@@ -1,6 +1,6 @@
 # Margem de inferência da Bruna — 11/10/2026
 
-Estado: testado localmente; publicação e validação real hospedada pendentes. Baseline local/origem 4879bf47a8e3fb1d1ca83eb4aa03f769ebebde15; produção df5af166b0c61dcc49bba1b769721a45d4f36898, deploy 6acbc8ea817d3600075f6270.
+Estado: publicado e verificado em produção; projeções do Drive em reconciliação. Baseline local/origem 4879bf47a8e3fb1d1ca83eb4aa03f769ebebde15; produção df5af166b0c61dcc49bba1b769721a45d4f36898, deploy 6acbc8ea817d3600075f6270.
 
 ## Problema e decisão
 
@@ -20,7 +20,7 @@ Saída incompleta/timeout não autoriza resposta. Rascunho sem avanço e sem mar
 
 ## Validação
 
-32 testes focados passaram: nove novos com relógio controlado, continuidade, modelo fixo, webhook real interceptado e gate hospedado. Verificam respostas completas após o limite antigo, encerramento exato no novo, liberação do timer, revisão sem reiniciar prazo e nenhum retry de API. Passaram também 183 testes dos consumidores diretos, 1.943 testes integrais e 43 adicionais obrigatórios. Incluindo os cinco testes do gate hospedado, são 1.991 testes distintos e 98 arquivos obrigatórios cobertos. Escopo exato de 18 arquivos, arquitetura, build/check com 193 arquivos e 54 URLs e diff aprovados. O recibo pendente recebeu o campo de versão exigido pela regressão de governança, e a suíte integral repetida passou sem falhas. Validação real hospedada ainda pendente.
+32 testes focados passaram: nove novos com relógio controlado, continuidade, modelo fixo, webhook real interceptado e gate hospedado. Verificam respostas completas após o limite antigo, encerramento exato no novo, liberação do timer, revisão sem reiniciar prazo e nenhum retry de API. Passaram também 183 testes dos consumidores diretos, 1.943 testes integrais e 43 adicionais obrigatórios. Incluindo os cinco testes do gate hospedado, são 1.991 testes distintos e 98 arquivos obrigatórios cobertos. Escopo exato de 18 arquivos, arquitetura, build/check com 193 arquivos e 54 URLs e diff aprovados. O recibo pendente recebeu o campo de versão exigido pela regressão de governança, e a suíte integral repetida passou sem falhas. Validação real hospedada aprovada em 11/10/2026 às 17:52:18 UTC.
 
 ## Fontes e limites
 
@@ -30,3 +30,19 @@ Daniel autorizou Publique e a continuação para otimizar estas configurações.
 
 Rollback: Restaurar Netlify 6acbc8ea817d3600075f6270 (commit df5af166b0c61dcc49bba1b769721a45d4f36898), preservando Apps Script v161, filas e recibos; sem replay.
 Monitoramento: primeiras conversas naturais, 48 horas e sete dias (13/10 e 18/10), Daniel/equipe. Revisar timeouts, incompletas, latência, revisões sem contexto, repetição e custo por conversa; conter diante de envio indevido, duplicidade ou interferência humana. Sem tarefa agendada criada.
+
+## Publicação verificada
+
+Commit 6c6507983012a0cff63cf712f7b3709a0b4d5f99, Netlify 6acbccab46983900087c5159, publicado em 2026-10-11T17:52:33.382Z e conferido em 2026-10-11T17:53:06.0000000Z. HTTP 200 no domínio e URL imutável, POST sem assinatura 401. As 14 funções e cinco agendas coincidem com o preflight; modo active e durable_background_intake preservados. Nenhum teste enviado a paciente.
+
+| Cenário sintético | Tempo total | Teto | Tokens saída / raciocínio |
+|---|---:|---:|---:|
+| Consulta | 7.645 ms | 20 s | 415 / 40 |
+| Cicatrizes de lifting | 5.708 ms | 20 s | 261 / 0 |
+| Urgência | 4.432 ms | 20 s | 219 / 0 |
+| Classificação | 4.025 ms | 15 s | 124 / 31 |
+| Recusa de retomada | 2.248 ms | 12 s | 28 / 0 |
+
+Os tokens de raciocínio já integram a saída, não devem ser somados outra vez. Cinco requisições, todas completas com Sol 6.1 médio. Consulta/lifting passaram pelo gate final; urgência permaneceu humana e recusa cancelou a retomada. O caso mais lento ficou aproximadamente no mesmo tempo do pacote anterior; este teste não demonstra aceleração. A margem até o corte passou de cerca de 0,4 para 12,4 segundos nesse caso. A amostra é pequena e sintética; desempenho e qualidade das próximas conversas naturais ainda precisam ser observados. Prazos de inferência não incluem consultas ao CRM nem transporte do WhatsApp.
+
+Projeções canônicas do Drive foram relidas antes da escrita e correspondem ao baseline anterior. A atualização e a comparação dos novos hashes ainda estão pendentes neste recibo intermediário.

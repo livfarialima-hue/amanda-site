@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-RUNTIME-2026-10-11",
   "title": "Prazos de inferencia e revisao com margem para Sol 6.1 medio",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "4879bf47a8e3fb1d1ca83eb4aa03f769ebebde15",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -358,7 +358,8 @@
       "siteCheck": "OK",
       "diff": "OK",
       "ops": "SYNC_PENDING esperado ate publicacao, Drive e checkout canonico reconciliados",
-      "liveInference": "pending_hosted_production_build"
+      "liveInference": "passed: 5 hosted synthetic scenarios, Sol 6.1 medium, 2248-7645ms",
+      "publication": "production_verified_drive_pending"
     },
     "executionNote": "Todos os 98 arquivos obrigatorios cobertos pela suite integral, cinco arquivos adicionais de campanhas e teste do gate hospedado; grupos sobrepostos nao foram repetidos. Nao se afirma execucao literal de cada comando redundante declarado."
   },
@@ -376,8 +377,12 @@
     ]
   },
   "release": {
-    "status": "pending",
+    "status": "production_verified_drive_pending",
     "billingMode": "api_paid_authorized",
-    "subscriptionIntegration": "requested_not_enabled"
+    "subscriptionIntegration": "requested_not_enabled",
+    "approvedCommit": "6c6507983012a0cff63cf712f7b3709a0b4d5f99",
+    "netlifyDeployId": "6acbccab46983900087c5159",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-10-11T17:53:06.0000000Z"
   }
 }

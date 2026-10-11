@@ -50,8 +50,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-RUNTIME-2026-10-11",
-    "status": "tested_local",
-    "liveModelCheckRequired": true,
+    "status": "committed",
     "authorization": "Continuidade de Publique e pedido Melhore essas configuracoes para otimizar o desempenho",
     "billingMode": "api_paid_authorized",
     "bundleVersion": "2026-10-11.2"

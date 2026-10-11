@@ -1,4 +1,305 @@
 {
-  "status": "pending",
-  "patientMessagesSent": 0
+  "status": "production_verified",
+  "changeId": "BRUNA-RUNTIME-2026-10-11",
+  "approvedCommit": "6c6507983012a0cff63cf712f7b3709a0b4d5f99",
+  "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+  "netlifyDeployId": "6acbccab46983900087c5159",
+  "buildId": "6acbccab46983900087c5156",
+  "publishedAt": "2026-10-11T17:52:33.382Z",
+  "verifiedAt": "2026-10-11T17:53:06.0000000Z",
+  "domainStatus": 200,
+  "immutableStatus": 200,
+  "unsignedPostStatus": 401,
+  "health": {
+    "ok": true,
+    "service": "ycloud-webhook",
+    "apiKeyConfigured": true,
+    "signatureProtection": "active",
+    "sheetsWebhookConfigured": true,
+    "sheetsSecretConfigured": true,
+    "openAIConfigured": true,
+    "reviewAlertConfigured": true,
+    "appointmentReviewEnabled": true,
+    "automationMode": "active",
+    "conversionExperience": "bruna-conversion-v1",
+    "processingMode": "durable_background_intake",
+    "contactPreferencesGuard": "active",
+    "internalPhoneExclusionConfigured": true,
+    "leadDeliveryRetry": "single_idempotent_transient",
+    "leadDeliveryFallback": "acquisition_only",
+    "leadFailureEmailAlert": "required_after_retries",
+    "messageCostObservability": "delivered_event_idempotent"
+  },
+  "functions": [
+    {
+      "name": "appointment-reminder",
+      "schedule": null
+    },
+    {
+      "name": "appointment-review",
+      "schedule": null
+    },
+    {
+      "name": "attribution-journey",
+      "schedule": null
+    },
+    {
+      "name": "attribution-journey-purge",
+      "schedule": "17 6 * * *"
+    },
+    {
+      "name": "classify-leads",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "name": "classify-leads-background",
+      "schedule": null
+    },
+    {
+      "name": "human-resume",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "name": "human-resume-background",
+      "schedule": null
+    },
+    {
+      "name": "post-consult-followup",
+      "schedule": null
+    },
+    {
+      "name": "scheduled-followup",
+      "schedule": null
+    },
+    {
+      "name": "synthetic-integration-health",
+      "schedule": "17 12 * * *"
+    },
+    {
+      "name": "ycloud-recovery",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "name": "ycloud-recovery-background",
+      "schedule": null
+    },
+    {
+      "name": "ycloud-webhook",
+      "schedule": null
+    }
+  ],
+  "functionCount": 14,
+  "schedulesPreserved": true,
+  "appsScriptVersion": 161,
+  "appsScriptVerification": "Registro canonico preservado, sem escrita nem nova leitura da plataforma",
+  "patientMessagesSent": 0,
+  "eventReplays": 0,
+  "billingMode": "api_paid_authorized",
+  "subscriptionIntegration": "requested_not_enabled",
+  "rollbackCommit": "df5af166b0c61dcc49bba1b769721a45d4f36898",
+  "rollbackDeployId": "6acbc8ea817d3600075f6270",
+  "releasePreflight": {
+    "checkedAt": "2026-10-11T17:51:30Z",
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "branch": "reestruturacao-site",
+    "previousCommit": "df5af166b0c61dcc49bba1b769721a45d4f36898",
+    "previousDeploy": "6acbc8ea817d3600075f6270",
+    "candidateCommit": "6c6507983012a0cff63cf712f7b3709a0b4d5f99",
+    "remote": "4879bf47a8e3fb1d1ca83eb4aa03f769ebebde15\trefs/heads/reestruturacao-site",
+    "authorization": "Publique + Melhore essas configuracoes para otimizar o desempenho"
+  },
+  "liveModelCheck": {
+    "status": "passed",
+    "checkedAt": "2026-10-11T17:52:18.423Z",
+    "evidence": "Resumo fiel do BRUNA_MODEL_PREFLIGHT lido no log autenticado do build; nao e exportacao bruta do log.",
+    "source": "https://app.netlify.com/projects/inspiring-sprite-b35ca4/deploys/6acbccab46983900087c5159",
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "maxOutputTokens": 4096,
+    "verbosity": "low",
+    "syntheticOnly": true,
+    "patientMessagesSent": 0,
+    "results": [
+      {
+        "name": "consultation_contextual",
+        "passed": true,
+        "elapsedMs": 7645,
+        "requestElapsedMs": 7608,
+        "timeoutMs": 20000,
+        "inputTokens": 19462,
+        "cachedTokens": 19459,
+        "cacheWriteTokens": 0,
+        "outputTokens": 415,
+        "reasoningTokens": 40,
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "outboundAllowed": true,
+        "httpStatus": 200,
+        "status": "completed",
+        "model": "gpt-6.1-sol",
+        "requests": 1
+      },
+      {
+        "name": "lifting_information",
+        "passed": true,
+        "elapsedMs": 5708,
+        "requestElapsedMs": 5697,
+        "timeoutMs": 20000,
+        "inputTokens": 19699,
+        "cachedTokens": 19696,
+        "cacheWriteTokens": 0,
+        "outputTokens": 261,
+        "reasoningTokens": 0,
+        "replyCode": "LIFTING-FACIAL-INFORMATION-01",
+        "outboundAllowed": true,
+        "httpStatus": 200,
+        "status": "completed",
+        "model": "gpt-6.1-sol",
+        "requests": 1
+      },
+      {
+        "name": "clinical_urgency",
+        "passed": true,
+        "elapsedMs": 4432,
+        "requestElapsedMs": 4427,
+        "timeoutMs": 20000,
+        "inputTokens": 19357,
+        "cachedTokens": 19354,
+        "cacheWriteTokens": 0,
+        "outputTokens": 219,
+        "reasoningTokens": 0,
+        "automaticAllowed": false,
+        "urgent": true,
+        "route": "human_review",
+        "httpStatus": 200,
+        "status": "completed",
+        "model": "gpt-6.1-sol",
+        "requests": 1
+      },
+      {
+        "name": "classification",
+        "passed": true,
+        "elapsedMs": 4025,
+        "requestElapsedMs": 4021,
+        "timeoutMs": 15000,
+        "inputTokens": 2342,
+        "cachedTokens": 0,
+        "cacheWriteTokens": 2339,
+        "outputTokens": 124,
+        "reasoningTokens": 31,
+        "httpStatus": 200,
+        "status": "completed",
+        "model": "gpt-6.1-sol",
+        "requests": 1
+      },
+      {
+        "name": "followup_declined",
+        "passed": true,
+        "elapsedMs": 2248,
+        "requestElapsedMs": 2246,
+        "timeoutMs": 12000,
+        "inputTokens": 535,
+        "cachedTokens": 0,
+        "cacheWriteTokens": 0,
+        "outputTokens": 28,
+        "reasoningTokens": 0,
+        "decision": "cancel_for_review",
+        "allowed": false,
+        "httpStatus": 200,
+        "status": "completed",
+        "model": "gpt-6.1-sol",
+        "requests": 1
+      }
+    ],
+    "actualApiRequests": 5,
+    "incompleteOutputs": 0,
+    "timeoutCount": 0
+  },
+  "drive": {
+    "status": "pending",
+    "beforeVerifiedUnchanged": true,
+    "manualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+    "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "beforeManualSha256": "dbd58f5f4b20e04a090ecef75f6622efacb74609faae1599a6dbc33dc1e4395f",
+    "beforePlanSha256": "b693e365171b3250a8e8efd42036fab92b5dd855ef3f2d32e3a097ce3bb63091",
+    "manualSha256": "f21f67f3c25d32d86aba40cf4742f8fbc613738a6cf84e2bbc50e9c953bbdb0e",
+    "planSha256": "fd07434b8c0af5675b547492d16e838dac7f47bccdc7d81c712eba327504ecc1"
+  },
+  "localVerification": {
+    "status": "passed_local",
+    "commands": [
+      "git diff --check",
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",
+      "node --test apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs netlify/functions/lib/scheduled-care.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+      "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
+      "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "node --test apps-script/clinica-liv-leads/WhatsAppCosts.test.mjs netlify/functions/lib/ycloud-message-observability.test.mjs netlify/functions/lib/webhook-intake-observability.test.mjs netlify/functions/lib/ycloud-patient-message.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/ycloud-post-consult.test.mjs",
+      "node --test campanhas/google-ads-ad-strength-20260913.test.mjs",
+      "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
+      "node --test campanhas/google-ads-settings.test.mjs",
+      "node --test campanhas/site-communication.test.mjs",
+      "node --test netlify/functions/lib/appointment-suggestions.test.mjs",
+      "node --test netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+      "node --test netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
+      "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-preco-direto.integration.test.mjs netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/price-journey.integration.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
+      "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-sol61.integration.test.mjs",
+      "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
+      "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+      "node --test netlify/functions/lib/human-resume-runtime.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-ledger.test.mjs",
+      "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/sheets-action-timeout.test.mjs",
+      "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs",
+      "node --test netlify/functions/lib/inbound-reply-context.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/ignored-inbound-supersedes-reply.test.mjs",
+      "node --test netlify/functions/lib/interaction-continuity.test.mjs",
+      "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
+      "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/ycloud-recovery.test.mjs",
+      "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "node --test netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs",
+      "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "node --test netlify/functions/lib/reply-continuity.test.mjs netlify/functions/lib/reply-continuity.integration.test.mjs",
+      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "node --test netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs",
+      "npm.cmd run architecture:check",
+      "npm.cmd run change:check",
+      "npm.cmd run ops:check",
+      "npm.cmd run site:build",
+      "npm.cmd run site:check",
+      "npm.cmd test",
+      "node --test scripts/check-bruna-model-live.test.mjs",
+      "node --test netlify/functions/lib/bruna-runtime.test.mjs"
+    ],
+    "baseline": "Conversa interrompida em 8 segundos; classificacao em 10; retomada em 8. Revisao podia iniciar com somente 1,5 segundo restante.",
+    "completedAt": "2026-10-11T17:50:21.141Z",
+    "results": {
+      "focusedTests": 32,
+      "directConsumerTests": 183,
+      "fullSuiteTests": 1943,
+      "additionalRequiredTests": 43,
+      "buildGateTests": 5,
+      "distinctTests": 1991,
+      "newRegressions": 9,
+      "requiredTestFilesCovered": 98,
+      "changeCheck": "OK",
+      "architecture": "OK",
+      "siteBuild": "193 files / 54 URLs / no errors",
+      "siteCheck": "OK",
+      "diff": "OK",
+      "ops": "SYNC_PENDING esperado ate publicacao, Drive e checkout canonico reconciliados",
+      "liveInference": "passed: 5 hosted synthetic scenarios, Sol 6.1 medium, 2248-7645ms",
+      "publication": "production_verified_drive_pending"
+    },
+    "executionNote": "Todos os 98 arquivos obrigatorios cobertos pela suite integral, cinco arquivos adicionais de campanhas e teste do gate hospedado; grupos sobrepostos nao foram repetidos. Nao se afirma execucao literal de cada comando redundante declarado."
+  }
 }
