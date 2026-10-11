@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
-    "lastObservedProductionCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
-    "functionalDeployId": "6ac2830ee4b0b50008ce8e5a",
-    "lastObservedProductionDeployId": "6ac2830ee4b0b50008ce8e5a",
-    "rollbackCommit": "cda9fa181ee04c889e7d8a1a09efc930042612b9",
-    "rollbackDeployId": "6ac267688469a20008853374",
+    "functionalCommit": "df5af166b0c61dcc49bba1b769721a45d4f36898",
+    "lastObservedProductionCommit": "df5af166b0c61dcc49bba1b769721a45d4f36898",
+    "functionalDeployId": "6acbc8ea817d3600075f6270",
+    "lastObservedProductionDeployId": "6acbc8ea817d3600075f6270",
+    "rollbackCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
+    "rollbackDeployId": "6ac2830ee4b0b50008ce8e5a",
     "rollbackConstraint": "Preservar Apps Script v161, filas, pausas e recibos; sem replay.",
-    "publishedAt": "2026-10-04T16:47:42.000Z",
-    "publishedTimePrecision": "Netlify deploy log",
-    "lastVerifiedAt": "2026-10-04T16:48:39.535Z",
-    "candidateChangeId": "BRUNA-ENTRADA-ACOLHEDORA-2026-10-04",
-    "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-04.3",
+    "publishedAt": "2026-10-11T17:36:31.979Z",
+    "publishedTimePrecision": "Netlify API published_at",
+    "lastVerifiedAt": "2026-10-11T17:37:34.000Z",
+    "candidateChangeId": "BRUNA-SOL61-CONVERSA-2026-10-11",
+    "candidateStatus": "production_verified_documentation_pending",
+    "bundleVersion": "2026-10-11.1",
     "appsScriptVersion": 161
   },
   "documentation": {
@@ -47,12 +47,5 @@
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "changeId": "BRUNA-SOL61-CONVERSA-2026-10-11",
-    "bundleVersion": "2026-10-11.1",
-    "status": "tested_local",
-    "billingStatus": "api_paid_authorized_subscription_pending",
-    "liveModelCheckRequired": true
-  }
+  "followupCopyContract": "followup-message-copy"
 }

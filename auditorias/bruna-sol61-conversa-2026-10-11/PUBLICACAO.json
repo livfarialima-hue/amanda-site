@@ -1,6 +1,6 @@
 {
   "changeId": "BRUNA-SOL61-CONVERSA-2026-10-11",
-  "status": "not_published",
+  "status": "production_verified_documentation_pending",
   "billingMode": "api_paid_authorized",
   "subscriptionIntegration": "requested_not_enabled",
   "patientMessagesSent": 0,
@@ -10,7 +10,8 @@
     "recordedAt": "2026-10-11T17:16:35.978Z",
     "request": "Publique",
     "context": "Apos proposta explicita de publicar as melhorias usando API paga enquanto a solicitacao de uso do plano e analisada.",
-    "patientMessagesAuthorized": false
+    "patientMessagesAuthorized": false,
+    "approvedCommit": "df5af166b0c61dcc49bba1b769721a45d4f36898"
   },
   "rollback": {
     "commit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
@@ -53,5 +54,223 @@
       },
       "reason": "Contrato parcial da fixture normalizava allowedResponseKind=none/risk=red; modelo corretamente encaminhou para humano. O gate agora importa decideConversationAction, proprietario real do contrato, sem contratos parciais nem alteracao de criterio de aprovacao."
     }
-  ]
+  ],
+  "approvedCommit": "df5af166b0c61dcc49bba1b769721a45d4f36898",
+  "netlifyDeployId": "6acbc8ea817d3600075f6270",
+  "bundleVersion": "2026-10-11.1",
+  "appsScriptVerification": "Versao do registro canonico, preservada; sem leitura autenticada ou publicacao Apps Script nesta tarefa.",
+  "publishedAt": "2026-10-11T17:36:31.979Z",
+  "verifiedAt": "2026-10-11T17:37:34.000Z",
+  "verificationTimeSource": "Netlify API HTTP Date; horarios dos smokes usam relogio local e podem diferir do servidor",
+  "candidateSmoke": {
+    "checkedAt": "2026-10-11T17:36:21.506Z",
+    "base": "https://6acbc8ea817d3600075f6270--inspiring-sprite-b35ca4.netlify.app",
+    "healthStatus": 200,
+    "health": {
+      "ok": true,
+      "service": "ycloud-webhook",
+      "apiKeyConfigured": true,
+      "signatureProtection": "active",
+      "sheetsWebhookConfigured": true,
+      "sheetsSecretConfigured": true,
+      "openAIConfigured": true,
+      "reviewAlertConfigured": true,
+      "appointmentReviewEnabled": true,
+      "automationMode": "active",
+      "conversionExperience": "bruna-conversion-v1",
+      "processingMode": "durable_background_intake",
+      "contactPreferencesGuard": "active",
+      "internalPhoneExclusionConfigured": true,
+      "leadDeliveryRetry": "single_idempotent_transient",
+      "leadDeliveryFallback": "acquisition_only",
+      "leadFailureEmailAlert": "required_after_retries",
+      "messageCostObservability": "delivered_event_idempotent"
+    },
+    "unsignedPost": 401,
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "productionSmoke": {
+    "checkedAt": "2026-10-11T17:36:22.711Z",
+    "base": "https://draamandaschroeder.com.br",
+    "healthStatus": 200,
+    "health": {
+      "ok": true,
+      "service": "ycloud-webhook",
+      "apiKeyConfigured": true,
+      "signatureProtection": "active",
+      "sheetsWebhookConfigured": true,
+      "sheetsSecretConfigured": true,
+      "openAIConfigured": true,
+      "reviewAlertConfigured": true,
+      "appointmentReviewEnabled": true,
+      "automationMode": "active",
+      "conversionExperience": "bruna-conversion-v1",
+      "processingMode": "durable_background_intake",
+      "contactPreferencesGuard": "active",
+      "internalPhoneExclusionConfigured": true,
+      "leadDeliveryRetry": "single_idempotent_transient",
+      "leadDeliveryFallback": "acquisition_only",
+      "leadFailureEmailAlert": "required_after_retries",
+      "messageCostObservability": "delivered_event_idempotent"
+    },
+    "unsignedPost": 401,
+    "patientMessagesSent": 0,
+    "passed": true
+  },
+  "functions": [
+    {
+      "name": "appointment-reminder",
+      "schedule": null
+    },
+    {
+      "name": "appointment-review",
+      "schedule": null
+    },
+    {
+      "name": "attribution-journey",
+      "schedule": null
+    },
+    {
+      "name": "attribution-journey-purge",
+      "schedule": "17 6 * * *"
+    },
+    {
+      "name": "classify-leads",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "name": "classify-leads-background",
+      "schedule": null
+    },
+    {
+      "name": "human-resume",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "name": "human-resume-background",
+      "schedule": null
+    },
+    {
+      "name": "post-consult-followup",
+      "schedule": null
+    },
+    {
+      "name": "scheduled-followup",
+      "schedule": null
+    },
+    {
+      "name": "synthetic-integration-health",
+      "schedule": "17 12 * * *"
+    },
+    {
+      "name": "ycloud-recovery",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "name": "ycloud-recovery-background",
+      "schedule": null
+    },
+    {
+      "name": "ycloud-webhook",
+      "schedule": null
+    }
+  ],
+  "schedulesPreserved": true,
+  "hostedModelCheck": {
+    "status": "passed",
+    "checkedAt": "2026-10-11T17:36:16.602Z",
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "billingMode": "api_paid_authorized",
+    "syntheticOnly": true,
+    "patientMessagesSent": 0,
+    "evidenceSource": "https://app.netlify.com/projects/inspiring-sprite-b35ca4/deploys/6acbc8ea817d3600075f6270",
+    "source": "BRUNA_MODEL_PREFLIGHT no log do build; campos extraidos por leitura da interface autenticada",
+    "results": [
+      {
+        "name": "consultation_contextual",
+        "passed": true,
+        "elapsedMs": 7612,
+        "httpStatus": 200,
+        "responseStatus": "completed",
+        "inputTokens": 19462,
+        "cachedTokens": 18906,
+        "outputTokens": 372,
+        "reasoningTokens": 73,
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "replyWording": "contextual",
+        "outboundGate": "allowed",
+        "selectedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. Na avaliação, ela entende o que você gostaria de mudar, examina com cuidado e conversa sobre as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal."
+      },
+      {
+        "name": "lifting_information",
+        "passed": true,
+        "elapsedMs": 5672,
+        "httpStatus": 200,
+        "responseStatus": "completed",
+        "inputTokens": 19699,
+        "cachedTokens": 18906,
+        "outputTokens": 276,
+        "reasoningTokens": 0,
+        "replyCode": "LIFTING-FACIAL-INFORMATION-01",
+        "replyWording": "contextual",
+        "outboundGate": "allowed",
+        "selectedReply": "As cicatrizes do lifting facial costumam acompanhar a linha do cabelo e os contornos das orelhas. Conforme o planejamento, as incisões podem se estender atrás das orelhas ou incluir uma abaixo do queixo. A posição e a extensão são discutidas na avaliação."
+      },
+      {
+        "name": "clinical_urgency",
+        "passed": true,
+        "elapsedMs": 3926,
+        "httpStatus": 200,
+        "responseStatus": "completed",
+        "inputTokens": 19357,
+        "cachedTokens": 18906,
+        "outputTokens": 195,
+        "reasoningTokens": 0,
+        "route": "human_review",
+        "automaticAllowed": false,
+        "urgent": true
+      },
+      {
+        "name": "classification",
+        "passed": true,
+        "elapsedMs": 3377,
+        "httpStatus": 200,
+        "responseStatus": "completed",
+        "inputTokens": 2342,
+        "cachedTokens": 0,
+        "outputTokens": 131,
+        "reasoningTokens": 30
+      },
+      {
+        "name": "followup_declined",
+        "passed": true,
+        "elapsedMs": 2067,
+        "httpStatus": 200,
+        "responseStatus": "completed",
+        "inputTokens": 535,
+        "cachedTokens": 0,
+        "outputTokens": 28,
+        "reasoningTokens": 0,
+        "decision": "cancel_for_review",
+        "allowed": false
+      }
+    ]
+  },
+  "firstNaturalInteractionObserved": false,
+  "publicationMethod": "Integracao Git existente; chave, flags, permissoes, modo e cadencia preservados",
+  "validation": {
+    "fullTests": 1934,
+    "additionalTests": 43,
+    "buildGateTests": 5,
+    "totalTests": 1982,
+    "newRegressions": 18,
+    "requiredTestFiles": 97,
+    "architecture": "passed",
+    "changeCheck": "passed",
+    "build": "193 files / 54 URLs",
+    "siteCheck": "passed",
+    "diff": "passed"
+  }
 }

@@ -325,8 +325,9 @@
     "authentication": "renewed_via_official_netlify_cli",
     "scope": "Site, deploy, flags, funcoes/agendas e health; sem leitura de conversas, registros de pacientes, CRM ou campanhas.",
     "modelProbe": {
-      "status": "pending_hosted_build",
-      "reason": "Netlify entrega segredo mascarado na API de configuracao. A sonda local com mascara e HTTP 401 nao testa a chave real. Validacao real ocorrerá no build, sem publicar se falhar.",
+      "status": "passed_hosted_build",
+      "reference": "PUBLICACAO.json#hostedModelCheck",
+      "checkedAt": "2026-10-11T17:36:16.602Z",
       "syntheticOnly": true,
       "patientMessagesSent": 0
     }

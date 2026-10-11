@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-SOL61-CONVERSA-2026-10-11",
   "title": "Sol 6.1 medium fixo e redacao contextual com fatos aprovados",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "3ff424e903c05dfd5d69a3e9a8930358f101a2d6",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -286,7 +286,7 @@
       },
       {
         "contract": "bruna-model-runtime",
-        "system": "Netlify autenticado: chave configurada, flags e modelo legado registrados; acesso real ao Sol condicionado ao gate do build.",
+        "system": "Netlify autenticado e cinco cenarios reais no build aprovados; recibo de modelo, tokens, latencia e guardrails em PUBLICACAO.json.",
         "status": "passed_read_only",
         "checkedAt": "2026-10-11T17:29:51.3051068Z",
         "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
@@ -361,9 +361,9 @@
       "siteBuild": "193 files / 54 URLs / no errors",
       "siteCheck": "OK",
       "diff": "OK",
-      "ops": "SYNC_PENDING: candidato nao publicado; reconciliacao do Drive e checkout aguardam publicacao",
-      "liveInference": "pending_hosted_build",
-      "publication": "not_performed",
+      "ops": "SYNC_PENDING: producao verificada; concluir Drive e checkout canonico",
+      "liveInference": "passed: 5 hosted synthetic scenarios, Sol 6.1 medium, 2067-7612ms",
+      "publication": "production_verified",
       "buildGateTests": 5
     },
     "executionNote": "Todos os 97 arquivos de teste obrigatorios foram cobertos pela suite integral (1934), cinco arquivos adicionais (43) e o gate hospedado (5). Grupos sobrepostos nao foram repetidos; nao se afirma execucao literal dos 51 comandos declarados."
@@ -382,11 +382,15 @@
     ]
   },
   "release": {
-    "status": "not_published",
+    "status": "production_verified_documentation_pending",
+    "approvedCommit": "df5af166b0c61dcc49bba1b769721a45d4f36898",
+    "netlifyDeployId": "6acbc8ea817d3600075f6270",
+    "appsScriptVersion": 161,
+    "verifiedAt": "2026-10-11T17:37:34.000Z",
     "billingMode": "api_paid_authorized",
     "subscriptionIntegration": "requested_not_enabled",
     "blockers": [
-      "O build de producao precisa passar a validacao sintetica real do Sol antes de publicar."
+      "Concluir igualdade das projecoes no Drive e reconciliacao do checkout."
     ]
   }
 }
