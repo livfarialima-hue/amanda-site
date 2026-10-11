@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-RUNTIME-2026-10-11",
   "title": "Prazos de inferencia e revisao com margem para Sol 6.1 medio",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "4879bf47a8e3fb1d1ca83eb4aa03f769ebebde15",
   "authorization": {
     "required": true,
@@ -357,9 +357,9 @@
       "siteBuild": "193 files / 54 URLs / no errors",
       "siteCheck": "OK",
       "diff": "OK",
-      "ops": "SYNC_PENDING esperado ate publicacao, Drive e checkout canonico reconciliados",
+      "ops": "Producao e Drive reconciliados; executar gate final no checkout canonico limpo depois do commit.",
       "liveInference": "passed: 5 hosted synthetic scenarios, Sol 6.1 medium, 2248-7645ms",
-      "publication": "production_verified_drive_pending"
+      "publication": "production_verified"
     },
     "executionNote": "Todos os 98 arquivos obrigatorios cobertos pela suite integral, cinco arquivos adicionais de campanhas e teste do gate hospedado; grupos sobrepostos nao foram repetidos. Nao se afirma execucao literal de cada comando redundante declarado."
   },
@@ -377,12 +377,17 @@
     ]
   },
   "release": {
-    "status": "production_verified_drive_pending",
+    "status": "published_verified",
     "billingMode": "api_paid_authorized",
     "subscriptionIntegration": "requested_not_enabled",
     "approvedCommit": "6c6507983012a0cff63cf712f7b3709a0b4d5f99",
     "netlifyDeployId": "6acbccab46983900087c5159",
     "appsScriptVersion": 161,
-    "verifiedAt": "2026-10-11T17:53:06.0000000Z"
+    "verifiedAt": "2026-10-11T17:53:06.0000000Z",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "fd07434b8c0af5675b547492d16e838dac7f47bccdc7d81c712eba327504ecc1",
+    "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+    "driveManualSha256": "f21f67f3c25d32d86aba40cf4742f8fbc613738a6cf84e2bbc50e9c953bbdb0e",
+    "documentationVerifiedAt": "2026-10-11T17:55:10.0000000Z"
   }
 }

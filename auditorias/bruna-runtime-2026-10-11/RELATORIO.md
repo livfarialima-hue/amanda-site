@@ -1,6 +1,6 @@
 # Margem de inferência da Bruna — 11/10/2026
 
-Estado: publicado e verificado em produção; projeções do Drive em reconciliação. Baseline local/origem 4879bf47a8e3fb1d1ca83eb4aa03f769ebebde15; produção df5af166b0c61dcc49bba1b769721a45d4f36898, deploy 6acbc8ea817d3600075f6270.
+Estado: publicado, verificado e reconciliado com as projeções canônicas do Drive. Baseline local/origem 4879bf47a8e3fb1d1ca83eb4aa03f769ebebde15; produção df5af166b0c61dcc49bba1b769721a45d4f36898, deploy 6acbc8ea817d3600075f6270.
 
 ## Problema e decisão
 
@@ -45,4 +45,4 @@ Commit 6c6507983012a0cff63cf712f7b3709a0b4d5f99, Netlify 6acbccab46983900087c515
 
 Os tokens de raciocínio já integram a saída, não devem ser somados outra vez. Cinco requisições, todas completas com Sol 6.1 médio. Consulta/lifting passaram pelo gate final; urgência permaneceu humana e recusa cancelou a retomada. O caso mais lento ficou aproximadamente no mesmo tempo do pacote anterior; este teste não demonstra aceleração. A margem até o corte passou de cerca de 0,4 para 12,4 segundos nesse caso. A amostra é pequena e sintética; desempenho e qualidade das próximas conversas naturais ainda precisam ser observados. Prazos de inferência não incluem consultas ao CRM nem transporte do WhatsApp.
 
-Projeções canônicas do Drive foram relidas antes da escrita e correspondem ao baseline anterior. A atualização e a comparação dos novos hashes ainda estão pendentes neste recibo intermediário.
+Projeções canônicas do Drive foram relidas antes da escrita e correspondem ao baseline anterior. Atualizadas nos mesmos IDs, sem mudar permissões, e relidas byte a byte em 2026-10-11T17:55:10.0000000Z. Manual: 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF, 160.503 bytes, SHA-256 f21f67f3c25d32d86aba40cf4742f8fbc613738a6cf84e2bbc50e9c953bbdb0e. Plano: 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO, 245.195 bytes, SHA-256 fd07434b8c0af5675b547492d16e838dac7f47bccdc7d81c712eba327504ecc1. Ambos coincidem com o conteúdo local commitado. Código funcional em produção permanece 6c6507983012a0cff63cf712f7b3709a0b4d5f99; os commits documentais usam [skip netlify] e removem o marcador de testes pagos para os próximos builds.

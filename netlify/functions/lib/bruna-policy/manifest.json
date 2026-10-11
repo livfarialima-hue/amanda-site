@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "df5af166b0c61dcc49bba1b769721a45d4f36898",
-    "lastObservedProductionCommit": "df5af166b0c61dcc49bba1b769721a45d4f36898",
-    "functionalDeployId": "6acbc8ea817d3600075f6270",
-    "lastObservedProductionDeployId": "6acbc8ea817d3600075f6270",
-    "rollbackCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
-    "rollbackDeployId": "6ac2830ee4b0b50008ce8e5a",
+    "functionalCommit": "6c6507983012a0cff63cf712f7b3709a0b4d5f99",
+    "lastObservedProductionCommit": "6c6507983012a0cff63cf712f7b3709a0b4d5f99",
+    "functionalDeployId": "6acbccab46983900087c5159",
+    "lastObservedProductionDeployId": "6acbccab46983900087c5159",
+    "rollbackCommit": "df5af166b0c61dcc49bba1b769721a45d4f36898",
+    "rollbackDeployId": "6acbc8ea817d3600075f6270",
     "rollbackConstraint": "Preservar Apps Script v161, filas, pausas e recibos; sem replay.",
-    "publishedAt": "2026-10-11T17:36:31.979Z",
+    "publishedAt": "2026-10-11T17:52:33.382Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-11T17:37:34.000Z",
-    "candidateChangeId": "BRUNA-SOL61-CONVERSA-2026-10-11",
+    "lastVerifiedAt": "2026-10-11T17:53:06.0000000Z",
+    "candidateChangeId": "BRUNA-RUNTIME-2026-10-11",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-11.1",
+    "bundleVersion": "2026-10-11.2",
     "appsScriptVersion": 161
   },
   "documentation": {
@@ -41,18 +41,11 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "dbd58f5f4b20e04a090ecef75f6622efacb74609faae1599a6dbc33dc1e4395f",
+    "driveProjectionSha256": "f21f67f3c25d32d86aba40cf4742f8fbc613738a6cf84e2bbc50e9c953bbdb0e",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy",
-  "pendingRelease": {
-    "changeId": "BRUNA-RUNTIME-2026-10-11",
-    "status": "committed",
-    "authorization": "Continuidade de Publique e pedido Melhore essas configuracoes para otimizar o desempenho",
-    "billingMode": "api_paid_authorized",
-    "bundleVersion": "2026-10-11.2"
-  }
+  "followupCopyContract": "followup-message-copy"
 }

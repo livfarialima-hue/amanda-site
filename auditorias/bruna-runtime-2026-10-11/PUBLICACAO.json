@@ -1,5 +1,5 @@
 {
-  "status": "production_verified",
+  "status": "published_verified",
   "changeId": "BRUNA-RUNTIME-2026-10-11",
   "approvedCommit": "6c6507983012a0cff63cf712f7b3709a0b4d5f99",
   "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
@@ -215,14 +215,24 @@
     "timeoutCount": 0
   },
   "drive": {
-    "status": "pending",
+    "status": "verified_equal",
     "beforeVerifiedUnchanged": true,
     "manualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
     "planFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "beforeManualSha256": "dbd58f5f4b20e04a090ecef75f6622efacb74609faae1599a6dbc33dc1e4395f",
     "beforePlanSha256": "b693e365171b3250a8e8efd42036fab92b5dd855ef3f2d32e3a097ce3bb63091",
     "manualSha256": "f21f67f3c25d32d86aba40cf4742f8fbc613738a6cf84e2bbc50e9c953bbdb0e",
-    "planSha256": "fd07434b8c0af5675b547492d16e838dac7f47bccdc7d81c712eba327504ecc1"
+    "planSha256": "fd07434b8c0af5675b547492d16e838dac7f47bccdc7d81c712eba327504ecc1",
+    "verifiedAt": "2026-10-11T17:55:10.0000000Z",
+    "verifiedAtSource": "HTTP Date do Netlify consultado apos releitura e comparacao do Drive; relogio local divergente",
+    "manualBytes": 160503,
+    "planBytes": 245195,
+    "manualModifiedAt": "2026-10-11T17:54:04.043Z",
+    "planModifiedAt": "2026-10-11T17:54:09.854Z",
+    "manualReadbackSha256": "f21f67f3c25d32d86aba40cf4742f8fbc613738a6cf84e2bbc50e9c953bbdb0e",
+    "planReadbackSha256": "fd07434b8c0af5675b547492d16e838dac7f47bccdc7d81c712eba327504ecc1",
+    "manualMatches": true,
+    "planMatches": true
   },
   "localVerification": {
     "status": "passed_local",
@@ -296,10 +306,11 @@
       "siteBuild": "193 files / 54 URLs / no errors",
       "siteCheck": "OK",
       "diff": "OK",
-      "ops": "SYNC_PENDING esperado ate publicacao, Drive e checkout canonico reconciliados",
+      "ops": "Producao e Drive reconciliados; executar gate final no checkout canonico limpo depois do commit.",
       "liveInference": "passed: 5 hosted synthetic scenarios, Sol 6.1 medium, 2248-7645ms",
-      "publication": "production_verified_drive_pending"
+      "publication": "production_verified"
     },
     "executionNote": "Todos os 98 arquivos obrigatorios cobertos pela suite integral, cinco arquivos adicionais de campanhas e teste do gate hospedado; grupos sobrepostos nao foram repetidos. Nao se afirma execucao literal de cada comando redundante declarado."
-  }
+  },
+  "documentationSourceCommit": "4cf3e7b"
 }
