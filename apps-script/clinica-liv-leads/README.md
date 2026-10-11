@@ -209,3 +209,11 @@ Desligamento: `desativarCuidadosProgramados` interrompe os demais cuidados; `des
 
 
 Revisão contextual autorizada em 12/09/2026: `diagnosticarCuidadosProgramados` faz apenas leitura de flags, cabeçalhos, contagens por estado e quantidade do gatilho compartilhado. Pode ser executada sem materializar planos nem enviar mensagens. A aprovação individual das demais retomadas humanas continua obrigatória; aniversário não oferece aprovação de envio pela Bruna.
+
+## Candidata: aprendizado revisável da Bruna (11/10/2026)
+
+A nova captura recebe `learning` no webhook e vincula a proposta à dúvida original por Event ID. A resposta individual fica em `_WHATSAPP_DUVIDAS`; somente uma proposta geral validada entra em `Respostas Aprovadas`, inicialmente como `Revisar`. Falta de inferência segura não transforma o texto individual em conhecimento.
+
+Depois de publicada a candidata, revise conteúdo, risco, modo, validade e limites na aba `Respostas Aprovadas`, selecione a linha e use **Central LIV → Aprovar resposta selecionada da Bruna**. A confirmação mostra o conteúdo efetivo; a rotina relê a linha sob trava, rejeita alterações concorrentes e preserva as regras ativas no novo snapshot. Descartar continua impedindo reutilização. Risco alto ou modo interno não se torna automático por essa aprovação. Correção humana explícita suspende a regra para revisão, sem substituir o texto aprovado pelo caso individual.
+
+Sem migração de cabeçalhos, novos triggers ou execução retroativa. Publicar primeiro estes arquivos no projeto/deployment canônicos, conferir a versão e só então publicar o Netlify do mesmo pacote. Publicação ainda pendente; ver `auditorias/bruna-autonomia-2026-10-11/RELATORIO.md`.

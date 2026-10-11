@@ -44,11 +44,13 @@ async function syntheticResponse(url, request) {
       const hints = input.policyHints;
       const unknown = /equipamento específico/.test(input.currentMessage);
       const urgent = /falta de ar/.test(input.currentMessage);
-      if (!urgent && !unknown) assert.ok(hints.deterministicReplyPreview.length > 30);
+      if (hints?.deterministicReplyCode) assert.ok(hints.deterministicReplyPreview.length > 30);
+      if (input.currentMessage.includes('comprovante fiscal')) assert.equal(input.approvedKnowledge[0].id, 'SYNTHETIC-INVOICE');
+      if (input.currentMessage.includes('levar para a primeira consulta')) assert.ok(input.approvedClinicalFacts.topics.includes('consultation_preparation'));
       if (!urgent && !unknown) {
         assert.equal(input.replyContract.allowedResponseKind, 'direct_answer');
         assert.equal(input.replyContract.owner, 'bruna');
-        assert.notEqual(input.replyContract.risk, 'red');
+        if (hints?.deterministicReplyCode) assert.notEqual(input.replyContract.risk, 'red');
       }
       if (hints?.deterministicReplyCode === 'AMANDA-CONSULTA-INFO-01' && input.replyContract.consultationNextStep === 'answer_only') {
         assert.doesNotMatch(hints.deterministicReplyPreview, /horário|agenda/i, 'the preview must honor the answer-only consultation contract');
@@ -61,6 +63,9 @@ async function syntheticResponse(url, request) {
           : hints?.deterministicReplyPreview || '', reviewReason: unknown ? 'unknown_digest:equipamento_lifting' : urgent ? 'possible_urgent_symptoms' : '',
         conversationState: { activeTopic: 'consulta', patientAct: 'question', refersToEventId: '', lastClinicQuestion: '', lastClinicOffer: '',
           unresolvedQuestions: unknown ? ['Qual equipamento específico é usado?'] : [], factsAlreadyProvided: [], owner: unknown ? 'human_team' : 'bruna', nextExpectedAction: unknown ? 'Equipe confirmar equipamento' : 'aguardar', ambiguity: '', contextConfidence: 'high' } };
+      if (unknown) decision.partialAnswer = { knowledgeIds: ['SYNTHETIC-PARKING'], pendingQuestion: 'Qual equipamento específico é usado?' };
+      if (input.currentMessage.includes('comprovante fiscal')) Object.assign(decision, { replyCode: 'KB:SYNTHETIC-INVOICE', suggestedReply: 'Sim, emitimos nota fiscal da consulta.' });
+      if (input.currentMessage.includes('levar para a primeira consulta')) decision.suggestedReply = 'Leve os exames que já tiver e suas dúvidas.';
     } else {
       decision = { recommendedStatus: 'Novo', confidence: 'high', professional: 'amanda', procedure: 'unknown', summary: 'Dúvida sobre avaliação.',
         nextAction: 'Aguardar paciente.', expectedParty: 'patient', commercialReason: 'Em andamento', evidence: 'Pergunta informativa.', appointmentOutcome: 'none', procedureMilestone: 'none' };
@@ -68,11 +73,15 @@ async function syntheticResponse(url, request) {
     return new Response(JSON.stringify({ model: 'gpt-6.1-sol', status: 'completed', output_text: JSON.stringify(decision) }));
 }
 
-test('all nine synthetic scenarios use the real adapters and pass the outbound protections', async () => {
-  const result = await checkBrunaModelLive({ env, manifest, fetchImpl: syntheticResponse });
+test('all twelve synthetic scenarios use the real adapters and pass the outbound protections', async () => {
+  const fixtureErrors = [];
+  const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (...args) => {
+    try { return await syntheticResponse(...args); } catch (error) { fixtureErrors.push(error.message); throw error; }
+  } });
+  assert.deepEqual(fixtureErrors, []);
   assert.equal(result.status, 'passed', JSON.stringify(result));
-  assert.equal(result.results.length, 9);
-  assert.deepEqual(result.results.map(r => r.timeoutMs), [20000, 20000, 20000, 20000, 20000, 20000, 20000, 15000, 12000]);
+  assert.equal(result.results.length, 12);
+  assert.deepEqual(result.results.map(r => r.timeoutMs), [...Array(10).fill(20000), 15000, 12000]);
   assert.equal(result.maxOutputTokens, 4096);
   assert.equal(result.verbosity, 'low');
   assert.equal(result.patientMessagesSent, 0);

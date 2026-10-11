@@ -129,6 +129,12 @@ export function approvedProcedureInformationFacts({ text, procedure, recentConve
   const facial = approvedLiftingFacialFacts({ text: request, procedure });
   const facts = [...(facial?.facts || [])];
   const boundaries = [...(facial?.boundaries || [])];
+  if (/\b(?:consulta|avalia[cç][aã]o)\b/i.test(request) &&
+      /\b(?:levar|preparar|preparo|documentos|exames|primeira vez)\b/i.test(request)) {
+    facts.push({ topic: "consultation_preparation", source: "conteudos/consulta-cirurgia-plastica/index.html",
+      statement: "Para a consulta, leve informações de saúde, a relação dos medicamentos, informações sobre cirurgias anteriores, exames que já tiver e as dúvidas que deseja esclarecer." });
+    boundaries.push("Não solicitar novos exames, interpretar resultados, orientar suspensão de medicamento ou dar preparo para uma cirurgia. Exigências individuais dependem da equipe.");
+  }
   if (["lifting_facial", "mini_lifting", "avaliacao_facial", "blefaroplastia"].includes(procedure) &&
       /\b(?:olhar|p[aá]lpebras?|sobrancelhas?)\b/i.test(request)) {
     facts.push({

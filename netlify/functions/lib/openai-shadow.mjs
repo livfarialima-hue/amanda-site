@@ -22,6 +22,7 @@ import {
 } from "./semantic-reply-policy.mjs";
 import { approvedProcedureInformationFacts } from "./lifting-information.mjs";
 import { assessReplyContinuity, buildReplyContinuityContext } from "./reply-continuity.mjs";
+import { replyStyleRevisionReason } from "./outbound-reply-gate.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 import {
@@ -93,6 +94,7 @@ const SHADOW_DECISION_SCHEMA = {
     "suggestedReply",
     "reviewReason",
     "conversationState",
+    "partialAnswer",
   ],
   properties: {
     route: { type: "string", enum: ROUTES },
@@ -105,6 +107,13 @@ const SHADOW_DECISION_SCHEMA = {
     replyWording: { type: "string", enum: ["approved_exact", "contextual"] },
     suggestedReply: { type: "string", maxLength: 1_200 },
     reviewReason: { type: "string", maxLength: 500 },
+    partialAnswer: {
+      type: "object", additionalProperties: false, required: ["knowledgeIds", "pendingQuestion"],
+      properties: {
+        knowledgeIds: { type: "array", maxItems: 2, items: { type: "string" } },
+        pendingQuestion: { type: "string", maxLength: 240 },
+      },
+    },
     conversationState: {
       type: "object",
       additionalProperties: false,
@@ -755,10 +764,16 @@ function isValidDecision(value) {
   }
 
   const keys = Object.keys(value);
-  if (keys.length !== SHADOW_DECISION_SCHEMA.required.length) return false;
-  if (!SHADOW_DECISION_SCHEMA.required.every((key) => key in value)) {
+  const requiredKeys = SHADOW_DECISION_SCHEMA.required.filter(key => key !== "partialAnswer" || "partialAnswer" in value);
+  if (keys.length !== requiredKeys.length) return false;
+  if (!requiredKeys.every((key) => key in value)) {
     return false;
   }
+  if ("partialAnswer" in value && (!value.partialAnswer ||
+      Object.keys(value.partialAnswer).sort().join(",") !== "knowledgeIds,pendingQuestion" ||
+      !Array.isArray(value.partialAnswer.knowledgeIds) || value.partialAnswer.knowledgeIds.length > 2 ||
+      !value.partialAnswer.knowledgeIds.every(id => typeof id === "string") ||
+      typeof value.partialAnswer.pendingQuestion !== "string" || value.partialAnswer.pendingQuestion.length > 240)) return false;
 
   const state = value.conversationState;
   const validState = Boolean(
@@ -1113,10 +1128,12 @@ export async function runOpenAIShadow(
 
     const assess = value => assessReplyContinuity({ body: value, currentMessage: text, recentConversation: normalizedConversation });
     const continuity = assess(parsed.decision.suggestedReply);
-    if (!continuity.needsRevision) return { ...parsed, decision: { ...parsed.decision, suggestedReply: continuity.body } };
+    const styleReason = value => replyStyleRevisionReason({ body: value, currentText: text, recentConversation: normalizedConversation, replyContract: normalizedReplyContract });
+    const styleFailure = styleReason(continuity.body);
+    if (!continuity.needsRevision && !styleFailure) return { ...parsed, decision: { ...parsed.decision, suggestedReply: continuity.body } };
 
     continuityFallback = { ...parsed, decision: { ...parsed.decision, route: "human_review", automaticAllowed: false,
-      suggestedReply: "", reviewReason: "reply_continuity_no_progress",
+      suggestedReply: "", reviewReason: styleFailure || "reply_continuity_no_progress",
       conversationState: { ...parsed.decision.conversationState, owner: "human_team",
         nextExpectedAction: "revisar a resposta repetitiva e responder ao assunto pendente" } } };
     // One revision shares the original total deadline. Never restart
@@ -1127,7 +1144,9 @@ export async function runOpenAIShadow(
     revisionRequest.input = JSON.stringify({ ...JSON.parse(revisionRequest.input), continuityRevision: {
       previousDraft: parsed.decision.suggestedReply,
       repeatedElements: continuity.removed,
-      instruction: "Reescreva a resposta a partir da informação nova da paciente e dos approvedClinicalFacts disponíveis. A descrição já recebida responde à descoberta: ofereça uma informação específica útil, sem repetir a explicação geral da consulta, presumir sofrimento ou pedir novamente região/objetivo. Não acrescente fatos, promessas, indicação ou agenda sem base. Encerre sem pergunta quando suficiente; se não houver resposta útil e segura, mantenha revisão humana.",
+      styleFailure,
+      replyContract: normalizedReplyContract,
+      instruction: "Reescreva a resposta a partir da informação nova da paciente e dos approvedClinicalFacts disponíveis. Corrija styleFailure respeitando os limites de perguntas, links e CTA do replyContract; use uma conversa natural, sem menu. A descrição já recebida responde à descoberta: ofereça uma informação específica útil, sem repetir a explicação geral da consulta, presumir sofrimento ou pedir novamente região/objetivo. Não acrescente fatos, promessas, indicação ou agenda sem base. Encerre sem pergunta quando suficiente; se não houver resposta útil e segura, mantenha revisão humana.",
     } });
     const revisedResponse = await fetchImpl(OPENAI_RESPONSES_URL, { ...request, body: JSON.stringify(revisionRequest) });
     if (!revisedResponse.ok) return continuityFallback;
@@ -1136,7 +1155,7 @@ export async function runOpenAIShadow(
     if (revised.decision?.route !== "standard_reply" || !revised.decision.automaticAllowed || revised.decision.urgent) return revised;
     if (revised.decision.confidence !== "high") return continuityFallback;
     const revisedContinuity = assess(revised.decision.suggestedReply);
-    if (revisedContinuity.needsRevision || !revisedContinuity.body) return continuityFallback;
+    if (revisedContinuity.needsRevision || !revisedContinuity.body || styleReason(revisedContinuity.body)) return continuityFallback;
     return { ...revised, decision: { ...revised.decision, suggestedReply: revisedContinuity.body } };
   } catch (error) {
     if (continuityFallback) return continuityFallback;

@@ -4,7 +4,7 @@ const BOT_KNOWLEDGE_CONFIG = Object.freeze({
   usageSheetName: "_WHATSAPP_USO_RESPOSTAS",
   reviewSheetName: "Revisões do Bot",
   timezone: "America/Sao_Paulo",
-  maximumCandidates: 5,
+  maximumCandidates: 40,
   maximumOpenQuestionsInDigest: 12,
   maximumRulesInDigest: 8,
 });
@@ -250,6 +250,9 @@ function tokensConhecimento_(value) {
   ]);
   return new Set(
     normalizarTextoConhecimento_(value)
+      .replace(/\b(?:convenio|plano de saude|plano medico|seguro saude)\b/g, "convenio")
+      .replace(/\b(?:estacionar|estacionamento|vaga para carro|deixar o carro)\b/g, "estacionamento")
+      .replace(/\b(?:endereco|localizacao|onde fica|onde atendem)\b/g, "localizacao")
       .split(" ")
       .filter(function (token) {
         return token.length >= 3 && !stopWords.has(token);
@@ -329,6 +332,7 @@ function obterDuvidaPendentePorTelefone_(sheet, phone) {
 }
 
 function obterContextoConhecimentoBot_(input) {
+  input = input || {};
   const question = textoSeguroConhecimento_(input && input.question, 2000);
   const phone = normalizarTelefoneConhecimento_(input && input.phone);
   const procedure = textoSeguroConhecimento_(input && input.procedure, 120);
@@ -338,8 +342,9 @@ function obterContextoConhecimentoBot_(input) {
   const now = new Date();
   const activeSnapshot = snapshotConhecimentoAtivo_();
   const candidates = [];
+  const learningCandidates = [];
 
-  if (approvedSheet.getLastRow() >= 2 && question) {
+  if (approvedSheet.getLastRow() >= 2 && (question || input.forLearning === true)) {
     const rows = approvedSheet
       .getRange(
         2,
@@ -350,9 +355,16 @@ function obterContextoConhecimentoBot_(input) {
       .getValues();
 
     rows.forEach(function (row) {
+      if (input.forLearning === true && learningCandidates.length < 20 &&
+          normalizarTextoConhecimento_(row[3]) === "baixo" &&
+          ["revisar", "aprovada"].includes(normalizarTextoConhecimento_(row[1])) &&
+          String(row[15] || "").startsWith("Proposta geral extraída")) {
+        learningCandidates.push({ id: String(row[0]), subject: String(row[4]), answer: String(row[6]), boundaries: String(row[7]) });
+      }
       if (!regraConhecimentoAtiva_(row, now, activeSnapshot)) return;
       const score = pontuarConhecimento_(question, row[4], row[5], row[8]);
-      if (score <= 0) return;
+      // The model selects by meaning. Lexical overlap ranks a bounded library;
+      // it is not a requirement for seeing an approved, current fact.
       candidates.push({
         id: String(row[0] || "").trim(),
         mode: String(row[2] || "").trim(),
@@ -364,6 +376,8 @@ function obterContextoConhecimentoBot_(input) {
         procedure: String(row[8] || "").trim(),
         version: String(row[16] || "").trim(),
         snapshotVersion: String(row[18] || "").trim(),
+        source: String(row[15] || "").trim(),
+        validUntil: dataConhecimentoValida_(row[11]) ? dataConhecimentoValida_(row[11]).toISOString() : "",
         score: Math.round(score * 100) / 100,
       });
     });
@@ -376,6 +390,9 @@ function obterContextoConhecimentoBot_(input) {
 
   return {
     snapshotVersion: activeSnapshot,
+    candidateCount: candidates.length,
+    catalogTruncated: candidates.length > BOT_KNOWLEDGE_CONFIG.maximumCandidates,
+    ...(input.forLearning === true ? { learningCandidates: learningCandidates } : {}),
     candidates: candidates.slice(0, BOT_KNOWLEDGE_CONFIG.maximumCandidates),
     pendingQuestion: pending ? {
       eventId: String(pending.values[0] || "").trim(),
@@ -617,10 +634,26 @@ function registrarRespostaHumanaAprendizado_(input) {
   const questionsSheet = obterPlanilhaDuvidasBot_(spreadsheet);
   const pending = obterDuvidaPendentePorTelefone_(questionsSheet, phone);
   const now = dataConhecimentoValida_(input.at) || new Date();
+  // A partial reply can leave another question pending. An explicit correction
+  // must still suspend the rule already used before capturing that other answer.
+  const explicitCorrection = respostaCorrigeConhecimento_(answer) &&
+    registrarCorrecaoRecenteConhecimento_(spreadsheet, phone, answer, now);
 
   if (pending) {
     const eventId = String(pending.values[0] || "").trim();
-    const ruleId = idRegraConhecimento_(eventId, now);
+    // Bind the proposal to the exact question read before inference. Another
+    // patient turn may have arrived while the model was drafting it.
+    const proposal = validarPropostaConhecimento_(input.proposal, pending.values);
+    if (input.proposal && !proposal) return { ok: true, captured: false, reason: "proposal_context_changed_or_unsafe" };
+    const approvedSheet = obterPlanilhaRespostasAprovadas_(spreadsheet);
+    const rows = approvedSheet.getLastRow() < 2 ? [] : approvedSheet.getRange(2, 1, approvedSheet.getLastRow() - 1, BOT_KNOWLEDGE_HEADERS.length).getValues();
+    const duplicate = proposal ? rows.find(function (row) {
+      return ["revisar", "aprovada"].includes(normalizarTextoConhecimento_(row[1])) &&
+        normalizarTextoConhecimento_(row[6]) === normalizarTextoConhecimento_(proposal.answer) &&
+        normalizarTextoConhecimento_(row[7]) === normalizarTextoConhecimento_(proposal.boundaries) &&
+        String(row[8] || "") === String(pending.values[14] || "");
+    }) : null;
+    const ruleId = proposal ? (duplicate ? String(duplicate[0]) : idRegraConhecimento_(eventId, now)) : "";
     const risk = String(pending.values[7] || "Médio").trim();
     questionsSheet.getRange(pending.row, 10, 1, 4).setValues([[
       "Resposta capturada",
@@ -629,16 +662,15 @@ function registrarRespostaHumanaAprendizado_(input) {
       now,
     ]]);
 
-    const approvedSheet = obterPlanilhaRespostasAprovadas_(spreadsheet);
-    approvedSheet.appendRow([
+    if (proposal && !duplicate) approvedSheet.appendRow([
       ruleId,
       "Revisar",
       modoPadraoConhecimento_(risk),
       risk,
-      textoSeguroConhecimento_(pending.values[5], 160),
-      textoSeguroConhecimento_(pending.values[4], 2000),
-      answer,
-      limitesPadraoConhecimento_(risk),
+      proposal.subject,
+      proposal.question,
+      proposal.answer,
+      proposal.boundaries,
       textoSeguroConhecimento_(pending.values[14], 120),
       "",
       "",
@@ -646,30 +678,50 @@ function registrarRespostaHumanaAprendizado_(input) {
       0,
       "",
       0,
-      "Resposta humana no WhatsApp",
+      "Proposta geral extraída de resposta humana; requer revisão de conteúdo e limites",
     ]);
-    registrarRevisaoBot_(spreadsheet, {
+    if (!duplicate) registrarRevisaoBot_(spreadsheet, {
       type: "Regra de resposta",
       priority: risk === "Alto" ? "Alta" : "Normal",
       at: now,
       patientName: pending.values[2],
       phone: phone,
       context: pending.values[4],
-      suggestion: answer,
-      confidence: "Resposta humana capturada",
+      suggestion: proposal ? proposal.answer : "Resposta preservada na dúvida original. Sem regra geral segura; conferir manualmente.",
+      confidence: proposal ? "Proposta geral — não aprovada" : "Resposta individual — não reutilizar",
       status: "Aguardando aprovação",
-      key: "knowledge:" + ruleId,
+      key: "knowledge:" + (ruleId || eventId),
     });
-    return { ok: true, captured: true, ruleId: ruleId };
+    return { ok: true, captured: true, ruleId: ruleId, consolidated: Boolean(duplicate), proposalCreated: Boolean(proposal && !duplicate) };
   }
 
-  const correction = registrarCorrecaoRecenteConhecimento_(
+  const correction = explicitCorrection || registrarCorrecaoRecenteConhecimento_(
     spreadsheet,
     phone,
     answer,
     now,
   );
   return { ok: true, captured: false, correction: correction };
+}
+
+function validarPropostaConhecimento_(proposal, pending) {
+  if (!proposal || proposal.version !== "learning-proposal-v1" || proposal.risk !== "Baixo" ||
+      proposal.sourceQuestionId !== String(pending[0] || "") || normalizarTextoConhecimento_(pending[7]) !== "baixo") return null;
+  const nameParts = normalizarTextoConhecimento_(pending[2]).split(" ").filter(function (part) { return part.length >= 3; });
+  const output = {};
+  const limits = { subject: 160, question: 500, answer: 1200, boundaries: 500 };
+  for (const key of Object.keys(limits)) {
+    const value = String(proposal[key] || "").trim();
+    const normalized = normalizarTextoConhecimento_(value);
+    if (!value || value.length > limits[key] || /@|https?:\/\/|\d{6,}/i.test(value) ||
+        nameParts.some(function (part) { return (" " + normalized + " ").includes(" " + part + " "); })) return null;
+    output[key] = value;
+  }
+  return output;
+}
+
+function respostaCorrigeConhecimento_(answer) {
+  return /\b(?:corrigindo|retificando|informacao anterior (?:esta )?(?:incorreta|errada)|na verdade)\b/.test(normalizarTextoConhecimento_(answer));
 }
 
 function registrarCorrecaoRecenteConhecimento_(spreadsheet, phone, answer, now) {
@@ -696,6 +748,12 @@ function registrarCorrecaoRecenteConhecimento_(spreadsheet, phone, answer, now) 
       if (match) {
         const corrections = Number(approvedSheet.getRange(match.getRow(), 15).getValue() || 0) + 1;
         approvedSheet.getRange(match.getRow(), 15).setValue(corrections);
+        if (respostaCorrigeConhecimento_(answer)) {
+          // An explicit correction suspends reuse until the team reviews the
+          // source. The patient's individual reply never replaces that source.
+          approvedSheet.getRange(match.getRow(), 2).setValue("Revisar");
+          approvedSheet.getRange(match.getRow(), 18).setValue("review");
+        }
       }
     }
     usageSheet.getRange(index + 2, 7).setValue("Resposta humana posterior — revisar");
@@ -906,14 +964,33 @@ function carregarAgendaAprendizadoBot_(spreadsheet, now) {
         automatico: false,
         futuro: false,
         prioridade: 3,
-        sugestao: "Revisar a resposta na aba Respostas Aprovadas, escolher o Modo de uso e alterar o Status para Aprovada ou Descartada.",
+        sugestao: "Proposta: " + String(row[6] || "") + "\nLimites: " + String(row[7] || "") + "\nRevisar na aba Respostas Aprovadas, marcar Aprovada e promover no snapshot; Descartada impede reutilização.",
       });
     });
   }
   return items;
 }
 
-function promoverSnapshotConhecimentoBot(snapshotVersion, ruleIds) {
+function aprovarRespostaSelecionadaBruna() {
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  if (spreadsheet.getId() !== CONFIG.spreadsheetId) throw new Error("Abra a planilha LEADS canônica.");
+  const sheet = spreadsheet.getActiveSheet();
+  const rowNumber = sheet.getActiveRange().getRow();
+  if (sheet.getName() !== BOT_KNOWLEDGE_CONFIG.approvedSheetName || rowNumber < 2) throw new Error("Selecione uma regra na aba Respostas Aprovadas.");
+  const row = sheet.getRange(rowNumber, 1, 1, BOT_KNOWLEDGE_HEADERS.length).getValues()[0];
+  const ui = SpreadsheetApp.getUi();
+  const decision = ui.alert("Aprovar resposta da Bruna", "Assunto: " + row[4] + "\nResposta: " + row[6] +
+    "\nLimites: " + row[7] + "\nRisco: " + row[3] + "\nModo: " + row[2] + "\nVálida até: " + (row[11] || "sem prazo definido") +
+    "\n\nConfirma que este conteúdo é geral, atual e não contém dados pessoais?", ui.ButtonSet.YES_NO);
+  if (decision !== ui.Button.YES) return;
+  // Promotion re-reads under the existing lock and checks the reviewed content.
+  const result = promoverSnapshotConhecimentoBot("kb-" + new Date().getTime(), [String(row[0])], {
+    id: String(row[0]), reviewed: JSON.stringify(row.slice(0, 12)), keepActive: true,
+  });
+  ui.alert("Resposta aprovada. Biblioteca atualizada: " + result.snapshotVersion);
+}
+
+function promoverSnapshotConhecimentoBot(snapshotVersion, ruleIds, approval) {
   const version = textoSeguroConhecimento_(snapshotVersion, 80);
   const selectedIds = new Set(
     (Array.isArray(ruleIds) ? ruleIds : [])
@@ -935,6 +1012,28 @@ function promoverSnapshotConhecimentoBot(snapshotVersion, ruleIds) {
       .getRange(2, 1, sheet.getLastRow() - 1, BOT_KNOWLEDGE_HEADERS.length)
       .getValues();
     const now = new Date();
+    let reviewedRow = null;
+    if (approval) {
+      reviewedRow = rows.find(function (row) { return String(row[0]) === approval.id; });
+      if (!reviewedRow || JSON.stringify(reviewedRow.slice(0, 12)) !== approval.reviewed ||
+          !["revisar", "aprovada"].includes(normalizarTextoConhecimento_(reviewedRow[1]))) throw new Error("A resposta mudou. Leia novamente antes de aprovar.");
+      if (approval.keepActive) rows.forEach(function (row) {
+        if (regraConhecimentoAtiva_(row, now, snapshotConhecimentoAtivo_())) selectedIds.add(String(row[0]));
+      });
+      reviewedRow[1] = "Aprovada";
+    }
+    // Validate the whole selection before any write: one invalid ID must not
+    // retire the live library or partially promote unreviewed answers.
+    if ([...selectedIds].some(function (id) {
+      return !rows.some(function (row) { return String(row[0] || "").trim() === id && normalizarTextoConhecimento_(row[1]) === "aprovada" && String(row[6] || "").trim() && String(row[7] || "").trim(); });
+    })) throw new Error("Todas as regras selecionadas precisam existir, estar aprovadas e ter resposta e limites revisados.");
+    if (reviewedRow) {
+      reviewedRow[9] = Session.getActiveUser().getEmail() || "revisão humana";
+      reviewedRow[10] = now;
+      const rowNumber = rows.indexOf(reviewedRow) + 2;
+      sheet.getRange(rowNumber, 2).setValue("Aprovada");
+      sheet.getRange(rowNumber, 10, 1, 2).setValues([[reviewedRow[9], now]]);
+    }
     let promoted = 0;
     rows.forEach(function promote(row, index) {
       const id = String(row[0] || "").trim();

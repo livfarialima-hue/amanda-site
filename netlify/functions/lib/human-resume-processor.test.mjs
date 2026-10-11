@@ -180,6 +180,44 @@ function dependencies() {
   };
 }
 
+for (const scenario of ["address", "invoice", "semantic_veto", "new_human", "new_patient", "opt_out", "too_early", "clinical", "unknown_professional"] ) {
+  test(`administrative side question preserves clinical ownership and send guards: ${scenario}`, async () => {
+    const deps = dependencies();
+    const relationship = { state: "active_postop", professional: scenario === "unknown_professional" ? "" : "amanda", hasPendingHumanTask: true };
+    deps.rescheduleHumanResumeImpl = async () => ({ status: "rescheduled" });
+    let relationshipReads = 0, historyReads = 0;
+    deps.callClassificationSheetsImpl = async action => action === "get_bot_knowledge_context"
+      ? { status: "completed", data: { candidates: [] } }
+      : { status: "completed", data: { relationship: { ...relationship, neverBotReply: scenario === "opt_out" && ++relationshipReads > 1 } } };
+    deps.getDurableConversationContextImpl = async () => ({ status: "completed", turns: [], pendingCommitments: [{ eventId: "synthetic-clinical-task", kind: "care", status: "pending", owner: "human_team" }] });
+    deps.readConversationTurnsImpl = async () => ({ status: "completed", turns: ++historyReads > 1 && ["new_human", "new_patient"].includes(scenario)
+      ? [{ role: scenario === "new_human" ? "assistant" : "user", source: scenario === "new_human" ? "human" : "patient", text: "Outra mensagem", at: "2026-07-28T15:29:00Z" }] : [] });
+    deps.runOpenAIShadowImpl = async input => {
+      assert.equal(input.patientRelationship.hasPendingHumanTask, true);
+      if (scenario === "unknown_professional") assert.doesNotMatch(input.policyHints.deterministicReplyCode || "", /^ADMIN-SIDE/);
+      const veto = scenario === "semantic_veto";
+      return { status: "completed", decision: { route: veto ? "human_review" : "standard_reply", confidence: "high", automaticAllowed: !veto,
+        urgent: false, professional: "amanda", procedure: "", replyCode: input.policyHints.deterministicReplyCode,
+        suggestedReply: input.policyHints.deterministicReplyPreview || "A equipe vai conferir.", reviewReason: veto ? "wait_for_team" : "" } };
+    };
+    const result = await processHumanResumeJob(job({ professional: scenario === "unknown_professional" ? "" : "amanda", text: scenario === "clinical" ? "Posso tomar remédio?" : scenario === "invoice" ? "Vocês emitem nota fiscal?" : "Pode me passar o endereço?",
+      receivedAt: scenario === "too_early" ? "2026-07-28T15:25:00Z" : "2026-07-28T15:00:00Z" }), { env: ACTIVE_ENV, now: NOW, ...deps });
+    if (["address", "invoice"].includes(scenario)) {
+      assert.equal(deps.patientMessages.length, 1, JSON.stringify(result));
+      assert.match(deps.patientMessages[0].body, scenario === "address" ? /Pais Leme, 215/ : /nota fiscal/);
+      assert.equal(result.status, "waiting_human");
+      assert.equal(deps.completions[0].options.controlStatus, "waiting_human");
+      assert.equal(deps.alerts.length, 0);
+    } else if (["clinical", "unknown_professional"].includes(scenario)) {
+      assert.equal(result.status, "waiting_human");
+      assert.equal(deps.alerts.length, 1);
+      for (const message of deps.patientMessages) assert.doesNotMatch(message.body, /Pais Leme|nota fiscal|tome|dose/i);
+    } else {
+      assert.equal(deps.patientMessages.length, 0, JSON.stringify(result));
+    }
+  });
+}
+
 test("unavailable current history postpones any patient reply", async () => {
   const deps = dependencies();
   deps.readConversationTurnsImpl = async () => ({ status: "failed", turns: [] });

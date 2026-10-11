@@ -72,6 +72,7 @@ function onOpen() {
       "comoUsarCentralAtendimento",
     )
     .addSeparator()
+    .addItem("Aprovar resposta selecionada da Bruna", "aprovarRespostaSelecionadaBruna")
     .addItem(
       "Processar decisões marcadas",
       "processarDecisoesMarcadasCentral",

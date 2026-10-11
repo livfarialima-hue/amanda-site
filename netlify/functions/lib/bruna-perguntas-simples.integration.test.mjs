@@ -66,7 +66,7 @@ function requestFor(payload) {
   return new Request('http://localhost/api/ycloud/webhook',{method:'POST',headers:{'YCloud-Signature':`t=${timestamp},s=${signature}`},body});
 }
 
-const scenarios=['fragmented_faq','unknown_alert_delivered','unknown_alert_failed','unknown_holding_alert_failed','unknown_email_delivered_whatsapp_failed','semantic_veto','fragmented_correction','knowledge_partial_veto'];
+const scenarios=['fragmented_faq','unknown_alert_delivered','unknown_alert_failed','unknown_holding_alert_failed','unknown_email_delivered_whatsapp_failed','semantic_veto','fragmented_correction','knowledge_partial_veto','partial_answer','partial_alert_failed','partial_human_race'];
 for (const [index,scenario] of scenarios.entries()) {
   test(`actual webhook FAQ and recovery contract: ${scenario}`,async t=>{
     const phone=`+55119000000${50+index}`;
@@ -77,27 +77,31 @@ for (const [index,scenario] of scenarios.entries()) {
     const previous=Object.fromEntries(Object.keys(settings).map(k=>[k,process.env[k]]));Object.assign(process.env,settings);
     t.after(()=>{for(const[k,v]of Object.entries(previous)){if(v===undefined)delete process.env[k];else process.env[k]=v;}});
     t.mock.method(console,'log',()=>{});
-    const sent=[],actions=[];let semanticCalls=0,semanticInput;
+    const sent=[],actions=[];let semanticCalls=0,semanticInput,alertDelivered=false;
+    const partial=scenario.startsWith('partial_');
     const unknown=scenario!=='fragmented_faq';
-    const failure=['unknown_alert_failed','unknown_holding_alert_failed'].includes(scenario);
+    const failure=['unknown_alert_failed','unknown_holding_alert_failed','partial_alert_failed'].includes(scenario);
     const text=scenario==='fragmented_correction'?'Na verdade quero otoplastia. Vocês fazem deep plane?':scenario==='semantic_veto'?'Vocês fazem deep plane?':scenario==='unknown_holding_alert_failed'?'Qual é a anestesia da minha cirurgia?':
-      unknown?'Qual equipamento específico é usado nessa técnica?':'Vocês fazem deep plane?';
+      partial?'Tem estacionamento? Qual equipamento específico é usado nessa técnica?':unknown?'Qual equipamento específico é usado nessa técnica?':'Vocês fazem deep plane?';
     const turns=[{role:'user',source:'patient',eventId:`${scenario}-origin`,at:'2026-09-27T14:08:00Z',text:'Gostaria de saber sobre lifting facial.',messageType:'text'}];
     t.mock.method(globalThis,'fetch',async(url,options)=>{
       const data=JSON.parse(options.body);
       if(url===SHEETS){
         actions.push(data);
-        if(data.action==='get_bot_knowledge_context' && scenario==='knowledge_partial_veto')return Response.json({ok:true,candidates:[{id:'KB-PARKING',mode:'Automática',risk:'Baixo',subject:'Estacionamento',answer:'A clínica tem estacionamento.'}]});
-        if(data.action==='send_review_alert_email')return new Response(JSON.stringify(failure?{ok:false}:{ok:true,sent:true}),{status:failure?500:200});
+        if(data.action==='get_bot_knowledge_context' && (scenario==='knowledge_partial_veto'||partial))return Response.json({ok:true,candidates:[{id:'KB-PARKING',mode:'Automática',risk:'Baixo',subject:'Estacionamento',answer:'A clínica tem estacionamento.'}]});
+        if(data.action==='send_review_alert_email'){alertDelivered=!failure;return new Response(JSON.stringify(failure?{ok:false}:{ok:true,sent:true}),{status:failure?500:200});}
+        if(data.action==='get_patient_relationship')return Response.json({ok:true,relationship:{state:'new_lead',neverBotReply:false}});
+        if(data.action==='get_conversation_context'&&scenario==='partial_human_race'&&alertDelivered)return Response.json({ok:true,turns:[...turns,{role:'assistant',source:'human',text:'A equipe já respondeu.',at:'2026-09-27T14:08:30Z',eventId:'synthetic-human-new'}]});
         return new Response(JSON.stringify(data.action==='get_conversation_context'?{ok:true,turns,professional:'amanda',opportunityId:scenario}:
           {ok:true,updated:true,duplicate:false,routed:true,routeStatus:'resolved',professional:'amanda',opportunityId:scenario,humanTakeoverToday:false,patientRelationship:{found:false}}),{status:200});
       }
       if(url==='https://api.openai.com/v1/responses'){
         semanticCalls++;const input=JSON.parse(data.input);semanticInput=input;
-        return new Response(JSON.stringify({model:'synthetic',output_text:JSON.stringify({route:unknown?'human_review':'standard_reply',confidence:unknown?'low':'high',automaticAllowed:!unknown,urgent:false,
+        return new Response(JSON.stringify({model:'synthetic',output_text:JSON.stringify({route:unknown?'human_review':'standard_reply',confidence:unknown&&!partial?'low':'high',automaticAllowed:!unknown,urgent:false,
           professional:'amanda',procedure:scenario==='fragmented_correction'?'otoplastia':'lifting_facial',replyCode:scenario==='knowledge_partial_veto'?'KB:KB-PARKING':unknown?'UNKNOWN-REVIEW-01':'LIFTING-FACIAL-INFORMATION-01',
           suggestedReply:unknown?'':'Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.\n\nSim, a Dra. Amanda realiza lifting facial com abordagem deep plane quando há indicação. A escolha depende da avaliação, da anatomia e dos objetivos de cada pessoa.',
           reviewReason:unknown?'unknown_digest:equipamento_lifting':'',
+          ...(partial?{partialAnswer:{knowledgeIds:['KB-PARKING'],pendingQuestion:'Qual equipamento é utilizado?'}}:{}),
           conversationState:{activeTopic:'dúvida sobre lifting facial',patientAct:'question',refersToEventId:'',lastClinicQuestion:'',lastClinicOffer:'',unresolvedQuestions:[text],factsAlreadyProvided:[],owner:unknown?'human_team':'bruna',nextExpectedAction:'responder a dúvida',ambiguity:'',contextConfidence:'high'}})}),{status:200});
       }
       assert.equal(url,YCLOUD,'every external call mocked');sent.push(data);
@@ -118,6 +122,13 @@ for (const [index,scenario] of scenarios.entries()) {
       assert.equal(replies.length,1,JSON.stringify(result));assert.match(replies[0].text.body,/Bruna.*deep plane/s);assert.equal(alerts.length,0);return;
     }
     assert.ok(alerts.length>0,'unknown question must reach an immediate internal alert, not only the daily digest');
+    if(partial&&!failure){
+      assert.equal(replies.length,scenario==='partial_answer'?1:0,JSON.stringify(result));
+      if(replies.length)assert.match(replies[0].text.body,/A clínica tem estacionamento/);
+      assert.equal(actions.filter(a=>a.action==='record_bot_knowledge_usage').length,scenario==='partial_answer'?1:0);
+      assert.ok(actions.some(a=>JSON.stringify(a).includes('human_handoff_queued')));
+      return;
+    }
     if(failure){
       assert.equal(result.aiActiveStatus,'failed',JSON.stringify(result));
       assert.equal(result.automaticWorkFinished,false,'failed alert must stay recoverable');

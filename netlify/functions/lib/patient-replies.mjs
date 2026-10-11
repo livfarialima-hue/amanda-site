@@ -63,6 +63,24 @@ export const AMANDA_SITE_URL =
   "https://draamandaschroeder.com.br/";
 const CLINIC_ADDRESS =
   "R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150";
+
+// Narrow factual assistance during a human-owned conversation. A full match
+// excludes compound clinical/scheduling requests; semantics must also confirm.
+export function buildAdministrativeSideAnswer({ text, professional, relationship } = {}) {
+  if (professional !== "amanda" || relationship?.neverBotReply === true) return null;
+  const value = String(text || "").normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()
+    .replace(/^(?:oi|ola|bom dia|boa tarde|boa noite)[,! .]+/, "")
+    .replace(/[,! .]+(?:por favor|por gentileza|obrigad[ao])[.!? ]*$/, "")
+    .replace(/[.!?]+$/, "").trim();
+  const facts = [
+    { code: "ADMIN-SIDE-LOCATION-01", pattern: /^(?:onde (?:fica(?: a clinica)?|voces (?:ficam|atendem))|qual (?:e )?o endereco(?: da clinica)?|(?:pode|podem|consegue) me (?:passar|mandar) o endereco(?: da clinica)?)$/, answer: `A Clínica LIV fica na ${CLINIC_ADDRESS}.` },
+    { code: "ADMIN-SIDE-INVOICE-01", pattern: /^(?:(?:voces )?(?:emitem|fornecem|dao) nota fiscal(?: da consulta)?|(?:a )?consulta (?:tem|inclui) nota fiscal)$/, answer: "Emitimos nota fiscal da consulta." },
+    { code: "ADMIN-SIDE-INSURANCE-01", pattern: /^(?:(?:voces )?(?:aceitam|atendem|trabalham com)(?: por)? (?:convenio|plano(?: de saude)?)|a consulta e particular|a consulta tem reembolso)$/, answer: AMANDA_PRIVATE_REIMBURSEMENT_REPLY },
+  ];
+  const fact = facts.find(item => item.pattern.test(value));
+  return fact ? { status: "completed", decision: { route: "standard_reply", confidence: "high", automaticAllowed: true,
+    urgent: false, professional: "amanda", procedure: "", replyCode: fact.code, suggestedReply: fact.answer, reviewReason: "" } } : null;
+}
 const CLINIC_MAPS_URL =
   "https://maps.app.goo.gl/yDFBmbcn5oDpHSM46";
 const CLINIC_LOCATION_PATTERNS = Object.freeze([

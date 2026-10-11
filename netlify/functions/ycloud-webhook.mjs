@@ -79,7 +79,10 @@ import {
   markExternalProfessionalContext,
 } from "./lib/external-professional-context.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
+import { proposeKnowledgeCandidate } from "./lib/knowledge-candidate.mjs";
 import {
+  normalizeKnowledgeContext,
+  approvedPartialAnswer,
   buildPediatricReviewAcknowledgement,
   buildUnknownHoldingReply,
   buildSafeInternalReviewSuggestion,
@@ -1179,6 +1182,7 @@ async function getBotKnowledgeContext(knowledge) {
     ? {
         candidates: result.responseData?.candidates || [],
         pendingQuestion: result.responseData?.pendingQuestion || null,
+        learningCandidates: result.responseData?.learningCandidates || [],
       }
     : { candidates: [], pendingQuestion: null };
 }
@@ -1190,10 +1194,16 @@ async function recordBotUnknownQuestion(learning) {
   );
 }
 
-async function recordHumanLearningAnswer(answer) {
-  return deliverSheetsAction(
+export async function recordHumanLearningAnswer(answer, dependencies = {}) {
+  const getContext = dependencies.getBotKnowledgeContextImpl || getBotKnowledgeContext;
+  const deliver = dependencies.deliverSheetsActionImpl || deliverSheetsAction;
+  const propose = dependencies.proposeKnowledgeCandidateImpl || proposeKnowledgeCandidate;
+  const context = await getContext({ phone: answer.phone, question: "", forLearning: true });
+  const pendingQuestion = normalizeKnowledgeContext(context).pendingQuestion;
+  const proposal = pendingQuestion ? await propose({ answer: answer.answer, pendingQuestion, existingCandidates: context.learningCandidates || [] }) : null;
+  return deliver(
     "record_human_learning_answer",
-    { answer },
+    { learning: { ...answer, ...(proposal ? { proposal } : {}) } },
   );
 }
 
@@ -2958,6 +2968,7 @@ async function completeOpenAIActive({
         decision: activeResult.decision,
         risk: learningRisk,
       });
+    const partialAnswer = approvedPartialAnswer(activeResult.decision, input.learningContext);
     if (unknownClarification || unknownReview) {
       await recordBotUnknownQuestion({
         eventId: String(input.eventId),
@@ -3010,7 +3021,9 @@ async function completeOpenAIActive({
           prepareReviewAlertInput(alertInput, {
             decision: {
               ...activeResult.decision,
-              suggestedReply: internalReviewSuggestion,
+              suggestedReply: partialAnswer
+                ? `Confirmar somente: ${partialAnswer.pendingQuestion}\nInformação aprovada disponível para envio após este alerta: ${partialAnswer.answer}\n${internalReviewSuggestion}`
+                : internalReviewSuggestion,
             },
             plan,
           }),
@@ -3051,7 +3064,7 @@ async function completeOpenAIActive({
         };
       }
 
-      const holdingReply =
+      const pendingHoldingReply =
         pediatricReviewAcknowledgement ||
         buildUnknownHoldingReply({
           patientName: input.patientProfileName,
@@ -3063,6 +3076,9 @@ async function completeOpenAIActive({
           allowNameQuestion:
             Number(conversationAction?.replyContract?.maxQuestions) >= 1,
         });
+      const holdingReply = partialAnswer
+        ? `${partialAnswer.answer}${pendingHoldingReply ? `\n\n${pendingHoldingReply}` : ""}`
+        : pendingHoldingReply;
       if (!holdingReply) {
         return {
           status: "awaiting_human_learning",
@@ -3081,7 +3097,21 @@ async function completeOpenAIActive({
         opportunityId: input.opportunityId,
         professional: input.professional,
         conversationAction,
-      });
+      }, partialAnswer ? { beforeSendImpl: async () => {
+        const current = await checkLatestInboundReply({ phone: to, eventId: input.eventId, markerStatus: replyDebounceMarkerStatus });
+        if (!current.shouldProcess) return false;
+        const human = await guardAutomaticReplyAgainstHumanRace({ phone: to, configuredDelayMs: 0 });
+        if (!human.shouldSend) return false;
+        const fresh = await getDurableConversationContext({ phone: to, opportunityId: input.opportunityId, professional: input.professional, limit: 20 });
+        const receivedAt = new Date(input.receivedAt || "").getTime();
+        if (fresh.status !== "completed" || !Number.isFinite(receivedAt)) return false;
+        if ((fresh.turns || []).some(turn => {
+          const at = new Date(turn.at || "").getTime();
+          return at > receivedAt || (at === receivedAt && turn.role === "assistant");
+        })) return false;
+        const preference = await guardAutomaticContactPreference({ phone: to });
+        return preference.shouldSend && preference.lookupStatus === "completed";
+      } } : {});
       await recordAutomaticReplyOperationally({
         result: holdingResult,
         eventId: `${input.eventId}-unknown-holding`,
@@ -3106,6 +3136,10 @@ async function completeOpenAIActive({
       );
 
       if (holdingResult.status === "completed") {
+        for (const ruleId of partialAnswer?.knowledgeIds || []) {
+          await recordBotKnowledgeUsage({ ruleId, eventId: `${input.eventId}-unknown-holding-kb-${ruleId}`,
+            phone: to, question: input.text, answer: holdingResult.body || holdingReply, result: "Resposta parcial enviada" });
+        }
         await appendConversationTurn({
           phone: to,
           role: "assistant",
@@ -3263,6 +3297,10 @@ async function completeOpenAIActive({
       const deliveredReplyBody =
         String(replyResult.body || "").trim() ||
         activeResult.decision.suggestedReply;
+      if (isKnowledgeDecision(activeResult.decision)) {
+        await recordBotKnowledgeUsage({ ruleId: knowledgeRuleId(activeResult.decision), eventId: `${input.eventId}-knowledge`,
+          phone: to, question: input.text, answer: deliveredReplyBody, result: "Enviada" });
+      }
       const memoryResult = await appendConversationTurn({
         phone: to,
         role: "assistant",

@@ -1,5 +1,11 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-AUTONOMIA-2026-10-11 -->
+**Candidata testada localmente — publicação pendente.** Daniel autorizou implementar e publicar em 11/10/2026. O pacote amplia a redação contextual de fatos aprovados e a seleção por significado, corrige o envelope de aprendizado Netlify–Apps Script, propõe respostas gerais para revisão única na LEADS e permite ajuda administrativa isolada durante uma pendência humana, após dez minutos. A pendência clínica permanece com a equipe. Respostas parciais exigem recibo do encaminhamento; problemas de estilo admitem uma revisão no mesmo prazo. Sol 6.1 médio, preços, agenda e prioridade humana preservados.
+
+A publicação depende de autenticação Google e Netlify neste ambiente. Produção observada em leitura pública: commit 590121d / deploy 6acbd59e31a918000966a0af; Apps Script v161 é o último registro local, ainda sem releitura autenticada nesta tarefa. Nenhuma mensagem real, migração, promoção de conhecimento ou publicação foi executada. Escopo, validação, sequência de publicação e rollback: `auditorias/bruna-autonomia-2026-10-11/RELATORIO.md`. Revisões: primeiras conversas naturais, 48h e sete dias após publicação efetiva; nenhuma nova automação criada.
+<!-- /BRUNA-AUTONOMIA-2026-10-11 -->
+
 <!-- BRUNA-CONTEXTO-2026-10-11 -->
 **Pacote 2026-10-11.3 — PUBLICADO E VERIFICADO EM PRODUÇÃO em 11/10/2026, 15:31:21 BRT.** Contexto pessoal atual prevalece sobre origem do anúncio; a entrada recebe currentTemplateId. Memória aprovada não reativa resposta vetada nem apaga outra pergunta pendente. Aceites curtos cumprem a oferta informativa, sem novo pedido de permissão. Dúvidas sem fonte vão a Daniel/equipe pelo encaminhamento imediato existente, com assunto explícito e recibo antes de ciência à pessoa. Fatos, faixas autorizadas, agenda e proteções de envio preservados.
 

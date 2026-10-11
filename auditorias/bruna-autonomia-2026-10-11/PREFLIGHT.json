@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-10-11T23:13:19.413500+00:00",
+  "status": "blocked_authentication",
+  "baseCommit": "8a6bcc6b9105aba10810775b680a3950c2ed3443",
+  "netlifySiteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+  "patientMessagesSent": 0,
+  "platformWrites": 0,
+  "authenticatedNetlify": false,
+  "authenticatedAppsScript": false,
+  "authenticatedDrive": false,
+  "limitations": [
+    "Somente health e metadados públicos Netlify; faltam estado autenticado de publicação e leitura do projeto, deployment, schema LEADS e Drive."
+  ],
+  "publicNetlifyDeploy": {
+    "id": "6acbd59e31a918000966a0af",
+    "state": "ready",
+    "branch": "reestruturacao-site",
+    "context": "production",
+    "commit_ref": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
+    "published_at": "2026-10-11T18:31:21.722Z"
+  },
+  "publicWebhook": {
+    "httpStatus": 200,
+    "ok": true,
+    "service": "ycloud-webhook",
+    "automationMode": "active",
+    "signatureProtection": "active",
+    "sheetsWebhookConfigured": true,
+    "processingMode": "durable_background_intake"
+  }
+}

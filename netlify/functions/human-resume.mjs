@@ -27,7 +27,8 @@ import {
   updateHumanResumeDeliveryState,
 } from "./lib/human-resume-queue.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
-import { shouldSendOpenAIPatientReply } from "./lib/patient-replies.mjs";
+import { shouldSendOpenAIPatientReply, buildAdministrativeSideAnswer } from "./lib/patient-replies.mjs";
+import { approvedPartialAnswer, knowledgeRuleId } from "./lib/knowledge-learning.mjs";
 import {
   appendConversationTurn,
   readConversationTurns,
@@ -256,7 +257,10 @@ async function sendPatientMessage(
     if (lookup.status !== "completed" || !lookup.data?.relationship) { contextError = "contact_context_unavailable"; return false; }
     if (blocksAutomatedPatientMessages(lookup.data.relationship)) return false;
     if (conversationAction?.action === CONVERSATION_ACTIONS.RESPOND &&
-        applyPatientRelationshipPolicy({ route: "standard_reply", automaticAllowed: true }, lookup.data.relationship).automaticAllowed === false) return false;
+        applyPatientRelationshipPolicy({ route: "standard_reply", automaticAllowed: true }, lookup.data.relationship).automaticAllowed === false) {
+      const side = buildAdministrativeSideAnswer({ text: job.text, professional: lookup.data.relationship.professional || job.professional, relationship: lookup.data.relationship });
+      if (!job.administrativeSideQuestionId || side?.decision.replyCode !== job.administrativeSideQuestionId) return false;
+    }
     return currentCheck(job);
   };
   if (job.patientWindowClosed || blocksAutomatedPatientMessages(job.patientRelationship)) {
@@ -573,13 +577,23 @@ export async function processHumanResumeJob(
           procedure: job.procedure,
         }
       : currentMessagePlan;
-  const enrichedPlan = applyPatientRelationshipPolicy(enrichAutomationPlanFromConversation(
+  let enrichedPlan = applyPatientRelationshipPolicy(enrichAutomationPlanFromConversation(
     preliminaryPlan,
     job.recentConversation,
     now,
   ), job.patientRelationship);
+  const knownProfessional = job.patientRelationship.professional || job.professional || "";
   job.professional = job.professional || enrichedPlan.professional || "";
   if (enrichedPlan.patientRelationship?.hasPendingHumanTask || /^known_patient_active/.test(enrichedPlan.reason || "")) job.preserveHumanOwnership = true;
+  const administrativeSideAnswer = job.preserveHumanOwnership &&
+    enrichedPlan.reason !== "possible_urgent_symptoms" &&
+    !["daniel_greeting_and_alert", "ignore"].includes(currentMessagePlan.route)
+      ? buildAdministrativeSideAnswer({ text: job.text, professional: knownProfessional, relationship: job.patientRelationship }) : null;
+  if (administrativeSideAnswer) {
+    if (now - timeMs(job.receivedAt) < 10 * 60_000) return retryJob(job, "human_reply_wait", dependencies, timeMs(job.receivedAt) + 10 * 60_000);
+    job.administrativeSideQuestionId = administrativeSideAnswer.decision.replyCode;
+    enrichedPlan = { ...enrichedPlan, route: "standard_reply", automaticAllowed: true, reason: "administrative_side_question", replyCode: job.administrativeSideQuestionId };
+  }
   const policy = classifyHumanResume({
     text: job.text,
     messageType: job.messageType,
@@ -786,7 +800,7 @@ export async function processHumanResumeJob(
             introduceBruna: false,
           })
         : "");
-  const approvedPriceReplyCandidate = consultationBundle?.candidate || acceptedProcedurePriceReply || (approvedPriceReply
+  const approvedPriceReplyCandidate = administrativeSideAnswer || consultationBundle?.candidate || acceptedProcedurePriceReply || (approvedPriceReply
     ? {
         status: "completed",
         decision: {
@@ -809,6 +823,9 @@ export async function processHumanResumeJob(
     : null);
   const runOpenAI =
     dependencies.runOpenAIShadowImpl || runOpenAIShadow;
+  const knowledge = await (dependencies.callClassificationSheetsImpl || callClassificationSheets)(
+    "get_bot_knowledge_context", { knowledge: { phone: job.phone, question: job.text, procedure: enrichedPlan.procedure || job.procedure || "" } }, { env });
+  const learningContext = knowledge.status === "completed" ? knowledge.data : null;
   const aiResult = await runOpenAI(
     {
       phone: job.phone,
@@ -818,11 +835,13 @@ export async function processHumanResumeJob(
       referenceCategory: job.referenceCategory,
       patientProfileName: job.patientName,
       recentConversation: job.recentConversation,
+      patientRelationship: job.patientRelationship,
+      learningContext,
       referralContext: job.referralContext,
       policyHints: {
         ...semanticPlan,
-        deterministicReplyCode: approvedPriceReplyCode,
-        deterministicReplyPreview: approvedPriceReply,
+        deterministicReplyCode: administrativeSideAnswer?.decision.replyCode || approvedPriceReplyCode,
+        deterministicReplyPreview: administrativeSideAnswer?.decision.suggestedReply || approvedPriceReply,
         deterministicReplyProfessional:
           approvedPriceReplyCandidate?.decision?.professional || "",
         deterministicReplyProcedure:
@@ -850,6 +869,9 @@ export async function processHumanResumeJob(
 
   if (aiResult.status === "completed" && aiResult.decision?.urgent === true) {
     return alertOnly(job, "possible_urgent_symptoms", dependencies);
+  }
+  if (administrativeSideAnswer && !approvedPriceReplyConfirmed) {
+    return alertOnly(job, "administrative_side_question_not_confirmed", dependencies);
   }
 
   if (deterministicReplyContextMismatch) {
@@ -893,6 +915,18 @@ export async function processHumanResumeJob(
     const suggestedReply = String(
       aiResult.decision?.suggestedReply || "",
     ).trim();
+    const partial = approvedPartialAnswer(aiResult.decision, learningContext);
+    if (partial) {
+      const outcome = await holdAndAlert(job, reason, dependencies, partial.answer,
+        `Confirmar somente: ${partial.pendingQuestion}\nInformação aprovada disponível para envio: ${partial.answer}`,
+        { ...openAIConversationAction, action: CONVERSATION_ACTIONS.WAIT_TEAM, allowHoldingReply: true });
+      if (outcome.holdingSent) for (const ruleId of partial.knowledgeIds) {
+        await (dependencies.callClassificationSheetsImpl || callClassificationSheets)("record_bot_knowledge_usage", {
+          usage: { ruleId, eventId: `${job.eventId}-human-resume-kb-${ruleId}`, phone: job.phone, question: job.text, answer: partial.answer, result: "Resposta parcial enviada" },
+        }, { env });
+      }
+      return outcome;
+    }
 
     if (
       hasConcreteResponseExpectation(
@@ -970,7 +1004,7 @@ export async function processHumanResumeJob(
     return finishReply(job, enrichedPlan.reason, dependencies);
   }
 
-  const reply = String(aiResult.decision.suggestedReply || "").trim();
+  const reply = String(administrativeSideAnswer?.decision.suggestedReply || aiResult.decision.suggestedReply || "").trim();
   const sendResult = await sendPatientMessage(
     job,
     reply,
@@ -995,6 +1029,10 @@ export async function processHumanResumeJob(
     "human-resume-reply-memory",
     dependencies,
   );
+  const usedRuleId = knowledgeRuleId(aiResult.decision);
+  if (usedRuleId) await (dependencies.callClassificationSheetsImpl || callClassificationSheets)("record_bot_knowledge_usage", {
+    usage: { ruleId: usedRuleId, eventId: `${job.eventId}-human-resume-knowledge`, phone: job.phone, question: job.text, answer: sendResult.body || reply, result: "Enviada" },
+  }, { env });
   return finishReply(job, policy.reason, dependencies);
 }
 

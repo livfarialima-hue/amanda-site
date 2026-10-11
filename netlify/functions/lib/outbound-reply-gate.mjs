@@ -306,7 +306,7 @@ function semanticUnsafeReplyReason(
   }
 
   if (
-    /\b(?:resultado\s+garantido|sem\s+risco|n[aã]o\s+vai\s+ficar\s+cicatriz|n[aã]o\s+deixa\s+cicatriz|n[aã]o\s+ter[aá]\s+hematoma|recupera[cç][aã]o\s+sem\s+dor|vai\s+ficar\s+natural\s+com\s+certeza)\b/i.test(raw)
+    /\b(?:resultado\s+(?:[ée]\s+)?garantido|sem\s+risco|n[aã]o\s+vai\s+ficar\s+cicatriz|n[aã]o\s+deixa\s+cicatriz|n[aã]o\s+ter[aá]\s+hematoma|recupera[cç][aã]o\s+sem\s+dor|vai\s+ficar\s+natural\s+com\s+certeza)\b/i.test(raw)
   ) {
     return "medical_or_result_promise";
   }
@@ -667,6 +667,16 @@ export function validateOutboundReply({
   }
 
   return { allowed: true, reason: "allowed", body: reply };
+}
+
+// Only these presentation failures can use the one existing bounded rewrite.
+// The same content/safety validator remains mandatory after the rewrite.
+export function replyStyleRevisionReason({ body, currentText, recentConversation = [], replyContract }) {
+  if (!replyContract) return "";
+  const gate = validateOutboundReply({ body, currentText, recentConversation,
+    conversationAction: { action: CONVERSATION_ACTIONS.RESPOND, replyContract, semanticHumanContextReplyAuthorized: true } });
+  return ["menu_like_continuation", "too_many_questions_for_context", "too_many_links_for_context",
+    "cta_not_allowed_for_context", "cta_type_not_allowed_for_context"].includes(gate.reason) ? gate.reason : "";
 }
 
 export async function readOutboundReplyStatus({ phone, eventId }, { getStoreImpl = getStore } = {}) {

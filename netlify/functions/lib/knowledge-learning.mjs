@@ -1,4 +1,5 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
+import { preservesKnowledgeLiterals } from "./knowledge-wording.mjs";
 
 const KNOWLEDGE_PREFIX = "KB:";
 
@@ -42,7 +43,7 @@ function normalizeMode(value) {
 export function normalizeKnowledgeContext(value) {
   const candidates = Array.isArray(value?.candidates)
     ? value.candidates
-        .slice(0, 8)
+        .slice(0, 40)
         .map((candidate) => ({
           id: limitText(candidate?.id, 80),
           subject: limitText(candidate?.subject, 160),
@@ -50,6 +51,11 @@ export function normalizeKnowledgeContext(value) {
           mode: limitText(candidate?.mode, 80),
           risk: limitText(candidate?.risk, 40),
           boundaries: limitText(candidate?.boundaries, 500),
+          procedure: limitText(candidate?.procedure, 120),
+          source: limitText(candidate?.source, 200),
+          version: limitText(candidate?.version, 80),
+          snapshotVersion: limitText(candidate?.snapshotVersion, 80),
+          validUntil: limitText(candidate?.validUntil, 40),
           keywords: limitText(
             candidate?.keywords || candidate?.examples,
             500,
@@ -64,9 +70,11 @@ export function normalizeKnowledgeContext(value) {
     pendingQuestion:
       pending && typeof pending === "object"
         ? {
-            id: limitText(pending.id, 80),
+            id: limitText(pending.id || pending.eventId, 200),
             subject: limitText(pending.subject, 160),
             question: limitText(pending.question, 500),
+            risk: limitText(pending.risk, 40),
+            procedure: limitText(pending.procedure, 120),
             clarificationCount: Math.max(
               0,
               Number(pending.clarificationCount) || 0,
@@ -198,7 +206,11 @@ export function applyKnowledgeDecisionGuard(decision, rawContext) {
       route: "standard_reply",
       confidence: "high",
       automaticAllowed: true,
-      suggestedReply: candidate.answer,
+      suggestedReply: decision.replyWording === "contextual" &&
+        String(decision.suggestedReply || "").trim() &&
+        String(decision.suggestedReply).length <= 1200 &&
+        preservesKnowledgeLiterals(decision.suggestedReply, candidate.answer)
+          ? decision.suggestedReply.trim() : candidate.answer,
       reviewReason: `knowledge:${candidate.id}`,
     };
   }
@@ -229,14 +241,35 @@ export function applyKnowledgeDecisionGuard(decision, rawContext) {
   }
 
   if (isUnknownReviewDecision(decision)) {
-    return invalidKnowledgeDecision(
+    const guarded = invalidKnowledgeDecision(
       decision,
       learningSubject(decision, "duvida_nao_mapeada").replaceAll(" ", "_"),
       decision?.suggestedReply,
     );
+    return { ...guarded, ...(decision.partialAnswer ? {
+      partialAnswer: decision.confidence === "high" && decision.automaticAllowed === false
+        ? { ...decision.partialAnswer, semanticConfidence: "high" } : null,
+    } : {}) };
   }
 
   return decision;
+}
+
+// A semantic veto still owns the unresolved request. Only explicitly cited,
+// low-risk approved facts can be included in the acknowledgement to the patient.
+export function approvedPartialAnswer(decision, rawContext) {
+  if (decision?.route !== "human_review" || decision.automaticAllowed !== false ||
+      (decision.confidence !== "high" && decision.partialAnswer?.semanticConfidence !== "high") || decision.urgent ||
+      decision.replyCode !== UNKNOWN_REVIEW_CODE) return null;
+  const ids = decision.partialAnswer?.knowledgeIds;
+  const pending = String(decision.partialAnswer?.pendingQuestion || "").trim();
+  if (!Array.isArray(ids) || !ids.length || ids.length > 2 || !pending || pending.length > 240) return null;
+  const context = normalizeKnowledgeContext(rawContext);
+  const candidates = [...new Set(ids)].map(id => context.candidates.find(c => c.id === id));
+  if (candidates.some(c => !c || normalizeMode(c.mode) !== "automatica" || normalizeMode(c.risk) !== "baixo")) return null;
+  const answer = candidates.map(c => c.answer).join(" ");
+  if (answer.length > 850) return null;
+  return { answer, pendingQuestion: pending, knowledgeIds: candidates.map(c => c.id) };
 }
 
 export function buildSafeInternalReviewSuggestion({
