@@ -66,7 +66,7 @@ function requestFor(payload) {
   return new Request('http://localhost/api/ycloud/webhook',{method:'POST',headers:{'YCloud-Signature':`t=${timestamp},s=${signature}`},body});
 }
 
-const scenarios=['fragmented_faq','unknown_alert_delivered','unknown_alert_failed','unknown_holding_alert_failed','unknown_email_delivered_whatsapp_failed','semantic_veto','fragmented_correction'];
+const scenarios=['fragmented_faq','unknown_alert_delivered','unknown_alert_failed','unknown_holding_alert_failed','unknown_email_delivered_whatsapp_failed','semantic_veto','fragmented_correction','knowledge_partial_veto'];
 for (const [index,scenario] of scenarios.entries()) {
   test(`actual webhook FAQ and recovery contract: ${scenario}`,async t=>{
     const phone=`+55119000000${50+index}`;
@@ -87,6 +87,7 @@ for (const [index,scenario] of scenarios.entries()) {
       const data=JSON.parse(options.body);
       if(url===SHEETS){
         actions.push(data);
+        if(data.action==='get_bot_knowledge_context' && scenario==='knowledge_partial_veto')return Response.json({ok:true,candidates:[{id:'KB-PARKING',mode:'Automática',risk:'Baixo',subject:'Estacionamento',answer:'A clínica tem estacionamento.'}]});
         if(data.action==='send_review_alert_email')return new Response(JSON.stringify(failure?{ok:false}:{ok:true,sent:true}),{status:failure?500:200});
         return new Response(JSON.stringify(data.action==='get_conversation_context'?{ok:true,turns,professional:'amanda',opportunityId:scenario}:
           {ok:true,updated:true,duplicate:false,routed:true,routeStatus:'resolved',professional:'amanda',opportunityId:scenario,humanTakeoverToday:false,patientRelationship:{found:false}}),{status:200});
@@ -94,7 +95,7 @@ for (const [index,scenario] of scenarios.entries()) {
       if(url==='https://api.openai.com/v1/responses'){
         semanticCalls++;const input=JSON.parse(data.input);semanticInput=input;
         return new Response(JSON.stringify({model:'synthetic',output_text:JSON.stringify({route:unknown?'human_review':'standard_reply',confidence:unknown?'low':'high',automaticAllowed:!unknown,urgent:false,
-          professional:'amanda',procedure:scenario==='fragmented_correction'?'otoplastia':'lifting_facial',replyCode:unknown?'UNKNOWN-REVIEW-01':'LIFTING-FACIAL-INFORMATION-01',
+          professional:'amanda',procedure:scenario==='fragmented_correction'?'otoplastia':'lifting_facial',replyCode:scenario==='knowledge_partial_veto'?'KB:KB-PARKING':unknown?'UNKNOWN-REVIEW-01':'LIFTING-FACIAL-INFORMATION-01',
           suggestedReply:unknown?'':'Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.\n\nSim, a Dra. Amanda realiza lifting facial com abordagem deep plane quando há indicação. A escolha depende da avaliação, da anatomia e dos objetivos de cada pessoa.',
           reviewReason:unknown?'unknown_digest:equipamento_lifting':'',
           conversationState:{activeTopic:'dúvida sobre lifting facial',patientAct:'question',refersToEventId:'',lastClinicQuestion:'',lastClinicOffer:'',unresolvedQuestions:[text],factsAlreadyProvided:[],owner:unknown?'human_team':'bruna',nextExpectedAction:'responder a dúvida',ambiguity:'',contextConfidence:'high'}})}),{status:200});
@@ -107,6 +108,7 @@ for (const [index,scenario] of scenarios.entries()) {
       {livInboundBackground:true},{registerInboundRecoveryImpl:async()=>({status:'completed'})});
     const result=await response.json(),replies=sent.filter(m=>m.to===phone),alerts=actions.filter(a=>a.action==='send_review_alert_email');
     assert.ok(semanticCalls>0,JSON.stringify(result));
+    if(scenario==='knowledge_partial_veto') assert.equal(semanticInput.approvedKnowledge[0]?.id,'KB-PARKING');
     if(scenario==='fragmented_correction'){
       assert.equal(semanticInput.procedureContext,'otoplastia');
       assert.ok(!semanticInput.approvedClinicalFacts?.topics.includes('deep_plane'));

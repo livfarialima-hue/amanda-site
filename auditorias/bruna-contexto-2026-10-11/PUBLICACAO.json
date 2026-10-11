@@ -1,0 +1,10 @@
+{
+  "status": "pending",
+  "changeId": "BRUNA-CONTEXTO-2026-10-11",
+  "targetSiteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+  "billingMode": "api_paid_authorized",
+  "subscriptionIntegration": "requested_not_enabled",
+  "patientMessagesSentByTests": 0,
+  "appsScriptVersionPreserved": 161,
+  "liveInference": "pending_hosted_build"
+}

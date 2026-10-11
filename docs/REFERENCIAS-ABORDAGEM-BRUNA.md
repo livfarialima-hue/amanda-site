@@ -2,7 +2,7 @@
 
 **Status:** base de referência subordinada ao manual canônico `docs/estrategia-abordagem-bruna.md`
 
-**Última revisão:** 12/09/2026
+**Última revisão:** 11/10/2026 (comunicação e decisão informada; sem nova revisão normativa)
 
 ## 1. Finalidade e limite
 
@@ -14,6 +14,8 @@ As aplicações à conversa de WhatsApp abaixo são adaptações operacionais da
 
 | Fonte | O que sustenta | Aplicação na Bruna | O que não autoriza |
 |---|---|---|---|
+| Stacey et al., Cochrane 2024, CD001431.pub6 | auxílios à decisão melhoram conhecimento, compreensão de benefícios/riscos e participação; provavelmente favorecem escolhas alinhadas aos valores da pessoa | esclarecer a dúvida concreta, apresentar limites e respeitar a decisão de pesquisar ou pausar antes de oferecer o próximo passo | afirmar que uma conversa de WhatsApp foi validada como auxílio à decisão, prometer resultado ou aumento de agendamentos |
+| Heritage et al., 2007, PMID 17674111 | estudo de comunicação em consultas de atenção primária encontrou menos preocupações não atendidas com uma forma específica de convidar outras dúvidas | conferir todos os pedidos já expressos e usar uma pergunta útil somente quando ainda faltar entendimento | transportar o efeito de uma formulação em inglês para português ou alegar ganho comercial da Bruna |
 | William R. Miller e Stephen Rollnick, *Motivational Interviewing*, 4ª ed., Guilford Press | engajamento colaborativo, respeito à autonomia, escuta da ambivalência e planejamento coerente com a prontidão da pessoa | acolher o sinal concreto, responder antes de conduzir, não pressionar quem quer pausar e usar no máximo uma pergunta que realmente mude o próximo passo | manipular emoção, criar urgência ou tratar uma técnica de conversa como roteiro de fechamento |
 | NICE NG197, *Shared decision making* | informação clara, discussão de opções e da possibilidade de não agir, benefícios, riscos, preferências e tempo para decidir | explicar limites, preservar a opção de não avançar, organizar perguntas para a consulta e encaminhar decisão clínica à equipe responsável | decidir procedimento, risco ou benefício individual no WhatsApp |
 | AHRQ, *Health Literacy Universal Precautions Toolkit*, 3ª ed. | comunicação compreensível para todos, informação em partes curtas e verificação respeitosa da compreensão | mensagens curtas, linguagem comum, um assunto por bloco e pergunta específica quando houver ambiguidade real | testar a paciente, infantilizar a linguagem ou repetir perguntas já respondidas |
@@ -45,7 +47,12 @@ Conversas reais servem para descobrir situações e falhas, não para copiar res
 
 A unidade de avaliação comercial é a oportunidade canônica, ligada por `Opportunity ID`. Cliques, abertura do WhatsApp, texto de campanha e resposta automática são sinais de contexto; não provam contato válido, qualificação, consulta, comparecimento ou cirurgia.
 
+Na correção de 11/10/2026, a hipótese operacional é que menos repetição, melhor cobertura das perguntas e encaminhamento preciso reduzam atrito até a consulta. Verificar por oportunidade: pergunta respondida ou pendência com responsável, convite aceito, consulta agendada e comparecimento. Acompanhar também respostas indevidas, recusas desrespeitadas, alertas não entregues e tempo de resposta. A evidência citada sustenta qualidade de comunicação e decisão; não demonstra aumento de conversão deste bot. Comparações antes/depois, especialmente com poucos contatos, são descritivas e não estabelecem causalidade.
+
 ## 5. Referências
+
+- Stacey D et al. *Decision aids for people facing health treatment or screening decisions*. Cochrane Database Syst Rev. 2024;1:CD001431. DOI: 10.1002/14651858.CD001431.pub6. https://www.cochrane.org/evidence/CD001431_patient-decision-aids-help-people-who-are-facing-decisions-about-health-treatment-or-screening (consultado em 11/10/2026).
+- Heritage J et al. *Reducing patients' unmet concerns in primary care: the difference one word can make*. J Gen Intern Med. 2007;22:1429-1433. DOI: 10.1007/s11606-007-0279-0. https://pubmed.ncbi.nlm.nih.gov/17674111/ (consultado em 11/10/2026).
 
 - Guilford Press. *Motivational Interviewing: Helping People Change and Grow*, 4th Edition. https://www.guilford.com/books/Motivational-Interviewing/Miller-Rollnick/9781462552795
 - National Institute for Health and Care Excellence. *Shared decision making (NG197): Recommendations*. https://www.nice.org.uk/guidance/ng197/chapter/Recommendations

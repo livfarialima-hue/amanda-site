@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-10-11.2",
-  "promptVersion": "bruna-concierge-2026-10-11.2",
+  "bundleVersion": "2026-10-11.3",
+  "promptVersion": "bruna-concierge-2026-10-11.3",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-10-11.2",
+  "knowledgeSnapshot": "kb-2026-10-11.3",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -47,5 +47,13 @@
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy"
+  "followupCopyContract": "followup-message-copy",
+  "pendingRelease": {
+    "changeId": "BRUNA-CONTEXTO-2026-10-11",
+    "status": "tested_local",
+    "liveModelCheckRequired": true,
+    "authorization": "Continuidade de Publique e do pedido de corrigir a API para respeitar contexto e conferir duvidas com Daniel.",
+    "billingMode": "api_paid_authorized",
+    "bundleVersion": "2026-10-11.3"
+  }
 }

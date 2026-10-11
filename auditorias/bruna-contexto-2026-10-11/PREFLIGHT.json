@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-10-11T18:21:16.934Z",
+  "mode": "read_only",
+  "baseCommit": "c7fbe767a07e9a1320b5e26f00e0daa574b34128",
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6acbccab46983900087c5159",
+    "functionalCommit": "6c6507983012a0cff63cf712f7b3709a0b4d5f99",
+    "state": "ready",
+    "verifiedWith": "authenticated Netlify project tool"
+  },
+  "health": {
+    "ok": true,
+    "service": "ycloud-webhook",
+    "apiKeyConfigured": true,
+    "signatureProtection": "active",
+    "sheetsWebhookConfigured": true,
+    "sheetsSecretConfigured": true,
+    "openAIConfigured": true,
+    "reviewAlertConfigured": true,
+    "appointmentReviewEnabled": true,
+    "automationMode": "active",
+    "conversionExperience": "bruna-conversion-v1",
+    "processingMode": "durable_background_intake",
+    "contactPreferencesGuard": "active",
+    "internalPhoneExclusionConfigured": true,
+    "leadDeliveryRetry": "single_idempotent_transient",
+    "leadDeliveryFallback": "acquisition_only",
+    "leadFailureEmailAlert": "required_after_retries",
+    "messageCostObservability": "delivered_event_idempotent"
+  },
+  "limitations": [
+    "Health comprova backend, nao entrega de WhatsApp.",
+    "Sem leitura ou escrita de pacientes; Apps Script, campanhas e mecanismos de envio permanecem no baseline.",
+    "Chave permanece no build hospedado; testes locais usam transportes simulados."
+  ]
+}

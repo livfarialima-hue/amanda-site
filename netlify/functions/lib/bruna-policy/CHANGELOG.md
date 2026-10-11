@@ -1,3 +1,7 @@
+## 2026-10-11.3 — contexto e revisão de conhecimento, candidato local
+
+Veto semântico preservado antes de resolver KB e UNKNOWN-CLARIFY; currentTemplateId explícito; instruções de aceites e preço alinhadas às permissões existentes. Pendências concretas vão à equipe, sem transferir ao paciente perguntas sobre dados internos. Fatos, faixas e runtime Sol 6.1 médio preservados. Gate hospedado passa a exigir nove cenários sintéticos. Evidência científica e limites no documento canônico de referências.
+
 ## 2026-10-11.2 — margem de inferência, publicado em 11/10/2026
 
 Conversa com prazo total de 20 segundos, classificação 15 e revisão de retomada 12. Revisão de redação limitada ao prazo original e iniciada somente com 8 segundos restantes. Modelo Sol 6.1 médio, 4.096 tokens e contexto preservados; saída concisa uniforme. Timeout e saída incompleta continuam sem autorização de envio. API paga já autorizada; sem alteração de assinatura ou preço. Nove regressões com relógio controlado, 1.991 testes locais e cinco cenários reais sintéticos aprovados (2,2–7,6 segundos). Commit 6c6507983012a0cff63cf712f7b3709a0b4d5f99; Netlify 6acbccab46983900087c5159.

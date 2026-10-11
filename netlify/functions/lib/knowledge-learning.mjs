@@ -153,6 +153,23 @@ export function applyKnowledgeDecisionGuard(decision, rawContext) {
   const context = normalizeKnowledgeContext(rawContext);
   const ruleId = knowledgeRuleId(decision);
 
+  // An approved fact is not permission to answer the whole current request.
+  // Preserve the semantic route before resolving KB or clarification codes.
+  if (ruleId || isUnknownClarificationDecision(decision)) {
+    if (decision?.urgent === true) {
+      return { ...decision, route: "human_review", automaticAllowed: false, suggestedReply: "" };
+    }
+    if (["ignore", "appointment_review", "daniel_greeting_and_alert"].includes(decision?.route)) {
+      return { ...decision, automaticAllowed: false, suggestedReply: "" };
+    }
+    if (decision?.route !== "standard_reply" || decision?.automaticAllowed !== true || decision?.confidence !== "high") {
+      const reason = String(decision?.reviewReason || "").startsWith("unknown_digest:")
+        ? learningSubject(decision).replaceAll(" ", "_")
+        : "conhecimento_aprovado_nao_cobre_pedido";
+      return invalidKnowledgeDecision(decision, reason);
+    }
+  }
+
   if (ruleId) {
     const candidate = context.candidates.find(
       (item) => item.id.toLowerCase() === ruleId.toLowerCase(),

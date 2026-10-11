@@ -67,6 +67,34 @@ test("an invalid or non-automatic knowledge rule is held for review", () => {
   assert.equal(shouldDigestLearningDecision(guarded), true);
 });
 
+for (const code of ["KB:KB-001", UNKNOWN_CLARIFICATION_CODE]) {
+  for (const veto of [
+    { route: "human_review", automaticAllowed: false, confidence: "low" },
+    { route: "standard_reply", automaticAllowed: false },
+    { route: "standard_reply", confidence: "low" },
+    { route: "appointment_review", automaticAllowed: false },
+    { route: "ignore", automaticAllowed: false },
+    { route: "daniel_greeting_and_alert", automaticAllowed: false },
+    { urgent: true },
+  ]) {
+    test(`knowledge cannot override a semantic veto: ${code} ${JSON.stringify(veto)}`, () => {
+      const guarded = applyKnowledgeDecisionGuard(decision({
+        replyCode: code, suggestedReply: "Você se refere à consulta ou à cirurgia?",
+        reviewReason: "unknown_digest:equipamento_lifting", ...veto,
+      }), { candidates: [{ id: "KB-001", mode: "Automática", risk: "Baixo", answer: "A clínica tem estacionamento." }] });
+      assert.equal(guarded.automaticAllowed, false);
+      assert.notEqual(guarded.route, "standard_reply");
+      if (["appointment_review", "ignore", "daniel_greeting_and_alert"].includes(veto.route)) {
+        assert.equal(guarded.route, veto.route);
+        assert.equal(guarded.suggestedReply, "");
+      } else if (!veto.urgent) {
+        assert.equal(guarded.replyCode, UNKNOWN_REVIEW_CODE);
+        assert.equal(guarded.reviewReason, "unknown_digest:equipamento_lifting");
+      }
+    });
+  }
+}
+
 test("medium-risk knowledge can never be sent automatically", () => {
   const decision = {
     route: "standard_reply",

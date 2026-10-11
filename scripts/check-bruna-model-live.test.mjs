@@ -34,8 +34,7 @@ test('incomplete model output blocks the build instead of accepting HTTP success
   assert.equal(result.results[0].errorCode, 'incomplete_response');
 });
 
-test('all five synthetic scenarios use the real adapters and pass the outbound protections', async () => {
-  const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (url, request) => {
+async function syntheticResponse(url, request) {
     const body = JSON.parse(request.body), input = JSON.parse(body.input);
     let decision;
     if (body.text.format.name === 'scheduled_followup_context_review') {
@@ -43,33 +42,56 @@ test('all five synthetic scenarios use the real adapters and pass the outbound p
       decision = { decision: 'cancel_for_review', reasonCode: 'patient_paused', confidence: 'high' };
     } else if (body.text.format.name === 'liv_whatsapp_shadow_decision') {
       const hints = input.policyHints;
-      const urgent = !hints?.deterministicReplyCode;
-      if (!urgent) assert.ok(hints.deterministicReplyPreview.length > 30);
-      if (!urgent) {
+      const unknown = /equipamento específico/.test(input.currentMessage);
+      const urgent = /falta de ar/.test(input.currentMessage);
+      if (!urgent && !unknown) assert.ok(hints.deterministicReplyPreview.length > 30);
+      if (!urgent && !unknown) {
         assert.equal(input.replyContract.allowedResponseKind, 'direct_answer');
         assert.equal(input.replyContract.owner, 'bruna');
         assert.notEqual(input.replyContract.risk, 'red');
       }
-      if (hints?.deterministicReplyCode === 'AMANDA-CONSULTA-INFO-01') {
+      if (hints?.deterministicReplyCode === 'AMANDA-CONSULTA-INFO-01' && input.replyContract.consultationNextStep === 'answer_only') {
         assert.doesNotMatch(hints.deterministicReplyPreview, /horário|agenda/i, 'the preview must honor the answer-only consultation contract');
       }
-      decision = { route: urgent ? 'human_review' : 'standard_reply', confidence: 'high', automaticAllowed: !urgent,
-        urgent, professional: 'amanda', procedure: input.procedureContext || 'unknown', replyCode: hints?.deterministicReplyCode || '',
+      assert.equal(input.currentTemplateId, '');
+      decision = { route: urgent || unknown ? 'human_review' : 'standard_reply', confidence: 'high', automaticAllowed: !urgent && !unknown,
+        urgent, professional: 'amanda', procedure: input.procedureContext || 'unknown', replyCode: unknown ? 'UNKNOWN-REVIEW-01' : hints?.deterministicReplyCode || '',
         replyWording: 'contextual', suggestedReply: hints?.deterministicReplyCode === 'AMANDA-CONSULTA-INFO-01'
           ? 'A consulta presencial com a Dra. Amanda custa R$ 500. Você pode esclarecer suas dúvidas sem precisar decidir pela cirurgia agora.'
-          : hints?.deterministicReplyPreview || '', reviewReason: urgent ? 'possible_urgent_symptoms' : '',
+          : hints?.deterministicReplyPreview || '', reviewReason: unknown ? 'unknown_digest:equipamento_lifting' : urgent ? 'possible_urgent_symptoms' : '',
         conversationState: { activeTopic: 'consulta', patientAct: 'question', refersToEventId: '', lastClinicQuestion: '', lastClinicOffer: '',
-          unresolvedQuestions: [], factsAlreadyProvided: [], owner: 'bruna', nextExpectedAction: 'aguardar', ambiguity: '', contextConfidence: 'high' } };
+          unresolvedQuestions: unknown ? ['Qual equipamento específico é usado?'] : [], factsAlreadyProvided: [], owner: unknown ? 'human_team' : 'bruna', nextExpectedAction: unknown ? 'Equipe confirmar equipamento' : 'aguardar', ambiguity: '', contextConfidence: 'high' } };
     } else {
       decision = { recommendedStatus: 'Novo', confidence: 'high', professional: 'amanda', procedure: 'unknown', summary: 'Dúvida sobre avaliação.',
         nextAction: 'Aguardar paciente.', expectedParty: 'patient', commercialReason: 'Em andamento', evidence: 'Pergunta informativa.', appointmentOutcome: 'none', procedureMilestone: 'none' };
     }
     return new Response(JSON.stringify({ model: 'gpt-6.1-sol', status: 'completed', output_text: JSON.stringify(decision) }));
-  } });
+}
+
+test('all nine synthetic scenarios use the real adapters and pass the outbound protections', async () => {
+  const result = await checkBrunaModelLive({ env, manifest, fetchImpl: syntheticResponse });
   assert.equal(result.status, 'passed', JSON.stringify(result));
-  assert.equal(result.results.length, 5);
-  assert.deepEqual(result.results.map(r => r.timeoutMs), [20000, 20000, 20000, 15000, 12000]);
+  assert.equal(result.results.length, 9);
+  assert.deepEqual(result.results.map(r => r.timeoutMs), [20000, 20000, 20000, 20000, 20000, 20000, 20000, 15000, 12000]);
   assert.equal(result.maxOutputTokens, 4096);
   assert.equal(result.verbosity, 'low');
+  assert.equal(result.patientMessagesSent, 0);
+});
+
+test('a partial known answer cannot make the live quality gate accept an unresolved clinic fact', async () => {
+  const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (url, request) => {
+    const response = await syntheticResponse(url, request);
+    const data = await response.json();
+    const input = JSON.parse(JSON.parse(request.body).input);
+    if (input.currentMessage?.includes('equipamento específico')) {
+      const decision = JSON.parse(data.output_text);
+      Object.assign(decision, { route: 'standard_reply', automaticAllowed: true, replyCode: 'KB:SYNTHETIC-PARKING', suggestedReply: 'Há estacionamento no local.', reviewReason: '' });
+      data.output_text = JSON.stringify(decision);
+    }
+    return Response.json(data);
+  } });
+  assert.equal(result.status, 'failed');
+  assert.equal(result.results.at(-1).name, 'unknown_clinic_fact');
+  assert.equal(result.results.at(-1).passed, false);
   assert.equal(result.patientMessagesSent, 0);
 });

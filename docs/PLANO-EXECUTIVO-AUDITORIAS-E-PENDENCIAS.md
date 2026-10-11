@@ -1,5 +1,11 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-CONTEXTO-2026-10-11 -->
+**Pacote 2026-10-11.3 — TESTADO LOCALMENTE, publicação pendente.** Contexto pessoal atual prevalece sobre origem de anúncio; a entrada do modelo recebe currentTemplateId. Memória aprovada não pode reativar resposta vetada nem apagar pergunta pendente. Dúvidas sem fonte são encaminhadas a Daniel/equipe pelo fluxo imediato existente, com assunto explícito e recibo antes de ciência à pessoa. Instruções de aceite informativo e preço foram alinhadas aos guards e à política vigente. Sol 6.1 médio e limites 20s/15s/12s, 4.096 tokens, fatos, faixas, agenda e proteções de envio preservados.
+
+Comunicação orientada por decisão informada e cobertura das dúvidas; não se afirma ganho de conversão. API paga; integração da assinatura permanece pendente. 2.008 testes locais aprovados; nove cenários sintéticos preparados para o gate hospedado, sem mensagens reais de teste. Produção ainda no pacote 2026-10-11.2. Evidência e rollback: `auditorias/bruna-contexto-2026-10-11/RELATORIO.md`. Responsável: Daniel/equipe, primeiras conversas naturais, 48 horas e sete dias após publicação; sem automação nova.
+<!-- /BRUNA-CONTEXTO-2026-10-11 -->
+
 <!-- BRUNA-RUNTIME-2026-10-11 -->
 **Pacote 2026-10-11.2 — PUBLICADO E VERIFICADO EM PRODUÇÃO em 11/10/2026, 14:52:33 BRT.** Mantém Sol 6.1 médio e 4.096 tokens, incluindo raciocínio. A chamada de conversa tem prazo total de 20 segundos, compartilhado com a única revisão de redação, que exige pelo menos 8 segundos restantes. Classificação: 15 segundos dentro do limite externo existente de 20. Revisão de retomada: 12 segundos. Respostas completas retornam imediatamente; saídas incompletas ou interrompidas continuam bloqueadas.
 

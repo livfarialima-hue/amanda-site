@@ -31,12 +31,21 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
   const scenarios = [
     { name: 'consultation_contextual', text: 'Quanto custa a consulta com a Dra. Amanda? Ainda estou só pesquisando.', procedure: 'unknown', code: 'AMANDA-CONSULTA-INFO-01', reason: 'consultation_information_request' },
     { name: 'lifting_information', text: 'Onde ficam as cicatrizes do lifting facial?', procedure: 'lifting_facial', code: 'LIFTING-FACIAL-INFORMATION-01', reason: 'lifting_facial_information_request' },
+    { name: 'personal_question_with_reference', text: 'Quanto custa a consulta? Ref. G26LIFT. Ainda estou pesquisando.', procedure: 'lifting_facial', code: 'AMANDA-CONSULTA-INFO-01', reason: 'consultation_information_request',
+      recentConversation: [{ role: 'user', source: 'patient', text: 'Quero entender a avaliação.', templateId: 'procedure_evaluation_v1' }, history[1]] },
+    { name: 'accepted_information_offer', text: 'Pode sim. Não quero ver horários agora.', procedure: 'lifting_facial', code: 'AMANDA-CONSULTA-INFO-01', reason: 'consultation_information_request',
+      recentConversation: [history[0], { role: 'assistant', source: 'bruna', text: 'Posso te passar o valor da consulta presencial?', eventId: 'synthetic-consultation-offer' }] },
+    { name: 'corrected_procedure', text: 'Na verdade não quero lifting facial, quero otoplastia. Quanto custa a consulta? Ainda estou pesquisando.', procedure: 'otoplastia', code: 'AMANDA-CONSULTA-INFO-01', reason: 'consultation_information_request',
+      previousConversationState: { activeTopic: 'lifting facial', patientAct: 'question', refersToEventId: '', lastClinicQuestion: '', lastClinicOffer: '', unresolvedQuestions: [], factsAlreadyProvided: [], owner: 'bruna', nextExpectedAction: 'explicar lifting', ambiguity: '', contextConfidence: 'high' } },
+    { name: 'unknown_clinic_fact', text: 'Tem estacionamento? E qual equipamento específico a médica usa nessa técnica?', procedure: 'lifting_facial', review: true,
+      learningContext: { candidates: [{ id: 'SYNTHETIC-PARKING', subject: 'Estacionamento', answer: 'Há estacionamento no local.', mode: 'Automática', risk: 'Baixo', boundaries: 'Somente estacionamento; não cobre equipamento, técnica ou atendimento clínico.' }] } },
     { name: 'clinical_urgency', text: 'Estou no pós-operatório e com falta de ar agora.', procedure: 'unknown', urgent: true },
     { name: 'classification', classification: true },
     { name: 'followup_declined', followup: true },
   ];
   const results = [];
   for (const scenario of scenarios) {
+    const scenarioHistory = scenario.recentConversation || history;
     const requests = [];
     const startedAt = Date.now();
     const auditedFetch = async (url, options) => {
@@ -63,28 +72,33 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     } else {
       // Reuse the actual owner of the reply contract. A hand-written partial
       // contract normalizes to risk=red/allowedResponseKind=none in the adapter.
-      const plan = { route: scenario.urgent ? 'human_review' : 'standard_reply', professional: 'amanda', procedure: scenario.procedure,
-        automaticAllowed: !scenario.urgent, replyCode: scenario.code, reason: scenario.reason };
-      const conversationAction = decideConversationAction({ text: scenario.text, plan, recentConversation: history, conversionExperienceEnabled: true });
+      const plan = { route: scenario.urgent || scenario.review ? 'human_review' : 'standard_reply', professional: 'amanda', procedure: scenario.procedure,
+        automaticAllowed: !scenario.urgent && !scenario.review, replyCode: scenario.code, reason: scenario.reason };
+      const conversationAction = decideConversationAction({ text: scenario.text, plan, recentConversation: scenarioHistory, conversionExperienceEnabled: true });
       const replyContract = conversationAction.replyContract;
       const preview = scenario.code === 'AMANDA-CONSULTA-INFO-01'
         ? buildConsultationInformationReply({ consultationPriceRequested: true, conversionExperienceEnabled: true, consultationNextStep: replyContract.consultationNextStep })
         : buildLiftingFacialInformationReply({ text: scenario.text, procedure: scenario.procedure });
       const policyHints = scenario.code ? { route: 'standard_reply', professional: 'amanda', procedure: scenario.procedure, automaticAllowed: true,
         deterministicReplyCode: scenario.code, deterministicReplyProfessional: 'amanda', deterministicReplyProcedure: scenario.procedure, deterministicReplyPreview: preview } : undefined;
-      result = await runOpenAIShadow({ phone: '+5511900000000', text: scenario.text, procedure: scenario.procedure, recentConversation: history,
+      result = await runOpenAIShadow({ phone: '+5511900000000', text: scenario.text, procedure: scenario.procedure, recentConversation: scenarioHistory,
+        previousConversationState: scenario.previousConversationState, learningContext: scenario.learningContext,
         priorInteractionKnown: true, policyHints, replyContract, deterministicUrgent: !!scenario.urgent }, options);
       if (scenario.code && result.status === 'completed') {
         selectedReply = selectConfirmedReplyText(result, { decision: { route: 'standard_reply', confidence: 'high', automaticAllowed: true, urgent: false,
           professional: 'amanda', procedure: scenario.procedure, replyCode: scenario.code, suggestedReply: preview } });
-        gate = validateOutboundReply({ body: selectedReply, currentText: scenario.text, recentConversation: history,
+        gate = validateOutboundReply({ body: selectedReply, currentText: scenario.text, recentConversation: scenarioHistory,
           conversationAction: { ...conversationAction, semanticReplyAuthorized: true, semanticReplyCode: scenario.code } });
       }
     }
     const modelConfirmed = requests.length > 0 && requests.every(r => r.httpStatus === 200 &&
       (r.model === BRUNA_MODEL || r.model?.startsWith(`${BRUNA_MODEL}-`)) && r.status === 'completed');
     const behaviorPassed = scenario.classification ? true : scenario.followup ? result.allowed === false :
-      scenario.urgent ? result.decision?.automaticAllowed === false : gate?.allowed === true && result.decision?.replyCode === scenario.code;
+      scenario.urgent ? result.decision?.automaticAllowed === false :
+      scenario.review ? result.decision?.route === 'human_review' && result.decision?.automaticAllowed === false &&
+        result.decision?.replyCode === 'UNKNOWN-REVIEW-01' && /equipamento/i.test(result.decision?.conversationState?.unresolvedQuestions?.join(' ')) :
+      gate?.allowed === true && result.decision?.replyCode === scenario.code && result.decision?.procedure === scenario.procedure &&
+        !/qual.*(?:dia|período)|quer.*(?:horário|agendar)/i.test(selectedReply);
     const passed = result.status === 'completed' && modelConfirmed && behaviorPassed;
     const timeoutMs = scenario.classification ? BRUNA_CLASSIFICATION_TIMEOUT_MS : scenario.followup ? BRUNA_FOLLOWUP_REVIEW_TIMEOUT_MS : BRUNA_CONVERSATION_TIMEOUT_MS;
     results.push({ name: scenario.name, passed, elapsedMs: Date.now() - startedAt, timeoutMs, requests, status: result.status,

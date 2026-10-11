@@ -1026,6 +1026,7 @@ export async function runOpenAIShadow(
         input: JSON.stringify({
           source: String(platform || "WhatsApp direto"),
           procedureContext: limitText(procedure, 100),
+          currentTemplateId: limitText(templateId, 80),
           cameFromWebsite: websiteEntryContext({ referenceCategory, currentMessage: text, recentConversation: normalizedConversation }).cameFromWebsite,
           siteResource,
           whatsappProfileName: usableProfileName(patientProfileName),

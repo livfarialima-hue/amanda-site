@@ -1402,6 +1402,19 @@ test("model context preserves the final correction, human authorship and prefill
   assert.equal(payload.recentConversation[2].source, "clinica_autoria_desconhecida");
 });
 
+test("current prefill provenance reaches the model without being inferred from a reference", async () => {
+  for (const templateId of [undefined, "procedure_evaluation_v1"]) {
+    let payload;
+    await runOpenAIShadow({ phone: PHONE, text: "Qual o valor da consulta? Ref. G26LIFT", templateId },
+      { env: { OPENAI_API_KEY: "test-key" }, fetchImpl: async (_url, options) => {
+        payload = JSON.parse(JSON.parse(options.body).input);
+        return new Response(JSON.stringify(validResponse()), { status: 200 });
+      } });
+    assert.equal(payload.currentTemplateId, templateId || "");
+    assert.match(payload.currentMessage, /Qual o valor da consulta/);
+  }
+});
+
 test("appointment review is accepted as a strict structured route", () => {
   const result = parseOpenAIShadowResponse(
     validResponse(
