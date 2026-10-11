@@ -278,8 +278,8 @@ test("request is private, structured, bounded and excludes raw phone", async () 
 
   assert.equal(result.status, "completed");
   assert.equal(requestBody.store, false);
-  assert.equal(requestBody.reasoning.effort, "low");
-  assert.equal(requestBody.model, "test-model");
+  assert.equal(requestBody.reasoning.effort, "medium");
+  assert.equal(requestBody.model, "gpt-6.1-sol");
   assert.equal(
     requestBody.text.format.type,
     "json_schema",

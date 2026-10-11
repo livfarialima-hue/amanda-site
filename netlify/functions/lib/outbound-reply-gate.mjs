@@ -300,7 +300,7 @@ function semanticUnsafeReplyReason(
   if (
     /\b(?:no\s+seu\s+caso|pela\s+(?:sua\s+)?foto|olhando\s+(?:sua|a)\s+foto)\b[\s\S]{0,100}\b(?:voc[eê]\s+tem|[ée]\s+|indica|precisa|predomina|melhor\s+op[cç][aã]o)\b/i.test(raw) ||
     /\bpredomina\s+(?:gordura|flacidez|pele|m[úu]sculo)\b/i.test(raw) ||
-    /\b(?:a|o)\s+melhor\s+(?:cirurgia|procedimento|op[cç][aã]o)\s+para\s+voc[eê]\s+[ée]\b/i.test(raw)
+    /\b(?:a|o)\s+melhor\s+(?:cirurgia|procedimento|op[cç][aã]o)\s+para\s+voc[eê]\s+[ée](?=\s|[.,:;!?]|$)/i.test(raw)
   ) {
     return "remote_diagnosis_or_indication";
   }

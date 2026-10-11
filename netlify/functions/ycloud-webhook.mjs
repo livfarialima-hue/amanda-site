@@ -188,6 +188,7 @@ import {
   CONTEXT_CONTINUATION_CODE,
   prepareSemanticContextContinuationAction,
   semanticDecisionConfirmsDeterministicReply,
+  selectConfirmedReplyText,
   deterministicReplyCoversPatientQuestions,
 } from "./lib/semantic-reply-policy.mjs";
 export { semanticDecisionConfirmsDeterministicReply };
@@ -2815,8 +2816,7 @@ async function completeOpenAIActive({
                 deterministicReplyResult.decision.procedure,
               replyCode:
                 deterministicReplyResult.decision.replyCode,
-              suggestedReply:
-                deterministicReplyResult.decision.suggestedReply,
+              suggestedReply: selectConfirmedReplyText(semanticResult, deterministicReplyResult),
             },
           }
         : semanticResult;

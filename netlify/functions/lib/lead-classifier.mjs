@@ -3,8 +3,7 @@ import { normalizeMarketingPrefillTemplateId } from "./marketing-prefill.mjs";
 import { isAutomatedBusinessReply } from "./patient-turn-context.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
-const DEFAULT_MODEL = "gpt-5.6-terra";
-const DEFAULT_REASONING_EFFORT = "low";
+import { BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS } from "./bruna-model-config.mjs";
 const OPENAI_TIMEOUT_MS = 10_000;
 const MAX_MESSAGES = 24;
 const MAX_MESSAGE_LENGTH = 1_000;
@@ -498,6 +497,9 @@ export function parseLeadClassificationResponse(
   response,
   fallbackModel,
 ) {
+  if (response?.status && response.status !== "completed") {
+    return result("failed", { httpStatus: 200, errorCode: "incomplete_response" });
+  }
   const outputText = extractOutputText(response);
 
   if (!outputText) {
@@ -554,14 +556,9 @@ export async function runLeadClassifier(
     });
   }
 
-  const model = String(
-    env.OPENAI_CLASSIFIER_MODEL || DEFAULT_MODEL,
-  );
+  const model = BRUNA_MODEL;
   const sanitizedMessages = sanitizeMessages(messages);
-  const reasoningEffort = String(
-    env.OPENAI_CLASSIFIER_REASONING_EFFORT ||
-      DEFAULT_REASONING_EFFORT,
-  );
+  const reasoningEffort = BRUNA_REASONING_EFFORT;
   const controller = new AbortController();
   const timeout = setTimeout(
     () => controller.abort(),
@@ -579,7 +576,7 @@ export async function runLeadClassifier(
         model,
         reasoning: { effort: reasoningEffort },
         store: false,
-        max_output_tokens: 700,
+        max_output_tokens: BRUNA_MAX_OUTPUT_TOKENS,
         safety_identifier:
           createClassifierSafetyIdentifier(phone),
         instructions: SYSTEM_INSTRUCTIONS,

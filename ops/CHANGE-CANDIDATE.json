@@ -1,46 +1,48 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-ENTRADA-ACOLHEDORA-2026-10-04",
-  "title": "Recuperar texto disponível e acolher quando o conteúdo faltar",
-  "status": "published_verified",
-  "baseCommit": "c670bb109b71fed4caccc44589abce800b72c22b",
+  "changeId": "BRUNA-SOL61-CONVERSA-2026-10-11",
+  "title": "Sol 6.1 medium fixo e redacao contextual com fatos aprovados",
+  "status": "tested_local",
+  "baseCommit": "3ff424e903c05dfd5d69a3e9a8930358f101a2d6",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel pediu tentar corrigir texto incompleto e, se persistir, apresentar Bruna/doutora e perguntar a queixa. Continuação do trabalho de correção e publicação já autorizado; não autoriza mensagem real, replay nem alteração de paciente."
+    "note": "Daniel autorizou publicar (Publique) apos a explicacao de que a publicacao usaria API paga enquanto a integracao do plano aguarda aprovacao. Autorizacao inclui a mudanca preparada e validacao sintetica; nao inclui mensagens reais de teste, replay ou migracao de dados."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true
+    "externalWritesPerformed": false
   },
   "scope": {
     "files": [
-      "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json",
-      "auditorias/bruna-entrada-acolhedora-2026-10-04/PUBLICACAO.json",
-      "auditorias/bruna-entrada-acolhedora-2026-10-04/RELATORIO.md",
+      "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json",
+      "auditorias/bruna-sol61-conversa-2026-10-11/PUBLICACAO.json",
+      "auditorias/bruna-sol61-conversa-2026-10-11/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
+      "netlify.toml",
+      "netlify/functions/lib/bruna-model-config.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/bruna-policy/rules.jsonl",
+      "netlify/functions/lib/bruna-sol61.integration.test.mjs",
       "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/extract-inbound-text.mjs",
-      "netlify/functions/lib/inbound-recovery.mjs",
-      "netlify/functions/lib/missing-text-webhook.test.mjs",
-      "netlify/functions/lib/netlify-blobs-contract.test.mjs",
-      "netlify/functions/lib/patient-replies.mjs",
-      "netlify/functions/lib/patient-replies.test.mjs",
-      "netlify/functions/lib/price-holding-webhook.test.mjs",
-      "netlify/functions/lib/surgical-price-review.mjs",
-      "netlify/functions/lib/surgical-price-review.test.mjs",
+      "netlify/functions/lib/lead-classifier.mjs",
+      "netlify/functions/lib/lead-classifier.test.mjs",
+      "netlify/functions/lib/openai-shadow.mjs",
+      "netlify/functions/lib/openai-shadow.test.mjs",
+      "netlify/functions/lib/outbound-reply-gate.mjs",
+      "netlify/functions/lib/scheduled-followup-context-review.mjs",
+      "netlify/functions/lib/semantic-reply-policy.mjs",
+      "netlify/functions/lib/semantic-reply-policy.test.mjs",
       "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json"
+      "ops/IMPACT-REGISTRY.json",
+      "scripts/check-bruna-model-live.mjs",
+      "scripts/check-bruna-model-live.test.mjs"
     ],
     "contracts": [
       "site-editorial-copy",
@@ -59,7 +61,8 @@
       "durable-storage-conditional-writes",
       "website-conversation-continuity",
       "reply-continuity",
-      "followup-message-copy"
+      "followup-message-copy",
+      "bruna-model-runtime"
     ]
   },
   "impact": {
@@ -115,6 +118,7 @@
       "mamoplastia-redutora/index.html",
       "mastopexia-com-protese/index.html",
       "mastopexia/index.html",
+      "netlify.toml",
       "netlify/functions/appointment-reminder.mjs",
       "netlify/functions/appointment-review.mjs",
       "netlify/functions/classify-leads-background.mjs",
@@ -171,207 +175,218 @@
       "otoplastia/index.html",
       "pos-bariatrica/index.html",
       "procedimentos/index.html",
-      "protese-de-mama/index.html"
+      "protese-de-mama/index.html",
+      "scripts/check-bruna-model-live.mjs"
     ],
     "preservedInvariants": [
-      "Ler somente conteúdo do mesmo evento assinado, preservando identidade, horário e corpo original; não inventar texto a partir do anúncio ou de outra pessoa.",
-      "Recuperação reconhece os mesmos envelopes seguros que a entrada; recibos e exclusão condicional preservam versão recuperada e envio único.",
-      "Conteúdo ainda ausente inicia acolhimento sem alegar texto incompleto; histórico conhecido não é apagado nem reapresentado.",
-      "Profissional conhecido diferente de Amanda, cuidado ativo, takeover, opt-out, urgência, janela e assinatura continuam protegidos.",
-      "Sem mudança de valores, fonte clínica, Apps Script, campanhas, cadência, flags, paciente ou replay."
+      "Somente Sol 6.1 medium nas tres chamadas de IA da Bruna, incluindo classificacao e revisao de retomada; sem fallback de modelo.",
+      "Precos cirurgicos, agenda, pendencias humanas, consentimento, autoria, urgencia, opt-out e envio unico preservados.",
+      "Redacao contextual somente em codigos educativos/institucionais permitidos, com concordancia semantica e gate final; numeros e URLs da previa preservados.",
+      "Somente chamadas sinteticas autorizadas pela API paga no preflight; sem copia de credenciais do Codex, troca de hospedagem, mensagens reais, replay ou escrita em LEADS/CRM.",
+      "API paga autorizada por Daniel; a integracao do plano permanece desativada. Check real dentro do build Netlify bloqueia a publicacao se acesso, formato, latencia ou casos sinteticos falharem."
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "site-editorial-copy",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "appointment-reminders",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "patient-journey-funnel-followups",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "professional-routing",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "bot-decision-observability",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "ycloud-delivery-cost-observability",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "patient-lifecycle-governance",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "bruna-regression-governance",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "patient-care-milestones",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "durable-storage-conditional-writes",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "website-conversation-continuity",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "reply-continuity",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "followup-message-copy",
-        "system": "Netlify e LEADS somente leitura; contratos adjacentes preservados",
-        "status": "verified_read_only",
-        "checkedAt": "2026-10-04T16:14:10.140Z",
-        "reference": "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json"
+        "system": "Netlify autenticado: site, deploy, flags, 14 funcoes/agendas e health; consumidores externos nao alterados, cobertos por regressao.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
+      },
+      {
+        "contract": "bruna-model-runtime",
+        "system": "Netlify autenticado: chave configurada, flags e modelo legado registrados; acesso real ao Sol condicionado ao gate do build.",
+        "status": "passed_read_only",
+        "checkedAt": "2026-10-11T17:29:51.3051068Z",
+        "reference": "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json"
       }
     ]
   },
   "verification": {
     "status": "passed_local",
     "commands": [
-      "node --test campanhas/site-communication.test.mjs",
-      "npm.cmd run change:check",
-      "npm.cmd run architecture:check",
-      "npm.cmd test",
       "git diff --check",
-      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
-      "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
-      "node --test netlify/functions/lib/interaction-continuity.test.mjs",
-      "node --test netlify/functions/lib/bruna-preco-direto.integration.test.mjs netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/price-journey.integration.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
-      "node --test netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
-      "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",
+      "node --test apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs netlify/functions/lib/scheduled-care.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
       "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
+      "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
+      "node --test apps-script/clinica-liv-leads/WhatsAppCosts.test.mjs netlify/functions/lib/ycloud-message-observability.test.mjs netlify/functions/lib/webhook-intake-observability.test.mjs netlify/functions/lib/ycloud-patient-message.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/ycloud-post-consult.test.mjs",
+      "node --test campanhas/google-ads-ad-strength-20260913.test.mjs",
+      "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
+      "node --test campanhas/google-ads-settings.test.mjs",
+      "node --test campanhas/site-communication.test.mjs",
+      "node --test netlify/functions/lib/appointment-suggestions.test.mjs",
+      "node --test netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+      "node --test netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
+      "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-preco-direto.integration.test.mjs netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/price-journey.integration.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
+      "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-sol61.integration.test.mjs",
+      "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
+      "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+      "node --test netlify/functions/lib/human-resume-runtime.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-ledger.test.mjs",
+      "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/sheets-action-timeout.test.mjs",
+      "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs",
+      "node --test netlify/functions/lib/inbound-reply-context.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/ignored-inbound-supersedes-reply.test.mjs",
+      "node --test netlify/functions/lib/interaction-continuity.test.mjs",
+      "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
+      "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/ycloud-recovery.test.mjs",
+      "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "node --test netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs",
+      "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "node --test netlify/functions/lib/reply-continuity.test.mjs netlify/functions/lib/reply-continuity.integration.test.mjs",
+      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "node --test netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs",
+      "npm.cmd run architecture:check",
+      "npm.cmd run change:check",
+      "npm.cmd run ops:check",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",
-      "node --test netlify/functions/lib/human-resume-runtime.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-ledger.test.mjs",
-      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
-      "npm.cmd run ops:check",
-      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "node --test campanhas/google-ads-settings.test.mjs",
-      "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
-      "node --test campanhas/google-ads-ad-strength-20260913.test.mjs",
-      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
-      "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
-      "node --test netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
-      "node --test netlify/functions/lib/appointment-suggestions.test.mjs",
-      "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "node --test apps-script/clinica-liv-leads/WhatsAppCosts.test.mjs netlify/functions/lib/ycloud-message-observability.test.mjs netlify/functions/lib/webhook-intake-observability.test.mjs netlify/functions/lib/ycloud-patient-message.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/ycloud-post-consult.test.mjs",
-      "node --test apps-script/clinica-liv-leads/CuidadosProgramados.test.mjs netlify/functions/lib/scheduled-care.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs",
-      "node --test netlify/functions/lib/netlify-blobs-contract.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/ycloud-recovery.test.mjs",
-      "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
-      "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs",
-      "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/sheets-action-timeout.test.mjs",
-      "node --test netlify/functions/lib/inbound-reply-context.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/ignored-inbound-supersedes-reply.test.mjs",
-      "node --test netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs",
-      "node --test netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs",
-      "node --test netlify/functions/lib/reply-continuity.test.mjs netlify/functions/lib/reply-continuity.integration.test.mjs",
-      "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
+      "npm.cmd test",
+      "node --test scripts/check-bruna-model-live.test.mjs"
     ],
-    "completedAt": "2026-10-04T16:46:04.708Z",
+    "baseline": "4 cenarios sinteticos falham no baseline: tres modelos alteraveis pelo ambiente e novo contrato de redacao contextual nao aceito.",
+    "completedAt": "2026-10-11T17:31:50.631Z",
     "results": {
-      "fullTests": 1921,
-      "newRegressions": 21,
-      "baselineFailures": 12,
-      "requiredCommands": 49,
-      "architecture": "passed",
+      "focusedTests": 115,
+      "fullSuiteTests": 1934,
+      "additionalRequiredTests": 43,
+      "newRegressions": 18,
+      "requiredTestFilesCovered": 97,
+      "changeCheck": "OK",
+      "architecture": "OK",
       "siteBuild": "193 files / 54 URLs / no errors",
-      "siteCheck": "passed",
-      "diff": "passed",
-      "ops": "SYNC_PENDING expected before publication"
+      "siteCheck": "OK",
+      "diff": "OK",
+      "ops": "SYNC_PENDING: candidato nao publicado; reconciliacao do Drive e checkout aguardam publicacao",
+      "liveInference": "pending_hosted_build",
+      "publication": "not_performed",
+      "buildGateTests": 5
     },
-    "external": "Functional commit published via existing Git integration; immutable and production health verified; same Drive files match committed local bytes."
+    "executionNote": "Todos os 97 arquivos de teste obrigatorios foram cobertos pela suite integral (1934), cinco arquivos adicionais (43) e o gate hospedado (5). Grupos sobrepostos nao foram repetidos; nao se afirma execucao literal dos 51 comandos declarados."
   },
   "rollback": {
-    "local": "Reverter somente este pacote.",
-    "production": "Restaurar Netlify 6ac267688469a20008853374 / cda9fa181ee04c889e7d8a1a09efc930042612b9, ou revert intencional na branch de produção. Preservar Apps Script v161, filas, pausas, recibos e corpo original; sem replay."
+    "local": "Descartar ou reverter apenas os commits desta branch isolada.",
+    "production": "Restaurar Netlify 6ac2830ee4b0b50008ce8e5a (commit c40e0f47b08d48e86ef0e2d50b237236a3e6046b), preservando Apps Script v161, filas e recibos; sem replay."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
-    "window": "Próximas conversas naturais e revisão em 06/10/2026; sem nova automação",
+    "window": "Primeiras conversas naturais, 48 horas e 7 dias apos eventual ativacao; sem agendamento automatico.",
     "signals": [
-      "Primeira entrada ausente acolhe sem jargão; mensagem recuperada segue seu pedido concreto sem segunda resposta.",
-      "Procedimento e autoria não são inferidos; conhecido não reinicia descoberta; reação permanece silenciosa.",
-      "Conter diante de saudação duplicada, assunto conhecido ignorado, conteúdo de outra mensagem ou atendimento humano liberado."
+      "Confirmar Sol 6.1 medium e consumo pela API paga autorizada; integracao do plano permanece desativada.",
+      "Naturalidade, perguntas respondidas, repeticao, tokens, latencia, timeout, saida incompleta e revisao humana.",
+      "Conter diante de valor indevido, assunto perdido, duplicidade, interferencia humana ou degradacao de latencia/timeout."
     ]
   },
   "release": {
-    "approvedCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
-    "netlifyDeployId": "6ac2830ee4b0b50008ce8e5a",
-    "appsScriptVersion": 161,
-    "verifiedAt": "2026-10-04T16:49:31.181Z",
-    "documentationStatus": "same_drive_files_verified",
-    "destinationsChanged": [
-      "Netlify",
-      "Google Drive: manual and executive plan, same IDs"
-    ],
-    "receipt": "auditorias/bruna-entrada-acolhedora-2026-10-04/PUBLICACAO.json",
-    "drivePlanSha256": "56e21dd53460b1a87e9800d6d853f87ae4e73875167e03770f914532359edd8a"
+    "status": "not_published",
+    "billingMode": "api_paid_authorized",
+    "subscriptionIntegration": "requested_not_enabled",
+    "blockers": [
+      "O build de producao precisa passar a validacao sintetica real do Sol antes de publicar."
+    ]
   }
 }

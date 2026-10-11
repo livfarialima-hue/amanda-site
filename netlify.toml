@@ -2,5 +2,8 @@
   command = "node scripts/build-static-site.mjs"
   publish = "tmp/netlify-deploy"
 
+[context.production]
+  command = "node scripts/check-bruna-model-live.mjs && node scripts/build-static-site.mjs"
+
 [[context.production.plugins]]
   package = "./netlify/plugins/indexnow"

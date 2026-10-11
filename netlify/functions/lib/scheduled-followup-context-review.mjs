@@ -1,8 +1,7 @@
 import { createHash } from "node:crypto";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
-const DEFAULT_MODEL = "gpt-5.6-terra";
-const DEFAULT_REASONING_EFFORT = "medium";
+import { BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS } from "./bruna-model-config.mjs";
 const TIMEOUT_MS = 8_000;
 
 const REVIEW_SCHEMA = {
@@ -183,20 +182,10 @@ export async function reviewScheduledFollowupContext(
         "content-type": "application/json; charset=utf-8",
       },
       body: JSON.stringify({
-        model: String(
-          env.OPENAI_BRUNA_MODEL ||
-            env.OPENAI_MODEL ||
-            DEFAULT_MODEL,
-        ),
-        reasoning: {
-          effort: String(
-            env.OPENAI_BRUNA_REASONING_EFFORT ||
-              env.OPENAI_REASONING_EFFORT ||
-              DEFAULT_REASONING_EFFORT,
-          ),
-        },
+        model: BRUNA_MODEL,
+        reasoning: { effort: BRUNA_REASONING_EFFORT },
         store: false,
-        max_output_tokens: 400,
+        max_output_tokens: BRUNA_MAX_OUTPUT_TOKENS,
         safety_identifier: safetyIdentifier(patientPhone),
         instructions: REVIEW_INSTRUCTIONS,
         input: JSON.stringify({
@@ -229,6 +218,9 @@ export async function reviewScheduledFollowupContext(
     }
 
     const data = await response.json();
+    if (data?.status && data.status !== "completed") {
+      return { status: "failed", allowed: false, errorCode: "incomplete_response" };
+    }
     const rawDecision = extractOutputText(data);
     let parsed;
 

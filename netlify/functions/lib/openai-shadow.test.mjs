@@ -1097,7 +1097,7 @@ test("valid structured response is parsed", () => {
 
   assert.equal(result.status, "completed");
   assert.equal(result.model, "test-model");
-  assert.deepEqual(result.decision, validDecision());
+  assert.deepEqual(result.decision, { ...validDecision(), replyWording: "approved_exact" });
   assert.deepEqual(result.usage, {
     input_tokens: 10,
     output_tokens: 20,

@@ -1,5 +1,11 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-SOL61-CONVERSA-2026-10-11 -->
+**Candidato local 2026-10-11.1 — NÃO PUBLICADO.** Sol 6.1 com raciocínio médio é a escolha fixa para conversa, retomada humana, classificação e revisão de retomadas. A redação contextual pode usar os fatos de prévias educativas e institucionais confirmadas; cópias de preço cirúrgico, agenda, convênio e pendências humanas continuam protegidas. Nenhuma política de preço, fonte clínica, fila, assinatura, autoria, pausa humana ou permissão de envio foi ampliada.
+
+Em 11/10/2026, Daniel autorizou publicar esta atualização usando a API paga enquanto a solicitação de integração do plano ChatGPT aguarda aprovação. A assinatura não será consumida por este release; não existe alternância automática de cobrança. A publicação exige validar o acesso ao Sol 6.1 médio e a latência com dados sintéticos. O fluxo de autorização próprio do plano permanece uma pendência separada, sem cópia de credenciais do Codex. Sem mensagem real de teste ou replay. Evidência e recibo: `auditorias/bruna-sol61-conversa-2026-10-11/RELATORIO.md` e `PUBLICACAO.json` na mesma pasta.
+<!-- /BRUNA-SOL61-CONVERSA-2026-10-11 -->
+
 <!-- BRUNA-ENTRADA-ACOLHEDORA-2026-10-04 -->
 **Pacote 2026-10-04.3 — PUBLICADO E VERIFICADO EM PRODUÇÃO em 04/10/2026, 13:47:42 BRT.** Quando faltar texto utilizável, primeiro preservar e aproveitar conteúdo confiável que esteja disponível. O extrator puro é comum à entrada e ao recibo de recuperação: os envelopes de texto já reconhecidos pelo webhook também são aceitos pela fila, mantendo assinatura, identidade e corpo originais. Sem conteúdo recuperável, no primeiro contato a Bruna se apresenta, apresenta brevemente a Dra. Amanda como cirurgiã plástica e pergunta o que a pessoa gostaria de avaliar ou melhorar. Não dizer que a mensagem veio incompleta, não solicitar reenvio e não inventar procedimento, anúncio ou diagnóstico. Conversas já iniciadas e pacientes conhecidos não recebem nova apresentação; profissional diferente já identificado mantém abordagem neutra. Pergunta posterior de preço sem procedimento recebe somente esclarecimento neutro, sem alegar falha técnica.
 

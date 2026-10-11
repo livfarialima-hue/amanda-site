@@ -1,15 +1,15 @@
 {
-  "bundleVersion": "2026-10-04.3",
-  "promptVersion": "bruna-concierge-2026-10-04.3",
+  "bundleVersion": "2026-10-11.1",
+  "promptVersion": "bruna-concierge-2026-10-11.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-10-04.3",
+  "knowledgeSnapshot": "kb-2026-10-11.1",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
-  "runtimeModel": "gpt-5.6-terra",
+  "runtimeModel": "gpt-6.1-sol",
   "runtimeReasoningEffort": "medium",
-  "classifierModel": "gpt-5.6-terra",
-  "classifierReasoningEffort": "low",
+  "classifierModel": "gpt-6.1-sol",
+  "classifierReasoningEffort": "medium",
   "googleAdsWorkbookCount": 1,
   "googleAdsLeadTab": "Google Ads - Conversões",
   "nonAdsLeadTab": "Leads Dr. Daniel",
@@ -47,5 +47,12 @@
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
-  "followupCopyContract": "followup-message-copy"
+  "followupCopyContract": "followup-message-copy",
+  "pendingRelease": {
+    "changeId": "BRUNA-SOL61-CONVERSA-2026-10-11",
+    "bundleVersion": "2026-10-11.1",
+    "status": "tested_local",
+    "billingStatus": "api_paid_authorized_subscription_pending",
+    "liveModelCheckRequired": true
+  }
 }

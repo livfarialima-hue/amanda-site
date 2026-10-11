@@ -1,0 +1,334 @@
+{
+  "checkedAt": "2026-10-11T16:55:30.5477880Z",
+  "localAndRemoteCommit": "3ff424e903c05dfd5d69a3e9a8930358f101a2d6",
+  "lastRecordedProductionCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
+  "lastRecordedProductionDeploy": "6ac2830ee4b0b50008ce8e5a",
+  "health": {
+    "ok": true,
+    "service": "ycloud-webhook",
+    "automationMode": "active",
+    "openAIConfigured": true,
+    "apiKeyConfigured": true,
+    "signatureProtection": "active"
+  },
+  "limitations": [
+    "Nenhuma credencial da conta transferida. Nenhuma chamada real de inferencia.",
+    "Plano ChatGPT exige OAuth especifico e elegibilidade da integracao; hospedagem remota nao esta automaticamente coberta.",
+    "Erro subscription_sharing_usage_limit_exceeded pode ser limite do aplicativo, nao esgotamento da conta inteira.",
+    "Estado de pacientes e plataforma Apps Script nao foram relidos; nao ha alteracao desses destinos. Testes cruzados cobrem os contratos acoplados. Health nao prova entrega."
+  ],
+  "sources": [
+    "https://developers.openai.com/api/docs/models/gpt-6.1-sol",
+    "https://developers.openai.com/siwc/token-sharing-open-source",
+    "https://developers.openai.com/siwc/token-sharing-open-source/preview-limitations",
+    "https://developers.openai.com/siwc/token-sharing-open-source/errors-and-recovery"
+  ],
+  "publicationAttempt": {
+    "checkedAt": "2026-10-11T17:18:24.775Z",
+    "authorization": "Publique; API paga autorizada no contexto da proposta anterior",
+    "repositoryUnchanged": true,
+    "remoteCommit": "3ff424e903c05dfd5d69a3e9a8930358f101a2d6",
+    "netlifyPublicDeployId": "6ac2830ee4b0b50008ce8e5a",
+    "netlifyPublicCommit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
+    "authentication": "expired",
+    "authenticationEvidence": "Netlify CLI status: loggedIn=false / NOT_LOGGED_IN; API accounts e environment HTTP 401; navegador exige login.",
+    "loginRenewal": "Solicitada ao usuario no fluxo oficial Netlify CLI; aguardando conclusao.",
+    "liveInference": "not_run",
+    "publication": "not_performed"
+  },
+  "authenticatedPreflight": {
+    "checkedAt": "2026-10-11T17:29:51.3051068Z",
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "siteName": "inspiring-sprite-b35ca4",
+    "accountSlug": "livfarialima",
+    "repository": "https://github.com/livfarialima-hue/amanda-site",
+    "branch": "reestruturacao-site",
+    "publishedDeploy": {
+      "commit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
+      "id": "6ac2830ee4b0b50008ce8e5a",
+      "state": "ready",
+      "publishedAt": "2026-10-04T16:47:41.708Z"
+    },
+    "flags": [
+      {
+        "values": [
+          {
+            "value": "medium",
+            "context": "production"
+          }
+        ],
+        "key": "OPENAI_BRUNA_REASONING_EFFORT",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ]
+      },
+      {
+        "values": [
+          {
+            "value": "kb-2026-08-18.5",
+            "context": "production"
+          }
+        ],
+        "key": "BRUNA_KB_SNAPSHOT",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ]
+      },
+      {
+        "values": [
+          {
+            "value": "2026-08-18.5",
+            "context": "production"
+          }
+        ],
+        "key": "BRUNA_POLICY_VERSION",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ]
+      },
+      {
+        "values": [
+          {
+            "value": "bruna-concierge-2026-08-18.5",
+            "context": "production"
+          }
+        ],
+        "key": "BRUNA_PROMPT_VERSION",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ]
+      },
+      {
+        "values": [
+          {
+            "value": "medium",
+            "context": "all"
+          }
+        ],
+        "key": "OPENAI_REASONING_EFFORT",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ]
+      },
+      {
+        "values": [
+          {
+            "value": "gpt-5.6-terra",
+            "context": "production"
+          }
+        ],
+        "key": "OPENAI_CLASSIFIER_MODEL",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ]
+      },
+      {
+        "values": [
+          {
+            "value": "low",
+            "context": "production"
+          }
+        ],
+        "key": "OPENAI_CLASSIFIER_REASONING_EFFORT",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ]
+      },
+      {
+        "values": [
+          {
+            "value": "active",
+            "context": "dev"
+          },
+          {
+            "value": "active",
+            "context": "branch-deploy"
+          },
+          {
+            "value": "active",
+            "context": "deploy-preview"
+          },
+          {
+            "value": "active",
+            "context": "production"
+          }
+        ],
+        "key": "WHATSAPP_AUTOMATION_MODE",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ]
+      },
+      {
+        "values": [
+          {
+            "value": "gpt-5.6-terra",
+            "context": "production"
+          }
+        ],
+        "key": "OPENAI_BRUNA_MODEL",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ]
+      },
+      {
+        "values": [
+          {
+            "value": "",
+            "context": "dev"
+          },
+          {
+            "value": "",
+            "context": "branch-deploy"
+          },
+          {
+            "value": "",
+            "context": "deploy-preview"
+          },
+          {
+            "value": "enabled",
+            "context": "production"
+          },
+          {
+            "value": "",
+            "context": "dev-server"
+          }
+        ],
+        "key": "BRUNA_CONVERSION_EXPERIENCE_V1",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ]
+      },
+      {
+        "values": [
+          {
+            "value": "gpt-5.6-terra",
+            "context": "all"
+          }
+        ],
+        "key": "OPENAI_MODEL",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ]
+      }
+    ],
+    "functions": [
+      {
+        "name": "appointment-reminder",
+        "schedule": null
+      },
+      {
+        "name": "appointment-review",
+        "schedule": null
+      },
+      {
+        "name": "attribution-journey",
+        "schedule": null
+      },
+      {
+        "name": "attribution-journey-purge",
+        "schedule": "17 6 * * *"
+      },
+      {
+        "name": "classify-leads",
+        "schedule": "*/5 * * * *"
+      },
+      {
+        "name": "classify-leads-background",
+        "schedule": null
+      },
+      {
+        "name": "human-resume",
+        "schedule": "*/5 * * * *"
+      },
+      {
+        "name": "human-resume-background",
+        "schedule": null
+      },
+      {
+        "name": "post-consult-followup",
+        "schedule": null
+      },
+      {
+        "name": "scheduled-followup",
+        "schedule": null
+      },
+      {
+        "name": "synthetic-integration-health",
+        "schedule": "17 12 * * *"
+      },
+      {
+        "name": "ycloud-recovery",
+        "schedule": "*/5 * * * *"
+      },
+      {
+        "name": "ycloud-recovery-background",
+        "schedule": null
+      },
+      {
+        "name": "ycloud-webhook",
+        "schedule": null
+      }
+    ],
+    "health": {
+      "ok": true,
+      "service": "ycloud-webhook",
+      "apiKeyConfigured": true,
+      "signatureProtection": "active",
+      "sheetsWebhookConfigured": true,
+      "sheetsSecretConfigured": true,
+      "openAIConfigured": true,
+      "reviewAlertConfigured": true,
+      "appointmentReviewEnabled": true,
+      "automationMode": "active",
+      "conversionExperience": "bruna-conversion-v1",
+      "processingMode": "durable_background_intake",
+      "contactPreferencesGuard": "active",
+      "internalPhoneExclusionConfigured": true,
+      "leadDeliveryRetry": "single_idempotent_transient",
+      "leadDeliveryFallback": "acquisition_only",
+      "leadFailureEmailAlert": "required_after_retries",
+      "messageCostObservability": "delivered_event_idempotent"
+    },
+    "authentication": "renewed_via_official_netlify_cli",
+    "scope": "Site, deploy, flags, funcoes/agendas e health; sem leitura de conversas, registros de pacientes, CRM ou campanhas.",
+    "modelProbe": {
+      "status": "pending_hosted_build",
+      "reason": "Netlify entrega segredo mascarado na API de configuracao. A sonda local com mascara e HTTP 401 nao testa a chave real. Validacao real ocorrerá no build, sem publicar se falhar.",
+      "syntheticOnly": true,
+      "patientMessagesSent": 0
+    }
+  }
+}

@@ -24,8 +24,7 @@ import { approvedProcedureInformationFacts } from "./lifting-information.mjs";
 import { assessReplyContinuity, buildReplyContinuityContext } from "./reply-continuity.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
-const DEFAULT_MODEL = "gpt-5.6-terra";
-const DEFAULT_REASONING_EFFORT = "medium";
+import { BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS } from "./bruna-model-config.mjs";
 const OPENAI_TIMEOUT_MS = 8_000;
 const MAX_USER_TEXT_LENGTH = 2_000;
 const MAX_REFERRAL_FIELD_LENGTH = 300;
@@ -88,6 +87,7 @@ const SHADOW_DECISION_SCHEMA = {
     "professional",
     "procedure",
     "replyCode",
+    "replyWording",
     "suggestedReply",
     "reviewReason",
     "conversationState",
@@ -100,6 +100,7 @@ const SHADOW_DECISION_SCHEMA = {
     professional: { type: "string", enum: PROFESSIONALS },
     procedure: { type: "string" },
     replyCode: { type: "string" },
+    replyWording: { type: "string", enum: ["approved_exact", "contextual"] },
     suggestedReply: { type: "string", maxLength: 1_200 },
     reviewReason: { type: "string", maxLength: 500 },
     conversationState: {
@@ -787,6 +788,7 @@ function isValidDecision(value) {
     PROFESSIONALS.includes(value.professional) &&
     typeof value.procedure === "string" &&
     typeof value.replyCode === "string" &&
+    ["approved_exact", "contextual"].includes(value.replyWording) &&
     typeof value.suggestedReply === "string" &&
     typeof value.reviewReason === "string" &&
     validState
@@ -837,6 +839,9 @@ export function applyUrgencyGuard(decision, deterministicUrgent = false) {
 }
 
 export function parseOpenAIShadowResponse(response, fallbackModel, options = {}) {
+  if (response?.status && response.status !== "completed") {
+    return result("failed", { httpStatus: 200, errorCode: "incomplete_response" });
+  }
   const outputText = extractOutputText(response);
 
   if (!outputText) {
@@ -857,6 +862,11 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
     });
   }
 
+  // Older persisted/synthetic decisions remain exact-copy only. Unknown fields
+  // and malformed new values still fail the strict decision validation.
+  if (decision && typeof decision === "object" && !Array.isArray(decision) && !("replyWording" in decision)) {
+    decision.replyWording = "approved_exact";
+  }
   if (!isValidDecision(decision)) {
     return result("failed", {
       httpStatus: 200,
@@ -953,14 +963,8 @@ export async function runOpenAIShadow(
     return result("skipped", { errorCode: "configuration_missing" });
   }
 
-  const model = String(
-    env.OPENAI_BRUNA_MODEL || env.OPENAI_MODEL || DEFAULT_MODEL,
-  );
-  const reasoningEffort = String(
-    env.OPENAI_BRUNA_REASONING_EFFORT ||
-      env.OPENAI_REASONING_EFFORT ||
-      DEFAULT_REASONING_EFFORT,
-  );
+  const model = BRUNA_MODEL;
+  const reasoningEffort = BRUNA_REASONING_EFFORT;
   const controller = new AbortController();
   const startedAt = Date.now();
   const timeout = setTimeout(() => controller.abort(), OPENAI_TIMEOUT_MS);
@@ -1012,7 +1016,7 @@ export async function runOpenAIShadow(
         model,
         reasoning: { effort: reasoningEffort },
         store: false,
-        max_output_tokens: 1_200,
+        max_output_tokens: BRUNA_MAX_OUTPUT_TOKENS,
         safety_identifier: createSafetyIdentifier(phone),
         instructions: buildConversationGuidelines({
           conversionExperienceEnabled,

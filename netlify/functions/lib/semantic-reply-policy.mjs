@@ -5,6 +5,35 @@ export const CONTEXT_REOPEN_CODE = "CONTEXT-REOPEN-01";
 export const CONTEXT_CONTINUATION_CODE = "CONTEXT-CONTINUE-01";
 export const COORDINATION_ACKNOWLEDGEMENT_CODE = "COORDINATION-ACK-01";
 
+export const CONTEXTUAL_APPROVED_REPLY_CODES = Object.freeze([
+  "MARKETING-PREFILL-OPENING-01",
+  "CONTEXT-CONTINUE-01",
+  "AMANDA-CONSULTA-INFO-01",
+  "LIFTING-FACIAL-INFORMATION-01",
+  "LIFTING-SCOPE-COMPARISON-01",
+]);
+
+function factualLiterals(text) {
+  const value = String(text || "");
+  const links = [...new Set(value.match(/https?:\/\/[^\s<>]+/g) || [])].sort();
+  const numbers = [...new Set(value.replace(/https?:\/\/[^\s<>]+/g, "").match(/\d+(?:[.,]\d+)*/g) || [])].sort();
+  return JSON.stringify({ links, numbers });
+}
+
+// This selects wording only. The confirmed route and the final outbound gate
+// remain authoritative; protected operational copies are never rewritten here.
+export function selectConfirmedReplyText(semanticResult, approvedResult) {
+  const approved = String(approvedResult?.decision?.suggestedReply || "");
+  const draft = String(semanticResult?.decision?.suggestedReply || "").trim();
+  if (!semanticDecisionConfirmsDeterministicReply(semanticResult, approvedResult) ||
+      semanticResult.decision.replyWording !== "contextual" ||
+      !CONTEXTUAL_APPROVED_REPLY_CODES.includes(approvedResult.decision.replyCode) ||
+      !draft || draft.length > 1200 || factualLiterals(draft) !== factualLiterals(approved)) {
+    return approved;
+  }
+  return draft;
+}
+
 function normalizedDimension(value) {
   const normalized = String(value || "")
     .normalize("NFD")

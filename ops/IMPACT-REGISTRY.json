@@ -489,7 +489,8 @@
         "netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
         "auditorias/bruna-entrada-acolhedora-2026-10-04/PREFLIGHT.json",
         "auditorias/bruna-entrada-acolhedora-2026-10-04/PUBLICACAO.json",
-        "auditorias/bruna-entrada-acolhedora-2026-10-04/RELATORIO.md"
+        "auditorias/bruna-entrada-acolhedora-2026-10-04/RELATORIO.md",
+        "netlify/functions/lib/semantic-reply-policy.test.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/Code.schema.test.mjs",
@@ -1554,6 +1555,42 @@
         "Apps Script",
         "Netlify",
         "Google Drive"
+      ],
+      "requiresReadOnlyPreflight": true
+    },
+    {
+      "id": "bruna-model-runtime",
+      "ownerFiles": [
+        "netlify/functions/lib/bruna-model-config.mjs"
+      ],
+      "consumerFiles": [
+        "netlify/functions/lib/openai-shadow.mjs",
+        "netlify/functions/lib/lead-classifier.mjs",
+        "netlify/functions/lib/scheduled-followup-context-review.mjs",
+        "netlify/functions/human-resume.mjs",
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/classify-leads-background.mjs",
+        "netlify/functions/scheduled-followup.mjs",
+        "netlify.toml",
+        "scripts/check-bruna-model-live.mjs"
+      ],
+      "coveredPaths": [
+        "netlify/functions/lib/bruna-model-config.mjs",
+        "netlify/functions/lib/bruna-sol61.integration.test.mjs",
+        "auditorias/bruna-sol61-conversa-2026-10-11/PREFLIGHT.json",
+        "auditorias/bruna-sol61-conversa-2026-10-11/RELATORIO.md",
+        "auditorias/bruna-sol61-conversa-2026-10-11/PUBLICACAO.json",
+        "netlify.toml",
+        "scripts/check-bruna-model-live.mjs",
+        "scripts/check-bruna-model-live.test.mjs"
+      ],
+      "requiredTestFiles": [
+        "netlify/functions/lib/bruna-sol61.integration.test.mjs",
+        "scripts/check-bruna-model-live.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test netlify/functions/lib/bruna-sol61.integration.test.mjs",
+        "node --test scripts/check-bruna-model-live.test.mjs"
       ],
       "requiresReadOnlyPreflight": true
     }

@@ -1,0 +1,20 @@
+{
+  "changeId": "BRUNA-SOL61-CONVERSA-2026-10-11",
+  "status": "not_published",
+  "billingMode": "api_paid_authorized",
+  "subscriptionIntegration": "requested_not_enabled",
+  "patientMessagesSent": 0,
+  "appsScriptVersion": 161,
+  "authorization": {
+    "approvedBy": "Daniel",
+    "recordedAt": "2026-10-11T17:16:35.978Z",
+    "request": "Publique",
+    "context": "Apos proposta explicita de publicar as melhorias usando API paga enquanto a solicitacao de uso do plano e analisada.",
+    "patientMessagesAuthorized": false
+  },
+  "rollback": {
+    "commit": "c40e0f47b08d48e86ef0e2d50b237236a3e6046b",
+    "deployId": "6ac2830ee4b0b50008ce8e5a",
+    "noReplay": true
+  }
+}
