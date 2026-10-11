@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONTEXTO-2026-10-11",
   "title": "Contexto atual e revisao humana prevalecem sobre mensagens prontas",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "c7fbe767a07e9a1320b5e26f00e0daa574b34128",
   "authorization": {
     "required": true,
@@ -395,9 +395,9 @@
         "inputTokens": 141421,
         "outputTokens": 2719
       },
-      "ops": "SYNC_PENDING esperado ate publicacao e reconciliacao",
+      "ops": "Producao e documentacao reconciliadas; gate final no checkout canonico limpo apos commit.",
       "publication": "production_verified",
-      "documentation": "pending_drive_readback"
+      "documentation": "Drive relido byte a byte, mesmos IDs e pastas"
     },
     "completedAt": "2026-10-11T18:27:56.027Z",
     "executionNote": "Todos os 99 arquivos obrigatorios cobertos pela suite integral, cinco arquivos adicionais de campanhas e o gate hospedado. Grupos sobrepostos nao repetidos; nao se afirma execucao literal de comandos redundantes."
@@ -416,12 +416,17 @@
     ]
   },
   "release": {
-    "status": "documentation_pending",
+    "status": "published_verified",
     "billingMode": "api_paid_authorized",
     "subscriptionIntegration": "requested_not_enabled",
     "approvedCommit": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
     "netlifyDeployId": "6acbd59e31a918000966a0af",
     "appsScriptVersion": 161,
-    "verifiedAt": "2026-10-11T18:32:35.869Z"
+    "verifiedAt": "2026-10-11T18:32:35.869Z",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "12cc1d53984f44a65dcc55af8c9328b775838f3996e50063b353e464d741f455",
+    "driveManualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+    "driveManualSha256": "3a7d7ab1f2b5ee8d4f906c13f672335e7c193d9bd81e84bce63897e7bf855e38",
+    "documentationVerifiedAt": "2026-10-11T18:35:02.000Z"
   }
 }

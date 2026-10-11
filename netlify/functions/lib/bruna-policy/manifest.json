@@ -28,7 +28,7 @@
     "publishedTimePrecision": "Netlify API published_at",
     "lastVerifiedAt": "2026-10-11T18:32:35.869Z",
     "candidateChangeId": "BRUNA-CONTEXTO-2026-10-11",
-    "candidateStatus": "documentation_pending",
+    "candidateStatus": "published_verified",
     "bundleVersion": "2026-10-11.3",
     "appsScriptVersion": 161
   },
@@ -41,7 +41,7 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "f21f67f3c25d32d86aba40cf4742f8fbc613738a6cf84e2bbc50e9c953bbdb0e",
+    "driveProjectionSha256": "3a7d7ab1f2b5ee8d4f906c13f672335e7c193d9bd81e84bce63897e7bf855e38",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU"
   },
   "reliabilityContract": "durable-storage-conditional-writes",

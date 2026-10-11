@@ -1,6 +1,6 @@
 # Bruna: contexto atual e dúvidas que exigem a equipe
 
-Estado: publicado e verificado em produção; projeções no Drive em reconciliação.
+Estado: publicado, verificado e reconciliado com as projeções canônicas do Drive.
 
 ## Problemas e correções
 
@@ -35,3 +35,5 @@ Daniel/equipe devem observar primeiras conversas naturais, 48 horas e sete dias 
 Commit funcional 590121d96c02bbfbb5bb01c53b30ab83a6a658b8; build 6acbd59e31a918000966a0ad; Netlify 6acbd59e31a918000966a0af, publicado em 2026-10-11T18:31:21.722Z, verificado em 2026-10-11T18:32:35.869Z. Nove cenários reais aprovados, nove chamadas, 1,8–10,6 segundos, Sol 6.1 medium confirmado e nenhuma saída incompleta. O aceite curto respeitou a recusa de horários; a correção para otoplastia prevaleceu; o equipamento desconhecido virou pendência da equipe sem resposta inventada. São cenários sintéticos, não prova de desempenho em conversas naturais.
 
 Saúde do backend 200 e POST sem assinatura 401 no domínio, na branch e na URL imutável. As 14 funções, modos de execução e cinco agendas coincidem com o baseline. Nenhum paciente recebeu mensagem de teste, nenhuma escrita em LEADS/CRM/Apps Script e nenhum replay. Recibo integral: `PUBLICACAO.json`.
+
+As projeções do manual e do plano foram atualizadas nos mesmos IDs, após releitura e confirmação do baseline. Readback byte a byte confirmado em 2026-10-11T18:35:02.000Z (HTTP Date do Netlify; relógio local divergente). Manual: 3a7d7ab1f2b5ee8d4f906c13f672335e7c193d9bd81e84bce63897e7bf855e38 (162393 bytes); plano: 12cc1d53984f44a65dcc55af8c9328b775838f3996e50063b353e464d741f455 (247085 bytes). IDs e recibos em `PUBLICACAO.json`. Commits documentais usam [skip netlify]; marcador de testes pagos removido após o build verificado.

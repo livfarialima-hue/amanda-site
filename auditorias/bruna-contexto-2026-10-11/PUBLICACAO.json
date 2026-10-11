@@ -1,5 +1,5 @@
 {
-  "status": "production_verified_documentation_pending",
+  "status": "published_verified",
   "changeId": "BRUNA-CONTEXTO-2026-10-11",
   "authorization": {
     "reference": "Continuidade da publicacao autorizada por Daniel (Publique) e do pedido atual de corrigir a API para contexto, coerencia e consulta a equipe. Sol 6.1 medio e API paga preservados; nao inclui plugin, migracao de assinatura, replay ou mensagens reais de teste.",
@@ -732,9 +732,24 @@
       "inputTokens": 141421,
       "outputTokens": 2719
     },
-    "ops": "SYNC_PENDING esperado ate publicacao e reconciliacao",
+    "ops": "Producao e documentacao reconciliadas; gate final no checkout canonico limpo apos commit.",
     "publication": "production_verified",
-    "documentation": "pending_drive_readback"
+    "documentation": "Drive relido byte a byte, mesmos IDs e pastas"
   },
-  "rollback": "Reverter o commit candidato e publicar pelo Git o codigo equivalente ao baseline 6c6507983012a0cff63cf712f7b3709a0b4d5f99 / deploy 6acbccab46983900087c5159; preservar Apps Script v161, filas e recibos, sem replay."
+  "rollback": "Reverter o commit candidato e publicar pelo Git o codigo equivalente ao baseline 6c6507983012a0cff63cf712f7b3709a0b4d5f99 / deploy 6acbccab46983900087c5159; preservar Apps Script v161, filas e recibos, sem replay.",
+  "drive": {
+    "verifiedAt": "2026-10-11T18:35:02.000Z",
+    "verifiedAtSource": "HTTP Date do Netlify apos download e comparacao do Drive; relogio local divergente",
+    "manual": {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "3a7d7ab1f2b5ee8d4f906c13f672335e7c193d9bd81e84bce63897e7bf855e38",
+      "bytes": 162393
+    },
+    "plan": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "12cc1d53984f44a65dcc55af8c9328b775838f3996e50063b353e464d741f455",
+      "bytes": 247085
+    },
+    "sameIdsAndParents": true
+  }
 }
