@@ -26,9 +26,9 @@
     "rollbackConstraint": "Dados, filas, pausas, recibos e conhecimento aprovado; sem replay. Restaurar Apps Script v161 no mesmo deployment se necessário.",
     "publishedAt": "2026-10-13T23:18:33.483Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-13T23:19:40.125Z",
+    "lastVerifiedAt": "2026-10-13T23:22:06.823Z",
     "candidateChangeId": "BRUNA-AUTONOMIA-2026-10-11",
-    "candidateStatus": "external_verified_drive_pending",
+    "candidateStatus": "published_verified",
     "bundleVersion": "2026-10-11.4",
     "appsScriptVersion": 162
   },
@@ -41,8 +41,9 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "3a7d7ab1f2b5ee8d4f906c13f672335e7c193d9bd81e84bce63897e7bf855e38",
-    "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU"
+    "driveProjectionSha256": "7e80e67673a18fc481a7f000b36dc4f41f6b35a35e2c838a4549b4f527ea8229",
+    "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU",
+    "driveProjectionVerifiedAt": "2026-10-13T23:22:06.823Z"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -50,7 +51,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-AUTONOMIA-2026-10-11",
-    "status": "published_verified_platforms",
+    "status": "published_verified",
     "liveModelCheckRequired": true,
     "baselineCommit": "8a6bcc6b9105aba10810775b680a3950c2ed3443",
     "bundleVersion": "2026-10-11.4",

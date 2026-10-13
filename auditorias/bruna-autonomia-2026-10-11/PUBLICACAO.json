@@ -1,5 +1,5 @@
 {
-  "status": "external_verified_drive_pending",
+  "status": "published_verified",
   "originalApprovedCommit": "30390877e6ca9c064fbb7d24e180bd6b71f752d7",
   "appsScript": {
     "status": "published_verified",
@@ -2114,7 +2114,7 @@
   },
   "patientMessagesSent": 0,
   "manualOperationalExecutions": 0,
-  "verifiedAt": "2026-10-13T23:19:40.125Z",
+  "verifiedAt": "2026-10-13T23:22:06.823Z",
   "releaseCommit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
   "runtimeEquivalentTo": "30390877e6ca9c064fbb7d24e180bd6b71f752d7",
   "leads": {
@@ -2207,15 +2207,36 @@
     "newAutomations": 0
   },
   "drive": {
-    "status": "pending",
+    "status": "verified",
+    "checkedAt": "2026-10-13T23:22:06.823Z",
     "files": [
       {
         "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-        "path": "docs/estrategia-abordagem-bruna.md"
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "sha256": "7e80e67673a18fc481a7f000b36dc4f41f6b35a35e2c838a4549b4f527ea8229",
+        "downloadedSha256": "7e80e67673a18fc481a7f000b36dc4f41f6b35a35e2c838a4549b4f527ea8229",
+        "equal": true,
+        "method": "replace same file ID then download complete bytes",
+        "sourceDocumentationCommit": "0b8c50f2eff657332af12d797500e3f0f03366e7",
+        "modifiedTime": "2026-10-13T23:21:07.321Z",
+        "parentIds": [
+          "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue"
+        ],
+        "fileSize": 165498
       },
       {
         "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md"
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "sha256": "3fe786fd4225e661ec1516e1bd8cb4c614d66be4e154c255565130009eb9953f",
+        "downloadedSha256": "3fe786fd4225e661ec1516e1bd8cb4c614d66be4e154c255565130009eb9953f",
+        "equal": true,
+        "method": "replace same file ID then download complete bytes",
+        "sourceDocumentationCommit": "0b8c50f2eff657332af12d797500e3f0f03366e7",
+        "modifiedTime": "2026-10-13T23:21:23.918Z",
+        "parentIds": [
+          "1L6aLWNwRXo0lj5O9ucxXi_Pe6nv95z3v"
+        ],
+        "fileSize": 250190
       }
     ]
   }

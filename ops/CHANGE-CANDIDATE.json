@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-AUTONOMIA-2026-10-11",
   "title": "Autonomia contextual com conhecimento aprovado, aprendizado revisável e prioridade humana por assunto",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "8a6bcc6b9105aba10810775b680a3950c2ed3443",
   "authorization": {
     "required": true,
@@ -301,7 +301,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed",
     "commands": [
       "git diff --check",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -359,7 +359,7 @@
       "npm.cmd test"
     ],
     "baseline": "Preflight autenticado 13/10/2026: remoto 8a6bcc6; Netlify 590121d / 6acbd59e31a918000966a0af; Apps Script v161. Apps Script v162 publicado primeiro; dois builds do 30390877 bloqueados por comparação vazio/unknown no teste administrativo.",
-    "completedAt": "2026-10-13T23:15:58.352Z",
+    "completedAt": "2026-10-13T23:22:06.823Z",
     "results": {
       "fullSuite": {
         "tests": 1984,
@@ -381,7 +381,7 @@
       "architectureCheck": "passed",
       "changeCheck": "passed; 30 exact files",
       "diffCheck": "passed",
-      "operationalConsistency": "SYNC_PENDING until Drive receipts and canonical clean branch closeout.",
+      "operationalConsistency": "pending_final_canonical_check",
       "liveModelApi": "passed;12/12 real synthetic scenarios in production build 6acebbd4a25f1e95fc6d90d3",
       "patientMessagesSent": 0,
       "buildGateCorrectionTests": {
@@ -389,7 +389,8 @@
         "passed": 8,
         "failed": 0
       },
-      "runtimeEquivalentTo": "30390877e6ca9c064fbb7d24e180bd6b71f752d7"
+      "runtimeEquivalentTo": "30390877e6ca9c064fbb7d24e180bd6b71f752d7",
+      "driveProjection": "passed; manual and executive plan downloaded byte-identical from existing IDs"
     }
   },
   "rollback": {
@@ -406,15 +407,14 @@
     ]
   },
   "release": {
-    "status": "external_verified_drive_pending",
+    "status": "published_verified",
     "originalApprovedCommit": "30390877e6ca9c064fbb7d24e180bd6b71f752d7",
     "appsScriptVersion": 162,
-    "blockers": [
-      "Download e igualdade das projeções existentes no Drive; fechamento limpo do checkout canônico."
-    ],
+    "blockers": [],
     "authorizationScope": "User explicitly authorized completion of implementation and publication in this task. Required build-only assertion correction preserves all runtime code and the twelve real API scenarios; two regression tests added. No new patient behavior.",
     "approvedCommit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
     "netlifyDeployId": "6acebbd4a25f1e95fc6d90d3",
-    "verifiedAt": "2026-10-13T23:19:40.125Z"
+    "verifiedAt": "2026-10-13T23:22:06.823Z",
+    "drivePlanSha256": "3fe786fd4225e661ec1516e1bd8cb4c614d66be4e154c255565130009eb9953f"
   }
 }
