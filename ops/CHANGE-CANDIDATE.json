@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -21,7 +21,9 @@
       "apps-script/clinica-liv-leads/KnowledgeBase.gs",
       "apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
       "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/production-target.json",
       "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json",
+      "auditorias/bruna-autonomia-2026-10-11/PUBLICACAO.json",
       "auditorias/bruna-autonomia-2026-10-11/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
@@ -191,109 +193,109 @@
       {
         "contract": "site-editorial-copy",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "change-governance",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "bruna-conversation-safety",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "appointment-reminders",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "patient-journey-funnel-followups",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "google-ads-acquisition-conversion",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "bruna-conversion-experience",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "professional-routing",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "bot-decision-observability",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "ycloud-delivery-cost-observability",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "patient-lifecycle-governance",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "bruna-regression-governance",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "patient-care-milestones",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "durable-storage-conditional-writes",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "website-conversation-continuity",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "reply-continuity",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "followup-message-copy",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       },
       {
         "contract": "bruna-model-runtime",
         "system": "Netlify / Apps Script / LEADS / Drive",
-        "status": "pending",
+        "status": "passed",
         "reference": "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json"
       }
     ]
@@ -356,8 +358,8 @@
       "npm.cmd run site:check",
       "npm.cmd test"
     ],
-    "baseline": "Produção funcional 590121d, checkout canônico 8a6bcc6; autenticação Google e Netlify pendente nesta nuvem.",
-    "completedAt": "2026-10-11T23:23:26.767409+00:00",
+    "baseline": "Preflight autenticado 13/10/2026: remoto 8a6bcc6; Netlify 590121d / 6acbd59e31a918000966a0af; Apps Script v161. Apps Script v162 publicado primeiro; dois builds do 30390877 bloqueados por comparação vazio/unknown no teste administrativo.",
+    "completedAt": "2026-10-13T23:15:58.352Z",
     "results": {
       "fullSuite": {
         "tests": 1984,
@@ -365,11 +367,11 @@
         "failed": 0
       },
       "additionalRequiredTests": {
-        "tests": 44,
-        "passed": 44,
+        "tests": 46,
+        "passed": 46,
         "failed": 0
       },
-      "distinctTests": 2028,
+      "distinctTests": 2030,
       "siteBuild": {
         "files": 193,
         "sitemapUrls": 54,
@@ -377,11 +379,17 @@
       },
       "siteCheck": "passed",
       "architectureCheck": "passed",
-      "changeCheck": "passed; 28 exact files",
+      "changeCheck": "passed; 30 exact files",
       "diffCheck": "passed",
       "operationalConsistency": "SYNC_PENDING: publication, authenticated receipts and Drive projection pending; isolated candidate branch",
-      "liveModelApi": "pending; hosted build requires 12 real synthetic scenarios",
-      "patientMessagesSent": 0
+      "liveModelApi": "failed: attempts 6aceb88184bf4afa39c9054b and 6aceb95a5b025f0fa6b676e5; six scenarios passed before fiscal procedure metadata mismatch. Narrow assertion correction under validation; all twelve scenarios remain required.",
+      "patientMessagesSent": 0,
+      "buildGateCorrectionTests": {
+        "tests": 8,
+        "passed": 8,
+        "failed": 0
+      },
+      "runtimeEquivalentTo": "30390877e6ca9c064fbb7d24e180bd6b71f752d7"
     }
   },
   "rollback": {
@@ -398,10 +406,12 @@
     ]
   },
   "release": {
-    "status": "pending",
+    "status": "apps_script_verified_netlify_pending",
+    "originalApprovedCommit": "30390877e6ca9c064fbb7d24e180bd6b71f752d7",
+    "appsScriptVersion": 162,
     "blockers": [
-      "Autenticação Google para preflight, atualização do Apps Script e projeções do Drive.",
-      "Autenticação Netlify para publicar e validar commit exato."
-    ]
+      "Novo build Git de produção deve aprovar os 12 cenários após correção restrita da comparação no teste; registros finais e Drive pendentes."
+    ],
+    "authorizationScope": "User explicitly authorized completion of implementation and publication in this task. Required build-only assertion correction preserves all runtime code and the twelve real API scenarios; two regression tests added. No new patient behavior."
   }
 }

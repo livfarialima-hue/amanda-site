@@ -1,6 +1,6 @@
 # Autonomia contextual da Bruna
 
-Estado: testada localmente; publicação pendente de autenticação Google/Netlify. Autorização: “Faça essas alterações então e publique.” Baseline do checkout: `8a6bcc6b9105aba10810775b680a3950c2ed3443`; produção pública observada: `590121d96c02bbfbb5bb01c53b30ab83a6a658b8`, Netlify `6acbd59e31a918000966a0af`. Apps Script v161 consta no registro local; esta tarefa ainda não pôde confirmar a versão autenticada.
+Estado em 13/10/2026: Apps Script v162 publicado e verificado no deployment canônico; Netlify ainda mantém 590121d / 6acbd59e31a918000966a0af. O commit aprovado 30390877 já integra reestruturacao-site e a PR 10 está merged. Dois novos builds de produção executaram a API real e falharam no sétimo cenário: nota fiscal correta, procedure vazio em vez de unknown. Correção estrita da comparação administrativa em validação; código de atendimento e os 12 cenários preservados. Recibos reais: PUBLICACAO.json e PREFLIGHT.json.
 
 ## Comportamento implementado
 

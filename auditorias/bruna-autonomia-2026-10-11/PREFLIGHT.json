@@ -1,31 +1,611 @@
 {
-  "checkedAt": "2026-10-11T23:13:19.413500+00:00",
-  "status": "blocked_authentication",
+  "checkedAt": "2026-10-13T22:47:22.934Z",
+  "status": "passed_read_only",
   "baseCommit": "8a6bcc6b9105aba10810775b680a3950c2ed3443",
-  "netlifySiteId": "c33facb6-eafc-4635-99d6-068bf8707227",
-  "patientMessagesSent": 0,
-  "platformWrites": 0,
-  "authenticatedNetlify": false,
-  "authenticatedAppsScript": false,
-  "authenticatedDrive": false,
-  "limitations": [
-    "Somente health e metadados públicos Netlify; faltam estado autenticado de publicação e leitura do projeto, deployment, schema LEADS e Drive."
-  ],
-  "publicNetlifyDeploy": {
+  "approvedCommit": "30390877e6ca9c064fbb7d24e180bd6b71f752d7",
+  "remoteProductionCommit": "8a6bcc6b9105aba10810775b680a3950c2ed3443",
+  "localParallelCommitPreserved": "df072a3",
+  "authorization": {
+    "approvedBy": "Daniel",
+    "approvedAt": "2026-10-13T22:47:22.934Z",
+    "reference": "User message in Codex task 01a1376a-8422-7553-b220-30cfac3c3392: Conclua a publicação das melhorias de autonomia da Bruna. A implementação e a publicação já foram autorizadas; explicit tested SHA 30390877e6ca9c064fbb7d24e180bd6b71f752d7 and PR 10."
+  },
+  "netlify": {
     "id": "6acbd59e31a918000966a0af",
-    "state": "ready",
+    "site_id": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "commit_ref": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
     "branch": "reestruturacao-site",
     "context": "production",
-    "commit_ref": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
-    "published_at": "2026-10-11T18:31:21.722Z"
+    "state": "ready",
+    "published_at": "2026-10-11T18:31:21.722Z",
+    "functions": [
+      {
+        "name": "appointment-reminder",
+        "digest": "e64ba3697cc9792f6bed7673b41b4c8edff82637c64d99ffc0ec68724f4a22f1",
+        "mode": "stream",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "appointment-review",
+        "digest": "2579e235b9966086b210fc4f54bc5f3788e4a06d749a37aab30757699369034a",
+        "mode": "stream",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey",
+        "digest": "0be1f25a28c31c92089ea1bea986b6f4c97b572dbb4800c58786674b506ae25a",
+        "mode": "stream",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "attribution-journey-purge",
+        "digest": "1d8ef0ea9aede7d1f22bc547ae72f66d6b7d72fb23a911d801ef0360b7c72a4c",
+        "mode": "stream",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads",
+        "digest": "2569e802d325521cb3eeaaecfc081b4347a41ca009b8ce4ef9babaaebee710e0",
+        "mode": "stream",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "classify-leads-background",
+        "digest": "1293a73a154a64c91fa535ad8360d6aa36213d79810ddf3959127124d727ea10",
+        "mode": "background",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "human-resume",
+        "digest": "eec283b5c15e23ac6e6ae9c56496238a1307618a368ac6e104bdf5d82ded9670",
+        "mode": "stream",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "human-resume-background",
+        "digest": "88372fe4cb3c852e251f84bc7c001209a768a93d9d222e06002ec600cce2d3a7",
+        "mode": "background",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "post-consult-followup",
+        "digest": "8d536137e879d257be5e32c89f7c540aba70be20af0ef323fcd2b19a09af3b72",
+        "mode": "stream",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "scheduled-followup",
+        "digest": "43a3c545ab236df0e0125a4845902968ed1719178f905973e313a2af357111da",
+        "mode": "stream",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "synthetic-integration-health",
+        "digest": "4134c3a43787c1286eb8ec1dd0711c9f7c7632cdb0319c2d050268e8431707e7",
+        "mode": "stream",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery",
+        "digest": "42673e609d7cda8a4cb9b5300b843df653eba2fc4343e36d37a44b27972fd6ab",
+        "mode": "stream",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-recovery-background",
+        "digest": "5b924834ca732108ea372831b0425bd80c12c065ebe51f28db66e661a9aad536",
+        "mode": "background",
+        "runtime": "nodejs24.x"
+      },
+      {
+        "name": "ycloud-webhook",
+        "digest": "7b2d6aed7ad11401a132f2ea9279c22c9e23a2223836a1276b62e84dcb69f029",
+        "mode": "stream",
+        "runtime": "nodejs24.x"
+      }
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ]
   },
+  "appsScript": {
+    "scriptId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "version": 161,
+    "executeAs": "owner",
+    "access": "anyone",
+    "sourceEquivalence": {
+      "checkedAt": "2026-10-13T22:44:59.444Z",
+      "normalization": "CRLF to LF; trim trailing whitespace at end of file",
+      "files": [
+        {
+          "file": "Code.gs",
+          "chars": 86717,
+          "liveSha256": "cc4563881793d65cd36e54fa10a1d457fa0ffd8b15fef8ec5d21d4b96fa54ade",
+          "baselineSha256": "cc4563881793d65cd36e54fa10a1d457fa0ffd8b15fef8ec5d21d4b96fa54ade",
+          "equal": true
+        },
+        {
+          "file": "Retomadas.gs",
+          "chars": 161659,
+          "liveSha256": "8e52768102d589223d20ab2649f1f240a3617f99943f275dc6ab9030fc147d89",
+          "baselineSha256": "8e52768102d589223d20ab2649f1f240a3617f99943f275dc6ab9030fc147d89",
+          "equal": true
+        },
+        {
+          "file": "LembretesConsultas.gs",
+          "chars": 42141,
+          "liveSha256": "37f8afe237acc3bbd6feaf62653052970318da06ee81f22567ed5ca1a6cd61d6",
+          "baselineSha256": "37f8afe237acc3bbd6feaf62653052970318da06ee81f22567ed5ca1a6cd61d6",
+          "equal": true
+        },
+        {
+          "file": "ConsultasSync.gs",
+          "chars": 172852,
+          "liveSha256": "456596a8daea5800c70e046eb9e673ef27b38c2ad91eb14786bc58df017b671c",
+          "baselineSha256": "456596a8daea5800c70e046eb9e673ef27b38c2ad91eb14786bc58df017b671c",
+          "equal": true
+        },
+        {
+          "file": "AgendaCuidados.gs",
+          "chars": 60858,
+          "liveSha256": "051705a5fd0284903b65276f283612c0faecc6504577bfe262f76206c44d7f19",
+          "baselineSha256": "051705a5fd0284903b65276f283612c0faecc6504577bfe262f76206c44d7f19",
+          "equal": true
+        },
+        {
+          "file": "CentralAtendimento.gs",
+          "chars": 136441,
+          "liveSha256": "6b1864eb756c1869ea035bb422360c2e04edd183fbfefac1c199f889a24dedcd",
+          "baselineSha256": "6b1864eb756c1869ea035bb422360c2e04edd183fbfefac1c199f889a24dedcd",
+          "equal": true
+        },
+        {
+          "file": "LeadClassification.gs",
+          "chars": 138093,
+          "liveSha256": "75510feb62ad66157de516c90c55796d02f186c0eb8df78dfbc56bf2ce1496b6",
+          "baselineSha256": "75510feb62ad66157de516c90c55796d02f186c0eb8df78dfbc56bf2ce1496b6",
+          "equal": true
+        },
+        {
+          "file": "ContactPreferences.gs",
+          "chars": 14469,
+          "liveSha256": "6dc9390b94bd97eb9ea6c702875e1ca42cec1fcaed24c76f3fec3a8b430ccbf1",
+          "baselineSha256": "6dc9390b94bd97eb9ea6c702875e1ca42cec1fcaed24c76f3fec3a8b430ccbf1",
+          "equal": true
+        },
+        {
+          "file": "RoomBooking.gs",
+          "chars": 8778,
+          "liveSha256": "6f34f9c42e7d1e17c830704fd431f09eb09d359b1c66216aaa084db96393a35b",
+          "baselineSha256": "6f34f9c42e7d1e17c830704fd431f09eb09d359b1c66216aaa084db96393a35b",
+          "equal": true
+        },
+        {
+          "file": "RoomBookingForm.html",
+          "chars": 10123,
+          "liveSha256": "9cea7d8a085e105556c9016e42f119e3b43ddaa998d4b56a850ddc60b1f9d39e",
+          "baselineSha256": "9cea7d8a085e105556c9016e42f119e3b43ddaa998d4b56a850ddc60b1f9d39e",
+          "equal": true
+        },
+        {
+          "file": "KnowledgeBase.gs",
+          "chars": 35817,
+          "liveSha256": "7fd655b29215318095c579005deddf7888f5fb7b273d011c7d014cda504ce87d",
+          "baselineSha256": "7fd655b29215318095c579005deddf7888f5fb7b273d011c7d014cda504ce87d",
+          "equal": true
+        },
+        {
+          "file": "OpportunityStore.gs",
+          "chars": 82325,
+          "liveSha256": "55aefbfeab282d9c6ff188a618ea2a671a00f50fdf5ae58e2b48bc71284e323e",
+          "baselineSha256": "55aefbfeab282d9c6ff188a618ea2a671a00f50fdf5ae58e2b48bc71284e323e",
+          "equal": true
+        },
+        {
+          "file": "BusinessMilestones.gs",
+          "chars": 2517,
+          "liveSha256": "f3d9a7fc771bd049daeaeee7ea86ecf1d1223f32e12b3979754e7a047f11ec9b",
+          "baselineSha256": "f3d9a7fc771bd049daeaeee7ea86ecf1d1223f32e12b3979754e7a047f11ec9b",
+          "equal": true
+        },
+        {
+          "file": "DataQualityRepair.gs",
+          "chars": 81297,
+          "liveSha256": "1b328375054d6903619d6e0fa3d815949b3c4bafaa79c535dfc3eda93d66c189",
+          "baselineSha256": "1b328375054d6903619d6e0fa3d815949b3c4bafaa79c535dfc3eda93d66c189",
+          "equal": true
+        },
+        {
+          "file": "OperationalEvents.gs",
+          "chars": 22767,
+          "liveSha256": "2c8f57ef21d19979f6ef7e9337b68d82bf0d355fdd78d431bb906ef0c31ce60b",
+          "baselineSha256": "2c8f57ef21d19979f6ef7e9337b68d82bf0d355fdd78d431bb906ef0c31ce60b",
+          "equal": true
+        },
+        {
+          "file": "SyntheticHealth.gs",
+          "chars": 4360,
+          "liveSha256": "f37e652a967cc20d3b9dedf91a356b769f5c00e6dae1b5c8388bdce1cc7fa18b",
+          "baselineSha256": "f37e652a967cc20d3b9dedf91a356b769f5c00e6dae1b5c8388bdce1cc7fa18b",
+          "equal": true
+        },
+        {
+          "file": "QualityDashboards.gs",
+          "chars": 5684,
+          "liveSha256": "89d6109984550223315affd8da659b77cb6dccc42d3399aecbfed1914e18263d",
+          "baselineSha256": "89d6109984550223315affd8da659b77cb6dccc42d3399aecbfed1914e18263d",
+          "equal": true
+        },
+        {
+          "file": "ScheduleMaintenance.gs",
+          "chars": 3977,
+          "liveSha256": "4e145ad28277de0412a53b05bc86bc4e3902087b4eeccd2d87972826ef3fbf1d",
+          "baselineSha256": "4e145ad28277de0412a53b05bc86bc4e3902087b4eeccd2d87972826ef3fbf1d",
+          "equal": true
+        },
+        {
+          "file": "FunnelDashboards.gs",
+          "chars": 18971,
+          "liveSha256": "0ef41f8ad6fc8f086d943db3a3cbccf99f33bb61dce9973a7be078cb9b23d7da",
+          "baselineSha256": "0ef41f8ad6fc8f086d943db3a3cbccf99f33bb61dce9973a7be078cb9b23d7da",
+          "equal": true
+        },
+        {
+          "file": "GoogleAdsFunnelReview.gs",
+          "chars": 26082,
+          "liveSha256": "9cd468cb7dc197621f1ea9a20fe4e6f33cee55d8b1ef12fb2c0157b2c163fd92",
+          "baselineSha256": "9cd468cb7dc197621f1ea9a20fe4e6f33cee55d8b1ef12fb2c0157b2c163fd92",
+          "equal": true
+        },
+        {
+          "file": "MetaAdsFunnelReview.gs",
+          "chars": 12589,
+          "liveSha256": "b3afc34022589ebdffc6349f645c023bf22193e161f7e690407c7e68c8a70389",
+          "baselineSha256": "b3afc34022589ebdffc6349f645c023bf22193e161f7e690407c7e68c8a70389",
+          "equal": true
+        },
+        {
+          "file": "MetaAdsReview.gs",
+          "chars": 53509,
+          "liveSha256": "2657e30e1b055dfe822dde3d674400adb0068a09089fc5fac2f4186490cbb09b",
+          "baselineSha256": "2657e30e1b055dfe822dde3d674400adb0068a09089fc5fac2f4186490cbb09b",
+          "equal": true
+        },
+        {
+          "file": "FunnelReconciliation.gs",
+          "chars": 24871,
+          "liveSha256": "3081887b6f7f49d6f733115e3fecafae75b0fda6d48e3acb7b9f413dc750200c",
+          "baselineSha256": "3081887b6f7f49d6f733115e3fecafae75b0fda6d48e3acb7b9f413dc750200c",
+          "equal": true
+        },
+        {
+          "file": "PainelDecisoesDiarias.gs",
+          "chars": 42283,
+          "liveSha256": "1bb1a43c94a8ffa3a0694e05484b610c25c9b8fbc53f2bd69bc1b628c34845aa",
+          "baselineSha256": "1bb1a43c94a8ffa3a0694e05484b610c25c9b8fbc53f2bd69bc1b628c34845aa",
+          "equal": true
+        },
+        {
+          "file": "WhatsAppCosts.gs",
+          "chars": 19422,
+          "liveSha256": "8ae1b7955712a9a2aa218ca615137c6b519f5f33c1f5175e155a1a54960ce4a7",
+          "baselineSha256": "8ae1b7955712a9a2aa218ca615137c6b519f5f33c1f5175e155a1a54960ce4a7",
+          "equal": true
+        },
+        {
+          "file": "ClassificationReconciliation.gs",
+          "chars": 14765,
+          "liveSha256": "7829c2557ce8db33c4577fc8a791773363052ae3eb71ee4613cc1f5e45fbc10c",
+          "baselineSha256": "7829c2557ce8db33c4577fc8a791773363052ae3eb71ee4613cc1f5e45fbc10c",
+          "equal": true
+        },
+        {
+          "file": "CuidadosProgramados.gs",
+          "chars": 46801,
+          "liveSha256": "5341d05ef05252410459d7ffee476352b8ca08634255e2602c597578839a3e10",
+          "baselineSha256": "5341d05ef05252410459d7ffee476352b8ca08634255e2602c597578839a3e10",
+          "equal": true
+        }
+      ]
+    },
+    "triggerCount": 11,
+    "preexistingObservations": [
+      "Central trigger UI error rate 36.13%; classification reconciliation 0.15%. These were present before this release; no manual operational execution."
+    ]
+  },
+  "platform": {
+    "checkedAt": "2026-10-13T22:46:32.417Z",
+    "environment": {
+      "checkedAt": "2026-10-13T22:45:40.327Z",
+      "openaiKey": {
+        "key": "OPENAI_API_KEY",
+        "scopes": [
+          "builds",
+          "functions",
+          "runtime"
+        ],
+        "productionPresent": true
+      },
+      "productionSettings": [
+        {
+          "key": "WHATSAPP_HUMAN_RESUME_BACKGROUND_ENABLED",
+          "value": "true"
+        },
+        {
+          "key": "WHATSAPP_AUTOMATION_MODE",
+          "value": "active"
+        },
+        {
+          "key": "WHATSAPP_BIRTHDAY_CARE_ENABLED",
+          "value": "false"
+        },
+        {
+          "key": "GOOGLE_SHEETS_WEBHOOK_URL",
+          "value": "https://script.google.com/macros/s/AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A/exec"
+        },
+        {
+          "key": "WHATSAPP_INBOUND_BACKGROUND_ENABLED",
+          "value": "true"
+        }
+      ]
+    },
+    "sheetHeaders": [
+      {
+        "name": "Respostas Aprovadas",
+        "range": "'Respostas Aprovadas'!A1:Z1",
+        "majorDimension": "ROWS",
+        "values": [
+          [
+            "ID da regra",
+            "Status",
+            "Modo de uso",
+            "Risco",
+            "Assunto",
+            "Perguntas equivalentes",
+            "Resposta aprovada",
+            "Limites / quando não usar",
+            "Procedimento",
+            "Aprovado por",
+            "Aprovado em",
+            "Válida até",
+            "Usos",
+            "Último uso",
+            "Correções",
+            "Origem",
+            "Versão da regra",
+            "Estado de promoção",
+            "Versão do snapshot",
+            "Aprovador da promoção",
+            "Promovida em",
+            "Substitui"
+          ]
+        ]
+      },
+      {
+        "name": "Revisões do Bot",
+        "range": "'Revisões do Bot'!A1:Z1",
+        "majorDimension": "ROWS",
+        "values": [
+          [
+            "Tipo",
+            "Prioridade",
+            "Data e hora",
+            "Paciente",
+            "Telefone",
+            "Contexto",
+            "Sugestão do bot",
+            "Confiança",
+            "Status",
+            "Decisão da equipe",
+            "Observação da equipe",
+            "Chave",
+            "Atualizado em"
+          ]
+        ]
+      },
+      {
+        "name": "_WHATSAPP_DUVIDAS",
+        "range": "'_WHATSAPP_DUVIDAS'!A1:O1",
+        "majorDimension": "ROWS",
+        "values": [
+          [
+            "Event ID",
+            "Telefone",
+            "Paciente",
+            "Recebida em",
+            "Pergunta",
+            "Assunto",
+            "Contexto",
+            "Risco",
+            "Esclarecimentos feitos",
+            "Status",
+            "Resposta humana",
+            "ID da regra candidata",
+            "Atualizada em",
+            "Prioridade",
+            "Procedimento"
+          ]
+        ]
+      },
+      {
+        "name": "_WHATSAPP_USO_RESPOSTAS",
+        "range": "'_WHATSAPP_USO_RESPOSTAS'!A1:G1",
+        "majorDimension": "ROWS",
+        "values": [
+          [
+            "Data e hora",
+            "Event ID",
+            "Telefone",
+            "ID da regra",
+            "Pergunta",
+            "Resposta enviada",
+            "Resultado"
+          ]
+        ]
+      },
+      {
+        "name": "Central de Atendimento",
+        "range": "'Central de Atendimento'!A1:Z1",
+        "majorDimension": "ROWS",
+        "values": [
+          [
+            "Fila",
+            "Prioridade",
+            "Agir até",
+            "Paciente",
+            "Abrir WhatsApp",
+            "Próxima ação",
+            "Mensagem final",
+            "Programar para",
+            "Aprovar com a Bruna",
+            "Cancelar retomada",
+            "Elegibilidade da Bruna",
+            "Resposta sugerida",
+            "Contexto",
+            "Responsável",
+            "Status operacional",
+            "Adiar até",
+            "Observação da equipe",
+            "Última interação",
+            "Relacionamento",
+            "Origem",
+            "Modo",
+            "Última ação da equipe",
+            "Atualizado em",
+            "Fonte",
+            "Chave operacional",
+            "Telefone"
+          ]
+        ]
+      }
+    ],
+    "driveFiles": [
+      {
+        "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "title": "DIRETRIZES ATIVAS — Bruna — atendimento e conversão no WhatsApp.md",
+        "mime_type": "text/markdown",
+        "size": null,
+        "url": "https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view?usp=drivesdk",
+        "display_url": "https://drive.google.com/file/d/17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF/view?usp=drivesdk",
+        "file_or_folder": "file",
+        "created_time": null,
+        "modified_time": "2026-10-11T18:34:11.060Z",
+        "parent_ids": [
+          "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue"
+        ],
+        "drive_id": null,
+        "current_user_can_share": null,
+        "has_augmented_permissions": null,
+        "shared": null,
+        "permissions": null,
+        "source_visibility_status": "access_not_verified"
+      },
+      {
+        "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "title": "00 — PLANO EXECUTIVO — pendências, prazos e publicações.md",
+        "mime_type": "text/markdown",
+        "size": null,
+        "url": "https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view?usp=drivesdk",
+        "display_url": "https://drive.google.com/file/d/18iUqY6HttJwPusSAA1VGmrMqqRluyjTO/view?usp=drivesdk",
+        "file_or_folder": "file",
+        "created_time": null,
+        "modified_time": "2026-10-11T18:34:13.941Z",
+        "parent_ids": [
+          "1L6aLWNwRXo0lj5O9ucxXi_Pe6nv95z3v"
+        ],
+        "drive_id": null,
+        "current_user_can_share": null,
+        "has_augmented_permissions": null,
+        "shared": null,
+        "permissions": null,
+        "source_visibility_status": "access_not_verified"
+      }
+    ]
+  },
+  "drive": [
+    {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "equal": true,
+      "sha256": "3a7d7ab1f2b5ee8d4f906c13f672335e7c193d9bd81e84bce63897e7bf855e38"
+    },
+    {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "equal": true,
+      "sha256": "12cc1d53984f44a65dcc55af8c9328b775838f3996e50063b353e464d741f455"
+    }
+  ],
   "publicWebhook": {
-    "httpStatus": 200,
-    "ok": true,
-    "service": "ycloud-webhook",
-    "automationMode": "active",
-    "signatureProtection": "active",
-    "sheetsWebhookConfigured": true,
-    "processingMode": "durable_background_intake"
+    "status": 200,
+    "body": {
+      "ok": true,
+      "service": "ycloud-webhook",
+      "apiKeyConfigured": true,
+      "signatureProtection": "active",
+      "sheetsWebhookConfigured": true,
+      "sheetsSecretConfigured": true,
+      "openAIConfigured": true,
+      "reviewAlertConfigured": true,
+      "appointmentReviewEnabled": true,
+      "automationMode": "active",
+      "conversionExperience": "bruna-conversion-v1",
+      "processingMode": "durable_background_intake",
+      "contactPreferencesGuard": "active",
+      "internalPhoneExclusionConfigured": true,
+      "leadDeliveryRetry": "single_idempotent_transient",
+      "leadDeliveryFallback": "acquisition_only",
+      "leadFailureEmailAlert": "required_after_retries",
+      "messageCostObservability": "delivered_event_idempotent"
+    }
+  },
+  "validation": {
+    "fullSuite": 1984,
+    "additionalDistinct": 44,
+    "focusedSubset": 82,
+    "totalDistinct": 2028,
+    "failures": 0,
+    "changeCheck": "passed; 28 exact files",
+    "architecture": "passed",
+    "siteBuild": {
+      "files": 193,
+      "sitemapUrls": 54,
+      "errors": 0
+    },
+    "siteCheck": "passed",
+    "diffCheck": "passed"
+  },
+  "externalWrites": 0,
+  "patientMessagesSent": 0,
+  "previousCloudAttempt": {
+    "checkedAt": "2026-10-11T23:13:19.413500+00:00",
+    "status": "blocked_authentication",
+    "resolvedInThisTask": true
+  },
+  "releasePreflight": {
+    "status": "passed",
+    "head": "30390877e6ca9c064fbb7d24e180bd6b71f752d7",
+    "log": "\r\n> release:preflight\r\n> node scripts/check-change-safety.mjs --release --approved-commit 30390877e6ca9c064fbb7d24e180bd6b71f752d7 --approved-at 2026-10-13T22:47:22.934Z --approved-by Daniel --approval-reference Codex task ***; user approved exact commit and publication --live-preflight-at 2026-10-13T22:47:22.934Z --live-preflight-reference tmp/release-20261013/PREFLIGHT-RELEASE.json\r\n\r\nCHANGE_SAFETY_STATUS=OK\r\nOK CHANGE_SCOPE_EXACT: 28 arquivos coincidem com o escopo declarado.\r\nOK REMINDER_CONTRACT_ALIGNED: Disparador, agenda diária e endpoint compartilham os mesmos guardrails.\r\n"
   }
 }

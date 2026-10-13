@@ -104,3 +104,41 @@ test('a partial known answer cannot make the live quality gate accept an unresol
   assert.equal(result.results.at(-1).passed, false);
   assert.equal(result.patientMessagesSent, 0);
 });
+
+test('administrative knowledge accepts an empty unspecified procedure from the real model', async () => {
+  const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (url, request) => {
+    const data = await (await syntheticResponse(url, request)).json();
+    const input = JSON.parse(JSON.parse(request.body).input);
+    if (input.currentMessage?.includes('comprovante fiscal')) {
+      const decision = JSON.parse(data.output_text);
+      Object.assign(decision, { procedure: '', professional: 'unknown' });
+      data.output_text = JSON.stringify(decision);
+    }
+    return Response.json(data);
+  } });
+  assert.equal(result.status, 'passed');
+  assert.equal(result.results.length, 12);
+  assert.equal(result.results.find(r => r.name === 'semantic_approved_knowledge').passed, true);
+  assert.equal(result.patientMessagesSent, 0);
+});
+
+test('procedure equivalence never accepts an invented procedure or drops a known correction', async () => {
+  for (const [messageFragment, replacement, failingScenario] of [
+    ['comprovante fiscal', 'lifting_facial', 'semantic_approved_knowledge'],
+    ['Na verdade não quero lifting', '', 'corrected_procedure'],
+  ]) {
+    const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (url, request) => {
+      const data = await (await syntheticResponse(url, request)).json();
+      const input = JSON.parse(JSON.parse(request.body).input);
+      if (input.currentMessage?.includes(messageFragment)) {
+        const decision = JSON.parse(data.output_text);
+        decision.procedure = replacement;
+        data.output_text = JSON.stringify(decision);
+      }
+      return Response.json(data);
+    } });
+    assert.equal(result.status, 'failed');
+    assert.equal(result.results.at(-1).name, failingScenario);
+    assert.equal(result.results.at(-1).passed, false);
+  }
+});

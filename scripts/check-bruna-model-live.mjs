@@ -101,13 +101,18 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     }
     const modelConfirmed = requests.length > 0 && requests.every(r => r.httpStatus === 200 &&
       (r.model === BRUNA_MODEL || r.model?.startsWith(`${BRUNA_MODEL}-`)) && r.status === 'completed');
+    // An administrative knowledge answer can leave an unspecified procedure
+    // empty. This is equivalent to unknown only in that scenario; an invented
+    // named procedure and every procedure-specific scenario still fail closed.
+    const procedureMatches = result.decision?.procedure === scenario.procedure ||
+      (scenario.knowledge === true && scenario.procedure === 'unknown' && result.decision?.procedure === '');
     const behaviorPassed = scenario.classification ? true : scenario.followup ? result.allowed === false :
       scenario.urgent ? result.decision?.automaticAllowed === false :
       scenario.review ? result.decision?.route === 'human_review' && result.decision?.automaticAllowed === false &&
         result.decision?.replyCode === 'UNKNOWN-REVIEW-01' && /equipamento/i.test(result.decision?.conversationState?.unresolvedQuestions?.join(' ')) &&
         approvedPartialAnswer(result.decision, scenario.learningContext)?.knowledgeIds.includes('SYNTHETIC-PARKING') :
       scenario.educational ? gate?.allowed === true && result.decision?.automaticAllowed === true && /exames|dúvidas|medicamentos/i.test(selectedReply) && !/suspend|solicit.*exame/i.test(selectedReply) :
-      gate?.allowed === true && result.decision?.replyCode === scenario.code && result.decision?.procedure === scenario.procedure &&
+      gate?.allowed === true && result.decision?.replyCode === scenario.code && procedureMatches &&
         !/qual.*(?:dia|período)|quer.*(?:horário|agendar)/i.test(selectedReply);
     const passed = result.status === 'completed' && modelConfirmed && behaviorPassed;
     const timeoutMs = scenario.classification ? BRUNA_CLASSIFICATION_TIMEOUT_MS : scenario.followup ? BRUNA_FOLLOWUP_REVIEW_TIMEOUT_MS : BRUNA_CONVERSATION_TIMEOUT_MS;
