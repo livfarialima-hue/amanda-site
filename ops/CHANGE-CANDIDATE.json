@@ -381,8 +381,8 @@
       "architectureCheck": "passed",
       "changeCheck": "passed; 30 exact files",
       "diffCheck": "passed",
-      "operationalConsistency": "SYNC_PENDING: publication, authenticated receipts and Drive projection pending; isolated candidate branch",
-      "liveModelApi": "failed: attempts 6aceb88184bf4afa39c9054b and 6aceb95a5b025f0fa6b676e5; six scenarios passed before fiscal procedure metadata mismatch. Narrow assertion correction under validation; all twelve scenarios remain required.",
+      "operationalConsistency": "SYNC_PENDING until Drive receipts and canonical clean branch closeout.",
+      "liveModelApi": "passed;12/12 real synthetic scenarios in production build 6acebbd4a25f1e95fc6d90d3",
       "patientMessagesSent": 0,
       "buildGateCorrectionTests": {
         "tests": 8,
@@ -406,12 +406,15 @@
     ]
   },
   "release": {
-    "status": "apps_script_verified_netlify_pending",
+    "status": "external_verified_drive_pending",
     "originalApprovedCommit": "30390877e6ca9c064fbb7d24e180bd6b71f752d7",
     "appsScriptVersion": 162,
     "blockers": [
-      "Novo build Git de produção deve aprovar os 12 cenários após correção restrita da comparação no teste; registros finais e Drive pendentes."
+      "Download e igualdade das projeções existentes no Drive; fechamento limpo do checkout canônico."
     ],
-    "authorizationScope": "User explicitly authorized completion of implementation and publication in this task. Required build-only assertion correction preserves all runtime code and the twelve real API scenarios; two regression tests added. No new patient behavior."
+    "authorizationScope": "User explicitly authorized completion of implementation and publication in this task. Required build-only assertion correction preserves all runtime code and the twelve real API scenarios; two regression tests added. No new patient behavior.",
+    "approvedCommit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
+    "netlifyDeployId": "6acebbd4a25f1e95fc6d90d3",
+    "verifiedAt": "2026-10-13T23:19:40.125Z"
   }
 }

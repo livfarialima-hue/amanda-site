@@ -1,5 +1,7 @@
 # Apps Script da Clínica LIV
 
+**Versão canônica atual: v162**, publicada e verificada em 13/10/2026; registro em `production-target.json` e recibo em `auditorias/bruna-autonomia-2026-10-11/PUBLICACAO.json`. O histórico abaixo conserva as publicações anteriores.
+
 <!-- BRUNA-RECUPERACAO-CONTEUDO-2026-09-25 -->
 **PUBLICADO E VERIFICADO em 25/09/2026, 18:41 BRT.** Commit funcional 1920658fa469b640099d3d4908e01945097cbaf3, Netlify 6ab6ea73cea89200081ef8d5 e Apps Script v161 no deployment canonico. Corrige falhas locais reproduzidas na fila, na memoria e no historico: texto entregue depois para a mesma mensagem pode preencher apenas conteudo antes indisponivel, conservando identidade e horario originais. Os corpos assinados sao preservados separadamente; a conclusao antiga nao apaga a versao recuperada. A recuperacao aguarda o processamento anterior e consulta seus recibos para nao repetir resposta, inclusive quando o provedor usa outro event ID para o mesmo wamid. Texto valido, atendimento humano, assinaturas, janelas e precos preservados.
 
@@ -210,10 +212,10 @@ Desligamento: `desativarCuidadosProgramados` interrompe os demais cuidados; `des
 
 Revisão contextual autorizada em 12/09/2026: `diagnosticarCuidadosProgramados` faz apenas leitura de flags, cabeçalhos, contagens por estado e quantidade do gatilho compartilhado. Pode ser executada sem materializar planos nem enviar mensagens. A aprovação individual das demais retomadas humanas continua obrigatória; aniversário não oferece aprovação de envio pela Bruna.
 
-## Candidata: aprendizado revisável da Bruna (11/10/2026)
+## Publicado: aprendizado revisável da Bruna — Apps Script v162 (13/10/2026)
 
 A nova captura recebe `learning` no webhook e vincula a proposta à dúvida original por Event ID. A resposta individual fica em `_WHATSAPP_DUVIDAS`; somente uma proposta geral validada entra em `Respostas Aprovadas`, inicialmente como `Revisar`. Falta de inferência segura não transforma o texto individual em conhecimento.
 
-Depois de publicada a candidata, revise conteúdo, risco, modo, validade e limites na aba `Respostas Aprovadas`, selecione a linha e use **Central LIV → Aprovar resposta selecionada da Bruna**. A confirmação mostra o conteúdo efetivo; a rotina relê a linha sob trava, rejeita alterações concorrentes e preserva as regras ativas no novo snapshot. Descartar continua impedindo reutilização. Risco alto ou modo interno não se torna automático por essa aprovação. Correção humana explícita suspende a regra para revisão, sem substituir o texto aprovado pelo caso individual.
+Revise conteúdo, risco, modo, validade e limites na aba `Respostas Aprovadas`, selecione a linha e use **Central LIV → Aprovar resposta selecionada da Bruna**. A confirmação mostra o conteúdo efetivo; a rotina relê a linha sob trava, rejeita alterações concorrentes e preserva as regras ativas no novo snapshot. Descartar continua impedindo reutilização. Risco alto ou modo interno não se torna automático por essa aprovação. Correção humana explícita suspende a regra para revisão, sem substituir o texto aprovado pelo caso individual.
 
-Sem migração de cabeçalhos, novos triggers ou execução retroativa. Publicar primeiro estes arquivos no projeto/deployment canônicos, conferir a versão e só então publicar o Netlify do mesmo pacote. Publicação ainda pendente; ver `auditorias/bruna-autonomia-2026-10-11/RELATORIO.md`.
+Sem migração de cabeçalhos, novos triggers ou execução retroativa. KnowledgeBase.gs e CentralAtendimento.gs foram comparados, salvos e relidos equivalentes a 30390877; v162 publicada em 13/10/2026, 19:50 BRT, no deployment existente, com ID, URL, proprietário e acesso preservados. Netlify 6acebbd4a25f1e95fc6d90d3 / 13bbc6f59e80cd41d5f4651cf47e171f90d0335b publicado depois, com os 12 cenários reais aprovados. Rollback: Apps Script v161, preservando dados, filas e recibos. Evidência: `auditorias/bruna-autonomia-2026-10-11/PUBLICACAO.json`.

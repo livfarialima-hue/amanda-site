@@ -17,20 +17,20 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
-    "lastObservedProductionCommit": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
-    "functionalDeployId": "6acbd59e31a918000966a0af",
-    "lastObservedProductionDeployId": "6acbd59e31a918000966a0af",
-    "rollbackCommit": "6c6507983012a0cff63cf712f7b3709a0b4d5f99",
-    "rollbackDeployId": "6acbccab46983900087c5159",
-    "rollbackConstraint": "Preservar Apps Script v161, filas, pausas e recibos; sem replay.",
-    "publishedAt": "2026-10-11T18:31:21.722Z",
+    "functionalCommit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
+    "lastObservedProductionCommit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
+    "functionalDeployId": "6acebbd4a25f1e95fc6d90d3",
+    "lastObservedProductionDeployId": "6acebbd4a25f1e95fc6d90d3",
+    "rollbackCommit": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
+    "rollbackDeployId": "6acbd59e31a918000966a0af",
+    "rollbackConstraint": "Dados, filas, pausas, recibos e conhecimento aprovado; sem replay. Restaurar Apps Script v161 no mesmo deployment se necessário.",
+    "publishedAt": "2026-10-13T23:18:33.483Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-11T18:32:35.869Z",
-    "candidateChangeId": "BRUNA-CONTEXTO-2026-10-11",
-    "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-11.3",
-    "appsScriptVersion": 161
+    "lastVerifiedAt": "2026-10-13T23:19:40.125Z",
+    "candidateChangeId": "BRUNA-AUTONOMIA-2026-10-11",
+    "candidateStatus": "external_verified_drive_pending",
+    "bundleVersion": "2026-10-11.4",
+    "appsScriptVersion": 162
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -50,9 +50,10 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-AUTONOMIA-2026-10-11",
-    "status": "tested_local",
+    "status": "published_verified_platforms",
     "liveModelCheckRequired": true,
     "baselineCommit": "8a6bcc6b9105aba10810775b680a3950c2ed3443",
-    "bundleVersion": "2026-10-11.4"
+    "bundleVersion": "2026-10-11.4",
+    "verifiedDeployId": "6acebbd4a25f1e95fc6d90d3"
   }
 }
