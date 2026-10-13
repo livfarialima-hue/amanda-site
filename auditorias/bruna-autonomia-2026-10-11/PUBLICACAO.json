@@ -2239,5 +2239,16 @@
         "fileSize": 250190
       }
     ]
+  },
+  "closeout": {
+    "verifiedAt": "2026-10-13T23:23:14.079Z",
+    "canonicalBranch": "reestruturacao-site",
+    "checkedCommit": "0c12fa1d724321d1980ab8b980924d1765579712",
+    "clean": true,
+    "opsCheck": "OK",
+    "changeCheck": "OK;30 exact files",
+    "architectureCheck": "OK",
+    "currentNetlifyDeployReconfirmed": "6acebbd4a25f1e95fc6d90d3",
+    "documentationOnlyCommitsSkipNetlify": true
   }
 }

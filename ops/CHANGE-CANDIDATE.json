@@ -381,7 +381,7 @@
       "architectureCheck": "passed",
       "changeCheck": "passed; 30 exact files",
       "diffCheck": "passed",
-      "operationalConsistency": "pending_final_canonical_check",
+      "operationalConsistency": "OPS_CHECK_STATUS=OK on clean canonical reestruturacao-site at 0c12fa1d724321d1980ab8b980924d1765579712; receipts-only closeout rechecked after final commit.",
       "liveModelApi": "passed;12/12 real synthetic scenarios in production build 6acebbd4a25f1e95fc6d90d3",
       "patientMessagesSent": 0,
       "buildGateCorrectionTests": {
@@ -415,6 +415,7 @@
     "approvedCommit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
     "netlifyDeployId": "6acebbd4a25f1e95fc6d90d3",
     "verifiedAt": "2026-10-13T23:22:06.823Z",
-    "drivePlanSha256": "3fe786fd4225e661ec1516e1bd8cb4c614d66be4e154c255565130009eb9953f"
+    "drivePlanSha256": "3fe786fd4225e661ec1516e1bd8cb4c614d66be4e154c255565130009eb9953f",
+    "closeoutVerifiedAt": "2026-10-13T23:23:14.079Z"
   }
 }
