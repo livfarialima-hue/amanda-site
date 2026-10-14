@@ -1655,6 +1655,8 @@
         "scripts/check-bruna-audio-live.test.mjs",
         "scripts/fixtures/README.md",
         "scripts/fixtures/bruna-audio-address.wav",
+        "scripts/fixtures/bruna-audio-context.wav",
+        "scripts/fixtures/bruna-audio-silence.wav",
         "auditorias/bruna-contexto-audio-arquivo-2026-10-13/RELATORIO.md",
         "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json",
         "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",

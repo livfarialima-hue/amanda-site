@@ -1,10 +1,10 @@
 {
-  "status": "activation_pending_documented_asr_recovery",
+  "status": "activation_pending_whisper_primary_validation",
   "recordedAt": "2026-10-14T01:22:51.511Z",
   "candidateFunctionalCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
   "pullRequest": "https://github.com/livfarialima-hue/amanda-site/pull/11",
   "localValidation": {
-    "uniqueTests": 2128,
+    "uniqueTests": 2122,
     "failures": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -330,6 +330,69 @@
         },
         "published": false,
         "diagnosis": "Both calls returned two positive log probabilities among eight scores (maximum 0.000091552734375). Text agreed but confidence remained invalid, so release stayed blocked."
+      },
+      {
+        "deployId": "6acee63199390ef93f436b01",
+        "commit": "aa9e2cabfa38f263d5540e9bfb42f9f19c6c9965",
+        "context": "production",
+        "purpose": "documented_asr_recovery",
+        "status": "failed",
+        "checkedAt": "2026-10-14T02:19:40.477Z",
+        "passedScenarios": 10,
+        "failedScenarios": [
+          {
+            "name": "approved_price_with_photo_request",
+            "errorCode": "timeout",
+            "elapsedMs": 20034
+          }
+        ],
+        "audioCheck": {
+          "status": "failed",
+          "syntheticOnly": true,
+          "patientMessagesSent": 0,
+          "apiCalls": 2,
+          "model": "gpt-4o-transcribe",
+          "elapsedMs": 2604,
+          "transcription": "Qual é o endereço da Clínica Live?",
+          "quality": {
+            "meanLogprob": null,
+            "lowTokenFraction": null,
+            "tokenCount": 8,
+            "scoreDiagnostics": {
+              "missing": 0,
+              "nonNumeric": 0,
+              "nonFinite": 0,
+              "positive": 2,
+              "maxPositive": 0.0000762939453125
+            },
+            "malformedConfidenceCanRetry": true
+          },
+          "confidenceRecovery": {
+            "attempts": 2,
+            "outcome": "text_disagrees",
+            "initialModel": "gpt-4o-transcribe",
+            "confirmationModel": "whisper-1",
+            "initialScoreDiagnostics": {
+              "missing": 0,
+              "nonNumeric": 0,
+              "nonFinite": 0,
+              "positive": 2,
+              "maxPositive": 0.0000762939453125
+            },
+            "confirmationQuality": {
+              "kind": "segment_confidence",
+              "segmentCount": 1,
+              "fieldsValid": true,
+              "textAgrees": true,
+              "lowestSegmentMeanLogprob": -0.4130357801914215,
+              "highestNoSpeechProbability": 0.0008814543252810836,
+              "highestCompressionRatio": 0.8260869383811951
+            }
+          },
+          "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+        },
+        "published": false,
+        "diagnosis": "Price/photo exceeded the unchanged20s limit. GPT confidence remained invalid; Whisper segment confidence passed but the two texts disagreed. Strict agreement blocked audio; no claim of equivalence or which text was correct."
       }
     ],
     "lastPublishedDeployId": "6aced9d34e4ec2c5c72ec53a",

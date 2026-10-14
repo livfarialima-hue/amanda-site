@@ -85,7 +85,9 @@
       "scripts/check-bruna-model-live.mjs",
       "scripts/check-bruna-model-live.test.mjs",
       "scripts/fixtures/README.md",
-      "scripts/fixtures/bruna-audio-address.wav"
+      "scripts/fixtures/bruna-audio-address.wav",
+      "scripts/fixtures/bruna-audio-context.wav",
+      "scripts/fixtures/bruna-audio-silence.wav"
     ],
     "contracts": [
       "site-editorial-copy",
@@ -421,7 +423,7 @@
     "status": "pending",
     "appsScriptVersion": 163,
     "blockers": [
-      "Ativação aguarda aprovação integral do novo build Git com recuperação documentada por whisper-1, texto concordante e confiança válida em todos os segmentos; nenhum prazo ampliado."
+      "Ativação aguarda novo build Git com 15 cenários de conversa e 3 casos de áudio real; transcritor Whisper único, sem repetição para obter confiança melhor."
     ],
     "evidence": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
     "approvedSourceCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972"

@@ -205,5 +205,18 @@
     },
     "productionOpenAiKeyPresent": true,
     "canonicalIdsRevalidated": true
+  },
+  "whisperPrimaryRefresh": {
+    "checkedAt": "2026-10-14T02:31:23.168Z",
+    "remoteProductionHead": "aa9e2cabfa38f263d5540e9bfb42f9f19c6c9965",
+    "netlifyPublishedDeploy": "6aced9d34e4ec2c5c72ec53a",
+    "netlifyPublishedCommit": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+    "appsScriptVersion": 163,
+    "featuresInPublishedDeploy": "off",
+    "productionFlagsConfiguredForNextSuccessfulBuild": true,
+    "lastFailedDeploy": "6acee63199390ef93f436b01",
+    "folderPrivate": true,
+    "productionOpenAiKeyPresent": true,
+    "canonicalIdsRevalidated": true
   }
 }

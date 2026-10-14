@@ -30,11 +30,11 @@
     ]
   },
   "validation": {
-    "coreTests": 2074,
+    "coreTests": 2069,
     "scriptTests": 16,
     "scriptTestsAlsoInCore": 0,
     "additionalContractTests": 38,
-    "uniqueTests": 2128,
+    "uniqueTests": 2122,
     "failed": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -56,7 +56,7 @@
     "afterReviewFocusedTests": 58,
     "finalHistoryFocusedTests": 16,
     "finalNegationFocusedTests": 140,
-    "additionalTests": 54
+    "additionalTests": 53
   },
   "riskReview": [
     "Origem de mídia restrita, assinatura do evento, hash, MIME e tamanho verificados antes do provedor.",
@@ -216,5 +216,30 @@
       "scripts/check-bruna-audio-live.mjs": "a8cfa14d60a9ec82f3c77953f1ffc47b3763374be0ca552477fb58c7dd45d096"
     },
     "behavior": "The single recovery call uses whisper-1 verbose_json and validates every segment, distinct segment confidence metrics, exact complete-text agreement, same verified bytes, shared35s deadline, cache and exclusive claim. Original known weak scores veto recovery. Any discrepancy, low confidence or error keeps human review. All 15 conversations plus live synthetic audio remain required."
+  },
+  "whisperPrimaryReview": {
+    "status": "completed_no_remaining_actionable_findings",
+    "reviewer": "/root/revisao_independente",
+    "reviewedBase": "aa9e2cabfa38f263d5540e9bfb42f9f19c6c9965",
+    "workingDiff": true,
+    "focusedTests": 28,
+    "normalization": "CRLF to LF for text; raw bytes for WAV",
+    "hashes": {
+      "netlify/functions/lib/audio-transcription.mjs": "0f792d20b677f956e356a67a199373e78fc655664d864751951111f91e97d5dc",
+      "netlify/functions/lib/audio-transcription.test.mjs": "f0a609031d1be8d7145f3537e951dc63692dccc042d962fc7e6b648f07603a30",
+      "scripts/check-bruna-audio-live.mjs": "b6633685fae487ac974a7b94c6c7ab63fcb109e0d56c12b9ef25475d53ca3098",
+      "scripts/check-bruna-audio-live.test.mjs": "1c7fb06d5cc7cdfd04a022fde134eacd024b02368e6d6d3d955cec2203673673",
+      "scripts/check-bruna-model-live.test.mjs": "99c873889e5dfb36db3c3527b726c40cd6b1c59f2b7c97d6ee9280ef22dfe4a1",
+      "scripts/fixtures/README.md": "a1ec2058ee6e52efa6332187a9123a490d97ea7ab99913a4dd29967631ae0123",
+      "ops/IMPACT-REGISTRY.json": "a8fc82d3ae01a82941f19a5bdbbe96e8078f27ad71d78813cdfac4db6715d9c7",
+      "scripts/fixtures/bruna-audio-context.wav": "8b3d5a7bfe2148eb579a0db08e1eebef28fba744dcf177f5969ba61b47e20cf4",
+      "scripts/fixtures/bruna-audio-silence.wav": "d303811b8c84619667cd0501342f84ec6cbe69f7aa3856dcf52fabda374c92b8"
+    },
+    "resolvedFindings": [
+      "Time assertion rejects numeric prefixes and changed times",
+      "Context assertion requires human task resolution, not mere document mention",
+      "Name assertion requires affirmative self-identification"
+    ],
+    "behavior": "One Whisper call with conservative segment confidence, original35s deadline and media validation. Uncertain text never retries for a better score. Legacy cache preserves original model and metrics. Three live synthetic fixtures and all15 conversations remain required."
   }
 }

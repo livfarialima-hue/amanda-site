@@ -20,6 +20,7 @@ test('missing and masked production secrets fail before network access', async (
 test('conversation failure still collects audio confidence without allowing deployment', async () => {
   for (const logprob of [-0.1, 0.01]) {
     const destinations = [];
+    let audioIndex = 0;
     const result = await checkBrunaModelLive({ env,
       manifest: { pendingRelease: { liveModelCheckRequired: true, audioTranscriptionCheckRequired: true } },
       fetchImpl: async (url) => {
@@ -28,15 +29,18 @@ test('conversation failure still collects audio confidence without allowing depl
           return Response.json({ status: 'incomplete', model: 'gpt-6.1-sol' });
         }
         assert.equal(url, 'https://api.openai.com/v1/audio/transcriptions');
-        return Response.json({ text: 'Qual é o endereço da Clínica LIV?', logprobs: [{ logprob }] });
+        const texts = audioIndex++ === 0 ? ['Qual é o endereço da Clínica LIV?'] :
+          audioIndex === 2 ? ['Não desejo agendar uma consulta agora. Depois das quinze horas.', 'Meu nome é Elisa. Não procure horários.',
+            'A equipe já confirmou que o documento foi enviado, então essa parte está resolvida.'] : [];
+        return Response.json({ text: texts.join(' '), segments: texts.map(text =>
+          ({ text, avg_logprob: logprob, no_speech_prob: 0.01, compression_ratio: 1.2 })) });
       },
     });
     assert.equal(result.status, 'failed');
     assert.equal(result.results[0].passed, false);
-    assert.deepEqual(destinations, ['https://api.openai.com/v1/responses',
-      ...Array(logprob <= 0 ? 1 : 2).fill('https://api.openai.com/v1/audio/transcriptions')]);
+    assert.deepEqual(destinations, ['https://api.openai.com/v1/responses', ...Array(3).fill('https://api.openai.com/v1/audio/transcriptions')]);
     assert.equal(result.audioCheck.status, logprob <= 0 ? 'passed' : 'failed');
-    assert.equal(result.audioCheck.quality.scoreDiagnostics.positive, logprob > 0 ? 1 : 0);
+    assert.equal(result.audioCheck.checks[0].quality.fieldsValid, logprob <= 0);
     assert.equal(result.patientMessagesSent, 0);
     assert.equal(JSON.stringify(result).includes(env.OPENAI_API_KEY), false);
   }
