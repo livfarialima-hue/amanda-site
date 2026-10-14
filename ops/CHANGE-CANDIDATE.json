@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONTEXTO-AUDIO-ARQUIVO-2026-10-13",
   "title": "Continuidade contextual, transcrição de áudio e arquivo privado de conversas em texto",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "872665ea0f0b04a6639034a8a67af1957861c3a7",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Usuário pediu nesta tarefa correções de contexto, backup de conversas no Drive a partir de agora, transcrição e resposta a áudio quando necessário. Nenhuma mensagem real de teste. A pasta privada vazia foi criada; código e ativação aguardam conclusão dos gates e conferência do candidato."
+    "note": "Implementação, publicação e ampliação de histórico autorizadas pelo usuário nesta tarefa; autorização Google concluída pessoalmente. Sem mensagem real de teste ou rotina operacional manual."
   },
   "risk": {
     "level": "critical",
@@ -35,6 +35,7 @@
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/conversation-archive.mjs",
       "netlify/functions/human-resume.mjs",
       "netlify/functions/lib/appointment-confirmation.mjs",
@@ -45,6 +46,7 @@
       "netlify/functions/lib/bruna-conversion-experience.mjs",
       "netlify/functions/lib/bruna-conversion-experience.test.mjs",
       "netlify/functions/lib/bruna-policy/manifest.json",
+      "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
       "netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
       "netlify/functions/lib/conversation-action-controller.mjs",
       "netlify/functions/lib/conversation-action-controller.test.mjs",
@@ -341,7 +343,7 @@
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed_local_and_production",
     "commands": [
       "git diff --check",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -413,19 +415,23 @@
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
-    "window": "Primeiras conversas naturais, 48 horas e sete dias após ativação.",
+    "window": "Primeiras conversas naturais; 48 horas em 15/10/2026 e sete dias em 20/10/2026, contadas da ativação de 13/10 à noite (America/Sao_Paulo).",
     "signals": [
       "Cobertura das perguntas, correções humanas, transcrições incertas e falhas, idade da fila e recibos do Drive.",
-      "Conter diante de resposta indevida, perda de prioridade humana, duplicidade, exposição de dados ou transcrição inventada."
+      "Conter diante de resposta indevida, perda de prioridade humana, duplicidade, exposição de dados ou transcrição inventada.",
+      "Latência e timeouts de 20 segundos, especialmente preço/fotos; sucesso final não elimina a variabilidade observada nas tentativas anteriores."
     ]
   },
   "release": {
-    "status": "pending",
+    "status": "published_verified",
+    "approvedCommit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
+    "approvedSourceCommit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
+    "netlifyDeployId": "6aceef108fbe857da62bcfac",
     "appsScriptVersion": 163,
-    "blockers": [
-      "Ativação bloqueada por timeout20s repetido em preço/fotos. Próximo build mede separadamente uma chamada sintética após falha, sem converter reprovação em aprovação ou alterar prazo de produção."
-    ],
+    "verifiedAt": "2026-10-14T03:02:29.699Z",
+    "blockers": [],
     "evidence": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
-    "approvedSourceCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972"
+    "drivePlanSha256": "af17f5867d2c783c940efb521a83bd2158d999c9d51f94956c6fca169a491284",
+    "drivePlanVerifiedAt": "2026-10-14T03:05:12.443Z"
   }
 }

@@ -1,7 +1,7 @@
 {
-  "status": "activation_pending_timeout_measurement",
-  "recordedAt": "2026-10-14T01:22:51.511Z",
-  "candidateFunctionalCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
+  "status": "published_verified",
+  "recordedAt": "2026-10-14T03:02:29.699Z",
+  "candidateFunctionalCommit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
   "pullRequest": "https://github.com/livfarialima-hue/amanda-site/pull/11",
   "localValidation": {
     "uniqueTests": 2124,
@@ -11,11 +11,12 @@
     "buildCheck": "passed",
     "releasePreflight": {
       "status": "passed",
-      "exactCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
+      "exactCommit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
       "livePreflightReference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json",
       "approvalBasis": "User explicitly authorized implementation and publication and subsequently requested the full-history extension; reused continuing authorization.",
       "approvalRecordedAt": "2026-10-14T01:11:00Z",
-      "checkedOnCleanWorktree": true
+      "checkedOnCleanWorktree": true,
+      "livePreflightAt": "2026-10-14T02:53:13.198Z"
     },
     "independentReview": "completed_no_remaining_actionable_findings"
   },
@@ -23,22 +24,50 @@
     {
       "kind": "manual",
       "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-      "sha256": "6b5644c4b62d131df8843c2399c6d4eb5f2a3fe806cc5cccee8d0ddaeae455f1",
+      "sha256": "645d74247178b18e1b213c97cab81511aa070cbd34a5c3ca7194f165a9b5b598",
       "readbackMatches": true,
-      "verifiedAt": "2026-10-14T00:47:58.647Z"
+      "verifiedAt": "2026-10-14T03:05:12.443Z"
     },
     {
       "kind": "executive_plan",
       "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "sha256": "5a9d68af80eade3ced18e99f333cc8026bb32d112de191e42f40a4060bd34493",
+      "sha256": "af17f5867d2c783c940efb521a83bd2158d999c9d51f94956c6fca169a491284",
       "readbackMatches": true,
-      "verifiedAt": "2026-10-14T00:47:58.647Z"
+      "verifiedAt": "2026-10-14T03:05:12.443Z"
     }
   ],
   "archive": {
     "folderId": "1NZFwgLSC2cUefzi73Nbn1nFaeJX8g85n",
-    "status": "empty_prepared_not_active",
-    "firstRealReceipt": null
+    "status": "active_initialized_waiting_first_natural_event_receipt",
+    "startAt": "2026-10-14T01:29:30.574Z",
+    "firstRealReceipt": null,
+    "lastObservedReceipt": null,
+    "diagnostic": {
+      "verifiedAt": "2026-10-14T03:01:49Z",
+      "function": "diagnosticarArquivoConversas",
+      "readOnly": true,
+      "result": {
+        "ok": true,
+        "folderId": "1NZFwgLSC2cUefzi73Nbn1nFaeJX8g85n",
+        "configured": true,
+        "initialized": true,
+        "startAt": "2026-10-14T01:29:30.574Z"
+      },
+      "naturalSchedule": {
+        "loggedAt": "2026-10-14T03:01:09Z",
+        "source": "conversation_archive",
+        "status": "caught_up",
+        "rows": 0,
+        "receipts": [],
+        "manuallyTriggered": false
+      }
+    },
+    "permissions": {
+      "userPrincipals": 3,
+      "publicOrDomainPermissions": 0
+    },
+    "mediaFilesIncluded": false,
+    "manualRuns": 0
   },
   "patientMessagesSent": 0,
   "manualOperationalRoutinesRun": 0,
@@ -77,8 +106,8 @@
         "lastReceipt": null
       }
     },
-    "additionalFileRequired": "LeadClassification.gs",
-    "codeUpdateRequired": true
+    "additionalFileRequired": null,
+    "codeUpdateRequired": false
   },
   "providerReadOnlyAudit": {
     "authenticated": true,
@@ -121,7 +150,9 @@
     "versionBefore": 162,
     "triggerCount": 11,
     "triggersCheckedAt": "2026-10-14T01:22:51.511Z",
-    "triggerChanges": 0
+    "triggerChanges": 0,
+    "equivalentInFunctionalCommit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
+    "normalization": "CRLF to LF, trimEnd"
   },
   "productionBaseline": {
     "appsScriptVersion": 162,
@@ -130,9 +161,9 @@
     "newFeaturesActive": false
   },
   "netlify": {
-    "defaultOffDeployId": "6aced7373b54b4e6948c444a",
-    "commit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
-    "status": "failed_no_production_change",
+    "defaultOffDeployId": "6aced9d34e4ec2c5c72ec53a",
+    "commit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
+    "status": "published_verified",
     "gitProductionBranch": "reestruturacao-site",
     "previewPromoted": false,
     "attempts": [
@@ -659,8 +690,823 @@
         "diagnosis": "Concise-state instruction did not prevent the20s timeout. Audio3/3passed. Separate synthetic measurement added for diagnosis; cannot turn a failed runtime call into a pass."
       }
     ],
-    "lastPublishedDeployId": "6aced9d34e4ec2c5c72ec53a",
-    "lastPublishedCommit": "684d504d5a3f0e13e4b62c8766480259097cafa5",
-    "newFeaturesActive": false
+    "lastPublishedDeployId": "6aceef108fbe857da62bcfac",
+    "lastPublishedCommit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
+    "newFeaturesActive": true,
+    "activationDeployId": "6aceef108fbe857da62bcfac",
+    "activationEvidence": {
+      "audio": "runtime_health",
+      "archive": "runtime_health_and_natural_schedule_initialized",
+      "fullHistory": "production_configuration_and_deployed_source; synthetic_adapter_gate_passed; natural_conversation_not_yet_observed"
+    },
+    "publishedAt": "2026-10-14T02:58:01.208Z",
+    "buildCommand": "node scripts/check-bruna-model-live.mjs && node scripts/build-static-site.mjs",
+    "publishDirectory": "tmp/netlify-deploy",
+    "functions": [
+      "appointment-reminder",
+      "appointment-review",
+      "attribution-journey",
+      "attribution-journey-purge",
+      "classify-leads",
+      "classify-leads-background",
+      "conversation-archive",
+      "human-resume",
+      "human-resume-background",
+      "post-consult-followup",
+      "scheduled-followup",
+      "synthetic-integration-health",
+      "ycloud-recovery",
+      "ycloud-recovery-background",
+      "ycloud-webhook"
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "conversation-archive"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ],
+    "defaultOffVerification": {
+      "metadata": {
+        "id": "6aced9d34e4ec2c5c72ec53a",
+        "site_id": "c33facb6-eafc-4635-99d6-068bf8707227",
+        "state": "ready",
+        "commit_ref": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+        "branch": "reestruturacao-site",
+        "context": "production",
+        "published_at": "2026-10-14T01:27:19.838Z",
+        "manual_deploy": false,
+        "available_functions": [
+          "appointment-reminder",
+          "appointment-review",
+          "attribution-journey",
+          "attribution-journey-purge",
+          "classify-leads",
+          "classify-leads-background",
+          "conversation-archive",
+          "human-resume",
+          "human-resume-background",
+          "post-consult-followup",
+          "scheduled-followup",
+          "synthetic-integration-health",
+          "ycloud-recovery",
+          "ycloud-recovery-background",
+          "ycloud-webhook"
+        ],
+        "function_schedules": [
+          {
+            "cron": "17 6 * * *",
+            "name": "attribution-journey-purge"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "classify-leads"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "conversation-archive"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "human-resume"
+          },
+          {
+            "cron": "17 12 * * *",
+            "name": "synthetic-integration-health"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "ycloud-recovery"
+          }
+        ]
+      },
+      "http": {
+        "checkedAt": "2026-10-14T01:28:08.799Z",
+        "results": [
+          {
+            "name": "domain",
+            "url": "https://draamandaschroeder.com.br",
+            "method": "GET",
+            "status": 200
+          },
+          {
+            "name": "webhook",
+            "url": "https://draamandaschroeder.com.br/api/ycloud/webhook",
+            "method": "GET",
+            "status": 200,
+            "response": "{\"ok\":true,\"service\":\"ycloud-webhook\",\"apiKeyConfigured\":true,\"signatureProtection\":\"active\",\"sheetsWebhookConfigured\":true,\"sheetsSecretConfigured\":true,\"openAIConfigured\":true,\"audioTranscription\":\"disabled\",\"conversationArchive\":\"disabled\",\"reviewAlertConfigured\":true,\"appointmentReviewEnabled\":true,\"automationMode\":\"active\",\"conversionExperience\":\"bruna-conversion-v1\",\"processingMode\":\"durable_background_intake\",\"contactPreferencesGuard\":\"active\",\"internalPhoneExclusionConfigured\":true,\"leadDeliveryRetry\":\"single_idempotent_transient\",\"leadDeliveryFallback\":\"acquisition_only\",\"leadFailureEmailAlert\":\"required_after_retries\",\"messageCostObservability\":\"delivered_event_idempotent\"}"
+          },
+          {
+            "name": "unsigned_webhook",
+            "url": "https://draamandaschroeder.com.br/api/ycloud/webhook",
+            "method": "POST",
+            "status": 401
+          }
+        ]
+      },
+      "flagsAbsentAtVerification": true
+    },
+    "defaultOffLiveGate": {
+      "status": "passed",
+      "checkedAt": "2026-10-14T01:27:04.196Z",
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "syntheticOnly": true,
+      "patientMessagesSent": 0,
+      "results": [
+        {
+          "name": "consultation_contextual",
+          "passed": true,
+          "elapsedMs": 10425,
+          "requestCount": 1
+        },
+        {
+          "name": "lifting_information",
+          "passed": true,
+          "elapsedMs": 9887,
+          "requestCount": 1
+        },
+        {
+          "name": "personal_question_with_reference",
+          "passed": true,
+          "elapsedMs": 10619,
+          "requestCount": 1
+        },
+        {
+          "name": "accepted_information_offer",
+          "passed": true,
+          "elapsedMs": 10333,
+          "requestCount": 1
+        },
+        {
+          "name": "corrected_procedure",
+          "passed": true,
+          "elapsedMs": 12579,
+          "requestCount": 1
+        },
+        {
+          "name": "unknown_clinic_fact",
+          "passed": true,
+          "elapsedMs": 10446,
+          "requestCount": 1
+        },
+        {
+          "name": "semantic_approved_knowledge",
+          "passed": true,
+          "elapsedMs": 6825,
+          "requestCount": 1
+        },
+        {
+          "name": "human_clinical_task_administrative_question",
+          "passed": true,
+          "elapsedMs": 6394,
+          "requestCount": 1
+        },
+        {
+          "name": "consultation_preparation",
+          "passed": true,
+          "elapsedMs": 7567,
+          "requestCount": 1
+        },
+        {
+          "name": "clinical_urgency",
+          "passed": true,
+          "elapsedMs": 6233,
+          "requestCount": 1
+        },
+        {
+          "name": "approved_price_with_photo_request",
+          "passed": true,
+          "elapsedMs": 15456,
+          "requestCount": 1
+        },
+        {
+          "name": "full_history_name_correction",
+          "passed": true,
+          "elapsedMs": 13169,
+          "requestCount": 1
+        },
+        {
+          "name": "full_history_resolved_human_task",
+          "passed": true,
+          "elapsedMs": 4912,
+          "requestCount": 1
+        },
+        {
+          "name": "classification",
+          "passed": true,
+          "elapsedMs": 4928,
+          "requestCount": 1
+        },
+        {
+          "name": "followup_declined",
+          "passed": true,
+          "elapsedMs": 2823,
+          "requestCount": 1
+        }
+      ],
+      "audioCheck": {
+        "status": "passed",
+        "syntheticOnly": true,
+        "patientMessagesSent": 0,
+        "apiCalls": 1,
+        "model": "gpt-4o-transcribe",
+        "elapsedMs": 536,
+        "transcription": "Qual é o endereço da Clínica Live?",
+        "quality": {
+          "meanLogprob": -0.1407817333515009,
+          "lowTokenFraction": 0,
+          "tokenCount": 8
+        },
+        "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+      }
+    },
+    "activationLiveGate": {
+      "status": "passed",
+      "checkedAt": "2026-10-14T02:57:45.456Z",
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "syntheticOnly": true,
+      "patientMessagesSent": 0,
+      "results": [
+        {
+          "name": "consultation_contextual",
+          "passed": true,
+          "elapsedMs": 7857,
+          "requestCount": 1
+        },
+        {
+          "name": "lifting_information",
+          "passed": true,
+          "elapsedMs": 6026,
+          "requestCount": 1
+        },
+        {
+          "name": "personal_question_with_reference",
+          "passed": true,
+          "elapsedMs": 12167,
+          "requestCount": 1
+        },
+        {
+          "name": "accepted_information_offer",
+          "passed": true,
+          "elapsedMs": 12401,
+          "requestCount": 1
+        },
+        {
+          "name": "corrected_procedure",
+          "passed": true,
+          "elapsedMs": 12037,
+          "requestCount": 1
+        },
+        {
+          "name": "unknown_clinic_fact",
+          "passed": true,
+          "elapsedMs": 10389,
+          "requestCount": 1
+        },
+        {
+          "name": "semantic_approved_knowledge",
+          "passed": true,
+          "elapsedMs": 6803,
+          "requestCount": 1
+        },
+        {
+          "name": "human_clinical_task_administrative_question",
+          "passed": true,
+          "elapsedMs": 9264,
+          "requestCount": 1
+        },
+        {
+          "name": "consultation_preparation",
+          "passed": true,
+          "elapsedMs": 7538,
+          "requestCount": 1
+        },
+        {
+          "name": "clinical_urgency",
+          "passed": true,
+          "elapsedMs": 5437,
+          "requestCount": 1
+        },
+        {
+          "name": "approved_price_with_photo_request",
+          "passed": true,
+          "elapsedMs": 18806,
+          "requestCount": 1
+        },
+        {
+          "name": "full_history_name_correction",
+          "passed": true,
+          "elapsedMs": 8844,
+          "requestCount": 1
+        },
+        {
+          "name": "full_history_resolved_human_task",
+          "passed": true,
+          "elapsedMs": 4774,
+          "requestCount": 1
+        },
+        {
+          "name": "classification",
+          "passed": true,
+          "elapsedMs": 4223,
+          "requestCount": 1
+        },
+        {
+          "name": "followup_declined",
+          "passed": true,
+          "elapsedMs": 3220,
+          "requestCount": 1
+        }
+      ],
+      "audioCheck": {
+        "status": "passed",
+        "syntheticOnly": true,
+        "patientMessagesSent": 0,
+        "model": "whisper-1",
+        "apiCalls": 3,
+        "elapsedMs": 7020,
+        "checks": [
+          {
+            "name": "address",
+            "passed": true,
+            "apiCalls": 1,
+            "model": "whisper-1",
+            "elapsedMs": 1138,
+            "transcription": "Qual é o endereço da Clínica Livre?",
+            "transcriptStatus": "transcribed",
+            "autoReplyEligible": true,
+            "quality": {
+              "kind": "segment_confidence",
+              "segmentCount": 1,
+              "fieldsValid": true,
+              "textAgrees": true,
+              "lowestSegmentMeanLogprob": -0.4130357801914215,
+              "highestNoSpeechProbability": 0.0008814543252810836,
+              "highestCompressionRatio": 0.8260869383811951
+            },
+            "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+          },
+          {
+            "name": "context",
+            "passed": true,
+            "apiCalls": 1,
+            "model": "whisper-1",
+            "elapsedMs": 5260,
+            "transcription": "Olá, quero deixar claro que não desejo agendar uma consulta agora. Estou apenas organizando as minhas dúvidas para uma conversa futura. Durante a semana, só consigo conversar depois das 15 horas, porque trabalho pela manhã. Meu nome é Elisa, e prefiro ser chamada assim. A equipe já confirmou que o documento foi enviado, então essa parte está resolvida. Ainda quero entender como funciona a avaliação presencial e o que devo levar no dia em que decidir marcar. Por enquanto, não procure horários para mim. Vou ler as informações com calma e depois entrar em contato novamente. Obrigada por guardar esse contexto e respeitar o meu tempo.",
+            "transcriptStatus": "transcribed",
+            "autoReplyEligible": true,
+            "quality": {
+              "kind": "segment_confidence",
+              "segmentCount": 9,
+              "fieldsValid": true,
+              "textAgrees": true,
+              "lowestSegmentMeanLogprob": -0.3264618515968323,
+              "highestNoSpeechProbability": 0.014948219060897827,
+              "highestCompressionRatio": 1.3806818723678589
+            },
+            "fixtureSha256": "8b3d5a7bfe2148eb579a0db08e1eebef28fba744dcf177f5969ba61b47e20cf4"
+          },
+          {
+            "name": "silence",
+            "passed": true,
+            "apiCalls": 1,
+            "model": "whisper-1",
+            "elapsedMs": 617,
+            "transcription": "you",
+            "transcriptStatus": "uncertain",
+            "autoReplyEligible": false,
+            "quality": {
+              "kind": "segment_confidence",
+              "segmentCount": 1,
+              "fieldsValid": true,
+              "textAgrees": true,
+              "lowestSegmentMeanLogprob": -0.5146503448486328,
+              "highestNoSpeechProbability": 0.9425907731056213,
+              "highestCompressionRatio": 0.27272728085517883
+            },
+            "fixtureSha256": "d303811b8c84619667cd0501342f84ec6cbe69f7aa3856dcf52fabda374c92b8"
+          }
+        ]
+      }
+    },
+    "http": {
+      "checkedAt": "2026-10-14T02:58:57.458Z",
+      "deployId": "6aceef108fbe857da62bcfac",
+      "commit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
+      "results": [
+        {
+          "name": "domain_site",
+          "url": "https://draamandaschroeder.com.br",
+          "method": "GET",
+          "status": 200
+        },
+        {
+          "name": "domain_webhook",
+          "url": "https://draamandaschroeder.com.br/api/ycloud/webhook",
+          "method": "GET",
+          "status": 200,
+          "response": {
+            "ok": true,
+            "service": "ycloud-webhook",
+            "apiKeyConfigured": true,
+            "signatureProtection": "active",
+            "sheetsWebhookConfigured": true,
+            "sheetsSecretConfigured": true,
+            "openAIConfigured": true,
+            "audioTranscription": "enabled",
+            "conversationArchive": "enabled",
+            "reviewAlertConfigured": true,
+            "appointmentReviewEnabled": true,
+            "automationMode": "active",
+            "conversionExperience": "bruna-conversion-v1",
+            "processingMode": "durable_background_intake",
+            "contactPreferencesGuard": "active",
+            "internalPhoneExclusionConfigured": true,
+            "leadDeliveryRetry": "single_idempotent_transient",
+            "leadDeliveryFallback": "acquisition_only",
+            "leadFailureEmailAlert": "required_after_retries",
+            "messageCostObservability": "delivered_event_idempotent"
+          }
+        },
+        {
+          "name": "branch_site",
+          "url": "https://reestruturacao-site--inspiring-sprite-b35ca4.netlify.app",
+          "method": "GET",
+          "status": 200
+        },
+        {
+          "name": "branch_webhook",
+          "url": "https://reestruturacao-site--inspiring-sprite-b35ca4.netlify.app/api/ycloud/webhook",
+          "method": "GET",
+          "status": 200,
+          "response": {
+            "ok": true,
+            "service": "ycloud-webhook",
+            "apiKeyConfigured": true,
+            "signatureProtection": "active",
+            "sheetsWebhookConfigured": true,
+            "sheetsSecretConfigured": true,
+            "openAIConfigured": true,
+            "audioTranscription": "enabled",
+            "conversationArchive": "enabled",
+            "reviewAlertConfigured": true,
+            "appointmentReviewEnabled": true,
+            "automationMode": "active",
+            "conversionExperience": "bruna-conversion-v1",
+            "processingMode": "durable_background_intake",
+            "contactPreferencesGuard": "active",
+            "internalPhoneExclusionConfigured": true,
+            "leadDeliveryRetry": "single_idempotent_transient",
+            "leadDeliveryFallback": "acquisition_only",
+            "leadFailureEmailAlert": "required_after_retries",
+            "messageCostObservability": "delivered_event_idempotent"
+          }
+        },
+        {
+          "name": "immutable_site",
+          "url": "https://6aceef108fbe857da62bcfac--inspiring-sprite-b35ca4.netlify.app",
+          "method": "GET",
+          "status": 200
+        },
+        {
+          "name": "immutable_webhook",
+          "url": "https://6aceef108fbe857da62bcfac--inspiring-sprite-b35ca4.netlify.app/api/ycloud/webhook",
+          "method": "GET",
+          "status": 200,
+          "response": {
+            "ok": true,
+            "service": "ycloud-webhook",
+            "apiKeyConfigured": true,
+            "signatureProtection": "active",
+            "sheetsWebhookConfigured": true,
+            "sheetsSecretConfigured": true,
+            "openAIConfigured": true,
+            "audioTranscription": "enabled",
+            "conversationArchive": "enabled",
+            "reviewAlertConfigured": true,
+            "appointmentReviewEnabled": true,
+            "automationMode": "active",
+            "conversionExperience": "bruna-conversion-v1",
+            "processingMode": "durable_background_intake",
+            "contactPreferencesGuard": "active",
+            "internalPhoneExclusionConfigured": true,
+            "leadDeliveryRetry": "single_idempotent_transient",
+            "leadDeliveryFallback": "acquisition_only",
+            "leadFailureEmailAlert": "required_after_retries",
+            "messageCostObservability": "delivered_event_idempotent"
+          }
+        },
+        {
+          "name": "unsigned_webhook",
+          "method": "POST",
+          "status": 401
+        }
+      ],
+      "status": "passed"
+    }
+  },
+  "previousDriveProjections": [
+    {
+      "kind": "manual",
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "6b5644c4b62d131df8843c2399c6d4eb5f2a3fe806cc5cccee8d0ddaeae455f1",
+      "readbackMatches": true,
+      "verifiedAt": "2026-10-14T00:47:58.647Z"
+    },
+    {
+      "kind": "executive_plan",
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "5a9d68af80eade3ced18e99f333cc8026bb32d112de191e42f40a4060bd34493",
+      "readbackMatches": true,
+      "verifiedAt": "2026-10-14T00:47:58.647Z"
+    }
+  ],
+  "activation": {
+    "configuredAt": "2026-10-14T01:29:30.574Z",
+    "effectiveAt": "2026-10-14T02:58:01.208Z",
+    "flags": [
+      {
+        "key": "WHATSAPP_AUDIO_TRANSCRIPTION_ENABLED",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ],
+        "values": [
+          {
+            "context": "dev",
+            "value": ""
+          },
+          {
+            "context": "branch-deploy",
+            "value": ""
+          },
+          {
+            "context": "deploy-preview",
+            "value": ""
+          },
+          {
+            "context": "production",
+            "value": "true"
+          },
+          {
+            "context": "dev-server",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "key": "WHATSAPP_CONVERSATION_ARCHIVE_START_AT",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ],
+        "values": [
+          {
+            "context": "dev",
+            "value": ""
+          },
+          {
+            "context": "branch-deploy",
+            "value": ""
+          },
+          {
+            "context": "deploy-preview",
+            "value": ""
+          },
+          {
+            "context": "production",
+            "value": "2026-10-14T01:29:30.574Z"
+          },
+          {
+            "context": "dev-server",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "key": "WHATSAPP_CONVERSATION_ARCHIVE_ENABLED",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ],
+        "values": [
+          {
+            "context": "dev",
+            "value": ""
+          },
+          {
+            "context": "branch-deploy",
+            "value": ""
+          },
+          {
+            "context": "deploy-preview",
+            "value": ""
+          },
+          {
+            "context": "production",
+            "value": "true"
+          },
+          {
+            "context": "dev-server",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "key": "WHATSAPP_FULL_HISTORY_ENABLED",
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ],
+        "values": [
+          {
+            "context": "dev",
+            "value": ""
+          },
+          {
+            "context": "branch-deploy",
+            "value": ""
+          },
+          {
+            "context": "deploy-preview",
+            "value": ""
+          },
+          {
+            "context": "production",
+            "value": "true"
+          },
+          {
+            "context": "dev-server",
+            "value": ""
+          }
+        ]
+      }
+    ],
+    "configurationMethod": "Netlify UI; connector upsert claimed success but readback showed no persisted changes",
+    "verification": {
+      "verifiedAt": "2026-10-14T02:59:26.279Z",
+      "deployId": "6aceef108fbe857da62bcfac",
+      "flags": [
+        {
+          "key": "WHATSAPP_CONVERSATION_ARCHIVE_START_AT",
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "values": [
+            {
+              "context": "dev",
+              "value": ""
+            },
+            {
+              "context": "branch-deploy",
+              "value": ""
+            },
+            {
+              "context": "deploy-preview",
+              "value": ""
+            },
+            {
+              "context": "production",
+              "value": "2026-10-14T01:29:30.574Z"
+            },
+            {
+              "context": "dev-server",
+              "value": ""
+            }
+          ]
+        },
+        {
+          "key": "WHATSAPP_CONVERSATION_ARCHIVE_ENABLED",
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "values": [
+            {
+              "context": "dev",
+              "value": ""
+            },
+            {
+              "context": "branch-deploy",
+              "value": ""
+            },
+            {
+              "context": "deploy-preview",
+              "value": ""
+            },
+            {
+              "context": "production",
+              "value": "true"
+            },
+            {
+              "context": "dev-server",
+              "value": ""
+            }
+          ]
+        },
+        {
+          "key": "WHATSAPP_AUDIO_TRANSCRIPTION_ENABLED",
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "values": [
+            {
+              "context": "dev",
+              "value": ""
+            },
+            {
+              "context": "branch-deploy",
+              "value": ""
+            },
+            {
+              "context": "deploy-preview",
+              "value": ""
+            },
+            {
+              "context": "production",
+              "value": "true"
+            },
+            {
+              "context": "dev-server",
+              "value": ""
+            }
+          ]
+        },
+        {
+          "key": "WHATSAPP_FULL_HISTORY_ENABLED",
+          "scopes": [
+            "builds",
+            "functions",
+            "post_processing",
+            "runtime"
+          ],
+          "values": [
+            {
+              "context": "dev",
+              "value": ""
+            },
+            {
+              "context": "branch-deploy",
+              "value": ""
+            },
+            {
+              "context": "deploy-preview",
+              "value": ""
+            },
+            {
+              "context": "production",
+              "value": "true"
+            },
+            {
+              "context": "dev-server",
+              "value": ""
+            }
+          ]
+        }
+      ],
+      "productionOpenAiKeyPresent": true,
+      "fullHistoryEvidence": "production_configuration_and_matching_deployed_source; real_model_synthetic_adapter_gate; no_natural_conversation_observed"
+    }
+  },
+  "closeout": {
+    "documentationCommitPending": true,
+    "sourceAndReceiptsReconciled": true
   }
 }

@@ -223,8 +223,10 @@ Revise conteúdo, risco, modo, validade e limites na aba `Respostas Aprovadas`, 
 Sem migração de cabeçalhos, novos triggers ou execução retroativa. KnowledgeBase.gs e CentralAtendimento.gs foram comparados, salvos e relidos equivalentes a 30390877; v162 publicada em 13/10/2026, 19:50 BRT, no deployment existente, com ID, URL, proprietário e acesso preservados. Netlify 6acebbd4a25f1e95fc6d90d3 / 13bbc6f59e80cd41d5f4651cf47e171f90d0335b publicado depois, com os 12 cenários reais aprovados. Rollback: Apps Script v161, preservando dados, filas e recibos. Evidência: `auditorias/bruna-autonomia-2026-10-11/PUBLICACAO.json`.
 
 
-## Arquivo contínuo em texto — candidato 2026-10-13.1
+## Arquivo contínuo em texto — publicado na v163 (13/10/2026)
 
 ConversationArchive.gs e a action autenticada archive_conversations projetam revisões de texto da fila durável Netlify na pasta restrita 1NZFwgLSC2cUefzi73Nbn1nFaeJX8g85n. A action get_conversation_archive_status e diagnosticarArquivoConversas são somente leitura e validam o acesso ao Drive sem rodar arquivo ou atendimento. DriveApp pode exigir consentimento Google. Não há novo acionador Apps Script nem leitura ou alteração de CRM nesta projeção.
 
 Netlify: WHATSAPP_CONVERSATION_ARCHIVE_ENABLED=true e WHATSAPP_CONVERSATION_ARCHIVE_START_AT em ISO UTC, somente após publicação verificada. O início torna-se imutável. O agendamento de cinco minutos processa até três revisões, com arquivo individual imutável, conteúdo e hash relidos, sem cursor baseado em linhas da planilha. Um ACK perdido não duplica arquivos; transcrição posterior gera revisão da mesma identidade. Pasta pública ou hash divergente interrompem a projeção. Preservar arquivos, fila e recibos em rollback; nunca contar inicialização vazia como backup. Acompanhar idade da fila.
+
+Ativação Netlify 6aceef108fbe857da62bcfac / 769cee33281516883b89ed150ba61ce8f6ccaaa4 em 2026-10-14T02:58:01.208Z. O agendamento natural inicializou o arquivo; ainda não havia recibo de conversa nova na leitura final. Isso confirma ativação e acesso, mas não comprova o primeiro backup de conteúdo. Sem execução manual ou novo acionador Apps Script. Recibos em `auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json`.

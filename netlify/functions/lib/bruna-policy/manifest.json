@@ -17,20 +17,20 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
-    "lastObservedProductionCommit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
-    "functionalDeployId": "6acebbd4a25f1e95fc6d90d3",
-    "lastObservedProductionDeployId": "6acebbd4a25f1e95fc6d90d3",
-    "rollbackCommit": "590121d96c02bbfbb5bb01c53b30ab83a6a658b8",
-    "rollbackDeployId": "6acbd59e31a918000966a0af",
-    "rollbackConstraint": "Dados, filas, pausas, recibos e conhecimento aprovado; sem replay. Restaurar Apps Script v161 no mesmo deployment se necessário.",
-    "publishedAt": "2026-10-13T23:18:33.483Z",
+    "functionalCommit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
+    "lastObservedProductionCommit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
+    "functionalDeployId": "6aceef108fbe857da62bcfac",
+    "lastObservedProductionDeployId": "6aceef108fbe857da62bcfac",
+    "rollbackCommit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
+    "rollbackDeployId": "6acebbd4a25f1e95fc6d90d3",
+    "rollbackConstraint": "Desligar flags de histórico, áudio e arquivo; restaurar Apps Script v162 no mesmo deployment. Preservar dados, filas, backups, transcrições e recibos; sem replay.",
+    "publishedAt": "2026-10-14T02:58:01.208Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-13T23:22:06.823Z",
-    "candidateChangeId": "BRUNA-AUTONOMIA-2026-10-11",
+    "lastVerifiedAt": "2026-10-14T03:02:29.699Z",
+    "candidateChangeId": "BRUNA-CONTEXTO-AUDIO-ARQUIVO-2026-10-13",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-11.4",
-    "appsScriptVersion": 162
+    "bundleVersion": "2026-10-13.1",
+    "appsScriptVersion": 163
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
@@ -41,9 +41,9 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "6b5644c4b62d131df8843c2399c6d4eb5f2a3fe806cc5cccee8d0ddaeae455f1",
+    "driveProjectionSha256": "645d74247178b18e1b213c97cab81511aa070cbd34a5c3ca7194f165a9b5b598",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU",
-    "driveProjectionVerifiedAt": "2026-10-14T00:47:58.647Z"
+    "driveProjectionVerifiedAt": "2026-10-14T03:05:12.443Z"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -51,13 +51,13 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-CONTEXTO-AUDIO-ARQUIVO-2026-10-13",
-    "status": "tested_local",
+    "status": "published_verified",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "baselineCommit": "872665ea0f0b04a6639034a8a67af1957861c3a7",
     "bundleVersion": "2026-10-13.1",
     "googleConsentPending": false,
-    "sourceCommit": null,
+    "sourceCommit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
     "fullHistoryCheckRequired": true,
     "liveModelScenarioCount": 15
   }

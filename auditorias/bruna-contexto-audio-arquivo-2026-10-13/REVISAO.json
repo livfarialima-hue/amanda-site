@@ -31,7 +31,7 @@
   },
   "validation": {
     "coreTests": 2069,
-    "scriptTests": 16,
+    "scriptTests": 17,
     "scriptTestsAlsoInCore": 0,
     "additionalContractTests": 38,
     "uniqueTests": 2124,
@@ -45,12 +45,12 @@
       "auditAndOpsFiles": 0
     },
     "diffCheck": "passed",
-    "liveModelCheck": "pending_hosted_production_build",
-    "liveAudioCheck": "pending_hosted_production_build",
+    "liveModelCheck": "passed_15_hosted_production_scenarios",
+    "liveAudioCheck": "passed_3_synthetic_audio_fixtures",
     "opsCheck": "SYNC_PENDING",
-    "rollbackPatchReverseCheck": "passed_without_mutation_for_4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
-    "status": "passed_local",
-    "scopeFiles": 69,
+    "rollbackPatchReverseCheck": "passed_without_mutation_for_769cee33281516883b89ed150ba61ce8f6ccaaa4",
+    "status": "passed_local_and_production",
+    "scopeFiles": 73,
     "liveModelScenarios": 15,
     "fullHistoryFocusedTests": 173,
     "afterReviewFocusedTests": 58,
@@ -268,5 +268,22 @@
       "scripts/check-bruna-model-live.test.mjs": "9614b3cbf04c644870644ef8974634b4d4908eec1be7710f2d4fd97365425296"
     },
     "behavior": "One separate synthetic diagnostic after timeout. It never changes the original failed gate or runtime deadline. A new inference does not prove the cause of an earlier timeout."
+  },
+  "closeoutReview": {
+    "status": "completed_no_remaining_actionable_findings",
+    "reviewer": "/root/revisao_independente",
+    "focusedTests": 21,
+    "checkedAt": "2026-10-14T03:07:43.518Z",
+    "hashes": {
+      "netlify/functions/lib/bruna-policy/regression-governance.test.mjs": "c6e3c520b1e3856d61a8fe93fa6de3235f1a077adb5e48017ad53271ac5dfdb6"
+    },
+    "resolvedFindings": [
+      "HTTP receipt written only after successful assertions and validated at closeout",
+      "Drive claim backed by both readback hashes",
+      "Full-history configuration distinguished from natural-conversation verification",
+      "Three audio fixtures, archive folder and immutable start verified",
+      "Final test and scope counts reconciled"
+    ],
+    "behavior": "Release marker retains all required production gates after verified publication. Documentation-only reconciliation does not claim a first natural conversation backup."
   }
 }

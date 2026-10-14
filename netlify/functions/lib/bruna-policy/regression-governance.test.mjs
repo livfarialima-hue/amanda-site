@@ -75,11 +75,25 @@ test("the published manifest matches the current bundle and closes the candidate
   assert.equal(manifest.release.status, "published");
   assert.equal(manifest.promptVersion, `bruna-concierge-${manifest.bundleVersion}`);
   if (manifest.pendingRelease) {
-    assert.notEqual(manifest.release.bundleVersion, manifest.bundleVersion);
     assert.equal(manifest.pendingRelease.bundleVersion, manifest.bundleVersion);
     const candidate = await readJson("../../../../ops/CHANGE-CANDIDATE.json");
     assert.equal(manifest.pendingRelease.changeId, candidate.changeId);
-    assert.ok(["implementing_local", "tested_local", "committed"].includes(candidate.status));
+    if (manifest.pendingRelease.status === "published_verified") {
+      // Retain the production build gates after closeout. Deleting this marker
+      // would make the next Git production build silently skip the live checks.
+      assert.equal(candidate.status, "published_verified");
+      assert.equal(manifest.release.bundleVersion, manifest.bundleVersion);
+      assert.equal(manifest.pendingRelease.sourceCommit, manifest.release.functionalCommit);
+      assert.equal(candidate.release.approvedCommit, manifest.release.functionalCommit);
+      assert.equal(candidate.release.netlifyDeployId, manifest.release.functionalDeployId);
+      assert.equal(manifest.pendingRelease.liveModelCheckRequired, true);
+      assert.equal(manifest.pendingRelease.audioTranscriptionCheckRequired, true);
+      assert.equal(manifest.pendingRelease.fullHistoryCheckRequired, true);
+      assert.equal(manifest.pendingRelease.liveModelScenarioCount, 15);
+    } else {
+      assert.notEqual(manifest.release.bundleVersion, manifest.bundleVersion);
+      assert.ok(["implementing_local", "tested_local", "committed"].includes(candidate.status));
+    }
   } else {
     assert.equal(manifest.release.bundleVersion, manifest.bundleVersion);
   }
