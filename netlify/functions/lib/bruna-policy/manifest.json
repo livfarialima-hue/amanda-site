@@ -38,12 +38,12 @@
     "driveActiveFolderId": "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue",
     "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
     "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
-    "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
+    "driveClosedAuditFileId": "1EtUNUjSPjSMPobKGmRLRDA89KBDQLMHE",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "645d74247178b18e1b213c97cab81511aa070cbd34a5c3ca7194f165a9b5b598",
+    "driveProjectionSha256": "9cbb487add833352e5ee913ff1278473cf078fa423d2bb03258b11937e5b5f00",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU",
-    "driveProjectionVerifiedAt": "2026-10-14T03:05:12.443Z"
+    "driveProjectionVerifiedAt": "2026-10-14T10:05:00.7372232Z"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",

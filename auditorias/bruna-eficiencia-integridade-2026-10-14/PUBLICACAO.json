@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "status": "platforms_verified_drive_git_pending",
+  "status": "published_verified",
   "candidateFunctionalCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
-  "verifiedAt": "2026-10-14T10:03:00.141Z",
+  "verifiedAt": "2026-10-14T10:05:00.9628529Z",
   "authorization": {
     "commit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
     "approvedBy": "Daniel",
@@ -4590,16 +4590,54 @@
     "pluginChanged": false
   },
   "drive": {
-    "status": "pending",
+    "status": "verified",
     "manual": {
       "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
       "localPath": "docs/estrategia-abordagem-bruna.md",
-      "localSha256": "9cbb487add833352e5ee913ff1278473cf078fa423d2bb03258b11937e5b5f00"
+      "localSha256": "9cbb487add833352e5ee913ff1278473cf078fa423d2bb03258b11937e5b5f00",
+      "remoteSha256": "9cbb487add833352e5ee913ff1278473cf078fa423d2bb03258b11937e5b5f00",
+      "verifiedAt": "2026-10-14T10:05:00.7372232Z"
     },
     "executivePlan": {
       "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
       "localPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "localSha256": "961e3b9bf47861ef15e65580f48bf84d36d7bef4b7afba2ee8ead172cf43b1c1"
+      "localSha256": "961e3b9bf47861ef15e65580f48bf84d36d7bef4b7afba2ee8ead172cf43b1c1",
+      "remoteSha256": "961e3b9bf47861ef15e65580f48bf84d36d7bef4b7afba2ee8ead172cf43b1c1",
+      "verifiedAt": "2026-10-14T10:05:00.8728165Z"
+    },
+    "readbacks": [
+      {
+        "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "localPath": "docs/estrategia-abordagem-bruna.md",
+        "sha256": "9cbb487add833352e5ee913ff1278473cf078fa423d2bb03258b11937e5b5f00",
+        "remoteSha256": "9cbb487add833352e5ee913ff1278473cf078fa423d2bb03258b11937e5b5f00",
+        "equal": true,
+        "verifiedAt": "2026-10-14T10:05:00.7372232Z"
+      },
+      {
+        "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "localPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "sha256": "961e3b9bf47861ef15e65580f48bf84d36d7bef4b7afba2ee8ead172cf43b1c1",
+        "remoteSha256": "961e3b9bf47861ef15e65580f48bf84d36d7bef4b7afba2ee8ead172cf43b1c1",
+        "equal": true,
+        "verifiedAt": "2026-10-14T10:05:00.8728165Z"
+      },
+      {
+        "fileId": "1EtUNUjSPjSMPobKGmRLRDA89KBDQLMHE",
+        "localPath": "auditorias/bruna-eficiencia-integridade-2026-10-14/RELATORIO.md",
+        "sha256": "a0a6390eb74268647f4f1a98389ee0a768a66dd1f0893708856fa9e8092255cd",
+        "remoteSha256": "a0a6390eb74268647f4f1a98389ee0a768a66dd1f0893708856fa9e8092255cd",
+        "equal": true,
+        "verifiedAt": "2026-10-14T10:05:00.9628529Z"
+      }
+    ],
+    "closedAudit": {
+      "fileId": "1EtUNUjSPjSMPobKGmRLRDA89KBDQLMHE",
+      "localPath": "auditorias/bruna-eficiencia-integridade-2026-10-14/RELATORIO.md",
+      "sha256": "a0a6390eb74268647f4f1a98389ee0a768a66dd1f0893708856fa9e8092255cd",
+      "remoteSha256": "a0a6390eb74268647f4f1a98389ee0a768a66dd1f0893708856fa9e8092255cd",
+      "equal": true,
+      "verifiedAt": "2026-10-14T10:05:00.9628529Z"
     }
   },
   "rollback": {
@@ -4618,7 +4656,8 @@
     "Synthetic gate does not prove conversion gain, cost reduction or stable future latency."
   ],
   "closeout": {
-    "status": "SYNC_PENDING"
+    "status": "git_reconciliation_pending",
+    "functionalCommitUnchanged": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb"
   },
   "independentPublicationReview": {
     "reviewer": "plugin_fallback_feasibility",

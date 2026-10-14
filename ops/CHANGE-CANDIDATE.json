@@ -366,12 +366,14 @@
     ]
   },
   "release": {
-    "status": "platforms_verified_drive_pending",
+    "status": "published_verified",
     "externalWritesPerformed": true,
     "approvedCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
     "netlifyDeployId": "6acf51c3102d74aed99ab751",
     "appsScriptVersion": 164,
-    "verifiedAt": "2026-10-14T10:03:00.141Z",
-    "evidence": "auditorias/bruna-eficiencia-integridade-2026-10-14/PUBLICACAO.json"
+    "verifiedAt": "2026-10-14T10:05:00.9628529Z",
+    "evidence": "auditorias/bruna-eficiencia-integridade-2026-10-14/PUBLICACAO.json",
+    "drivePlanSha256": "961e3b9bf47861ef15e65580f48bf84d36d7bef4b7afba2ee8ead172cf43b1c1",
+    "drivePlanVerifiedAt": "2026-10-14T10:05:00.8728165Z"
   }
 }

@@ -146,14 +146,20 @@
     }
   ],
   "publicationVerification": {
-    "status": "platforms_verified",
-    "verifiedAt": "2026-10-14T10:03:00.141Z",
+    "status": "published_verified",
+    "verifiedAt": "2026-10-14T10:05:00.9628529Z",
     "approvedCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
     "netlifyDeployId": "6acf51c3102d74aed99ab751",
     "appsScriptVersion": 164,
     "realModelScenarios": 15,
     "audioScenarios": 3,
     "patientMessagesSent": 0,
-    "evidence": "auditorias/bruna-eficiencia-integridade-2026-10-14/PUBLICACAO.json"
+    "evidence": "auditorias/bruna-eficiencia-integridade-2026-10-14/PUBLICACAO.json",
+    "driveReadbackEquality": true,
+    "metadataChecks": {
+      "architecture": "passed",
+      "changeSafety": "passed",
+      "governanceTests": 9
+    }
   }
 }
