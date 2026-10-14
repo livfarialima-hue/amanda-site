@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "bbf297da98946badd4460989064e4f2636f1211c",
-    "lastObservedProductionCommit": "bbf297da98946badd4460989064e4f2636f1211c",
-    "functionalDeployId": "6acf71e94079694bfc8221a4",
-    "lastObservedProductionDeployId": "6acf71e94079694bfc8221a4",
-    "rollbackCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
-    "rollbackDeployId": "6acf51c3102d74aed99ab751",
+    "functionalCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
+    "lastObservedProductionCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
+    "functionalDeployId": "6acf8f3d0c1fdf2d868cceb3",
+    "lastObservedProductionDeployId": "6acf8f3d0c1fdf2d868cceb3",
+    "rollbackCommit": "bbf297da98946badd4460989064e4f2636f1211c",
+    "rollbackDeployId": "6acf71e94079694bfc8221a4",
     "rollbackConstraint": "Git revert and a new verified Netlify deploy; preserve all data and receipts; no replay.",
-    "publishedAt": "2026-10-14T12:16:27.301Z",
+    "publishedAt": "2026-10-14T14:21:55.624Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-14T12:26:46.286Z",
-    "candidateChangeId": "BRUNA-AUDIO-CONTEXTO-2026-10-14",
-    "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-14.2",
+    "lastVerifiedAt": "2026-10-14T14:29:29.285Z",
+    "candidateChangeId": "BRUNA-TELECONSULTA-2026-10-14",
+    "candidateStatus": "platforms_verified_drive_pending",
+    "bundleVersion": "2026-10-14.3",
     "appsScriptVersion": 164
   },
   "documentation": {
@@ -51,7 +51,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-TELECONSULTA-2026-10-14",
-    "status": "tested_local",
+    "status": "platforms_verified_drive_pending",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
@@ -59,6 +59,7 @@
     "baselineCommit": "50af5ccfafb1d37e529e53f96f814511516d6da5",
     "bundleVersion": "2026-10-14.3",
     "baselineDeployId": "6acf71e94079694bfc8221a4",
-    "baselineAppsScriptVersion": 164
+    "baselineAppsScriptVersion": 164,
+    "sourceCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d"
   }
 }

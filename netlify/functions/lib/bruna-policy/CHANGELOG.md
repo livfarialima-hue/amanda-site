@@ -1,6 +1,6 @@
 ## 2026-10-14.3 — teleconsulta confirmada por Daniel
 
-Candidato: Amanda/R$500/exterior como fato administrativo único; retirada da espera artificial e das prévias conflitantes. Profissional, confirmação semântica, urgência, agenda e LEADS/CRM/Ads preservados. Publicação pendente.
+Publicado: Amanda/R$500/exterior como fato administrativo único; retirada da espera artificial e das prévias conflitantes. Profissional, confirmação semântica, urgência, agenda e LEADS/CRM/Ads preservados. Publicado em 14/10/2026, 11:21:55 BRT: bed7810a3dda4bbef39913edc48999b5a31aa06d, Netlify 6acf8f3d0c1fdf2d868cceb3; Apps Script v164 preservado. 2.165 testes integrais, 54 complementares, 19 cenários reais de IA e três áudios passaram. Agenda responde primeiro à dúvida aprovada sem inventar horários; tentativas bloqueadas preservadas no recibo.
 
 ## 2026-10-11.3 — contexto e revisão de conhecimento, publicado em 11/10/2026
 

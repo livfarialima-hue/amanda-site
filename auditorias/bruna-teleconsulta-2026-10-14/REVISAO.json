@@ -77,10 +77,12 @@
     }
   ],
   "liveModelGate": {
-    "status": "pending_production_build",
+    "status": "passed",
     "scenarios": 19,
     "audioScenarios": 3,
     "fullHistoryScenarios": 2,
+    "checkedAt": "2026-10-14T14:21:39.363Z",
+    "maximumScenarioMs": 17482,
     "failedAttempts": [
       "6acf8bb4b1fbba04a8414db2",
       "6acf8d56ed868243953c2e75"

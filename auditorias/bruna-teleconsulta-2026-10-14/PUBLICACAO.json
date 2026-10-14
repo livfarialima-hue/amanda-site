@@ -1,5 +1,5 @@
 {
-  "status": "pending",
+  "status": "platforms_verified_drive_pending",
   "changeId": "BRUNA-TELECONSULTA-2026-10-14",
   "netlifyBaseline": "6acf71e94079694bfc8221a4",
   "appsScriptVersion": 164,
@@ -68,5 +68,702 @@
       "receiptSource": "Netlify production deploy WebSocket build log, full JSON parsed",
       "note": "Broad scheduling instructions suppressed the current approved informational question despite the direct_answer contract. Replaced duplicated unconditional instructions with one priority rule. Pure appointment case added to the live gate; no deadline or acceptance relaxation."
     }
-  ]
+  ],
+  "schemaVersion": 1,
+  "candidateFunctionalCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
+  "verifiedAt": "2026-10-14T14:29:29.285Z",
+  "authorization": {
+    "recordedAt": "2026-10-14T14:18:34.418Z",
+    "source": "Daniel nesta conversa",
+    "instruction": "Autorizo publicar tudo que estiver pendente.",
+    "confirmedFact": "Sim, teleconsulta por R$500, inclusive do exterior"
+  },
+  "preflightAt": "2026-10-14T14:17:34.208Z",
+  "localValidation": {
+    "status": "passed_local",
+    "checkedAt": "2026-10-14T14:17:50.482Z",
+    "syntheticOnly": true,
+    "patientMessagesSent": 0,
+    "operationalRoutinesExecuted": 0,
+    "fullSuite": {
+      "passed": 2165,
+      "failed": 0,
+      "log": "tmp/teleconsulta-full-tests.log"
+    },
+    "complementary": {
+      "passed": 54,
+      "failed": 0,
+      "log": "tmp/teleconsulta-complementary.log",
+      "coverage": "Union of contract test files outside the full test runner"
+    },
+    "build": {
+      "status": "passed",
+      "files": 193,
+      "sitemapUrls": 54,
+      "auditsInArtifact": 0
+    },
+    "checks": {
+      "change": "OK",
+      "architecture": "OK",
+      "syntaxFiles": 16,
+      "diff": "OK",
+      "rollback": "All 29 files against baseline reverse-check; no reversal applied",
+      "ops": "SYNC_PENDING until verified publication and Drive readback"
+    },
+    "independentReviews": [
+      {
+        "reviewer": "crm_knowledge_audit",
+        "status": "approved",
+        "testsPassed": 309,
+        "independentAssertions": 12,
+        "findingsResolved": [
+          "Incidental referral/negative mention does not change professional",
+          "Direct question about Amanda supersedes old Daniel subject"
+        ]
+      },
+      {
+        "reviewer": "audio_context_review",
+        "status": "approved",
+        "focusedTests": 106,
+        "acceptanceMutations": {
+          "rejectedInvalid": 6,
+          "acceptedLegitimate": 2
+        },
+        "findingsResolved": [
+          "Negated or ambiguous remote/payment wording stays semantic",
+          "Only consultation cost inherits confirmed remote modality",
+          "Publication gate rejects denial of the approved remote fact without blocking budget or schedule boundaries"
+        ],
+        "postFailureReview": {
+          "status": "approved",
+          "findingsResolved": [
+            "Conversion appendix contradicted confirmed remote availability",
+            "Generic payment instruction ignored modality",
+            "Prior surgical range blocked a new consultation question"
+          ],
+          "effectivePromptCharacters": 98917,
+          "timeoutCause": "not established; no latency claim",
+          "apiCallsByReviewer": 0
+        },
+        "schedulingPriorityReview": {
+          "status": "approved",
+          "controls": [
+            "Mixed informational question answers first",
+            "Human takeover preserves wait_team",
+            "Pure scheduling and rescheduling retain human ownership",
+            "No invented availability"
+          ],
+          "networkCalls": 0
+        }
+      }
+    ],
+    "liveModelGate": {
+      "status": "pending_production_build",
+      "scenarios": 19,
+      "audioScenarios": 3,
+      "fullHistoryScenarios": 2,
+      "failedAttempts": [
+        "6acf8bb4b1fbba04a8414db2",
+        "6acf8d56ed868243953c2e75"
+      ]
+    },
+    "limits": [
+      "First natural post-release conversation not observed",
+      "Google Ads import acceptance not verified",
+      "Existing LEADS responsible projection discrepancy remains separate from canonical CRM"
+    ]
+  },
+  "netlify": {
+    "id": "6acf8f3d0c1fdf2d868cceb3",
+    "state": "ready",
+    "commit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
+    "publishedAt": "2026-10-14T14:21:55.624Z",
+    "buildId": "6acf8f3d0c1fdf2d868cceb1",
+    "context": "production",
+    "manualDeploy": false,
+    "functions": [
+      {
+        "name": "appointment-reminder",
+        "digest": "e0137c4c5210e2cc42a607b33056bbccaf7380efde2fb4fb5bcd483b0b9f920c"
+      },
+      {
+        "name": "appointment-review",
+        "digest": "2579e235b9966086b210fc4f54bc5f3788e4a06d749a37aab30757699369034a"
+      },
+      {
+        "name": "attribution-journey",
+        "digest": "0be1f25a28c31c92089ea1bea986b6f4c97b572dbb4800c58786674b506ae25a"
+      },
+      {
+        "name": "attribution-journey-purge",
+        "digest": "481a6d2b73e4371b573a2e8a005a8e9489eea15bb1cc20cea9a77ecb48839825"
+      },
+      {
+        "name": "classify-leads",
+        "digest": "15b44fa5ae1558be95d2b1e2a61d23152de83e6f78fa791b0fc8857a1e41597e"
+      },
+      {
+        "name": "classify-leads-background",
+        "digest": "5856c9a680f66f1ff4f891948522147ff31503fdf4e52a054548fd79db26f027"
+      },
+      {
+        "name": "conversation-archive",
+        "digest": "b6fd5fd103cef907eb4b1ae6c9e4e74a5b0fbffab3bdbc649ec1a23cfe345ad1"
+      },
+      {
+        "name": "human-resume",
+        "digest": "f13c17f0bf521c8a428c9c1c7aa04cb1dd8a687a8251b0a5398169f17c06521e"
+      },
+      {
+        "name": "human-resume-background",
+        "digest": "b30c7b80b8fc2de3cc2498524a28f00b598e7f4814bcf3c4f0f76adf457f0019"
+      },
+      {
+        "name": "post-consult-followup",
+        "digest": "e995a9a24a2a6f3fb3cb9011d45c77e608da5c8e54c3a0f5332f730668892630"
+      },
+      {
+        "name": "scheduled-followup",
+        "digest": "176132ec859eb0638d9e68a64b96bfc8ff194d3850bb401e985c0f4bb8fb6643"
+      },
+      {
+        "name": "synthetic-integration-health",
+        "digest": "4134c3a43787c1286eb8ec1dd0711c9f7c7632cdb0319c2d050268e8431707e7"
+      },
+      {
+        "name": "ycloud-recovery",
+        "digest": "515064566c538a17a49fd9f6af74fa8fd5c515b0d02759f5dd55187d21c8d355"
+      },
+      {
+        "name": "ycloud-recovery-background",
+        "digest": "cf4b175db93b7ce5563e513ed1006041f309d6aac2b6aa29cc552e8cc4afb444"
+      },
+      {
+        "name": "ycloud-webhook",
+        "digest": "3915a7b03cb127bcec17270990b20b31e667b23297f3848989b7a88db6cb176e"
+      }
+    ],
+    "functionSchedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "conversation-archive"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ],
+    "preservedNames": true,
+    "preservedSchedules": true
+  },
+  "liveModelGate": {
+    "status": "passed",
+    "checkedAt": "2026-10-14T14:21:39.363Z",
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "maxOutputTokens": 4096,
+    "verbosity": "low",
+    "syntheticOnly": true,
+    "patientMessagesSent": 0,
+    "receiptSource": "Compact extraction of full Netlify build JSON parsed after exact concatenation of two log fragments; original source remains the Netlify build log.",
+    "results": [
+      {
+        "name": "remote_assessment_after_price_audio_context",
+        "passed": true,
+        "elapsedMs": 11167,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "amanda",
+        "automaticAllowed": true,
+        "selectedReply": "Sim, a Dra. Amanda atende por consulta online, inclusive quem mora no exterior. Você pode começar por essa consulta para conversar sobre o lifting facial e planejar sua viagem. O orçamento individual depende da avaliação e do plano cirúrgico; não fica fechado apenas por esta conversa no WhatsApp.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21731,
+          "outputTokens": 436,
+          "totalTokens": 22167
+        }
+      },
+      {
+        "name": "pure_appointment_request",
+        "passed": true,
+        "elapsedMs": 5829,
+        "timeoutMs": 20000,
+        "route": "appointment_review",
+        "professional": "amanda",
+        "automaticAllowed": false,
+        "selectedReply": "",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21670,
+          "outputTokens": 192,
+          "totalTokens": 21862
+        }
+      },
+      {
+        "name": "consultation_contextual",
+        "passed": true,
+        "elapsedMs": 9525,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "amanda",
+        "automaticAllowed": true,
+        "selectedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Você pode fazer a avaliação mesmo estando só pesquisando: a Dra. Amanda entende o que você gostaria de mudar, examina com cuidado e conversa sobre as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21803,
+          "outputTokens": 337,
+          "totalTokens": 22140
+        }
+      },
+      {
+        "name": "lifting_information",
+        "passed": true,
+        "elapsedMs": 5772,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "amanda",
+        "automaticAllowed": true,
+        "selectedReply": "As cicatrizes do lifting facial costumam acompanhar a linha do cabelo e os contornos das orelhas. Conforme o planejamento, as incisões podem se estender atrás das orelhas ou incluir uma incisão abaixo do queixo. A posição e a extensão são discutidas na avaliação.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 22041,
+          "outputTokens": 268,
+          "totalTokens": 22309
+        }
+      },
+      {
+        "name": "personal_question_with_reference",
+        "passed": true,
+        "elapsedMs": 12166,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "amanda",
+        "automaticAllowed": true,
+        "selectedReply": "A consulta presencial com a Dra. Amanda custa R$ 500, com pagamento por Pix, débito ou parcelamento e emissão de nota fiscal. Você pode fazer a avaliação enquanto pesquisa: a Dra. Amanda entende o que você busca, examina com cuidado e conversa sobre as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. Se quiser, posso verificar opções de horário com a equipe.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21795,
+          "outputTokens": 467,
+          "totalTokens": 22262
+        }
+      },
+      {
+        "name": "accepted_information_offer",
+        "passed": true,
+        "elapsedMs": 9357,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "amanda",
+        "automaticAllowed": true,
+        "selectedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Na avaliação do lifting facial, ela entende o que você gostaria de mudar ou preservar, examina com cuidado e conversa sobre possibilidades, limites e recuperação, sem obrigação de decidir pela cirurgia. Não vamos ver horários agora, como você prefere.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21769,
+          "outputTokens": 366,
+          "totalTokens": 22135
+        }
+      },
+      {
+        "name": "corrected_procedure",
+        "passed": true,
+        "elapsedMs": 9551,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "amanda",
+        "automaticAllowed": true,
+        "selectedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Para avaliar a otoplastia, ela entende o que você gostaria de mudar, examina as orelhas e conversa sobre as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. Se quiser, posso verificar opções de horário com a equipe.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21896,
+          "outputTokens": 389,
+          "totalTokens": 22285
+        }
+      },
+      {
+        "name": "unknown_clinic_fact",
+        "passed": true,
+        "elapsedMs": 10847,
+        "timeoutMs": 20000,
+        "route": "human_review",
+        "professional": "amanda",
+        "automaticAllowed": false,
+        "selectedReply": null,
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21773,
+          "outputTokens": 460,
+          "totalTokens": 22233
+        }
+      },
+      {
+        "name": "semantic_approved_knowledge",
+        "passed": true,
+        "elapsedMs": 6653,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "unknown",
+        "automaticAllowed": true,
+        "selectedReply": "Sim, emitimos nota fiscal da consulta de avaliação.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21758,
+          "outputTokens": 226,
+          "totalTokens": 21984
+        }
+      },
+      {
+        "name": "human_clinical_task_administrative_question",
+        "passed": true,
+        "elapsedMs": 7491,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "amanda",
+        "automaticAllowed": true,
+        "selectedReply": "A Clínica LIV fica na R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21582,
+          "outputTokens": 299,
+          "totalTokens": 21881
+        }
+      },
+      {
+        "name": "consultation_preparation",
+        "passed": true,
+        "elapsedMs": 8317,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "unknown",
+        "automaticAllowed": true,
+        "selectedReply": "Para a primeira consulta, leve suas informações de saúde, a lista dos medicamentos que usa, informações sobre cirurgias anteriores e os exames que já tiver. Vale também anotar as dúvidas que deseja esclarecer.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21787,
+          "outputTokens": 339,
+          "totalTokens": 22126
+        }
+      },
+      {
+        "name": "clinical_urgency",
+        "passed": true,
+        "elapsedMs": 5102,
+        "timeoutMs": 20000,
+        "route": "human_review",
+        "professional": "unknown",
+        "automaticAllowed": false,
+        "selectedReply": null,
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21691,
+          "outputTokens": 203,
+          "totalTokens": 21894
+        }
+      },
+      {
+        "name": "approved_price_with_photo_request",
+        "passed": true,
+        "elapsedMs": 17482,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "amanda",
+        "automaticAllowed": true,
+        "selectedReply": "Helena, o lifting facial reposiciona tecidos que perderam sustentação e trata o excesso de pele conforme o caso. Na consulta, a Dra. Amanda avalia as bochechas e a região perto da boca e conversa sobre possibilidades, limites e recuperação. As fotos podem contextualizar seu pedido, mas a indicação e o orçamento individual dependem da consulta. Para ajudar no seu planejamento, a referência para lifting facial é entre R$ 26 mil e R$ 42 mil. É uma referência para planejamento, não é um orçamento fechado. O valor individual é definido após avaliação, conforme o plano cirúrgico, a equipe, o hospital, a anestesia e os materiais.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21975,
+          "outputTokens": 787,
+          "totalTokens": 22762
+        }
+      },
+      {
+        "name": "full_history_name_correction",
+        "passed": true,
+        "elapsedMs": 11504,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "amanda",
+        "automaticAllowed": true,
+        "selectedReply": "Elisa, a consulta presencial com a Dra. Amanda custa R$ 500. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Na consulta, ela entende o que você busca, examina com cuidado e conversa sobre as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia. Se quiser, posso verificar opções de horário com a equipe.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 27386,
+          "outputTokens": 441,
+          "totalTokens": 27827
+        }
+      },
+      {
+        "name": "full_history_resolved_human_task",
+        "passed": true,
+        "elapsedMs": 4989,
+        "timeoutMs": 20000,
+        "route": "ignore",
+        "professional": "unknown",
+        "automaticAllowed": false,
+        "selectedReply": "",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 27295,
+          "outputTokens": 175,
+          "totalTokens": 27470
+        }
+      },
+      {
+        "name": "remote_consultation_price_continuation_1",
+        "passed": true,
+        "elapsedMs": 8822,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "amanda",
+        "automaticAllowed": true,
+        "selectedReply": "A consulta online com a Dra. Amanda custa R$ 500. Nela, vocês conversam sobre o que você busca, as possibilidades e os próximos passos, sem obrigação de decidir naquele momento. Se quiser, posso verificar opções de horário com a equipe.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21563,
+          "outputTokens": 349,
+          "totalTokens": 21912
+        }
+      },
+      {
+        "name": "remote_consultation_price_continuation_2",
+        "passed": true,
+        "elapsedMs": 7730,
+        "timeoutMs": 20000,
+        "route": "standard_reply",
+        "professional": "amanda",
+        "automaticAllowed": true,
+        "selectedReply": "A consulta online com a Dra. Amanda custa R$ 500.",
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 21548,
+          "outputTokens": 269,
+          "totalTokens": 21817
+        }
+      },
+      {
+        "name": "classification",
+        "passed": true,
+        "elapsedMs": 6696,
+        "timeoutMs": 15000,
+        "route": null,
+        "professional": null,
+        "automaticAllowed": null,
+        "selectedReply": null,
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 2342,
+          "outputTokens": 124,
+          "totalTokens": 2466
+        }
+      },
+      {
+        "name": "followup_declined",
+        "passed": true,
+        "elapsedMs": 2643,
+        "timeoutMs": 12000,
+        "route": null,
+        "professional": null,
+        "automaticAllowed": null,
+        "selectedReply": null,
+        "requestCount": 1,
+        "usage": {
+          "inputTokens": 535,
+          "outputTokens": 28,
+          "totalTokens": 563
+        }
+      }
+    ],
+    "audio": {
+      "status": "passed",
+      "model": "whisper-1",
+      "apiCalls": 3,
+      "elapsedMs": 3698,
+      "checks": [
+        {
+          "name": "address",
+          "passed": true,
+          "elapsedMs": 724,
+          "transcription": "Qual é o endereço da Clínica Livre?",
+          "autoReplyEligible": true,
+          "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+        },
+        {
+          "name": "context",
+          "passed": true,
+          "elapsedMs": 2555,
+          "autoReplyEligible": true,
+          "segmentCount": 9,
+          "fixtureSha256": "8b3d5a7bfe2148eb579a0db08e1eebef28fba744dcf177f5969ba61b47e20cf4"
+        },
+        {
+          "name": "silence",
+          "passed": true,
+          "elapsedMs": 413,
+          "transcription": "you",
+          "transcriptStatus": "uncertain",
+          "autoReplyEligible": false,
+          "highestNoSpeechProbability": 0.9425907731056213,
+          "fixtureSha256": "d303811b8c84619667cd0501342f84ec6cbe69f7aa3856dcf52fabda374c92b8"
+        }
+      ]
+    }
+  },
+  "smoke": {
+    "checkedAt": "2026-10-14T14:23:23.742Z",
+    "syntheticOnly": true,
+    "patientMessagesSent": 0,
+    "checks": [
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "site": 200,
+        "health": 200,
+        "unsignedWebhook": 401,
+        "healthBody": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled",
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        }
+      },
+      {
+        "origin": "https://reestruturacao-site--inspiring-sprite-b35ca4.netlify.app",
+        "site": 200,
+        "health": 200,
+        "unsignedWebhook": 401,
+        "healthBody": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled",
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        }
+      },
+      {
+        "origin": "https://6acf8f3d0c1fdf2d868cceb3--inspiring-sprite-b35ca4.netlify.app",
+        "site": 200,
+        "health": 200,
+        "unsignedWebhook": 401,
+        "healthBody": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled",
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        }
+      }
+    ]
+  },
+  "leadsPostflight": {
+    "checkedAt": "2026-10-14T14:27:06.124Z",
+    "readOnly": true,
+    "opportunities": 556,
+    "uniqueOpportunityIds": 556,
+    "routed": 556,
+    "comparedRanges": [
+      "CRM opportunity IDs",
+      "CRM professional/routing/status/phase",
+      "Ads events A:O",
+      "Ads export A:H"
+    ],
+    "unchangedComparedWithPrepublication": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "before": "2026-10-14T14:19:37.231Z",
+    "ads": {
+      "readyRows": 12,
+      "exportRows": 12,
+      "uniqueTransactions": 12,
+      "mismatches": 0,
+      "fields": {},
+      "acceptanceVerified": false
+    },
+    "limits": [
+      "Existing responsible-party projection discrepancy in visible LEADS remains pending; canonical CRM preserved.",
+      "Read-only comparison does not prove a new natural patient delivery."
+    ]
+  },
+  "appsScript": {
+    "version": 164,
+    "status": "preserved_no_code_change",
+    "baselineEvidence": "auditorias/bruna-eficiencia-integridade-2026-10-14/PUBLICACAO.json"
+  },
+  "drive": {
+    "folderId": "1vcdz2sZOya5t09vgZWE62-iDk2nYTKak",
+    "status": "pending"
+  },
+  "limitations": [
+    "First natural post-release automated reply not observed",
+    "Google Ads import acceptance not verified",
+    "Prior visible LEADS responsibility projection discrepancy remains pending; no data migration in this release"
+  ],
+  "rollback": {
+    "functionalCommit": "bbf297da98946badd4460989064e4f2636f1211c",
+    "deployId": "6acf71e94079694bfc8221a4",
+    "appsScriptVersion": 164,
+    "method": "New Git revert commit; preserve data, queues, receipts and canonical deployment; no replay"
+  }
 }
