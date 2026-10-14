@@ -28,9 +28,10 @@ test("a wrong or uncertain transcription blocks the release", async () => {
 test("live gate accepts only an explicit valid recovery and rejects repeated bad confidence", async () => {
   for (const secondScore of [-0.1, 0.0001, -3]) {
     let calls = 0;
-    const result = await checkBrunaAudioLive({ env, manifest, fetchImpl: async () => Response.json({
-      text: "Qual é o endereço da clínica LIV?", logprobs: [{ logprob: calls++ === 0 ? 0.000118255615234375 : secondScore }],
-    }) });
+    const text = "Qual é o endereço da clínica LIV?";
+    const result = await checkBrunaAudioLive({ env, manifest, fetchImpl: async () => Response.json(calls++ === 0 ?
+      { text, logprobs: [{ logprob: 0.000118255615234375 }] } :
+      { text, segments: [{ text, avg_logprob: secondScore, no_speech_prob: 0.01, compression_ratio: 1.2 }] }) });
     assert.equal(calls, 2);
     assert.equal(result.status, secondScore === -0.1 ? "passed" : "failed");
     assert.equal(result.confidenceRecovery.outcome, secondScore === -0.1 ? "recovered" : "confidence_still_invalid_or_low");

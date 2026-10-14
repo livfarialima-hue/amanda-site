@@ -421,7 +421,7 @@
     "status": "pending",
     "appsScriptVersion": 163,
     "blockers": [
-      "Ativação aguarda aprovação integral do novo build Git com recuperação limitada de confiança malformada; nenhum limiar ou prazo ampliado."
+      "Ativação aguarda aprovação integral do novo build Git com recuperação documentada por whisper-1, texto concordante e confiança válida em todos os segmentos; nenhum prazo ampliado."
     ],
     "evidence": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
     "approvedSourceCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972"

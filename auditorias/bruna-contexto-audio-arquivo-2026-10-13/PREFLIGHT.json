@@ -187,5 +187,23 @@
     "lastFailedDeploy": "6acee0cc10efdbc18a41e5e2",
     "all15ConversationsPassed": true,
     "providerPositiveScoreObserved": true
+  },
+  "asrRecoveryRefresh": {
+    "checkedAt": "2026-10-14T02:16:51.896Z",
+    "remoteProductionHead": "6c695125991e17759e393490dae77c94ad54788f",
+    "netlifyPublishedDeploy": "6aced9d34e4ec2c5c72ec53a",
+    "netlifyPublishedCommit": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+    "appsScriptVersion": 163,
+    "featuresInPublishedDeploy": "off",
+    "productionFlagsConfiguredForNextSuccessfulBuild": true,
+    "lastFailedDeploy": "6acee334fdef3f7284e36421",
+    "all15ConversationsPassed": true,
+    "folderPrivate": true,
+    "folderPermissionCounts": {
+      "user": 3,
+      "publicOrDomain": 0
+    },
+    "productionOpenAiKeyPresent": true,
+    "canonicalIdsRevalidated": true
   }
 }

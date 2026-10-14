@@ -4,6 +4,8 @@ import { getStore } from "@netlify/blobs";
 const STORE = "liv-whatsapp-audio-transcripts-v1";
 const MAX_BYTES = 8 * 1024 * 1024;
 const MODEL = "gpt-4o-transcribe";
+const RECOVERY_MODEL = "whisper-1";
+const comparableText = text => text.normalize("NFC").replace(/\s+/gu, " ").trim();
 const TYPES = new Map([["audio/ogg", "ogg"], ["audio/mpeg", "mp3"], ["audio/mp4", "m4a"], ["audio/wav", "wav"], ["audio/x-wav", "wav"], ["audio/webm", "webm"], ["audio/flac", "flac"]]);
 
 export function audioTranscriptionEnabled(env = process.env) {
@@ -61,6 +63,28 @@ export function assessTranscript(data) {
     quality: { meanLogprob: mean, lowTokenFraction: lowFraction, tokenCount: scores.length, scoreDiagnostics, malformedConfidenceCanRetry } };
 }
 
+// Whisper exposes segment confidence, not token log probabilities. Keep the
+// two metrics distinct and require every segment to pass the conservative local
+// policy. These heuristics are not a calibrated guarantee of clinical meaning.
+export function assessRecoveryTranscript(data) {
+  const text = typeof data?.text === "string" ? data.text.trim() : "";
+  const segments = Array.isArray(data?.segments) ? data.segments : [];
+  const finite = value => typeof value === "number" && Number.isFinite(value);
+  const valid = segments.length > 0 && segments.every(s => s && typeof s.text === "string" && s.text.trim() &&
+    finite(s.avg_logprob) && s.avg_logprob <= 0 && finite(s.no_speech_prob) && s.no_speech_prob >= 0 && s.no_speech_prob <= 1 &&
+    finite(s.compression_ratio) && s.compression_ratio > 0);
+  const textAgrees = valid && comparableText(segments.map(s => s.text).join(" ")) === comparableText(text);
+  const eligible = text.length > 1 && text.length <= 4000 && /[\p{L}\p{N}]/u.test(text) && textAgrees &&
+    segments.every(s => s.avg_logprob >= -0.6 && s.no_speech_prob <= 0.1 && s.compression_ratio <= 2.4) &&
+    !/\[(?:inaud[ií]vel|incompreens[ií]vel|sil[eê]ncio)\]/i.test(text);
+  return { status: eligible ? "transcribed" : "uncertain", text: text.slice(0, 12000),
+    truncated: text.length > 12000, autoReplyEligible: eligible, model: RECOVERY_MODEL,
+    quality: { kind: "segment_confidence", segmentCount: segments.length, fieldsValid: valid, textAgrees,
+      lowestSegmentMeanLogprob: valid ? Math.min(...segments.map(s => s.avg_logprob)) : null,
+      highestNoSpeechProbability: valid ? Math.max(...segments.map(s => s.no_speech_prob)) : null,
+      highestCompressionRatio: valid ? Math.max(...segments.map(s => s.compression_ratio)) : null } };
+}
+
 async function boundedBytes(response, maximum, controller) {
   if (Number(response.headers.get("content-length")) > maximum) throw new Error("audio_too_large");
   const reader = response.body?.getReader();
@@ -109,37 +133,41 @@ export async function transcribeYCloudAudio(message, { eventId, phone }, {
     if (mime !== descriptor.mime && mime !== "application/octet-stream") throw new Error("audio_mime_mismatch");
     const bytes = await boundedBytes(audio, MAX_BYTES, controller);
     if (createHash("sha256").update(bytes).digest("base64") !== descriptor.sha256) throw new Error("audio_hash_mismatch");
-    const form = new FormData();
-    form.set("model", MODEL); form.set("response_format", "json"); form.append("include[]", "logprobs");
-    form.set("file", new Blob([bytes], { type: descriptor.mime }), `voice.${descriptor.extension}`);
-    const requestTranscript = async () => {
+    const requestTranscript = async (model = MODEL) => {
+      const form = new FormData();
+      form.set("model", model); form.set("response_format", model === RECOVERY_MODEL ? "verbose_json" : "json");
+      if (model === RECOVERY_MODEL) form.append("timestamp_granularities[]", "segment");
+      else form.append("include[]", "logprobs");
+      form.set("file", new Blob([bytes], { type: descriptor.mime }), `voice.${descriptor.extension}`);
       const response = await fetchImpl("https://api.openai.com/v1/audio/transcriptions", {
         method: "POST", headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` }, body: form,
         redirect: "error", signal: controller.signal,
       });
       if (!response.ok) throw new Error("transcription_provider_failed");
       const body = await boundedBytes(response, 200000, controller);
-      return assessTranscript(JSON.parse(body.toString("utf8")));
+      const assess = model === RECOVERY_MODEL ? assessRecoveryTranscript : assessTranscript;
+      return assess(JSON.parse(body.toString("utf8")));
     };
     result = await requestTranscript();
     const diagnostics = result.quality.scoreDiagnostics;
     // The provider has returned impossible positive log probabilities. Do not
-    // clamp them or retry a genuinely low-confidence result. One fresh reading
-    // may recover malformed confidence, within the same lease and 35s deadline.
-    // It must agree with the first text and independently pass every quality gate.
+    // clamp them or retry a genuinely low-confidence result. One reading with
+    // the documented segment-confidence API may recover malformed confidence,
+    // within the same lease and 35s deadline. Text must agree exactly and every
+    // segment must pass. Two models still do not prove the patient's meaning.
     if (result.quality.malformedConfidenceCanRetry) {
       const original = result;
-      const comparable = text => text.normalize("NFC").replace(/\s+/gu, " ").trim();
       let outcome = "request_failed";
       let confirmationQuality;
       try {
-        const repeated = await requestTranscript();
+        const repeated = await requestTranscript(RECOVERY_MODEL);
         confirmationQuality = repeated.quality;
-        outcome = comparable(original.text) !== comparable(repeated.text) ? "text_disagrees" :
+        outcome = comparableText(original.text) !== comparableText(repeated.text) ? "text_disagrees" :
           repeated.autoReplyEligible ? "recovered" : "confidence_still_invalid_or_low";
         if (outcome === "recovered") result = repeated;
       } catch { /* Preserve the original uncertain transcript for human review. */ }
-      result = { ...result, confidenceRecovery: { attempts: 2, outcome, initialScoreDiagnostics: diagnostics, confirmationQuality } };
+      result = { ...result, confidenceRecovery: { attempts: 2, outcome, initialModel: MODEL, confirmationModel: RECOVERY_MODEL,
+        initialScoreDiagnostics: diagnostics, confirmationQuality } };
     }
   } catch (error) {
     const permanent = ["audio_too_large", "empty_audio", "audio_expired", "audio_hash_mismatch", "audio_mime_mismatch"];

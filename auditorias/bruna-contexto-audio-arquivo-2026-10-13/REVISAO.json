@@ -30,11 +30,11 @@
     ]
   },
   "validation": {
-    "coreTests": 2072,
+    "coreTests": 2074,
     "scriptTests": 16,
     "scriptTestsAlsoInCore": 0,
     "additionalContractTests": 38,
-    "uniqueTests": 2126,
+    "uniqueTests": 2128,
     "failed": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -55,7 +55,8 @@
     "fullHistoryFocusedTests": 173,
     "afterReviewFocusedTests": 58,
     "finalHistoryFocusedTests": 16,
-    "finalNegationFocusedTests": 140
+    "finalNegationFocusedTests": 140,
+    "additionalTests": 54
   },
   "riskReview": [
     "Origem de mídia restrita, assinatura do evento, hash, MIME e tamanho verificados antes do provedor.",
@@ -200,5 +201,20 @@
     },
     "behavior": "One recovery request for malformed confidence; known weak scores veto retry. Exact text agreement after NFC/whitespace, unchanged strict second confidence, shared35s deadline, cache and concurrency. Errors or disagreement retain uncertain first transcript.",
     "checkedAt": "2026-10-14T02:04:10.874Z"
+  },
+  "asrRecoveryReview": {
+    "status": "completed_no_remaining_actionable_findings",
+    "reviewer": "/root/revisao_independente",
+    "reviewedBase": "6c695125991e17759e393490dae77c94ad54788f",
+    "workingDiff": true,
+    "focusedTests": 34,
+    "normalization": "CRLF to LF",
+    "hashes": {
+      "netlify/functions/lib/audio-transcription.mjs": "d0e80d28821f4545d89037f4d263881a72b0c898d5843a70ecb3695a9e946b8b",
+      "netlify/functions/lib/audio-transcription.test.mjs": "8aace12f272bfb992768f5222728346cf973a30dabd217b2f1c5bbc59a824b48",
+      "scripts/check-bruna-audio-live.test.mjs": "77f805501ce8afde06ad8e0c07a9966244f6aa5d70b864769c147c5061055965",
+      "scripts/check-bruna-audio-live.mjs": "a8cfa14d60a9ec82f3c77953f1ffc47b3763374be0ca552477fb58c7dd45d096"
+    },
+    "behavior": "The single recovery call uses whisper-1 verbose_json and validates every segment, distinct segment confidence metrics, exact complete-text agreement, same verified bytes, shared35s deadline, cache and exclusive claim. Original known weak scores veto recovery. Any discrepancy, low confidence or error keeps human review. All 15 conversations plus live synthetic audio remain required."
   }
 }

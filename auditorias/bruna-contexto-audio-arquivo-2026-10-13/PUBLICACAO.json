@@ -1,10 +1,10 @@
 {
-  "status": "activation_pending_bounded_confidence_recovery",
+  "status": "activation_pending_documented_asr_recovery",
   "recordedAt": "2026-10-14T01:22:51.511Z",
   "candidateFunctionalCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
   "pullRequest": "https://github.com/livfarialima-hue/amanda-site/pull/11",
   "localValidation": {
-    "uniqueTests": 2126,
+    "uniqueTests": 2128,
     "failures": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -271,6 +271,65 @@
         },
         "published": false,
         "diagnosis": "4 of 8 scores were positive, max 0.000118255615234375; the cause is unconfirmed. No tolerance introduced. Strict validation blocked release."
+      },
+      {
+        "deployId": "6acee334fdef3f7284e36421",
+        "commit": "6c695125991e17759e393490dae77c94ad54788f",
+        "context": "production",
+        "purpose": "bounded_same_model_confidence_recovery",
+        "status": "failed",
+        "checkedAt": "2026-10-14T02:07:19.477Z",
+        "passedScenarios": 15,
+        "failedScenario": "synthetic_audio",
+        "audioCheck": {
+          "status": "failed",
+          "syntheticOnly": true,
+          "patientMessagesSent": 0,
+          "apiCalls": 2,
+          "model": "gpt-4o-transcribe",
+          "elapsedMs": 2106,
+          "transcription": "Qual é o endereço da Clínica Live?",
+          "quality": {
+            "meanLogprob": null,
+            "lowTokenFraction": null,
+            "tokenCount": 8,
+            "scoreDiagnostics": {
+              "missing": 0,
+              "nonNumeric": 0,
+              "nonFinite": 0,
+              "positive": 2,
+              "maxPositive": 0.000091552734375
+            },
+            "malformedConfidenceCanRetry": true
+          },
+          "confidenceRecovery": {
+            "attempts": 2,
+            "outcome": "confidence_still_invalid_or_low",
+            "initialScoreDiagnostics": {
+              "missing": 0,
+              "nonNumeric": 0,
+              "nonFinite": 0,
+              "positive": 2,
+              "maxPositive": 0.000091552734375
+            },
+            "confirmationQuality": {
+              "meanLogprob": null,
+              "lowTokenFraction": null,
+              "tokenCount": 8,
+              "scoreDiagnostics": {
+                "missing": 0,
+                "nonNumeric": 0,
+                "nonFinite": 0,
+                "positive": 2,
+                "maxPositive": 0.000091552734375
+              },
+              "malformedConfidenceCanRetry": true
+            }
+          },
+          "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+        },
+        "published": false,
+        "diagnosis": "Both calls returned two positive log probabilities among eight scores (maximum 0.000091552734375). Text agreed but confidence remained invalid, so release stayed blocked."
       }
     ],
     "lastPublishedDeployId": "6aced9d34e4ec2c5c72ec53a",
