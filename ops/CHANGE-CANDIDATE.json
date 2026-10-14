@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-TELECONSULTA-2026-10-14",
   "title": "Informar a teleconsulta da Dra. Amanda por R$500 inclusive do exterior",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "50af5ccfafb1d37e529e53f96f814511516d6da5",
   "authorization": {
     "required": true,
@@ -419,11 +419,14 @@
     ]
   },
   "release": {
-    "status": "platforms_verified_drive_pending",
+    "status": "published_verified",
     "externalWritesPerformed": true,
     "approvedCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
     "netlifyDeployId": "6acf8f3d0c1fdf2d868cceb3",
     "appsScriptVersion": 164,
-    "verifiedAt": "2026-10-14T14:29:29.285Z"
+    "verifiedAt": "2026-10-14T14:32:26.769Z",
+    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "drivePlanSha256": "beafaf84e82dea67f795f5b88cf75ef30f87018880743010ad8289fb733a04db",
+    "receipt": "auditorias/bruna-teleconsulta-2026-10-14/PUBLICACAO.json"
   }
 }

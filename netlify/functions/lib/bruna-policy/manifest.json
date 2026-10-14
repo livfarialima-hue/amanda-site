@@ -26,9 +26,9 @@
     "rollbackConstraint": "Git revert and a new verified Netlify deploy; preserve all data and receipts; no replay.",
     "publishedAt": "2026-10-14T14:21:55.624Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-14T14:29:29.285Z",
+    "lastVerifiedAt": "2026-10-14T14:32:26.769Z",
     "candidateChangeId": "BRUNA-TELECONSULTA-2026-10-14",
-    "candidateStatus": "platforms_verified_drive_pending",
+    "candidateStatus": "published_verified",
     "bundleVersion": "2026-10-14.3",
     "appsScriptVersion": 164
   },
@@ -38,12 +38,12 @@
     "driveActiveFolderId": "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue",
     "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
     "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
-    "driveClosedAuditFileId": "1mzCH4V6Tik7FCIAGUq3s-cKCrgDEqnAj",
+    "driveClosedAuditFileId": "13IJpbRic6dvUSFFhv3Ad3iiKgHAno-WX",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "e93e49353b8e664f4938939297481ec18a11b8b1d260f765f879e636b91499b1",
+    "driveProjectionSha256": "74086bc8f5e30c7b00b155bb2923f236f7946951f6607712b34502341d53da3e",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU",
-    "driveProjectionVerifiedAt": "2026-10-14T12:26:46.061Z"
+    "driveProjectionVerifiedAt": "2026-10-14T14:31:50.013Z"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -51,7 +51,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-TELECONSULTA-2026-10-14",
-    "status": "platforms_verified_drive_pending",
+    "status": "published_verified",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,

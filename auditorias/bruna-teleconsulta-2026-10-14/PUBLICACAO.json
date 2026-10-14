@@ -1,10 +1,10 @@
 {
-  "status": "platforms_verified_drive_pending",
+  "status": "published_verified",
   "changeId": "BRUNA-TELECONSULTA-2026-10-14",
   "netlifyBaseline": "6acf71e94079694bfc8221a4",
   "appsScriptVersion": 164,
   "appsScriptChanged": false,
-  "drivePending": true,
+  "drivePending": false,
   "attempts": [
     {
       "commit": "b709344516fe47d7b11b76f10847e1a4c3f9dbc5",
@@ -71,7 +71,7 @@
   ],
   "schemaVersion": 1,
   "candidateFunctionalCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
-  "verifiedAt": "2026-10-14T14:29:29.285Z",
+  "verifiedAt": "2026-10-14T14:32:26.769Z",
   "authorization": {
     "recordedAt": "2026-10-14T14:18:34.418Z",
     "source": "Daniel nesta conversa",
@@ -157,16 +157,6 @@
         }
       }
     ],
-    "liveModelGate": {
-      "status": "pending_production_build",
-      "scenarios": 19,
-      "audioScenarios": 3,
-      "fullHistoryScenarios": 2,
-      "failedAttempts": [
-        "6acf8bb4b1fbba04a8414db2",
-        "6acf8d56ed868243953c2e75"
-      ]
-    },
     "limits": [
       "First natural post-release conversation not observed",
       "Google Ads import acceptance not verified",
@@ -752,8 +742,59 @@
     "baselineEvidence": "auditorias/bruna-eficiencia-integridade-2026-10-14/PUBLICACAO.json"
   },
   "drive": {
+    "status": "verified",
     "folderId": "1vcdz2sZOya5t09vgZWE62-iDk2nYTKak",
-    "status": "pending"
+    "manual": {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "localPath": "docs/estrategia-abordagem-bruna.md",
+      "localSha256": "74086bc8f5e30c7b00b155bb2923f236f7946951f6607712b34502341d53da3e",
+      "remoteSha256": "74086bc8f5e30c7b00b155bb2923f236f7946951f6607712b34502341d53da3e",
+      "equal": true,
+      "verifiedAt": "2026-10-14T14:31:50.013Z"
+    },
+    "executivePlan": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "localPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "localSha256": "beafaf84e82dea67f795f5b88cf75ef30f87018880743010ad8289fb733a04db",
+      "remoteSha256": "beafaf84e82dea67f795f5b88cf75ef30f87018880743010ad8289fb733a04db",
+      "equal": true,
+      "verifiedAt": "2026-10-14T14:31:49.905Z"
+    },
+    "closedAudit": {
+      "fileId": "13IJpbRic6dvUSFFhv3Ad3iiKgHAno-WX",
+      "localPath": "auditorias/bruna-teleconsulta-2026-10-14/RELATORIO.md",
+      "localSha256": "4070c14770f97d5275b0ffaabb8487d553a70669deb5afe6d663fc6a4fc2c50c",
+      "remoteSha256": "4070c14770f97d5275b0ffaabb8487d553a70669deb5afe6d663fc6a4fc2c50c",
+      "equal": true,
+      "verifiedAt": "2026-10-14T14:31:50.020Z"
+    },
+    "readbacks": [
+      {
+        "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "localPath": "docs/estrategia-abordagem-bruna.md",
+        "localSha256": "74086bc8f5e30c7b00b155bb2923f236f7946951f6607712b34502341d53da3e",
+        "remoteSha256": "74086bc8f5e30c7b00b155bb2923f236f7946951f6607712b34502341d53da3e",
+        "equal": true,
+        "verifiedAt": "2026-10-14T14:31:50.013Z"
+      },
+      {
+        "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "localPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "localSha256": "beafaf84e82dea67f795f5b88cf75ef30f87018880743010ad8289fb733a04db",
+        "remoteSha256": "beafaf84e82dea67f795f5b88cf75ef30f87018880743010ad8289fb733a04db",
+        "equal": true,
+        "verifiedAt": "2026-10-14T14:31:49.905Z"
+      },
+      {
+        "fileId": "13IJpbRic6dvUSFFhv3Ad3iiKgHAno-WX",
+        "localPath": "auditorias/bruna-teleconsulta-2026-10-14/RELATORIO.md",
+        "localSha256": "4070c14770f97d5275b0ffaabb8487d553a70669deb5afe6d663fc6a4fc2c50c",
+        "remoteSha256": "4070c14770f97d5275b0ffaabb8487d553a70669deb5afe6d663fc6a4fc2c50c",
+        "equal": true,
+        "verifiedAt": "2026-10-14T14:31:50.020Z"
+      }
+    ],
+    "sourceDocumentationCommit": "a5481e52cc9a8e9aba0e81007f1b360ac94c5bbd"
   },
   "limitations": [
     "First natural post-release automated reply not observed",
@@ -765,5 +806,28 @@
     "deployId": "6acf71e94079694bfc8221a4",
     "appsScriptVersion": 164,
     "method": "New Git revert commit; preserve data, queues, receipts and canonical deployment; no replay"
+  },
+  "independentPublicationReview": {
+    "reviewer": "audio_context_review",
+    "status": "approved",
+    "reviewedAt": "2026-10-14T14:32:26.769Z",
+    "scope": "Local compact platform receipts; no repeat network calls by reviewer",
+    "blockingFindings": 0,
+    "checks": [
+      "19 unique real scenarios inside runtime deadlines",
+      "2 full-history cases included within the 19",
+      "3 audio calls additional; silence uncertain and ineligible",
+      "Remote modality and fee correct; pure appointment keeps human review",
+      "LEADS 556 unique and Ads 12/12 preserved; no import acceptance claim"
+    ]
+  },
+  "closeout": {
+    "functionalCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
+    "platformsVerified": true,
+    "driveVerified": true,
+    "documentationCommit": "a5481e52cc9a8e9aba0e81007f1b360ac94c5bbd",
+    "automation": "already_paused",
+    "canonicalBranch": "reestruturacao-site",
+    "status": "pending_final_canonical_checks"
   }
 }
