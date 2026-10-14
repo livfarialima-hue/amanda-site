@@ -1,6 +1,6 @@
 import { isReactionMessageType } from "./inbound-message-kind.mjs";
 import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
-import { isClearInformationAcceptance, isAutomatedBusinessReply, isPriceAmountInquiry, isConsultationCostInquiry, consultationQuestionTopics, resolveOfferedInformationChoice, withoutNegatedSchedulingMentions } from "./patient-turn-context.mjs";
+import { isClearInformationAcceptance, isAutomatedBusinessReply, isPriceAmountInquiry, isConsultationCostInquiry, consultationQuestionTopics, latestConsultationModality, resolveOfferedInformationChoice, withoutNegatedSchedulingMentions } from "./patient-turn-context.mjs";
 import { isAutomaticSurgicalPriceProcedure, containsApprovedSurgicalRange, resolveSurgicalPricePlan, resolveBundledSurgicalPricePlan, earPriceScope } from "./surgical-price-policy.mjs";
 import {
   hasRecentCommercialSolicitationContext,
@@ -63,6 +63,32 @@ const AMANDA_PATTERNS = [
   /\bcirurg(?:ia|i[aã])\s+pl[aá]stica\b/i,
   /\bprocedimento\s+est[eé]tico\b/i,
 ];
+
+// Patient corrections own the subject; clinic wording is only a fallback.
+// A heart condition is patient context, not a request to change professional.
+function latestNamedConversationProfessional(recentConversation) {
+  const isPatient = turn => turn?.role === 'user' || ['patient','paciente'].includes(turn?.source);
+  const turns = [...recentConversation.filter(isPatient).reverse(), ...recentConversation.filter(turn => !isPatient(turn)).reverse()];
+  for (const turn of turns) {
+    const value = String(turn?.text || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/\b(dr|dra)\./g, '$1');
+    const requested = new Set();
+    for (const clause of value.split(/[,.!?;\n]|\b(?:mas|porem)\b/)) {
+      if (isPatient(turn)) {
+        if (/\b(?:nao|nem|nunca)\s+(?:quero|queria|gostaria|preciso|prefiro|vou|desejo|busco)\b/.test(clause)) continue;
+        const target = clause.match(/\b(?:(?:consulta|atendimento)(?:\s+(?:online|presencial|de avaliacao))?\s+(?:com|da|do)|consultar|prefiro|quero|falar com|conversar com)\s+(?:(?:a|o|com)\s+)?(?:(?:dra?|doutora?)\s+)?(amanda|daniel)\b/);
+        if (target) requested.add(target[1]);
+        const availabilityQuestion = clause.match(/^\s*(?:(?:a|o|sera que a|sera que o)\s+)?(?:dra?|doutora?)\s+(amanda|daniel)\s+(?:atende|faz\s+(?:consulta|teleconsulta)|oferece\s+(?:consulta|teleconsulta))\b/);
+        if (availabilityQuestion) requested.add(availabilityQuestion[1]);
+        if (/\b(?:quero|queria|preciso|gostaria de)\s+(?:(?:uma?|agendar|marcar)\s+)*(?:consulta|atendimento)\s+(?:de|em)\s+cardiologia\b|^\s*cardiologia\s*$/.test(clause)) requested.add('daniel');
+      } else {
+        if (/\b(?:dra|doutora)\s+amanda\b/.test(clause)) requested.add('amanda');
+        if (/\b(?:dr|doutor)\s+daniel\b/.test(clause)) requested.add('daniel');
+      }
+    }
+    if (requested.size) return requested.size === 1 ? [...requested][0] : '';
+  }
+  return null;
+}
 
 const DECLINED_PRICE_AMOUNT_PATTERN =
   /\bn[aã]o\s+(?:quero|preciso|gostaria(?:\s+de)?)(?:\s+(?:saber|receber|ver|conhecer|entender))?\s+(?:(?:o|os|a|as|um|uma|sobre|de|dos|das)\s+){0,2}(?:pre[cç]os?|custos?|valor(?:es)?|or[cç]amento|faixa(?:\s+de\s+(?:pre[cç]os?|valores))?)\b/gi;
@@ -241,11 +267,6 @@ export function enrichAutomationPlanFromConversation(
     return {...plan,route:"ignore",reason:"commercial_solicitation_or_partnership",automaticAllowed:false,replyCode:null,professional:null,procedure:null};
   }
 
-  if (plan.reason === 'consultation_question_bundle') {
-    const bundledPricePlan = resolveBundledSurgicalPricePlan(plan.currentText, plan.questionTopics, recentConversation);
-    return {...plan, bundledPricePlan, procedure:bundledPricePlan?.procedure || null};
-  }
-
   const hasClinicTurn = recentConversation.some(
     (turn) =>
       turn?.role === "assistant" ||
@@ -269,6 +290,30 @@ export function enrichAutomationPlanFromConversation(
     reference: "",
     platform: "WhatsApp direto",
   });
+  const latestProfessional = latestNamedConversationProfessional(recentConversation);
+  if (latestProfessional !== null) context.professional = latestProfessional || null;
+  const currentIdentifiesAmanda = matchesAny(plan.currentText || '', AMANDA_PATTERNS) || Boolean(detectProcedure(plan.currentText || ''));
+  if (context.professional === 'daniel' && !currentIdentifiesAmanda &&
+      ['consultation_question_bundle','consultation_information_request','price_without_confirmed_procedure','open_question_for_ai'].includes(plan.reason)) {
+    return {...plan, route:'daniel_greeting_and_alert', reason:'cardiology_or_dr_daniel',
+      replyCode:'DANIEL-ENC-01', professional:'daniel', procedure:null, automaticAllowed:true};
+  }
+  if (latestProfessional === '' && !currentIdentifiesAmanda &&
+      ['consultation_question_bundle','consultation_information_request','price_without_confirmed_procedure'].includes(plan.reason)) {
+    return {...plan, route:'standard_reply', reason:'open_question_for_ai', replyCode:null,
+      professional:null, automaticAllowed:true};
+  }
+  if (plan.reason === 'consultation_question_bundle') {
+    const bundledPricePlan = resolveBundledSurgicalPricePlan(plan.currentText, plan.questionTopics, recentConversation);
+    return {...plan, bundledPricePlan, procedure:bundledPricePlan?.procedure || null};
+  }
+  if (['consultation_information_request','price_without_confirmed_procedure'].includes(plan.reason) &&
+      latestConsultationModality(plan.currentText, recentConversation) === 'remote' && !detectProcedure(plan.currentText || '')) {
+    // Let the semantic reader answer the current consultation continuation,
+    // without injecting a presencial preview or an older surgical price.
+    return {...plan, route:'standard_reply', reason:'open_question_for_ai', replyCode:null,
+      professional:context.professional || plan.professional, automaticAllowed:true};
+  }
   const recentPatientProcedure = detectRecentPatientProcedure(recentConversation);
   const recentClinicProcedure = detectRecentClinicProcedure(recentConversation);
   const lastClinicTurn = [...recentConversation]
@@ -718,6 +763,15 @@ export function planAutomation({
     isInsuranceAcceptanceRequest(normalizedText);
 
   const questionTopics = consultationQuestionTopics(normalizedText);
+  if (!marketingPrefilledMessage && !LEGACY_ADMINISTRATIVE_REQUEST_PATTERN.test(normalizedText) &&
+      /\b(?:online|on-line|teleconsulta|videochamada|videoconsulta|remot[oa]|a distancia|por video)\b/i.test(normalizedText) &&
+      !questionTopics.includes('remote_consultation')) {
+    // Mentioning an online channel or declining a modality cannot select the
+    // remote consultation preview. The AI still receives the complete request.
+    return {route:'standard_reply', reason:'open_question_for_ai', replyCode:null,
+      professional:mentionsAmanda || procedure ? 'amanda' : null, procedure:procedure?.key || null,
+      automaticAllowed:true, currentText:normalizedText};
+  }
   if (!marketingPrefilledMessage && !LEGACY_ADMINISTRATIVE_REQUEST_PATTERN.test(normalizedText) && questionTopics.length >= 2) {
     const bundledPricePlan = resolveBundledSurgicalPricePlan(normalizedText, questionTopics, recentConversation);
     return {route:'standard_reply', reason:'consultation_question_bundle', replyCode:'AMANDA-CONSULTA-BUNDLE-01',
@@ -796,7 +850,7 @@ export function planAutomation({
   }
 
   // A remote assessment is a modality question even beside "orçamento".
-  // Keep its context for the AI; no booking or teleconsultation is authorized.
+  // The AI can use the approved modality/fee; this signal never books a slot.
   if (!marketingPrefilledMessage && questionTopics.includes('remote_consultation')) {
     return {route:'standard_reply', reason:'open_question_for_ai', replyCode:null,
       professional:mentionsAmanda || procedure ? 'amanda' : null, procedure:procedure?.key || null, automaticAllowed:true, currentText:normalizedText};
@@ -806,6 +860,7 @@ export function planAutomation({
     return {
       route: "standard_reply",
       reason: "consultation_information_request",
+      currentText: normalizedText,
       replyCode: "AMANDA-CONSULTA-INFO-01",
       professional: "amanda",
       procedure: procedure?.key || null,

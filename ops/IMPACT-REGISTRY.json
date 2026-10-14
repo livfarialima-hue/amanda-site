@@ -180,6 +180,10 @@
         "auditorias/bruna-respostas-contextuais-2026-09-25/PREFLIGHT.json",
         "auditorias/bruna-respostas-contextuais-2026-09-25/PUBLICACAO.json",
         "auditorias/bruna-respostas-contextuais-2026-09-25/RELATORIO.md",
+        "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "auditorias/bruna-teleconsulta-2026-10-14/PUBLICACAO.json",
+        "auditorias/bruna-teleconsulta-2026-10-14/RELATORIO.md",
+        "auditorias/bruna-teleconsulta-2026-10-14/REVISAO.json",
         "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json",
         "auditorias/reconciliacao-leads-conversas-2026-09-13/RELATORIO.md",
         "docs/ARQUITETURA-JORNADA-PACIENTE.md",
@@ -205,10 +209,10 @@
         "scripts/check-operational-consistency.test.mjs"
       ],
       "requiredCommands": [
-        "npm.cmd run change:check",
+        "git diff --check",
         "npm.cmd run architecture:check",
-        "npm.cmd test",
-        "git diff --check"
+        "npm.cmd run change:check",
+        "npm.cmd test"
       ],
       "liveSystems": [],
       "requiresReadOnlyPreflight": false
@@ -480,6 +484,7 @@
         "netlify/functions/lib/bruna-preco-direto.integration.test.mjs",
         "netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
         "netlify/functions/lib/bruna-reacoes.integration.test.mjs",
+        "netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
         "netlify/functions/lib/conversation-action-controller.mjs",
         "netlify/functions/lib/conversation-action-controller.test.mjs",
         "netlify/functions/lib/conversation-guidelines.mjs",
@@ -541,6 +546,7 @@
         "netlify/functions/lib/bruna-preco-direto.integration.test.mjs",
         "netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
         "netlify/functions/lib/bruna-reacoes.integration.test.mjs",
+        "netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
         "netlify/functions/lib/conversation-action-controller.test.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
         "netlify/functions/lib/conversation-ledger.test.mjs",
@@ -574,6 +580,7 @@
         "node --test netlify/functions/lib/bruna-preco-direto.integration.test.mjs netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/price-journey.integration.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
         "node --test netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
         "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
+        "node --test netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
         "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
         "node --test netlify/functions/lib/interaction-continuity.test.mjs",
         "node --test netlify/functions/lib/knowledge-learning.test.mjs",

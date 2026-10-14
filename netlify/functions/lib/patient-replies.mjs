@@ -7,6 +7,9 @@ import { procedureOpeningMicrovalue } from "./bruna-conversion-experience.mjs";
 import { isOnlyNamedProcedure } from "./procedure-context.mjs";
 
 export const AMANDA_CONSULTATION_PRICE_REPLY = 'A consulta presencial com a Dra. Amanda custa R$ 500.';
+// Daniel confirmed both facts on 2026-10-14; they do not reserve an appointment.
+export const AMANDA_REMOTE_CONSULTATION_REPLY = 'A Dra. Amanda atende por consulta online, inclusive quem está no exterior.';
+export const AMANDA_REMOTE_CONSULTATION_PRICE_REPLY = 'A consulta online com a Dra. Amanda custa R$ 500.';
 export const AMANDA_CONSULTATION_PAYMENT_REPLY = 'O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal.';
 export const AMANDA_PRIVATE_REIMBURSEMENT_REPLY = 'O atendimento da Dra. Amanda é particular. Emitimos nota fiscal para solicitar eventual reembolso, que depende das regras e da análise do seu plano.';
 

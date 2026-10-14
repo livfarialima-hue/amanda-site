@@ -32,11 +32,11 @@ test('five consecutive messages retain every question without inferring facial l
   assert.deepEqual(action.replyContract.unresolvedIntents,bundle.topics);
   assert.equal(plan.procedure,null);
   assert.match(body,/pescoço é o que mais incomoda/);
-  assert.match(body,/consulta presencial.*R\$ 500/);
+  assert.match(body,/consulta online.*R\$ 500/);
   assert.match(body,/particular.*nota fiscal.*eventual reembolso/s);
-  assert.match(body,/confirmar com a equipe.*consulta online.*emissão do relatório/s);
+  assert.match(body,/confirmar com a equipe.*emissão do relatório/s);
   assert.match(body,/pescoço apenas ou também para o rosto\?/);
-  assert.equal(bundle.pendingDetails.length,2);
+  assert.equal(bundle.pendingDetails.length,1);
   assert.doesNotMatch(body,/Eu sou a Bruna|mil|https:|opções de horário/);
   assert.equal(check.allowed,true,JSON.stringify(check));
 });
@@ -96,11 +96,12 @@ test('the same range is not repeated and an unsupported surgery gets a concrete 
   assert.match(unsupported.body,/confirmar com a equipe.*cirurgia/s);
 });
 
-test('a first bundle introduces Bruna once and never confirms online or a report',()=>{
+test('a first bundle confirms teleconsultation but retains the report pending detail',()=>{
   const {body,check}=response('Qual o valor da consulta com a Dra. Amanda? Pode ser online? Meu convênio pede relatório para reembolso.',[]);
   assert.match(body,/Eu sou a Bruna/);
   assert.equal((body.match(/Bruna/g)||[]).length,1);
-  assert.doesNotMatch(body,/consulta online custa|emitimos.*relatório|reembolso garantido|atendemos online/i);
+  assert.match(body,/consulta online com a Dra\. Amanda custa R\$ 500/);
+  assert.doesNotMatch(body,/emitimos.*relatório|reembolso garantido/i);
   assert.equal(check.allowed,true,JSON.stringify(check));
 });
 

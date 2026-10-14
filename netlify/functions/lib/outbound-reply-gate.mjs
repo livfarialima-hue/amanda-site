@@ -276,7 +276,8 @@ function semanticUnsafeReplyReason(
     for (const amount of amounts) {
       const compact = amount.replace(/[.\s]/g, "").toLowerCase();
       const consultation500 =
-        /^r\$500(?:,00)?$/.test(compact) && /\bconsulta\b/i.test(raw);
+        /^r\$500(?:,00)?$/.test(compact) && /\b(?:consulta|teleconsulta)\b/i.test(raw) &&
+        !/\b(?:dr\.?\s+daniel|cardiolog)/i.test(raw);
       const danielConsultation =
         /^r\$(?:350|700)(?:,00)?$/.test(compact) &&
         /\b(?:dr\.?\s+daniel|cardiolog|consulta\s+cardiol[oó]gica)\b/i.test(raw);

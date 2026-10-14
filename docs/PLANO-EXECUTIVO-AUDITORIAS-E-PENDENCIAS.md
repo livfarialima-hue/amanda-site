@@ -1,5 +1,13 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-TELECONSULTA-2026-10-14 -->
+**Pacote 2026-10-14.3 — SYNC_PENDING.** Daniel confirmou em 14/10/2026: a Dra. Amanda oferece teleconsulta por R$ 500, inclusive para pacientes no exterior. A modalidade pode ser informada diretamente; o preço é respondido quando solicitado. Isso não confirma horário, indicação cirúrgica individual, orçamento por foto, forma de pagamento remoto ou atendimento de outro profissional.
+
+Fatos centralizados em patient-replies.mjs, compartilhados por prompt, perguntas combinadas e sugestões de retomada. Retirada a confirmação humana artificial da modalidade/preço; relatório de reembolso permanece pendente. Continuação contextual não injeta consulta presencial nem preço cirúrgico antigo; contexto de Daniel não recebe fatos da Amanda. Urgência, posse humana, reserva, identidade, LEADS/CRM/Ads e histórico mantêm os controles existentes.
+
+Implementação revisada independentemente e testada localmente: 2.163 testes integrais e 54 complementares passaram; artefato de 193 arquivos/54 URLs, contrato, arquitetura e ensaio de reversão aprovados. Os 18 cenários reais de IA, três áudios e dois casos de histórico completo continuam obrigatórios na publicação. Netlify atual 6acf71e94079694bfc8221a4, commit funcional bbf297da98946badd4460989064e4f2636f1211c; Apps Script v164 preservado. Rollback por novo commit equivalente a esse baseline, sem replay ou mudança de dados. Recibo: auditorias/bruna-teleconsulta-2026-10-14/PUBLICACAO.json. Daniel/equipe: observar primeiras conversas e revisar em 48 horas; conter diante de profissional incorreto, valor divergente, reserva ou indicação inventada.
+<!-- /BRUNA-TELECONSULTA-2026-10-14 -->
+
 <!-- BRUNA-AUDIO-CONTEXTO-2026-10-14 -->
 **Pacote 2026-10-14.2 — PUBLICADO E VERIFICADO NAS PLATAFORMAS em 14/10/2026, 09:16:27 BRT.** Commit funcional bbf297da98946badd4460989064e4f2636f1211c, Netlify 6acf71e94079694bfc8221a4, pela integração Git. Apps Script v164 preservado, sem nova escrita. A transcrição do incidente continha a pergunta sobre avaliação online; o ramo anterior de preço ignorava o assunto reconhecido pela IA. Diagnóstico baseado nos registros, sem ouvir o áudio original.
 

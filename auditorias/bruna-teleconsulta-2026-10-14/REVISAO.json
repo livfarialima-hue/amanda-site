@@ -1,0 +1,69 @@
+{
+  "status": "passed_local",
+  "checkedAt": "2026-10-14T14:02:56.887Z",
+  "syntheticOnly": true,
+  "patientMessagesSent": 0,
+  "operationalRoutinesExecuted": 0,
+  "fullSuite": {
+    "passed": 2163,
+    "failed": 0,
+    "log": "tmp/teleconsulta-full-tests.log"
+  },
+  "complementary": {
+    "passed": 54,
+    "failed": 0,
+    "log": "tmp/teleconsulta-complementary.log",
+    "coverage": "Union of contract test files outside the full test runner"
+  },
+  "build": {
+    "status": "passed",
+    "files": 193,
+    "sitemapUrls": 54,
+    "auditsInArtifact": 0
+  },
+  "checks": {
+    "change": "OK",
+    "architecture": "OK",
+    "syntaxFiles": 14,
+    "diff": "OK",
+    "rollback": "All 27 staged files reverse-check passed; no reversal applied",
+    "ops": "SYNC_PENDING until verified publication and Drive readback"
+  },
+  "independentReviews": [
+    {
+      "reviewer": "crm_knowledge_audit",
+      "status": "approved",
+      "testsPassed": 309,
+      "independentAssertions": 12,
+      "findingsResolved": [
+        "Incidental referral/negative mention does not change professional",
+        "Direct question about Amanda supersedes old Daniel subject"
+      ]
+    },
+    {
+      "reviewer": "audio_context_review",
+      "status": "approved",
+      "focusedTests": 106,
+      "acceptanceMutations": {
+        "rejectedInvalid": 6,
+        "acceptedLegitimate": 2
+      },
+      "findingsResolved": [
+        "Negated or ambiguous remote/payment wording stays semantic",
+        "Only consultation cost inherits confirmed remote modality",
+        "Publication gate rejects denial of the approved remote fact without blocking budget or schedule boundaries"
+      ]
+    }
+  ],
+  "liveModelGate": {
+    "status": "pending_production_build",
+    "scenarios": 18,
+    "audioScenarios": 3,
+    "fullHistoryScenarios": 2
+  },
+  "limits": [
+    "First natural post-release conversation not observed",
+    "Google Ads import acceptance not verified",
+    "Existing LEADS responsible projection discrepancy remains separate from canonical CRM"
+  ]
+}

@@ -5,7 +5,7 @@ import { runOpenAIShadow } from '../netlify/functions/lib/openai-shadow.mjs';
 import { runLeadClassifier } from '../netlify/functions/lib/lead-classifier.mjs';
 import { reviewScheduledFollowupContext } from '../netlify/functions/lib/scheduled-followup-context-review.mjs';
 import { buildConsultationInformationReply, buildAdministrativeSideAnswer } from '../netlify/functions/lib/patient-replies.mjs';
-import { approvedPartialAnswer, buildUnknownHoldingReply } from '../netlify/functions/lib/knowledge-learning.mjs';
+import { approvedPartialAnswer } from '../netlify/functions/lib/knowledge-learning.mjs';
 import { buildLiftingFacialInformationReply } from '../netlify/functions/lib/lifting-information.mjs';
 import { selectConfirmedReplyText, semanticDecisionConfirmsDeterministicReply, deterministicReplyCoversPatientQuestions } from '../netlify/functions/lib/semantic-reply-policy.mjs';
 import { buildSurgicalPriceSuggestedReply } from '../netlify/functions/lib/surgical-price-review.mjs';
@@ -16,6 +16,14 @@ import {
   BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS, BRUNA_TEXT_VERBOSITY,
   BRUNA_CONVERSATION_TIMEOUT_MS, BRUNA_CLASSIFICATION_TIMEOUT_MS, BRUNA_FOLLOWUP_REVIEW_TIMEOUT_MS,
 } from '../netlify/functions/lib/bruna-model-config.mjs';
+
+// Acceptance of this confirmed administrative fact is separate from the
+// outbound safety gate: a safe refusal would still be the wrong answer here.
+function contradictsApprovedRemoteConsultation(reply) {
+  const text = String(reply || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  return /\bnao\s+(?:(?:e|sera|seria)\s+possivel\s+)?(?:atende(?:mos)?|oferece(?:mos)?|realiza(?:mos)?|faz(?:er|emos)?|temos|ha|pode(?:mos)?(?:\s+(?:ser|fazer|realizar))?)\s+(?:(?:por|via|em|a|o|uma|um|atendimento|consulta|de|forma|modalidade)\s+){0,5}(?:online|teleconsulta|remot[oa])\b/.test(text) ||
+    /(?:consulta online|teleconsulta)\b[^.!?;\n]{0,40}\b(?:indisponivel|nao\s+(?:(?:e|esta)\s+(?:disponivel|disponibilizada|oferecida|possivel)|pode\s+ser\s+realizada|custa\s+r\$\s*500))/.test(text);
+}
 
 // A separate synthetic measurement after a failed runtime call. It cannot
 // change the failed gate, extend the runtime deadline, or send patient data.
@@ -85,6 +93,11 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       fullHistory: longHistory, recentConversation: longHistory.slice(-32), fullHistoryName: true },
     { name: 'full_history_resolved_human_task', text: 'Obrigada, recebi o documento. Era só isso.', procedure: 'unknown', fullHistoryResolved: true,
       recentConversation: longHistory.slice(-32), fullHistory: [...longHistory, { role: 'assistant', source: 'human', text: 'O documento solicitado já foi enviado por e-mail. Está resolvido.', eventId: 'synthetic-resolved', at: '2026-10-13T13:00:00Z' }] },
+    ...['E qual o valor da consulta?', 'Quanto custa?'].map((text, index) => ({
+      name:`remote_consultation_price_continuation_${index + 1}`, remoteAssessment:true, consultationCost:true, procedure:'unknown', text,
+      recentConversation:[{role:'user',source:'patient',text:'A Dra. Amanda atende por teleconsulta? Moro no exterior.'},
+        {role:'assistant',source:'bruna',text:'Sim, a Dra. Amanda atende por consulta online, inclusive quem está no exterior.'}]
+    })),
     { name: 'classification', classification: true },
     { name: 'followup_declined', followup: true },
   ];
@@ -148,14 +161,11 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         previousConversationState: scenario.previousConversationState, learningContext: scenario.learningContext,
         patientRelationship: scenario.patientRelationship,
         priorInteractionKnown: true, policyHints, replyContract, deterministicUrgent: !!scenario.urgent }, options);
-      if (scenario.remoteAssessment && result.status === 'completed') {
-        selectedReply = buildUnknownHoldingReply({currentText:scenario.text, reviewReason:result.decision?.reviewReason, procedure:scenario.procedure});
-      }
-      if ((scenario.code || scenario.educational) && result.status === 'completed') {
+      if ((scenario.code || scenario.educational || scenario.remoteAssessment) && result.status === 'completed') {
         const candidate = {status:'completed', decision: { route: 'standard_reply', confidence: 'high', automaticAllowed: true, urgent: false,
           professional: 'amanda', procedure: scenario.procedure, replyCode: scenario.code, suggestedReply: preview } };
         const confirmed = semanticDecisionConfirmsDeterministicReply(result,candidate);
-        selectedReply = scenario.knowledge || scenario.educational ? result.decision?.suggestedReply : confirmed && deterministicReplyCoversPatientQuestions(candidate,conversationAction)
+        selectedReply = scenario.knowledge || scenario.educational || scenario.remoteAssessment ? result.decision?.suggestedReply : confirmed && deterministicReplyCoversPatientQuestions(candidate,conversationAction)
           ? selectConfirmedReplyText(result,candidate) : result.decision?.suggestedReply || '';
         gate = validateOutboundReply({ body: selectedReply, currentText: scenario.text, recentConversation: scenarioHistory,
           conversationAction: { ...conversationAction, semanticReplyAuthorized: true, semanticReplyCode: scenario.code } });
@@ -169,8 +179,13 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     const procedureMatches = result.decision?.procedure === scenario.procedure ||
       (scenario.knowledge === true && scenario.procedure === 'unknown' && result.decision?.procedure === '');
     const behaviorPassed = scenario.classification ? true : scenario.followup ? result.allowed === false :
-      scenario.remoteAssessment ? result.decision?.route === 'human_review' && result.decision?.automaticAllowed === false &&
-        result.decision?.replyCode === 'UNKNOWN-REVIEW-01' && /avaliação online/.test(selectedReply) && !/faixa|R\$|confirmada|agendad/i.test(selectedReply) :
+      scenario.remoteAssessment ? gate?.allowed === true && result.decision?.route === 'standard_reply' && result.decision?.automaticAllowed === true &&
+        result.decision?.confidence === 'high' && result.decision?.professional === 'amanda' && result.decision?.urgent !== true &&
+        (procedureMatches || (scenario.procedure === 'unknown' && !result.decision?.procedure)) &&
+        /online|teleconsulta/i.test(selectedReply) && !contradictsApprovedRemoteConsultation(selectedReply) &&
+        (!scenario.consultationCost || /R\$\s*500(?:,00)?\b/.test(selectedReply)) &&
+        (scenario.consultationCost || (/exterior/i.test(selectedReply) && /avaliação|consulta/.test(selectedReply))) &&
+        !/confirmar (?:com a equipe )?(?:a possibilidade|a disponibilidade|o valor|se .*online)|R\$\s*(?:26|42)\s*mil|(?:consulta|teleconsulta) (?:já está )?(?:confirmada|agendada)|cirurgia (?:autorizada|garantida)/i.test(selectedReply) :
       scenario.fullHistoryResolved ? result.decision?.route === 'ignore' && result.decision?.automaticAllowed === false && !result.decision?.suggestedReply :
       scenario.urgent ? result.decision?.automaticAllowed === false :
       scenario.review ? result.decision?.route === 'human_review' && result.decision?.automaticAllowed === false &&

@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-10-14T13:36:53.902Z",
+  "baseCommit": "50af5ccfafb1d37e529e53f96f814511516d6da5",
+  "functionalCommit": "bbf297da98946badd4460989064e4f2636f1211c",
+  "netlifyDeployId": "6acf71e94079694bfc8221a4",
+  "appsScriptVersion": 164,
+  "readOnly": true,
+  "authorization": {
+    "by": "Daniel",
+    "source": "Confirmação direta nesta conversa: teleconsulta da Dra. Amanda por R$500 inclusive do exterior; publicação já autorizada na mensagem anterior.",
+    "scope": "Fato administrativo de modalidade e preço; não confirma agenda, indicação ou orçamento cirúrgico individual."
+  },
+  "leads": {
+    "opportunities": 556,
+    "uniqueIds": 556,
+    "routed": 556
+  },
+  "ads": {
+    "readyRows": 12,
+    "exportRows": 12,
+    "uniqueTransactions": 12,
+    "mismatches": 0,
+    "acceptanceVerified": false
+  },
+  "limits": [
+    "Apps Script sem mudança neste pacote; versão v164 conforme recibo de publicação anterior.",
+    "Divergência anterior do responsável na projeção LEADS continua fora deste pacote; nenhuma migração."
+  ]
+}

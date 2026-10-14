@@ -1,4 +1,6 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
+import { AMANDA_REMOTE_CONSULTATION_REPLY, AMANDA_REMOTE_CONSULTATION_PRICE_REPLY } from './patient-replies.mjs';
+import { isConsultationCostInquiry, isPriceAmountInquiry, latestConsultationModality } from './patient-turn-context.mjs';
 
 const DEFAULT_TIME_ZONE = "America/Sao_Paulo";
 const DEFAULT_START_HOUR = 0;
@@ -276,6 +278,15 @@ export function buildMorningResumeOpening({
       text,
     );
 
+  const modality = latestConsultationModality(currentText, recentConversation);
+  if (modality === 'remote') {
+    if (/\b(?:daniel|cardiolog)/i.test(combined)) return '';
+    const price = isConsultationCostInquiry(currentText) ||
+      (isPriceAmountInquiry(currentText) && !/cirurgia|lifting|or[cç]amento/i.test(currentText));
+    return `${opening} Como combinamos, retomando pela manhã: ${AMANDA_REMOTE_CONSULTATION_REPLY}${price ? ' ' + AMANDA_REMOTE_CONSULTATION_PRICE_REPLY : ''}`;
+  }
+  if (!modality && /online|on-line|teleconsulta|videoconsulta|videochamada|a dist[aâ]ncia/i.test(currentText)) return '';
+
   if (asksConsultationPrice) {
     return `${opening} Como combinamos, retomando pela manhã: a consulta presencial com a Dra. Amanda custa R$ 500, pode ser paga por Pix, débito ou parcelamento e tem emissão de nota fiscal.`;
   }
@@ -311,6 +322,12 @@ export function buildContextualHumanSuggestion({
   if (/foto|imagem/.test(text)) {
     return `${opening} Obrigada por compartilhar sua foto e confiar na equipe. Entendo que você queira uma orientação cuidadosa. A Dra. Amanda poderá avaliar pessoalmente os detalhes importantes e conversar com você sobre as possibilidades que façam sentido.`;
   }
+  const modality = latestConsultationModality(messageText);
+  if (modality === 'remote') {
+    if (/\b(?:daniel|cardiolog)/i.test(text)) return '';
+    return `${opening} ${AMANDA_REMOTE_CONSULTATION_REPLY}${isConsultationCostInquiry(messageText) ? ' ' + AMANDA_REMOTE_CONSULTATION_PRICE_REPLY : ''}`;
+  }
+  if (!modality && /online|on-line|teleconsulta|videoconsulta|videochamada|a dist[aâ]ncia/i.test(messageText)) return '';
   if (/valor da consulta|consulta.*(?:valor|preco)|quanto.*consulta/.test(text)) {
     return `${opening} A consulta presencial com a Dra. Amanda custa R$ 500, pode ser paga por Pix, débito ou parcelamento e tem emissão de nota fiscal.`;
   }

@@ -1,48 +1,45 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-AUDIO-CONTEXTO-2026-10-14",
-  "title": "Preservar o assunto da pergunta e a decisão semântica no retorno após áudio",
-  "status": "published_verified",
-  "baseCommit": "a50fba8e496539c6c521213943012f8f9955b9a4",
+  "changeId": "BRUNA-TELECONSULTA-2026-10-14",
+  "title": "Informar a teleconsulta da Dra. Amanda por R$500 inclusive do exterior",
+  "status": "tested_local",
+  "baseCommit": "50af5ccfafb1d37e529e53f96f814511516d6da5",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel pediu identificar, ajustar e publicar a resposta incompatível com o áudio nesta conversa. Preflight de publicação vinculará o commit concreto à instrução."
+    "note": "Daniel confirmou o fato e já autorizou publicar as pendências nesta conversa; autorização vinculada ao commit exato no preflight externo."
   },
   "risk": {
-    "level": "critical",
+    "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true
+    "externalWritesPerformed": false
   },
   "scope": {
     "files": [
-      "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json",
-      "auditorias/bruna-audio-contexto-2026-10-14/PUBLICACAO.json",
-      "auditorias/bruna-audio-contexto-2026-10-14/RELATORIO.md",
-      "auditorias/bruna-audio-contexto-2026-10-14/REVISAO.json",
+      "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+      "auditorias/bruna-teleconsulta-2026-10-14/PUBLICACAO.json",
+      "auditorias/bruna-teleconsulta-2026-10-14/RELATORIO.md",
+      "auditorias/bruna-teleconsulta-2026-10-14/REVISAO.json",
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/human-resume.mjs",
+      "netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs",
+      "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
+      "netlify/functions/lib/consultation-question-bundle.mjs",
+      "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/extreme-night-policy.mjs",
       "netlify/functions/lib/human-resume-processor.test.mjs",
-      "netlify/functions/lib/knowledge-learning.mjs",
-      "netlify/functions/lib/knowledge-learning.test.mjs",
-      "netlify/functions/lib/openai-shadow.test.mjs",
-      "netlify/functions/lib/overnight-webhook.test.mjs",
-      "netlify/functions/lib/patient-relationship.mjs",
-      "netlify/functions/lib/patient-relationship.test.mjs",
+      "netlify/functions/lib/outbound-reply-gate.mjs",
+      "netlify/functions/lib/patient-replies.mjs",
       "netlify/functions/lib/patient-turn-context.mjs",
       "netlify/functions/lib/price-holding-webhook.test.mjs",
-      "netlify/functions/lib/surgical-price-review.mjs",
-      "netlify/functions/lib/surgical-price-review.test.mjs",
+      "netlify/functions/lib/surgical-price-policy.mjs",
       "netlify/functions/lib/whatsapp-automation.mjs",
-      "netlify/functions/lib/whatsapp-automation.test.mjs",
-      "netlify/functions/lib/ycloud-review-alert.test.mjs",
-      "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json",
       "scripts/check-bruna-model-live.mjs",
@@ -185,104 +182,145 @@
       "scripts/check-bruna-model-live.mjs"
     ],
     "preservedInvariants": [
-      "Identidade canônica, autoria, histórico integral e metadados de áudio preservados.",
-      "Sem alteração de LEADS/CRM/qualificação, atribuição, Ads, filas, agenda ou preços aprovados.",
-      "Sem mensagem real de teste, replay, promoção de conhecimento ou mudança de flags.",
-      "Falha de inferência ou alerta não autoriza promessa de retorno nem cópia contraditória.",
-      "Pergunta sobre atendimento remoto não autoriza teleconsulta nem reserva."
+      "Somente modalidade e preço administrativos da Dra. Amanda; nenhum novo fato clínico.",
+      "Sem mudança de LEADS, CRM, atribuição, Ads, agenda, filas, identidade ou prioridade humana.",
+      "Não confirma reserva, cirurgia individual, orçamento por foto, isenção ou desconto."
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "site-editorial-copy",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
         "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
-      },
-      {
-        "contract": "patient-journey-funnel-followups",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
-      },
-      {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
-      },
-      {
-        "contract": "professional-routing",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
-      },
-      {
-        "contract": "bot-decision-observability",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
-      },
-      {
-        "contract": "ycloud-delivery-cost-observability",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
-      },
-      {
-        "contract": "patient-lifecycle-governance",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
-      },
-      {
-        "contract": "bruna-regression-governance",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
-      },
-      {
-        "contract": "durable-storage-conditional-writes",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
-      },
-      {
-        "contract": "website-conversation-continuity",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
-      },
-      {
-        "contract": "reply-continuity",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
-      },
-      {
-        "contract": "followup-message-copy",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
-      },
-      {
-        "contract": "bruna-model-runtime",
-        "system": "Netlify / LEADS; Apps Script v164 preservado",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json"
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
       },
       {
         "contract": "appointment-reminders",
-        "system": "LEADS / queues / schedule; Apps Script v164 unchanged",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
         "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json",
-        "note": "Documentation-only release receipt; no change to this contract runtime. Existing full and complementary suites cover its required tests."
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
+      },
+      {
+        "contract": "patient-journey-funnel-followups",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
+        "status": "verified_baseline_with_limits",
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
+      },
+      {
+        "contract": "google-ads-acquisition-conversion",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
+        "status": "verified_baseline_with_limits",
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
+      },
+      {
+        "contract": "professional-routing",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
+        "status": "verified_baseline_with_limits",
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
+      },
+      {
+        "contract": "bot-decision-observability",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
+        "status": "verified_baseline_with_limits",
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
+      },
+      {
+        "contract": "ycloud-delivery-cost-observability",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
+        "status": "verified_baseline_with_limits",
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
+      },
+      {
+        "contract": "patient-lifecycle-governance",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
+        "status": "verified_baseline_with_limits",
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
+      },
+      {
+        "contract": "bruna-regression-governance",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
+        "status": "verified_baseline_with_limits",
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
       },
       {
         "contract": "patient-care-milestones",
-        "system": "LEADS / queues / schedule; Apps Script v164 unchanged",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
         "status": "verified_baseline_with_limits",
-        "reference": "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json",
-        "note": "Documentation-only release receipt; no change to this contract runtime. Existing full and complementary suites cover its required tests."
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
+      },
+      {
+        "contract": "durable-storage-conditional-writes",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
+        "status": "verified_baseline_with_limits",
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
+      },
+      {
+        "contract": "website-conversation-continuity",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
+        "status": "verified_baseline_with_limits",
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
+      },
+      {
+        "contract": "reply-continuity",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
+        "status": "verified_baseline_with_limits",
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
+      },
+      {
+        "contract": "followup-message-copy",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
+        "status": "verified_baseline_with_limits",
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
+      },
+      {
+        "contract": "bruna-model-runtime",
+        "system": "Netlify / LEADS / CRM / Ads; Apps Script v164 preservado",
+        "status": "verified_baseline_with_limits",
+        "checkedAt": "2026-10-14T13:36:53.902Z",
+        "evidence": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "reference": "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
+        "note": "Leitura viva; nenhuma mudança de dados, campanhas, agenda, Apps Script ou flags. Aceite Ads não verificado."
       }
     ]
   },
@@ -322,6 +360,7 @@
       "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
       "node --test netlify/functions/lib/bruna-runtime.test.mjs",
       "node --test netlify/functions/lib/bruna-sol61.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
       "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
       "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
       "node --test netlify/functions/lib/human-resume-runtime.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-ledger.test.mjs",
@@ -349,42 +388,36 @@
       "npm.cmd run site:check",
       "npm.cmd test"
     ],
-    "baseline": "a50fba8e496539c6c521213943012f8f9955b9a4",
-    "evidence": "auditorias/bruna-audio-contexto-2026-10-14/REVISAO.json",
-    "executedCoverage": {
-      "fullSuite": 2134,
-      "complementary": 52,
-      "note": "All test files required by the contracts are included in the full suite or complementary union; no duplicated execution needed.",
-      "build": "passed",
-      "site": "passed",
-      "architecture": "passed",
-      "rollback": "passed",
-      "independentReview": "completed",
-      "ops": "OK"
-    }
+    "baseline": "50af5ccfafb1d37e529e53f96f814511516d6da5",
+    "evidence": "auditorias/bruna-teleconsulta-2026-10-14/REVISAO.json",
+    "checkedAt": "2026-10-14T14:02:56.887Z",
+    "executed": [
+      "npm.cmd test: 2163/2163",
+      "contract complementary union: 54/54",
+      "npm.cmd run site:build",
+      "npm.cmd run site:check",
+      "npm.cmd run architecture:check",
+      "npm.cmd run change:check",
+      "git diff --check",
+      "node --check: 14 files",
+      "git apply --reverse --check: 27 staged files"
+    ]
   },
   "rollback": {
-    "local": "Reverter somente o candidato no checkout isolado.",
-    "production": "Reverter o commit funcional pela integração Git e conferir o novo deploy equivalente a dcb5df99f91a; Apps Script v164 preservado. Não apagar dados, filas, histórico ou recibos nem repetir mensagens."
+    "local": "Reverter somente este pacote no worktree isolado.",
+    "production": "Novo commit de reversão pela integração Git para comportamento equivalente a bbf297d; preservar Apps Script v164, dados, filas e recibos; sem replay."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
-    "window": "Primeiras conversas naturais e 48 horas após publicação",
+    "window": "Primeiras conversas naturais e 48 horas",
     "signals": [
-      "Compatibilidade da resposta com a pergunta atual, sem retorno indevido a preço.",
-      "Encaminhamento com recibo antes da promessa; falhas recuperáveis.",
-      "Autoria, áudio, Opportunity ID, LEADS/CRM e exportação Ads preservados."
+      "Resposta à pergunta remota sem espera artificial.",
+      "Preço exato e profissional correto; nenhuma reserva ou indicação individual inventada.",
+      "LEADS/CRM e exportações preservados."
     ]
   },
   "release": {
-    "status": "published_verified",
-    "externalWritesPerformed": true,
-    "approvedCommit": "bbf297da98946badd4460989064e4f2636f1211c",
-    "netlifyDeployId": "6acf71e94079694bfc8221a4",
-    "appsScriptVersion": 164,
-    "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "b357c204bd87cc4ef042d88700ce44d5adf6d6adf059515df4f1cb12345e40f9",
-    "verifiedAt": "2026-10-14T12:26:46.286Z",
-    "evidence": "auditorias/bruna-audio-contexto-2026-10-14/PUBLICACAO.json"
+    "status": "pending",
+    "externalWritesPerformed": false
   }
 }

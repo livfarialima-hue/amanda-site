@@ -1,5 +1,13 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+<!-- BRUNA-TELECONSULTA-2026-10-14 -->
+**Pacote 2026-10-14.3 — SYNC_PENDING.** Daniel confirmou em 14/10/2026: a Dra. Amanda oferece teleconsulta por R$ 500, inclusive para pacientes no exterior. A modalidade pode ser informada diretamente; o preço é respondido quando solicitado. Isso não confirma horário, indicação cirúrgica individual, orçamento por foto, forma de pagamento remoto ou atendimento de outro profissional.
+
+Fatos centralizados em patient-replies.mjs, compartilhados por prompt, perguntas combinadas e sugestões de retomada. Retirada a confirmação humana artificial da modalidade/preço; relatório de reembolso permanece pendente. Continuação contextual não injeta consulta presencial nem preço cirúrgico antigo; contexto de Daniel não recebe fatos da Amanda. Urgência, posse humana, reserva, identidade, LEADS/CRM/Ads e histórico mantêm os controles existentes.
+
+Implementação revisada independentemente e testada localmente: 2.163 testes integrais e 54 complementares passaram; artefato de 193 arquivos/54 URLs, contrato, arquitetura e ensaio de reversão aprovados. Os 18 cenários reais de IA, três áudios e dois casos de histórico completo continuam obrigatórios na publicação. Netlify atual 6acf71e94079694bfc8221a4, commit funcional bbf297da98946badd4460989064e4f2636f1211c; Apps Script v164 preservado. Rollback por novo commit equivalente a esse baseline, sem replay ou mudança de dados. Recibo: auditorias/bruna-teleconsulta-2026-10-14/PUBLICACAO.json. Daniel/equipe: observar primeiras conversas e revisar em 48 horas; conter diante de profissional incorreto, valor divergente, reserva ou indicação inventada.
+<!-- /BRUNA-TELECONSULTA-2026-10-14 -->
+
 <!-- BRUNA-AUDIO-CONTEXTO-2026-10-14 -->
 **Pacote 2026-10-14.2 — PUBLICADO E VERIFICADO NAS PLATAFORMAS em 14/10/2026, 09:16:27 BRT.** Commit funcional bbf297da98946badd4460989064e4f2636f1211c, Netlify 6acf71e94079694bfc8221a4, pela integração Git. Apps Script v164 preservado, sem nova escrita. A transcrição do incidente continha a pergunta sobre avaliação online; o ramo anterior de preço ignorava o assunto reconhecido pela IA. Diagnóstico baseado nos registros, sem ouvir o áudio original.
 
@@ -264,7 +272,7 @@ No primeiro ciclo natural da versão final, as três pendências técnicas com c
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste mesmo conteúdo. Posicionamento e estratégia de aquisição permanecem em `campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md`; detalhes técnicos ficam em `docs/whatsapp-clinica-liv-operacao.md`.
 
-**Versão:** 2026-10-14.2
+**Versão:** 2026-10-14.3
 
 **Release `2026-08-31.1` — publicado, ativado e verificado:** a experiência conversacional protegida por `BRUNA_CONVERSION_EXPERIENCE_V1` está ativa somente no contexto de produção. A abertura de marketing mantém nome e procedimento validados, acrescenta um único microvalor específico para cada procedimento — inclusive os de menor procura — e termina com uma pergunta fácil. A pergunta isolada sobre a consulta responde primeiro `R$ 500`, Pix, débito ou parcelamento e nota fiscal; omite a explicação da avaliação quando ela não resolve uma dúvida nova e só inclui endereço se também tiver sido solicitado. O modelo relê o histórico, evita repetir o nome em turnos consecutivos, mantém salvaguardas como política interna e usa apenas uma progressão compatível com o estágio: continuação informativa, oferta de faixa já autorizada, consulta de horários ou coleta de preferência. O gate remove somente uma CTA final incompatível quando o restante da resposta é seguro, preservando a informação útil; também bloqueia a exposição mecânica de frases como `sem prometer um resultado específico`. Procedimentos, preços, agenda, confirmação humana, takeover, opt-out, deduplicação, debounce, retomadas, CRM e Apps Script permaneceram inalterados. Código funcional `67f00a2a0c614f57a2fc1a70fdcc3c59c265d815`; deploy verificado ainda desligado `6a954ed0e6d4950008ba7051`; deploy ativo `6a95502db8459ddb8876d56e`; **303/303 testes focados**, **1210/1210 integrais**, arquitetura, contrato de mudança, build de 180 arquivos e 44 URLs aprovados. Domínio e URL imutável reportaram `automationMode=active` e `conversionExperience=bruna-conversion-v1`; requisições sem assinatura retornaram HTTP 401 antes de qualquer efeito. Nenhuma mensagem real foi enviada. Apps Script v139 e seus IDs canônicos foram preservados. Rollback imediato: remover ou desligar `BRUNA_CONVERSION_EXPERIENCE_V1` e confirmar `conversionExperience=off` antes de qualquer rollback de código.
 
@@ -609,7 +617,7 @@ O primeiro nome pode ser usado quando for claramente pessoal. A frase sobre como
 
 A grade `Datas Consulta` restringe somente os horários que a automação pode oferecer e confirmar. Se a equipe humana negociar e confirmar outro horário, o comprovante completo pode registrá-lo normalmente. Para a Dra. Amanda, a reserva continua obrigatoriamente na `Sala 1`; se já houver outro evento no mesmo intervalo, o agendamento humano é preservado e um alerta por e-mail exige que a equipe resolva o conflito. Um comprovante incompleto nunca cria linha parcial em `Consultas` nem evento: a operação para e informa com clareza quais dados a equipe precisa completar antes de reenviar a confirmação final.
 
-Não prometer teleconsulta, horário, política de sinal, remarcação, estacionamento ou reembolso sem confirmação operacional vigente.
+Daniel confirmou em 14/10/2026: a Dra. Amanda oferece teleconsulta por R$ 500, inclusive para pacientes no exterior. A modalidade pode ser informada diretamente; o preço é respondido quando solicitado. Isso não confirma horário, indicação cirúrgica individual, orçamento por foto, forma de pagamento remoto ou atendimento de outro profissional. Horários, sinal, remarcação, estacionamento e reembolso exigem suas confirmações operacionais próprias.
 
 ## 12. Preço e pagamento de cirurgia
 

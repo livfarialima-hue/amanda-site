@@ -80,7 +80,7 @@ export function hasOnlyApprovedSurgicalAmounts(body, { allowConsultationPrice = 
   if (allowConsultationPrice) {
     // Only the canonical consultation fact, once. No standalone 500, surgical
     // fee of 500, duplicate, alternative price or extension of numeric policy.
-    remaining = remaining.replace(/A consulta presencial com a Dra\. Amanda custa R\$ 500\./, '');
+    remaining = remaining.replace(/A consulta (?:presencial|online) com a Dra\. Amanda custa R\$ 500\./, '');
   }
   const groups = ['lifting_facial', 'lifting_cervical', 'otoplastia']
     .filter(procedure => containsApprovedSurgicalRange(remaining, procedure));

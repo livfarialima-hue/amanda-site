@@ -16,6 +16,17 @@ const ACTIVE_ENV = {
 const INITIAL_PRICE_REPLY =
   "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 
+test('resumed teleconsultation price uses the approved bundle without creating human pending work',async()=>{
+  const deps=dependencies();
+  deps.runOpenAIShadowImpl=async payload=>({status:'completed',decision:{route:'standard_reply',confidence:'high',automaticAllowed:true,urgent:false,
+    professional:'amanda',procedure:'',replyCode:'AMANDA-CONSULTA-BUNDLE-01',suggestedReply:payload.policyHints.deterministicReplyPreview,reviewReason:''}});
+  const result=await processHumanResumeJob(job({text:'Quanto custa a teleconsulta da Dra. Amanda? Moro no exterior.',procedure:'',recentConversation:[{role:'assistant',source:'bruna',text:'Como posso ajudar?'}]}),{env:ACTIVE_ENV,now:NOW,...deps});
+  assert.equal(deps.patientMessages.length,1,JSON.stringify(result));
+  assert.match(deps.patientMessages[0].body,/consulta online.*R\$ 500/);
+  assert.match(deps.patientMessages[0].body,/exterior/);
+  assert.equal(deps.alerts.length,0);
+});
+
 test('resumed remote assessment uses semantics without repeating a surgical price holding', async () => {
   const deps=dependencies(); let calls=0;
   deps.runOpenAIShadowImpl=async()=>{calls++;return {status:'completed',decision:{route:'human_review',confidence:'high',automaticAllowed:false,urgent:false,

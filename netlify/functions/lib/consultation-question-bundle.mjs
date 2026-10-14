@@ -1,6 +1,6 @@
 import { consultationQuestionTopics } from './patient-turn-context.mjs';
 import { resolveBundledSurgicalPricePlan } from './surgical-price-policy.mjs';
-import { AMANDA_CONSULTATION_PRICE_REPLY, AMANDA_CONSULTATION_PAYMENT_REPLY, AMANDA_PRIVATE_REIMBURSEMENT_REPLY } from './patient-replies.mjs';
+import { AMANDA_CONSULTATION_PRICE_REPLY, AMANDA_CONSULTATION_PAYMENT_REPLY, AMANDA_PRIVATE_REIMBURSEMENT_REPLY, AMANDA_REMOTE_CONSULTATION_REPLY, AMANDA_REMOTE_CONSULTATION_PRICE_REPLY } from './patient-replies.mjs';
 import { buildSurgicalPriceSuggestedReply } from './surgical-price-review.mjs';
 import { usableProfileFirstName } from './profile-name.mjs';
 
@@ -12,11 +12,12 @@ export const CONSULTATION_BUNDLE_CODE = 'AMANDA-CONSULTA-BUNDLE-01';
 // delivered human alert for pending details before making a patient promise.
 export function buildConsultationQuestionBundle({plan, text = '', recentConversation = [], patientName = '', introduceBruna = false}) {
   if (plan?.reason !== CONSULTATION_BUNDLE_REASON) return null;
+  if (plan.professional && plan.professional !== 'amanda') return null;
   const topics = consultationQuestionTopics(text);
   if (topics.length < 2) return null;
   const pricePlan = resolveBundledSurgicalPricePlan(text, topics, recentConversation);
   const pendingDetails = [];
-  if (topics.includes('remote_consultation')) pendingDetails.push('a possibilidade de consulta online e, se disponível, seu valor');
+  const remoteConsultation = topics.includes('remote_consultation');
   if (topics.includes('reimbursement_document')) pendingDetails.push('a emissão do relatório para solicitar reembolso, além da nota fiscal');
   const needsPriceClarification = Boolean(pricePlan && !pricePlan.procedure);
   const priceAllowed = Boolean(pricePlan?.automaticAllowed && /price_range_direct$/.test(pricePlan.reason));
@@ -36,7 +37,10 @@ export function buildConsultationQuestionBundle({plan, text = '', recentConversa
       : 'Sobre o valor da cirurgia: qual procedimento você está pesquisando?'
     : '';
   const body = [opening, concern,
-    topics.includes('price_consultation') && `${AMANDA_CONSULTATION_PRICE_REPLY} ${AMANDA_CONSULTATION_PAYMENT_REPLY}`,
+    remoteConsultation && AMANDA_REMOTE_CONSULTATION_REPLY,
+    topics.includes('price_consultation') && (remoteConsultation
+      ? AMANDA_REMOTE_CONSULTATION_PRICE_REPLY
+      : `${AMANDA_CONSULTATION_PRICE_REPLY} ${AMANDA_CONSULTATION_PAYMENT_REPLY}`),
     (topics.includes('insurance') || topics.includes('reimbursement_document')) && AMANDA_PRIVATE_REIMBURSEMENT_REPLY,
     priceBody, pendingBody, clarification,
   ].filter(Boolean).join('\n\n');

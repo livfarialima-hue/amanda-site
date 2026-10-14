@@ -21,8 +21,8 @@ export function withoutNegatedSchedulingMentions(value) {
 // question about cost, not consent to a range, a booking, or a price objection.
 const PRICE_AMOUNT_PATTERN = /\b(?:precos?|custos?(?![\s-]*beneficio)|valor(?:es)?|investimento|media|orcamento|faixa|quanto\s+(?:custa|fica|sai|e)(?!\s+(?:(?:o|a|um|uma)\s+)?(?:tempo|prazo|periodo|risco|tamanho|inchaco|inchad[oa]|vermelh[oa]|dolorid[oa]|sensivel|afastad[oa]|internad[oa])\b))\b/i;
 const CONSULTATION_COST_PATTERN = new RegExp(
-  `(?:${PRICE_AMOUNT_PATTERN.source}|\\b(?:tem\\s+custo|cobr(?:a|am|ado|ada|ados|adas|ar))\\b).{0,45}\\b(?:consulta|avalia[cç][aã]o)\\b|` +
-  `\\b(?:consulta|avalia[cç][aã]o)\\b.{0,45}(?:${PRICE_AMOUNT_PATTERN.source}|\\b(?:tem\\s+custo|cobr(?:a|am|ado|ada|ados|adas|ar))\\b)`, "i");
+  `(?:${PRICE_AMOUNT_PATTERN.source}|\\b(?:tem\\s+custo|cobr(?:a|am|ado|ada|ados|adas|ar))\\b).{0,45}\\b(?:consulta|teleconsulta|avalia[cç][aã]o)\\b|` +
+  `\\b(?:consulta|teleconsulta|avalia[cç][aã]o)\\b.{0,45}(?:${PRICE_AMOUNT_PATTERN.source}|\\b(?:tem\\s+custo|cobr(?:a|am|ado|ada|ados|adas|ar))\\b)`, "i");
 
 export function isPriceAmountInquiry(text) {
   return PRICE_AMOUNT_PATTERN.test(String(text || "").normalize("NFD").replace(/\p{M}/gu, "").replace(/\ba todo custo\b/gi, ""));
@@ -51,7 +51,44 @@ export function isProcedureExplanationInquiry(text) {
 }
 
 export function isConsultationCostInquiry(text) {
-  return CONSULTATION_COST_PATTERN.test(String(text || "").normalize("NFD").replace(/\p{M}/gu, "").replace(/\ba todo custo\b/gi, ""));
+  const value = String(text || "").normalize("NFD").replace(/\p{M}/gu, "").replace(/\ba todo custo\b/gi, "")
+    // Asking to obtain an estimate through a consultation does not ask its fee.
+    .replace(/\borcamento\s+(?:por|via|com|durante)\s+(?:(?:a|uma)\s+)?(?:teleconsulta|consulta|avaliacao)\b/gi, "");
+  return CONSULTATION_COST_PATTERN.test(value);
+}
+
+const CONSULTATION_MODALITY_MENTION = /\b(?:online|on-line|teleconsulta|videochamada|videoconsulta|presencial|remot[oa]|a distancia|por video)\b/;
+
+// A narrow continuation signal, not permission to answer/book. Negated or
+// ambiguous wording stays with the semantic reader, including online payment
+// or scheduling. A substantive intervening topic stops inheritance.
+export function latestConsultationModality(text, recentConversation = []) {
+  const fold = value => String(value || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().trim();
+  const modality = value => {
+    const modes = new Set();
+    const consultationSubject = /\b(?:consulta|avaliacao|atendimento|atende(?:m)?|atender)\b/.test(value);
+    for (const clause of value.split(/[.!?;,\n]|\b(?:mas|porem)\b/)) {
+      const mention = clause.match(CONSULTATION_MODALITY_MENTION);
+      if (!mention) continue;
+      const before = clause.slice(0, mention.index);
+      const after = clause.slice(mention.index + mention[0].length);
+      if (/\b(?:nao|nem|nunca|sem)\b/.test(before) || /^\s+(?:nao|nem|nunca)\b/.test(after)) continue;
+      if (/\b(?:pagamento|pagar|pago|pix|cartao|boleto|agend\w*|marc\w*|reserv\w*)\b/.test(clause)) continue;
+      if (/\bpresencial\b/.test(clause) && (consultationSubject || /\b(?:prefiro|quero)\b/.test(clause))) modes.add('presencial');
+      if (/\b(?:teleconsulta|videoconsulta)\b/.test(clause) ||
+          (consultationSubject && /\b(?:online|on-line|videochamada|remot[oa]|a distancia|por video)\b/.test(clause))) modes.add('remote');
+    }
+    return modes.size === 1 ? [...modes][0] : '';
+  };
+  const current = fold(text);
+  if (CONSULTATION_MODALITY_MENTION.test(current)) return modality(current);
+  if (!isConsultationCostInquiry(current) && !/^(?:e\s+)?(?:quanto custa|qual (?:e )?o (?:valor|preco)|e o (?:valor|preco))(?:\s+entao)?[.!?\s]*$/.test(current)) return '';
+  for (const turn of [...recentConversation].reverse()) {
+    const value = fold(turn?.text);
+    if (!value || /^(?:sim|claro|ok|entendi|obrigad[oa])[.!\s]*$/.test(value)) continue;
+    return modality(value);
+  }
+  return '';
 }
 
 // Independent questions in one unanswered block; this supplies topics, never
@@ -68,7 +105,7 @@ export function consultationQuestionTopics(text) {
     if (!isPriceAmountInquiry(c)) return consultationPrice && /^\s*e\s+(?:[oa]|d[oa])\s+(?:lifting|cervicoplastia|otoplastia|cirurgia)\b/.test(c);
     if (!isConsultationCostInquiry(c)) return true;
     // A shared price question: "preço da consulta e do lifting", in either order.
-    return /\b(?:consulta|avaliacao)\s*(?:presencial\s*)?(?:,|e|ou)\s*(?:(?:tambem|d[oa]|[oa])\s+)*(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting)\b/.test(c) ||
+    return /\b(?:consulta|teleconsulta|avaliacao)\s*(?:(?:presencial|online)\s*)?(?:,|e|ou)\s*(?:(?:tambem|d[oa]|[oa])\s+)*(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting)\b/.test(c) ||
       /\b(?:cirurgia|lifting(?: facial| cervical)?|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting)\s*(?:,|e|ou)\s*(?:d[ae]|a|da minha)?\s*(?:consulta|avaliacao)\b/.test(c) ||
       /\b(?:e|tambem)\s+(?:qual\s+(?:e\s+)?(?:o\s+)?|quanto\s+|[oa]\s+)?(?:preco|valor|faixa|media|custa|fica)\b.{0,45}\b(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting)\b/.test(c);
   });
@@ -76,7 +113,7 @@ export function consultationQuestionTopics(text) {
     consultationPrice && 'price_consultation',
     surgeryPrice && 'price_surgery',
     /\b(?:convenio|plano de saude|bradesco|unimed|sulamerica|amil)\b/.test(value) && 'insurance',
-    /\b(?:online|on-line|teleconsulta|videochamada|videoconsulta|(?:consulta|avaliacao|atendimento|orcamento) (?:por video|remot[oa]|a distancia))\b/.test(value) && 'remote_consultation',
+    latestConsultationModality(value) === 'remote' && 'remote_consultation',
     /\b(?:relatorio|laudo|documentacao|documentos?)\b[\s\S]{0,120}\breembolso\b|\breembolso\b[\s\S]{0,120}\b(?:relatorio|laudo|documentacao|documentos?)\b/.test(value) && 'reimbursement_document',
   ].filter(Boolean);
 }
