@@ -31,10 +31,10 @@
   },
   "validation": {
     "coreTests": 2066,
-    "scriptTests": 14,
+    "scriptTests": 15,
     "scriptTestsAlsoInCore": 0,
     "additionalContractTests": 38,
-    "uniqueTests": 2118,
+    "uniqueTests": 2119,
     "failed": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -169,5 +169,19 @@
       "audio-transcription.test.mjs": "fc8629ad83eede0909cb321eb2fe66a9fa932e1fbf12789dde7a53e236708d91"
     },
     "behavior": "Only aggregate diagnostics. Validity, automatic eligibility, limits, model and timeouts unchanged."
+  },
+  "audioGateIsolationReview": {
+    "status": "completed_no_remaining_actionable_findings",
+    "reviewer": "/root/revisao_independente",
+    "reviewedBase": "7fec43b9fb725f1c1f412c2e49aee7ea0b1cd3d5",
+    "workingDiff": true,
+    "focusedTests": 25,
+    "checkedAt": "2026-10-14T01:53:52.954Z",
+    "normalization": "CRLF to LF",
+    "hashes": {
+      "scripts/check-bruna-model-live.mjs": "0364f6502357848fb001b5d0799db9b9e8ae14af2c57aa897f725c6ba493a7cd",
+      "scripts/check-bruna-model-live.test.mjs": "92bc968327e13c1278a08b3f2e459408af462b392788419597c928d50b53f883"
+    },
+    "behavior": "Independent synthetic audio diagnostic executes even after a conversation failure. The build still requires every conversation and the required audio gate. No timeout, model, assertion or confidence change."
   }
 }

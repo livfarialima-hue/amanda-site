@@ -1,10 +1,10 @@
 {
-  "status": "activation_pending_confidence_diagnostics",
+  "status": "activation_pending_independent_audio_diagnostic",
   "recordedAt": "2026-10-14T01:22:51.511Z",
   "candidateFunctionalCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
   "pullRequest": "https://github.com/livfarialima-hue/amanda-site/pull/11",
   "localValidation": {
-    "uniqueTests": 2118,
+    "uniqueTests": 2119,
     "failures": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -215,6 +215,25 @@
             "tokenCount": 8
           },
           "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+        },
+        "published": false,
+        "gateUnchanged": true
+      },
+      {
+        "deployId": "6acedefd10fefd71591ff6fe",
+        "commit": "7fec43b9fb725f1c1f412c2e49aee7ea0b1cd3d5",
+        "context": "production",
+        "purpose": "confidence_diagnostics",
+        "status": "failed",
+        "checkedAt": "2026-10-14T01:48:48.052Z",
+        "passedScenarios": 10,
+        "failedScenario": "approved_price_with_photo_request",
+        "reason": "timeout",
+        "elapsedMs": 20031,
+        "timeoutMs": 20000,
+        "audioCheck": {
+          "status": "skipped",
+          "reason": "conversation_gate_failed"
         },
         "published": false,
         "gateUnchanged": true

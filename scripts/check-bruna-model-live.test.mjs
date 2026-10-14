@@ -17,6 +17,29 @@ test('missing and masked production secrets fail before network access', async (
     assert.equal(result.reason, 'production_key_unavailable');
   }
 });
+test('conversation failure still collects audio confidence without allowing deployment', async () => {
+  for (const logprob of [-0.1, 0.01]) {
+    const destinations = [];
+    const result = await checkBrunaModelLive({ env,
+      manifest: { pendingRelease: { liveModelCheckRequired: true, audioTranscriptionCheckRequired: true } },
+      fetchImpl: async (url) => {
+        destinations.push(url);
+        if (url === 'https://api.openai.com/v1/responses') {
+          return Response.json({ status: 'incomplete', model: 'gpt-6.1-sol' });
+        }
+        assert.equal(url, 'https://api.openai.com/v1/audio/transcriptions');
+        return Response.json({ text: 'Qual é o endereço da Clínica LIV?', logprobs: [{ logprob }] });
+      },
+    });
+    assert.equal(result.status, 'failed');
+    assert.equal(result.results[0].passed, false);
+    assert.deepEqual(destinations, ['https://api.openai.com/v1/responses', 'https://api.openai.com/v1/audio/transcriptions']);
+    assert.equal(result.audioCheck.status, logprob <= 0 ? 'passed' : 'failed');
+    assert.equal(result.audioCheck.quality.scoreDiagnostics.positive, logprob > 0 ? 1 : 0);
+    assert.equal(result.patientMessagesSent, 0);
+    assert.equal(JSON.stringify(result).includes(env.OPENAI_API_KEY), false);
+  }
+});
 test('provider authentication failure blocks deployment without leaking error text or credentials', async () => {
   let calls = 0;
   const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (url, request) => {

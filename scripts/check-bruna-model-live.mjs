@@ -157,8 +157,9 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       errorCode: result.errorCode, decision: result.decision, replyCode: result.decision?.replyCode, replyWording: result.decision?.replyWording, selectedReply, gate });
     if (!passed) break;
   }
-  const audioCheck = results.length === scenarios.length && results.every(r => r.passed)
-    ? await checkBrunaAudioLive({ env, manifest, fetchImpl }) : { status: 'skipped', reason: 'conversation_gate_failed' };
+  // Collect the independent synthetic audio diagnostic even when a conversation
+  // fails. Deployment still requires every conversation and the audio gate.
+  const audioCheck = await checkBrunaAudioLive({ env, manifest, fetchImpl });
   return { status: results.length === scenarios.length && results.every(r => r.passed) && audioCheck.status !== 'failed' ? 'passed' : 'failed',
     checkedAt: new Date().toISOString(), model: BRUNA_MODEL, effort: BRUNA_REASONING_EFFORT,
     maxOutputTokens: BRUNA_MAX_OUTPUT_TOKENS, verbosity: BRUNA_TEXT_VERBOSITY,
