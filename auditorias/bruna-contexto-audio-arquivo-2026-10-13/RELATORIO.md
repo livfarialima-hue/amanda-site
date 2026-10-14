@@ -32,3 +32,7 @@ Testes focados de segurança de áudio, deduplicação, respostas, memória e ar
 Antes da publicação: concluir revisão independente dos ajustes, commit exato e release:preflight. Publicar Code.gs, KnowledgeBase.gs e ConversationArchive.gs primeiro no deployment Apps Script existente, conferir hash, autorização de Drive e versão. Depois integrar Git na branch de produção e observar novo build. Ativar áudio/arquivo somente após equivalência e verificação. Registrar início exato do arquivo e primeiro recibo real; ausência de mensagens novas é ausência de lote, não backup comprovado.
 
 Rollback: desligar as duas flags; restaurar Netlify `6acebbd4a25f1e95fc6d90d3` e Apps Script v162 no mesmo deployment. Preservar filas, dados, transcrições, arquivos e recibos; sem replay. Revisar primeiras conversas naturais, 48 horas e sete dias após ativação, sem enviar mensagens de teste nem disparar rotinas operacionais.
+
+## Estado da publicação
+
+Em 13/10/2026, os três arquivos Apps Script (Code.gs, KnowledgeBase.gs e ConversationArchive.gs) foram salvos e relidos após recarregar o editor, equivalentes ao commit 6f48d89de65cbf862e57df952df9867b8ef868e5. A versão pública permanece v162. O diagnóstico somente leitura encontrou solicitação de autorização Google e aviso de aplicativo não verificado; a etapa foi entregue ao usuário. Não houve nova implantação, ativação, execução de backup ou alteração de acesso. Netlify mantém a produção anterior, com domínio/webhook 200 e POST sem assinatura 401. As projeções abaixo registram este estado pendente, sem alegar publicação.

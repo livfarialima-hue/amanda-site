@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONTEXTO-AUDIO-ARQUIVO-2026-10-13",
   "title": "Continuidade contextual, transcrição de áudio e arquivo privado de conversas em texto",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "872665ea0f0b04a6639034a8a67af1957861c3a7",
   "authorization": {
     "required": true,
@@ -398,8 +398,10 @@
     "status": "pending",
     "appsScriptVersion": 162,
     "blockers": [
-      "Publicação coordenada, autorização Google se necessária, ativação e recibos pendentes."
+      "Google exige autorização do acesso ao Drive; intervenção solicitada ao usuário na janela do Chrome.",
+      "Nova versão Apps Script, build Git Netlify com IA real, ativação e primeiro recibo pendentes."
     ],
-    "evidence": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json"
+    "evidence": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
+    "approvedSourceCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5"
   }
 }

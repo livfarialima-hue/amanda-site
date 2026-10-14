@@ -41,9 +41,9 @@
     "driveClosedAuditFileId": "1AnKeIWyZb9qBD2SHA21NKE5uVx_1KJj7",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "b54a1c6fb6e52db82af34dcd91e2c43216a4fc4cd3bf90a610368e7cb120b939",
+    "driveProjectionSha256": "6b5644c4b62d131df8843c2399c6d4eb5f2a3fe806cc5cccee8d0ddaeae455f1",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU",
-    "driveProjectionVerifiedAt": "2026-10-14T00:05:48Z"
+    "driveProjectionVerifiedAt": "2026-10-14T00:47:58.647Z"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -51,10 +51,12 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-CONTEXTO-AUDIO-ARQUIVO-2026-10-13",
-    "status": "tested_local",
+    "status": "committed",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "baselineCommit": "872665ea0f0b04a6639034a8a67af1957861c3a7",
-    "bundleVersion": "2026-10-13.1"
+    "bundleVersion": "2026-10-13.1",
+    "googleConsentPending": true,
+    "sourceCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5"
   }
 }

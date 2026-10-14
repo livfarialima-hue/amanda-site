@@ -1,28 +1,28 @@
 {
-  "status": "pending_not_published",
-  "recordedAt": "2026-10-14T00:05:48Z",
-  "candidateFunctionalCommit": "8607d8ec6bafd24f8dd09e99ef826e3f4aa104e5",
+  "status": "source_saved_waiting_google_consent_not_published",
+  "recordedAt": "2026-10-14T00:46:56.554Z",
+  "candidateFunctionalCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5",
   "pullRequest": "https://github.com/livfarialima-hue/amanda-site/pull/11",
   "localValidation": {
-    "uniqueTests": 2082,
+    "uniqueTests": 2093,
     "failures": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
     "buildCheck": "passed",
     "releasePreflight": {
-      "status": "passed_formal_gate_only",
-      "authorizationRecordedAt": "2026-10-14T00:04:42Z",
-      "livePreflightAt": "2026-10-13T23:57:14.087Z",
+      "status": "passed",
+      "approvedCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5",
+      "authorizationRecordedAt": "2026-10-14T00:40:18Z",
+      "livePreflightAt": "2026-10-14T00:40:18Z",
       "reference": "PREFLIGHT.json",
       "remainingConditions": [
-        "Independent review",
-        "YCloud full conversation access",
-        "Apps Script Drive authorization",
-        "Apps Script publication",
+        "Google Drive access authorization by project owner",
+        "Apps Script new version in existing deployment",
         "Production Git build with real model and audio gates",
         "Activation and first archive receipt"
       ]
-    }
+    },
+    "independentReview": "completed_no_actionable_findings"
   },
   "productionUnchanged": {
     "appsScriptVersion": 162,
@@ -34,14 +34,16 @@
     {
       "kind": "manual",
       "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-      "sha256": "b54a1c6fb6e52db82af34dcd91e2c43216a4fc4cd3bf90a610368e7cb120b939",
-      "readbackMatches": true
+      "sha256": "6b5644c4b62d131df8843c2399c6d4eb5f2a3fe806cc5cccee8d0ddaeae455f1",
+      "readbackMatches": true,
+      "verifiedAt": "2026-10-14T00:47:58.647Z"
     },
     {
       "kind": "executive_plan",
       "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "sha256": "efa91c8f5c85a02537fda1b45fa7592a3ea5b961b66bd6f851cce82322c7a210",
-      "readbackMatches": true
+      "sha256": "5a9d68af80eade3ced18e99f333cc8026bb32d112de191e42f40a4060bd34493",
+      "readbackMatches": true,
+      "verifiedAt": "2026-10-14T00:47:58.647Z"
     }
   ],
   "archive": {
@@ -51,5 +53,41 @@
   },
   "patientMessagesSent": 0,
   "manualOperationalRoutinesRun": 0,
-  "opsCheck": "SYNC_PENDING"
+  "opsCheck": "SYNC_PENDING",
+  "appsScriptStaged": {
+    "commit": "6f48d89de65cbf862e57df952df9867b8ef868e5",
+    "savedAndReloadedAt": "2026-10-14T00:45:21.037Z",
+    "files": {
+      "Code.gs": {
+        "sha256": "8d66cfa47ed3737c84b0e77782b480b32a46cfecb584a865a578b98afc862878",
+        "matchesCommit": true
+      },
+      "KnowledgeBase.gs": {
+        "sha256": "f8355af646eae85924da0e29969ff8d0b265cabd786338906398a844394117dc",
+        "matchesCommit": true
+      },
+      "ConversationArchive.gs": {
+        "sha256": "ce237919eb4959455e949c992ebf69389fac8f293a83cec83dd00ca12d721d90",
+        "matchesCommit": true
+      }
+    },
+    "versionBefore": 162,
+    "publicationStatus": "waiting_google_authorization",
+    "operationalRoutinesRun": 0,
+    "patientMessagesSent": 0,
+    "readOnlyDiagnostic": {
+      "function": "diagnosticarArquivoConversas",
+      "status": "waiting_google_authorization",
+      "executed": false,
+      "reason": "Google displayed unverified app warning and requests new Drive access; owner handoff requested."
+    }
+  },
+  "providerReadOnlyAudit": {
+    "authenticated": true,
+    "correctCaseMatched": true,
+    "ledgerMessages": 45,
+    "humanRows": 22,
+    "providerDeliveryTimeoutsObserved": true,
+    "historicalGapsRemain": true
+  }
 }
