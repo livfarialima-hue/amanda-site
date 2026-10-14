@@ -92,7 +92,8 @@ function boundedText(value, maximumLength = MAX_TEXT_LENGTH) {
 function normalizeTurn(turn) {
   if (!turn || typeof turn !== "object") return null;
   const messageType = ["text", "unsupported", "image", "audio", "video", "document", "reaction", "sticker"].includes(turn.messageType) ? turn.messageType : "unknown";
-  const text = boundedText(turn.text) || (["text", "unsupported"].includes(messageType)
+  const text = (String(turn.text || "").startsWith("[Transcrição incerta de áudio]")
+    ? "[Áudio de conteúdo não confirmado; aguardar atendimento humano.]" : boundedText(turn.text)) || (["text", "unsupported"].includes(messageType)
     ? UNAVAILABLE_PATIENT_TEXT
     : messageType === "reaction" ? "[Reação recebida.]" : "[Conteúdo indisponível; conferir o tipo e o contexto.]");
   const role = turn.role === "assistant" ? "assistant" : "user";

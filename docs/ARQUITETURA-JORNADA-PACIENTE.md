@@ -300,3 +300,10 @@ O `conversation-action-controller.mjs` continua proprietário da permissão: `re
 Consumo do plano ChatGPT não foi implementado: hospedagem remota requer elegibilidade/autorização específica e transporte SSE/OAuth compatível. Daniel autorizou publicar usando a API paga enquanto a integração da assinatura aguarda aprovação. Não há alternância automática de cobrança. Nenhuma credencial do Codex pode ser reaproveitada por suposição.
 
 O gate `scripts/check-bruna-model-live.mjs` roda somente no build Netlify de produção quando o manifesto marca uma publicação que exige validação real. Usa os três adaptadores, cinco cenários sintéticos e o segredo já injetado no build; não lê nem envia mensagens reais. A falha interrompe o build antes de publicar. Nenhuma chave ou erro bruto do provedor é registrado. O marcador é removido no fechamento para evitar consumo em builds futuros sem relação com o release.
+
+
+## Contrato de áudio e arquivo de conversas (candidato 2026-10-13)
+
+O adaptador audio-transcription.mjs é proprietário da validação de mídia e da transcrição. Somente o webhook autenticado o chama; áudio incerto não autoriza resposta, agenda ou aprendizado. patient-turn-context.mjs define o marcador transitório e conversation-memory.mjs controla sua substituição. O refresh do contexto espera áudio pendente antes de montar a resposta. Transcrições não são novo proprietário de regra clínica.
+
+ConversationArchive.gs é proprietário da projeção de texto do ledger no Drive, acionado somente pela função Netlify conversation-archive.mjs via segredo existente. Não envia WhatsApp, não altera agenda/CRM e não baixa mídia. Cursor e hash exigem releitura do arquivo privado, com lease separado de I/O. A cobertura é a do ledger recebido, não a totalidade não verificada do aplicativo. Flags default-off; revisão independente, preflight e recibos de Apps Script/Netlify/Drive são obrigatórios.

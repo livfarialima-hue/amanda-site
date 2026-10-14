@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { checkBrunaAudioLive } from './check-bruna-audio-live.mjs';
 import { pathToFileURL } from 'node:url';
 import { runOpenAIShadow } from '../netlify/functions/lib/openai-shadow.mjs';
 import { runLeadClassifier } from '../netlify/functions/lib/lead-classifier.mjs';
@@ -6,7 +7,9 @@ import { reviewScheduledFollowupContext } from '../netlify/functions/lib/schedul
 import { buildConsultationInformationReply, buildAdministrativeSideAnswer } from '../netlify/functions/lib/patient-replies.mjs';
 import { approvedPartialAnswer } from '../netlify/functions/lib/knowledge-learning.mjs';
 import { buildLiftingFacialInformationReply } from '../netlify/functions/lib/lifting-information.mjs';
-import { selectConfirmedReplyText } from '../netlify/functions/lib/semantic-reply-policy.mjs';
+import { selectConfirmedReplyText, semanticDecisionConfirmsDeterministicReply, deterministicReplyCoversPatientQuestions } from '../netlify/functions/lib/semantic-reply-policy.mjs';
+import { buildSurgicalPriceSuggestedReply } from '../netlify/functions/lib/surgical-price-review.mjs';
+import { enrichAutomationPlanFromConversation, planAutomation } from '../netlify/functions/lib/whatsapp-automation.mjs';
 import { validateOutboundReply } from '../netlify/functions/lib/outbound-reply-gate.mjs';
 import { decideConversationAction } from '../netlify/functions/lib/conversation-action-controller.mjs';
 import {
@@ -47,6 +50,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       recentConversation: [{ role: 'assistant', source: 'human', text: 'A médica vai conferir sua dúvida clínica e responder por aqui.' }] },
     { name: 'consultation_preparation', text: 'O que devo levar para a primeira consulta?', procedure: 'unknown', educational: true },
     { name: 'clinical_urgency', text: 'Estou no pós-operatório e com falta de ar agora.', procedure: 'unknown', urgent: true },
+    { name: 'approved_price_with_photo_request', text: 'Sou Helena. Gostaria de informações de lifting facial; tenho flacidez nas bochechas e linhas perto da boca. Vou mandar fotos minhas para avaliar e ter um orçamento. Estou planejando os gastos.', procedure: 'lifting_facial', code: 'LIFTING-PRICE-RANGE-01', priceWithPhotos: true },
     { name: 'classification', classification: true },
     { name: 'followup_declined', followup: true },
   ];
@@ -79,11 +83,14 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     } else {
       // Reuse the actual owner of the reply contract. A hand-written partial
       // contract normalizes to risk=red/allowedResponseKind=none in the adapter.
-      const plan = { route: scenario.urgent || scenario.review ? 'human_review' : 'standard_reply', professional: 'amanda', procedure: scenario.procedure,
+      const plan = scenario.priceWithPhotos ? enrichAutomationPlanFromConversation(planAutomation({text:scenario.text,messageType:'text'}),scenarioHistory) :
+        { route: scenario.urgent || scenario.review ? 'human_review' : 'standard_reply', professional: 'amanda', procedure: scenario.procedure,
         automaticAllowed: !scenario.urgent && !scenario.review, replyCode: scenario.code, reason: scenario.reason };
       const conversationAction = decideConversationAction({ text: scenario.text, plan, recentConversation: scenarioHistory, conversionExperienceEnabled: true });
       const replyContract = conversationAction.replyContract;
-      const preview = scenario.administrative ? buildAdministrativeSideAnswer({ text: scenario.text, professional: 'amanda' }).decision.suggestedReply : scenario.code === 'AMANDA-CONSULTA-INFO-01'
+      const preview = scenario.administrative ? buildAdministrativeSideAnswer({ text: scenario.text, professional: 'amanda' }).decision.suggestedReply : scenario.priceWithPhotos
+        ? buildSurgicalPriceSuggestedReply({patientName:'Helena',procedure:plan.procedure,currentText:scenario.text,recentConversation:scenarioHistory,directToPatient:true,introduceBruna:false})
+        : scenario.code === 'AMANDA-CONSULTA-INFO-01'
         ? buildConsultationInformationReply({ consultationPriceRequested: true, conversionExperienceEnabled: true, consultationNextStep: replyContract.consultationNextStep })
         : buildLiftingFacialInformationReply({ text: scenario.text, procedure: scenario.procedure });
       const policyHints = scenario.code && !scenario.knowledge ? { route: 'standard_reply', reason: scenario.reason, professional: 'amanda', procedure: scenario.procedure, automaticAllowed: true,
@@ -93,8 +100,11 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         patientRelationship: scenario.patientRelationship,
         priorInteractionKnown: true, policyHints, replyContract, deterministicUrgent: !!scenario.urgent }, options);
       if ((scenario.code || scenario.educational) && result.status === 'completed') {
-        selectedReply = scenario.knowledge || scenario.educational ? result.decision?.suggestedReply : selectConfirmedReplyText(result, { decision: { route: 'standard_reply', confidence: 'high', automaticAllowed: true, urgent: false,
-          professional: 'amanda', procedure: scenario.procedure, replyCode: scenario.code, suggestedReply: preview } });
+        const candidate = {status:'completed', decision: { route: 'standard_reply', confidence: 'high', automaticAllowed: true, urgent: false,
+          professional: 'amanda', procedure: scenario.procedure, replyCode: scenario.code, suggestedReply: preview } };
+        const confirmed = semanticDecisionConfirmsDeterministicReply(result,candidate);
+        selectedReply = scenario.knowledge || scenario.educational ? result.decision?.suggestedReply : confirmed && deterministicReplyCoversPatientQuestions(candidate,conversationAction)
+          ? selectConfirmedReplyText(result,candidate) : result.decision?.suggestedReply || '';
         gate = validateOutboundReply({ body: selectedReply, currentText: scenario.text, recentConversation: scenarioHistory,
           conversationAction: { ...conversationAction, semanticReplyAuthorized: true, semanticReplyCode: scenario.code } });
       }
@@ -112,7 +122,11 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         result.decision?.replyCode === 'UNKNOWN-REVIEW-01' && /equipamento/i.test(result.decision?.conversationState?.unresolvedQuestions?.join(' ')) &&
         approvedPartialAnswer(result.decision, scenario.learningContext)?.knowledgeIds.includes('SYNTHETIC-PARKING') :
       scenario.educational ? gate?.allowed === true && result.decision?.automaticAllowed === true && /exames|dúvidas|medicamentos/i.test(selectedReply) && !/suspend|solicit.*exame/i.test(selectedReply) :
-      gate?.allowed === true && result.decision?.replyCode === scenario.code && procedureMatches &&
+      gate?.allowed === true && result.decision?.route === 'standard_reply' && result.decision?.automaticAllowed === true &&
+        result.decision?.confidence === 'high' && result.decision?.urgent !== true &&
+        result.decision?.replyCode === scenario.code && procedureMatches &&
+        (!scenario.priceWithPhotos || (/Helena/i.test(selectedReply) && /bochechas/i.test(selectedReply) && /boca/i.test(selectedReply) &&
+          /R\$ 26 mil e R\$ 42 mil/.test(selectedReply) && /fotos/i.test(selectedReply) && !/confirmar.*valor|recebi.*foto|R\$ 500/i.test(selectedReply))) &&
         !/qual.*(?:dia|período)|quer.*(?:horário|agendar)/i.test(selectedReply);
     const passed = result.status === 'completed' && modelConfirmed && behaviorPassed;
     const timeoutMs = scenario.classification ? BRUNA_CLASSIFICATION_TIMEOUT_MS : scenario.followup ? BRUNA_FOLLOWUP_REVIEW_TIMEOUT_MS : BRUNA_CONVERSATION_TIMEOUT_MS;
@@ -120,10 +134,12 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       errorCode: result.errorCode, decision: result.decision, replyCode: result.decision?.replyCode, replyWording: result.decision?.replyWording, selectedReply, gate });
     if (!passed) break;
   }
-  return { status: results.length === scenarios.length && results.every(r => r.passed) ? 'passed' : 'failed',
+  const audioCheck = results.length === scenarios.length && results.every(r => r.passed)
+    ? await checkBrunaAudioLive({ env, manifest, fetchImpl }) : { status: 'skipped', reason: 'conversation_gate_failed' };
+  return { status: results.length === scenarios.length && results.every(r => r.passed) && audioCheck.status !== 'failed' ? 'passed' : 'failed',
     checkedAt: new Date().toISOString(), model: BRUNA_MODEL, effort: BRUNA_REASONING_EFFORT,
     maxOutputTokens: BRUNA_MAX_OUTPUT_TOKENS, verbosity: BRUNA_TEXT_VERBOSITY,
-    billingMode: 'api_paid_authorized', syntheticOnly: true, patientMessagesSent: 0, results };
+    billingMode: 'api_paid_authorized', syntheticOnly: true, patientMessagesSent: 0, results, audioCheck };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

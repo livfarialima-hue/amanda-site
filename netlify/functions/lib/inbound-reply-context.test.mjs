@@ -4,6 +4,7 @@ import { refreshInboundReplyContext } from "./inbound-reply-context.mjs";
 import { appendConversationTurn, readConversationTurns } from "./conversation-memory.mjs";
 import { planAutomation } from "./whatsapp-automation.mjs";
 import { buildConsultationQuestionBundle } from "./consultation-question-bundle.mjs";
+import { PENDING_AUDIO_TEXT } from "./patient-turn-context.mjs";
 
 const phone = "+5511900000000";
 const start = Date.parse("2026-09-26T12:00:00Z");
@@ -20,6 +21,17 @@ const messages = [
 ].map((text, index) => turn(text, index));
 const input = {phone, text: messages.at(-1).text, eventId: messages.at(-1).eventId,
   receivedAt: messages.at(-1).at, recentConversation: []};
+
+test('a new question waits for an earlier audio in the same block and resumes after its transcript', async () => {
+  const pending = turn(PENDING_AUDIO_TEXT,0);
+  const options = { now:start+60000,readConversationTurnsImpl:async()=>({status:'completed',turns:[pending]}) };
+  assert.equal((await refreshInboundReplyContext({...input,text:'E quanto custa?',eventId:'newer'},options)).status,'pending_audio');
+  pending.text='Estou falando de lifting cervical.';
+  const result=await refreshInboundReplyContext({...input,text:'E quanto custa?',eventId:'newer'},options);
+  assert.equal(result.status,'completed');assert.match(result.block.text,/lifting cervical/);
+  pending.text=PENDING_AUDIO_TEXT;
+  assert.equal((await refreshInboundReplyContext(input,{...options,now:start+11*60000})).status,'completed','an expired failed transcription cannot freeze future care');
+});
 
 test("late cache refresh supplies all five questions even if older workers have not reached LEADS", async () => {
   let value = null, revision = 0;

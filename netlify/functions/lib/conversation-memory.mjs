@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { getStore } from "@netlify/blobs";
-import { UNAVAILABLE_PATIENT_TEXT } from "./patient-turn-context.mjs";
+import { UNAVAILABLE_PATIENT_TEXT, PENDING_AUDIO_TEXT } from "./patient-turn-context.mjs";
 
 const STORE_NAME = "liv-whatsapp-conversations-v1";
 const MEMORY_VERSION = 2;
@@ -191,7 +191,8 @@ function recoversUnavailableTurn(previous, next) {
   return previous?.role === "user" && next?.role === "user" &&
     previous.source === "patient" && next.source === "patient" &&
     previous.eventId === next.eventId && previous.at === next.at &&
-    previous.text === UNAVAILABLE_PATIENT_TEXT && next.text !== UNAVAILABLE_PATIENT_TEXT;
+    [UNAVAILABLE_PATIENT_TEXT, PENDING_AUDIO_TEXT].includes(previous.text) &&
+    ![UNAVAILABLE_PATIENT_TEXT, PENDING_AUDIO_TEXT].includes(next.text);
 }
 
 function mergeTurns(...collections) {

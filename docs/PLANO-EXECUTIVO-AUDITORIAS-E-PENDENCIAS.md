@@ -1,5 +1,13 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-CONTEXTO-AUDIO-ARQUIVO-2026-10-13 -->
+**Pacote 2026-10-13.1 — EM VALIDAÇÃO LOCAL, NÃO PUBLICADO.** Continuidade entre preço, preocupações pessoais e pedido de fotos; transcrição de áudio autenticado com texto incerto identificado; projeção em texto do ledger no Drive. Pasta privada preparada: 1NZFwgLSC2cUefzi73Nbn1nFaeJX8g85n. Flags de áudio e arquivo inicialmente desligadas, sem migração ou novo acionador Apps Script. Um novo agendamento Netlify proposto (cinco minutos). Nenhuma mensagem real de teste.
+
+O arquivo abrangerá mensagens capturadas pela integração a partir do início configurado; não comprova cobertura de mensagens ausentes no provedor/ledger. A conversa indicada pelo usuário tem apenas quatro mensagens no ledger e a imagem não permite leitura fiel; análise completa aguarda autenticação YCloud. Preços e fatos aprovados, agenda, recusa e prioridade humana preservados. Áudio não confirma compromisso nem aprova conhecimento. Backup não muda CRM ou filas.
+
+Pendências: terminar testes/gates, revisão independente, commit/preflight, autorização Google para acesso do Apps Script ao Drive, publicação coordenada Apps Script → novo build Git Netlify com 13 cenários reais e áudio sintético, ativação e primeiro recibo. Produção continua em 2026-10-11.4, Netlify 6acebbd4a25f1e95fc6d90d3 / Apps Script v162. Rollback mantém esse baseline e preserva dados, filas, arquivos e transcrições, sem replay. Evidência: auditorias/bruna-contexto-audio-arquivo-2026-10-13/RELATORIO.md e PREFLIGHT.json. Daniel/equipe: primeiras conversas naturais, 48h e 7d após ativação; conter em erro de autoria/contexto, transcrição inventada, duplicidade, exposição de dados ou falta de prioridade humana.
+<!-- /BRUNA-CONTEXTO-AUDIO-ARQUIVO-2026-10-13 -->
+
 <!-- BRUNA-AUTONOMIA-2026-10-11 -->
 **Pacote 2026-10-11.4 — PUBLICADO E VERIFICADO NAS PLATAFORMAS em 13/10/2026, 20:18:33 BRT.** Apps Script v162 publicado primeiro no deployment canônico existente, às 19:50 BRT de 13/10, preservando ID, URL e acesso. Os dois arquivos salvos coincidem com o commit originalmente aprovado 30390877e6ca9c064fbb7d24e180bd6b71f752d7; 27 arquivos vivos conferidos antes da escrita. Sem migração, novos acionadores, promoção de conhecimento ou execução manual de rotinas.
 

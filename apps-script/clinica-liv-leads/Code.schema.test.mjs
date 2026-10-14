@@ -8,6 +8,20 @@ const source = readFileSync(
   "utf8",
 );
 
+test("archive actions require the existing secret and never open patient sheets before authentication",()=>{
+  for(const action of ['archive_conversations','get_conversation_archive_status']){
+    let calls=0;const sandbox={console,Date,LockService:{getScriptLock:()=>({hasLock:()=>false})},
+      PropertiesService:{getScriptProperties:()=>({getProperty:()=> 'synthetic-secret'})},
+      SpreadsheetApp:{openById:()=>assert.fail('Archive action must not use operational handlers')}};
+    vm.runInNewContext(source,sandbox);
+    Object.assign(sandbox,{json_:v=>v,parseBody_:()=>({action,secret:'invalid',archive:{startAt:'2026-10-13T00:00:00Z'}}),
+      arquivarConversasNoDrive_:()=>{calls++;return {ok:true};},diagnosticarArquivoConversas_:()=>{calls++;return {ok:true};}});
+    assert.equal(sandbox.doPost({}).error,'unauthorized');assert.equal(calls,0);
+    sandbox.parseBody_=()=>({action,secret:'synthetic-secret',archive:{startAt:'2026-10-13T00:00:00Z'}});
+    assert.equal(sandbox.doPost({}).ok,true);assert.equal(calls,1);
+  }
+});
+
 test("duplicate provider deliveries still reach canonical content recovery without creating a lead", () => {
   const sandbox = { Date, console, LockService: { getScriptLock: () => ({ tryLock: () => true, hasLock: () => false }) },
     PropertiesService: { getScriptProperties: () => ({ getProperty: () => "synthetic-secret" }) },

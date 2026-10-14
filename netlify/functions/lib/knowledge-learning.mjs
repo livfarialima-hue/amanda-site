@@ -1,5 +1,6 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
 import { preservesKnowledgeLiterals } from "./knowledge-wording.mjs";
+import { isPatientPhotoAssessmentRequest } from "./patient-turn-context.mjs";
 
 const KNOWLEDGE_PREFIX = "KB:";
 
@@ -311,6 +312,16 @@ export function buildUnknownHoldingReply({
   const introduction = introduceBruna
     ? " Eu sou a Bruna, concierge da Clínica LIV Faria Lima."
     : "";
+  // This is only a handoff acknowledgement, never a way around a semantic
+  // veto. Name an assessment only when it is the stated reason for review,
+  // not just because photos appear beside another unresolved question.
+  // The caller must retain the verified internal alert receipt.
+  const individualAssessmentReview = /(?:avaliacao|indicacao|orcamento)[_ -]+individual|foto[_ -]+clinica/i.test(
+    String(reviewReason || "").normalize("NFD").replace(/\p{M}/gu, ""),
+  );
+  if (individualAssessmentReview && isPatientPhotoAssessmentRequest(currentText)) {
+    return `${greeting}${introduction} Vou encaminhar seu pedido de avaliação individual à equipe.`;
+  }
   const combined = `${currentText} ${reviewReason}`;
   const procedureLabel = String(procedure || "")
     .replaceAll("_", " ")

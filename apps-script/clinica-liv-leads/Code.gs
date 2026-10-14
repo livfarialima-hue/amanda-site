@@ -294,6 +294,8 @@ function doPost(e) {
       body.action !== "record_ycloud_template_event" &&
       body.action !== "record_conversation_turn" &&
       body.action !== "get_conversation_context" &&
+      body.action !== "archive_conversations" &&
+      body.action !== "get_conversation_archive_status" &&
       body.action !== "validate_care_send" &&
       body.action !== "apply_audited_lead_classifications" &&
       body.action !== "run_synthetic_health_check"
@@ -303,6 +305,14 @@ function doPost(e) {
 
     if (body.action === "validate_care_send") {
       return json_(validarEnvioCuidado_(body.care || {}));
+    }
+
+    if (body.action === "get_conversation_archive_status") {
+      return json_(diagnosticarArquivoConversas_());
+    }
+    if (body.action === "archive_conversations") {
+      stage = "archive_conversations";
+      return json_(arquivarConversasNoDrive_(body.archive || {}));
     }
 
     if (body.action === "get_conversation_context") {

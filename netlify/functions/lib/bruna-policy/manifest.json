@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-10-11.4",
-  "promptVersion": "bruna-concierge-2026-10-11.4",
+  "bundleVersion": "2026-10-13.1",
+  "promptVersion": "bruna-concierge-2026-10-13.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-10-11.4",
+  "knowledgeSnapshot": "kb-2026-10-13.1",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -50,11 +50,11 @@
   "replyContinuityContract": "reply-continuity",
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
-    "changeId": "BRUNA-AUTONOMIA-2026-10-11",
-    "status": "published_verified",
+    "changeId": "BRUNA-CONTEXTO-AUDIO-ARQUIVO-2026-10-13",
+    "status": "tested_local",
     "liveModelCheckRequired": true,
-    "baselineCommit": "8a6bcc6b9105aba10810775b680a3950c2ed3443",
-    "bundleVersion": "2026-10-11.4",
-    "verifiedDeployId": "6acebbd4a25f1e95fc6d90d3"
+    "audioTranscriptionCheckRequired": true,
+    "baselineCommit": "872665ea0f0b04a6639034a8a67af1957861c3a7",
+    "bundleVersion": "2026-10-13.1"
   }
 }

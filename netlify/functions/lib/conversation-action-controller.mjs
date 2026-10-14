@@ -1,7 +1,7 @@
 import { liftingFacialInformationTopics } from "./lifting-information.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
 import { buildReplyContinuityContext } from "./reply-continuity.mjs";
-import { isClearInformationAcceptance, isPersonalAppearanceConcern, isPriceAmountInquiry, isConsultationCostInquiry, isProcedureExplanationInquiry, resolveOfferedInformationChoice } from "./patient-turn-context.mjs";
+import { isClearInformationAcceptance, isPersonalAppearanceConcern, isPatientPhotoAssessmentRequest, isPriceAmountInquiry, isConsultationCostInquiry, isProcedureExplanationInquiry, resolveOfferedInformationChoice } from "./patient-turn-context.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   BRUNA_CTA_TYPES,
@@ -378,6 +378,10 @@ function inferUnresolvedIntents({
   }
 
   if (String(messageType || "").toLowerCase() === "image") add("photo");
+  else if (isPatientPhotoAssessmentRequest(value)) {
+    add("photo_assessment_request");
+    if (isPersonalAppearanceConcern(value)) add("appearance_concerns");
+  }
   const consultationPriceRequest = isConsultationCostInquiry(value);
   if (
     (isPriceAmountInquiry(value) || consultationPriceRequest) &&

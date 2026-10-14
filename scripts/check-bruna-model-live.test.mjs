@@ -66,6 +66,9 @@ async function syntheticResponse(url, request) {
       if (unknown) decision.partialAnswer = { knowledgeIds: ['SYNTHETIC-PARKING'], pendingQuestion: 'Qual equipamento específico é usado?' };
       if (input.currentMessage.includes('comprovante fiscal')) Object.assign(decision, { replyCode: 'KB:SYNTHETIC-INVOICE', suggestedReply: 'Sim, emitimos nota fiscal da consulta.' });
       if (input.currentMessage.includes('levar para a primeira consulta')) decision.suggestedReply = 'Leve os exames que já tiver e suas dúvidas.';
+      if (input.replyContract.unresolvedIntents.includes('photo_assessment_request')) {
+        decision.suggestedReply = `Helena, entendi suas dúvidas sobre as bochechas e as linhas perto da boca. As fotos ajudam a contextualizar sua dúvida; a indicação e o orçamento individual são definidos na consulta.\n\n${hints.deterministicReplyPreview}`;
+      }
     } else {
       decision = { recommendedStatus: 'Novo', confidence: 'high', professional: 'amanda', procedure: 'unknown', summary: 'Dúvida sobre avaliação.',
         nextAction: 'Aguardar paciente.', expectedParty: 'patient', commercialReason: 'Em andamento', evidence: 'Pergunta informativa.', appointmentOutcome: 'none', procedureMilestone: 'none' };
@@ -73,15 +76,15 @@ async function syntheticResponse(url, request) {
     return new Response(JSON.stringify({ model: 'gpt-6.1-sol', status: 'completed', output_text: JSON.stringify(decision) }));
 }
 
-test('all twelve synthetic scenarios use the real adapters and pass the outbound protections', async () => {
+test('all thirteen synthetic scenarios use the real adapters and pass the outbound protections', async () => {
   const fixtureErrors = [];
   const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (...args) => {
     try { return await syntheticResponse(...args); } catch (error) { fixtureErrors.push(error.message); throw error; }
   } });
   assert.deepEqual(fixtureErrors, []);
   assert.equal(result.status, 'passed', JSON.stringify(result));
-  assert.equal(result.results.length, 12);
-  assert.deepEqual(result.results.map(r => r.timeoutMs), [...Array(10).fill(20000), 15000, 12000]);
+  assert.equal(result.results.length, 13);
+  assert.deepEqual(result.results.map(r => r.timeoutMs), [...Array(11).fill(20000), 15000, 12000]);
   assert.equal(result.maxOutputTokens, 4096);
   assert.equal(result.verbosity, 'low');
   assert.equal(result.patientMessagesSent, 0);
@@ -117,7 +120,7 @@ test('administrative knowledge accepts an empty unspecified procedure from the r
     return Response.json(data);
   } });
   assert.equal(result.status, 'passed');
-  assert.equal(result.results.length, 12);
+  assert.equal(result.results.length, 13);
   assert.equal(result.results.find(r => r.name === 'semantic_approved_knowledge').passed, true);
   assert.equal(result.patientMessagesSent, 0);
 });
@@ -142,3 +145,22 @@ test('procedure equivalence never accepts an invented procedure or drops a known
     assert.equal(result.results.at(-1).passed, false);
   }
 });
+for (const failure of ['drops_concerns', 'drops_photo_boundary', 'semantic_veto']) {
+  test(`the release probe rejects a deficient price/photo response: ${failure}`,async()=>{
+    const result=await checkBrunaModelLive({env,manifest,fetchImpl:async(url,request)=>{
+      const response=await syntheticResponse(url,request), data=await response.json();
+      const input=JSON.parse(JSON.parse(request.body).input);
+      if(input.replyContract?.unresolvedIntents?.includes('photo_assessment_request')) {
+        const decision=JSON.parse(data.output_text);
+        if(failure==='drops_concerns')decision.suggestedReply=input.policyHints.deterministicReplyPreview;
+        if(failure==='drops_photo_boundary')decision.suggestedReply=decision.suggestedReply.replace(/As fotos[^.]+\./, '');
+        if(failure==='semantic_veto')Object.assign(decision,{route:'human_review',automaticAllowed:false});
+        data.output_text=JSON.stringify(decision);
+      }
+      return Response.json(data);
+    }});
+    assert.equal(result.status,'failed');
+    assert.equal(result.results.at(-1).name,'approved_price_with_photo_request');
+    assert.equal(result.patientMessagesSent,0);
+  });
+}

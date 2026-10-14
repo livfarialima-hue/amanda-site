@@ -6,7 +6,7 @@ export const SURGICAL_PRICE_DISCLOSURE = 'É uma referência para planejamento, 
 export function hasApprovedSurgicalPriceDisclosure(value) {
   const text = String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
   // An approved amount does not authorize a fixed quote or unconfirmed inclusions.
-  if (/\b(?:tudo incluido|preco (?:e )?garantido|valor (?:e )?garantido|preco fechado|nunca ultrapassa|nao passa de)\b|\b(?:apenas|somente|so) (?:os )?honorarios\b/.test(text)) return false;
+  if (/\b(?:tudo incluido|inclui tudo|orcamento (?:e|esta|ja esta) fechado|preco (?:e )?garantido|valor (?:e )?garantido|preco fechado|nunca ultrapassa|nao passa de)\b|\b(?:apenas|somente|so) (?:os )?honorarios\b/.test(text)) return false;
   const concise = /e uma referencia para planejamento nao e um orcamento fechado/.test(text) &&
     /o valor individual e definido apos avaliacao conforme o plano cirurgico a equipe o hospital a anestesia e os materiais/.test(text);
   // Existing, already-approved replies may still appear in delayed reviews/history.

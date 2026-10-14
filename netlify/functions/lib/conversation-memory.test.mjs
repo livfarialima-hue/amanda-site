@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { UNAVAILABLE_PATIENT_TEXT } from "./patient-turn-context.mjs";
+import { UNAVAILABLE_PATIENT_TEXT, PENDING_AUDIO_TEXT } from "./patient-turn-context.mjs";
 import {
   appendConversationTurn,
   conversationKey,
@@ -49,6 +49,18 @@ test("recovered patient content replaces only an unavailable turn and cannot be 
   assert.match(blobs.value().turns[0].text, /lifting cervical/);
   await appendConversationTurn({ ...turn, text: "Outro texto" }, opts);
   assert.match(blobs.value().turns[0].text, /lifting cervical/);
+});
+
+test("a confirmed audio replaces its pending turn without erasing following text or accepting an old placeholder", async () => {
+  const blobs = fakeBlobs();
+  const opts = { getStoreImpl: blobs.getStoreImpl, now: Date.parse("2026-10-13T20:00:10Z") };
+  const turn = { phone: "+5511900000000", role: "user", source: "patient", eventId: "synthetic-audio", at: "2026-10-13T20:00:00Z", text: PENDING_AUDIO_TEXT };
+  await appendConversationTurn(turn, opts);
+  await appendConversationTurn({ ...turn, eventId: "synthetic-following", at: "2026-10-13T20:00:03Z", text: "E qual é o endereço?" }, opts);
+  await appendConversationTurn({ ...turn, text: "Qual o valor da consulta?" }, opts);
+  await hydrateConversationMemory({ phone: turn.phone, turns: [turn] }, opts);
+  await appendConversationTurn(turn, opts);
+  assert.deepEqual(blobs.value().turns.map(t => t.text), ["Qual o valor da consulta?", "E qual é o endereço?"]);
 });
 
 test("a complete durable turn replaces an unavailable cache turn without changing chronology", async () => {

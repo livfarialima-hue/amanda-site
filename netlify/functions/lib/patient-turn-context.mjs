@@ -1,6 +1,7 @@
 // Pure linguistic signals. Acceptance needs an explicit offer in the caller;
 // it never authorizes a procedure, payment, booking or clinical recommendation.
 export const UNAVAILABLE_PATIENT_TEXT = "[Mensagem de texto indisponível na integração.]";
+export const PENDING_AUDIO_TEXT = "[Áudio recebido; transcrição em andamento.]";
 
 // Same linguistic signal for planning and the outbound contract. It identifies a
 // question about cost, not consent to a range, a booking, or a price objection.
@@ -11,6 +12,20 @@ const CONSULTATION_COST_PATTERN = new RegExp(
 
 export function isPriceAmountInquiry(text) {
   return PRICE_AMOUNT_PATTERN.test(String(text || "").normalize("NFD").replace(/\p{M}/gu, "").replace(/\ba todo custo\b/gi, ""));
+}
+
+// Text about personal photos is not proof that an image was received/reviewed.
+// Independent intent only: never authorizes diagnosis, a quote, or a handoff.
+export function isPatientPhotoAssessmentRequest(text) {
+  const value = String(text || "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+  return value.split(/[.!?;\n]+/).some(clause => {
+    if (!/\b(?:fotos?|imagens?)\b/.test(clause) ||
+        /\b(?:nao (?:quero|vou|posso|pretendo)|prefiro nao)\b[^.!?]{0,50}\b(?:enviar|mandar|compartilhar)\b/.test(clause)) return false;
+    if (/\b(?:antes e depois|portfolio|catalogo|fotos? profissionais|fotografo)\b/.test(clause)) return false;
+    return /\b(?:minhas?|minhas? proprias?)\s+(?:fotos?|imagens?)\b|\b(?:fotos?|imagens?)\s+(?:minhas?|de mim|do meu|da minha)\b/.test(clause) ||
+      /\b(?:vou|posso|quero|pretendo|gostaria de)\s+(?:te |lhe |lhes )?(?:enviar|mandar|compartilhar)\b[^.!?]{0,50}\b(?:fotos?|imagens?)\b/.test(clause) ||
+      /\b(?:avaliar|avaliacao|orcamento|indicacao)\b[^.!?]{0,50}\b(?:por|pela|pelas|com)\s+(?:(?:uma|a|as|minha|minhas)\s+)?(?:fotos?|imagens?)\b/.test(clause);
+  });
 }
 
 // Asking how a procedure works remains a separate question even beside price.

@@ -1,5 +1,7 @@
 import { isReactionMessageType } from "./lib/inbound-message-kind.mjs";
 import { extractInboundText } from "./lib/extract-inbound-text.mjs";
+import { audioTranscriptionEnabled, transcribeYCloudAudio } from "./lib/audio-transcription.mjs";
+import { PENDING_AUDIO_TEXT } from "./lib/patient-turn-context.mjs";
 export { extractInboundText } from "./lib/extract-inbound-text.mjs";
 import { refreshInboundReplyContext } from "./lib/inbound-reply-context.mjs";
 import { buildConsultationQuestionBundle } from './lib/consultation-question-bundle.mjs';
@@ -2323,6 +2325,10 @@ async function completeOpenAIActive({
     };
     let refreshedContextSource = "volatile_cache";
     if (humanContextContinuationCandidate) {
+      const pendingContext = await refreshInboundReplyContextImpl(input);
+      if (pendingContext.status === "pending_audio") {
+        return { status: "failed", errorCode: "audio_transcription_pending", replySent: false };
+      }
       const refreshed = await refreshLatestHumanContextInput(input);
       input = refreshed.input;
       refreshedContextSource = refreshed.source;
@@ -3957,6 +3963,8 @@ export async function handleYCloudWebhook(
     appendConversationTurnImpl = appendConversationTurn,
     markLatestInboundForReplyImpl = markLatestInboundForReply,
     dispatchInboundRecoveryImpl = dispatchInboundRecovery,
+    transcribeYCloudAudioImpl = transcribeYCloudAudio,
+    markHumanTakeoverImpl = markHumanTakeover,
   } = {},
 ) {
   const webhookSecret = process.env.YCLOUD_WEBHOOK_SECRET;
@@ -3984,6 +3992,8 @@ export async function handleYCloudWebhook(
         process.env.GOOGLE_SHEETS_WEBHOOK_SECRET,
       ),
       openAIConfigured: Boolean(process.env.OPENAI_API_KEY),
+      audioTranscription: audioTranscriptionEnabled() ? "enabled" : "disabled",
+      conversationArchive: process.env.WHATSAPP_CONVERSATION_ARCHIVE_ENABLED === "true" ? "enabled" : "disabled",
       reviewAlertConfigured: isReviewAlertConfigured(),
       appointmentReviewEnabled: isAppointmentAlertEnabled(),
       automationMode,
@@ -4224,12 +4234,24 @@ export async function handleYCloudWebhook(
       });
     }
 
-    const echoText = String(echo.text?.body || "");
+    let echoText = String(echo.text?.body || "");
     const echoAt = String(
       echo.sendTime || echo.createTime || payload.createTime || "",
     );
+    const humanAudio = String(echo.type || "").toLowerCase() === "audio" && audioTranscriptionEnabled();
+    let humanResumeControl = null;
+    if (humanAudio) {
+      // Pause before the potentially slow transcription. Audio cannot create
+      // appointments, learn clinic policy or change professional ownership.
+      humanResumeControl = await markHumanTakeoverImpl({ phone: patientPhone, eventId: String(eventId), at: echoAt });
+      const transcript = await transcribeYCloudAudioImpl(echo, { eventId: String(eventId), phone: patientPhone });
+      if (transcript.status === "retry") return json({ received: false, error: "human_audio_transcription_pending" }, 503);
+      echoText = transcript.autoReplyEligible
+        ? `[Transcrição automática de áudio] ${transcript.text}`
+        : `[Transcrição incerta de áudio] ${transcript.text || "Conteúdo indisponível; conferir o áudio no WhatsApp."}`;
+    }
     const echoExternalProfessional =
-      detectExternalProfessionalAppointment(echoText);
+      !humanAudio && detectExternalProfessionalAppointment(echoText);
     if (echoExternalProfessional) {
       const externalContext = await markExternalProfessionalContext({
         phone: patientPhone,
@@ -4268,7 +4290,7 @@ export async function handleYCloudWebhook(
       });
     }
 
-    const standaloneAppointment = detectManualAppointment({
+    const standaloneAppointment = humanAudio ? null : detectManualAppointment({
       currentText: echoText,
       recentConversation: [],
       at: echoAt,
@@ -4310,12 +4332,9 @@ export async function handleYCloudWebhook(
       });
     };
 
-    const humanResumeControl = await markHumanTakeover({
-      phone: patientPhone,
-      eventId: String(eventId),
-      at: echoAt,
-    });
-
+    if (!humanResumeControl) {
+      humanResumeControl = await markHumanTakeoverImpl({ phone: patientPhone, eventId: String(eventId), at: echoAt });
+    }
     // A mensagem estruturada é a confirmação final da equipe. A reserva
     // canônica precisa acontecer antes da persistência secundária da tomada
     // humana, que pode sofrer timeout sem invalidar o comprovante já enviado.
@@ -4362,15 +4381,15 @@ export async function handleYCloudWebhook(
       );
     }
 
-    const memoryResult = await appendConversationTurn({
+    const memoryResult = await appendConversationTurnImpl({
       phone: patientPhone,
       role: "assistant",
-      text: echoText,
+      text: echoText.startsWith("[Transcrição incerta de áudio]") ? "[Áudio da equipe com conteúdo não confirmado.]" : echoText,
       eventId: String(eventId),
       at: echoAt,
       source: "human",
     });
-    const humanLearning = echoText.trim()
+    const humanLearning = echoText.trim() && !humanAudio
       ? await recordHumanLearningAnswer({
           phone: patientPhone,
           answer: echoText,
@@ -4382,11 +4401,11 @@ export async function handleYCloudWebhook(
         });
     const manualAppointment =
       structuredAppointment ||
-      detectManualAppointment({
+      (humanAudio ? null : detectManualAppointment({
         currentText: echoText,
         recentConversation: memoryResult.historyAfter,
         at: echoAt,
-      });
+      }));
 
     if (manualAppointment && !manualAppointmentResult) {
       await syncManualAppointment(manualAppointment);
@@ -4497,9 +4516,25 @@ export async function handleYCloudWebhook(
   }
 
   const contactAt = message.sendTime || payload.createTime;
-  const normalizedMessageType = String(message.type || "")
+  const originalMessageType = String(message.type || "")
     .trim()
     .toLowerCase();
+  let normalizedMessageType = originalMessageType;
+  const audioEnabled = originalMessageType === "audio" && audioTranscriptionEnabled() && backgroundEnabled;
+  const audioPending = audioEnabled && backgroundIntake;
+  let audioTranscript = null;
+  if (audioEnabled && backgroundExecution) {
+    audioTranscript = await transcribeYCloudAudioImpl(message, { eventId: String(eventId), phone });
+    if (audioTranscript.status === "retry") return json({ received: false, error: "audio_transcription_pending",
+      automaticWorkFinished: false, recoveryStatus: "pending" }, 503);
+    // Only a result produced after authenticated intake can become text. The
+    // signed provider envelope remains unchanged in durable recovery storage.
+    if (audioTranscript.autoReplyEligible) {
+      normalizedMessageType = "text";
+      message.type = "text";
+      message.text = { body: audioTranscript.text };
+    }
+  }
   // Signature, sender and event ID were validated above. A reaction is not a
   // new request: stop before recovery, memory, debounce, CRM or human queues.
   if (isReactionMessageType(normalizedMessageType)) {
@@ -4536,6 +4571,7 @@ export async function handleYCloudWebhook(
         .slice(0, 5)
     : [];
   const recoverableInbound = Boolean(
+    audioEnabled ||
     (normalizedMessageType === "text" && text.trim()) ||
     (backgroundEnabled && unavailableInboundContent),
   );
@@ -4571,7 +4607,7 @@ export async function handleYCloudWebhook(
     // The signed durable job remains the recovery source; this is the existing cache.
     const intakeMemory = await appendConversationTurnImpl({
       phone, role: "user", source: "patient", eventId: String(eventId), at: contactAt,
-      text: unavailableInboundContent ? UNAVAILABLE_PATIENT_TEXT : text,
+      text: audioPending ? PENDING_AUDIO_TEXT : unavailableInboundContent ? UNAVAILABLE_PATIENT_TEXT : text,
       templateId: extractPrefillTemplateId(message, null, classifyAttribution(payload, message, text, null)),
     });
     if (!["completed", "duplicate"].includes(intakeMemory.status)) {
@@ -4584,7 +4620,7 @@ export async function handleYCloudWebhook(
   }
   let replyDebounceMarkerStatus = "skipped";
   const inboundReplyKind = replyDebounceKindForInbound({
-    messageType: normalizedMessageType,
+    messageType: audioPending ? "text" : normalizedMessageType,
     unsupportedInboundContent,
   });
   if (inboundReplyKind) {
@@ -4731,9 +4767,11 @@ export async function handleYCloudWebhook(
       currentText: text,
       recentConversation: rememberedConversation?.turns || [],
     }),
-    messageType: normalizedMessageType,
+    messageType: audioTranscript ? originalMessageType : normalizedMessageType,
     relatedMessageId: String(message.context?.id || message.reaction?.message_id || ""),
-    text,
+    text: audioTranscript ? audioTranscript.autoReplyEligible
+      ? `[Transcrição automática de áudio] ${audioTranscript.text}`
+      : `[Transcrição incerta de áudio] ${audioTranscript.text || "Conteúdo indisponível; conferir o áudio no WhatsApp."}` : text,
     reference: attribution.reference,
     platform: attribution.platform,
     referenceCategory: attribution.referenceCategory,
@@ -4806,7 +4844,7 @@ export async function handleYCloudWebhook(
 
       if (
         appointmentSelection &&
-        isAutomatedAppointmentMutationEnabled(automationMode)
+        !audioTranscript && isAutomatedAppointmentMutationEnabled(automationMode)
       ) {
         const bookingResult =
           await completeSelectedAppointment({
@@ -4850,7 +4888,7 @@ export async function handleYCloudWebhook(
 
       if (
         appointmentReply &&
-        isAutomatedAppointmentMutationEnabled(automationMode)
+        !audioTranscript && isAutomatedAppointmentMutationEnabled(automationMode)
       ) {
         const statusSync = await deliverSheetsAction(
           "update_appointment_status",
@@ -4959,10 +4997,12 @@ export async function handleYCloudWebhook(
     recoveryRegistration,
   });
 
-  const conversationInboundText = unavailableInboundContent ? UNAVAILABLE_PATIENT_TEXT : text;
+  const conversationInboundText = audioTranscript && !audioTranscript.autoReplyEligible
+    ? "[Áudio de conteúdo não confirmado; aguardar atendimento humano.]"
+    : unavailableInboundContent ? UNAVAILABLE_PATIENT_TEXT : text;
   if (
     (!suppressExactDuplicate || delivery.contentRecovered) &&
-    ((normalizedMessageType === "text" && text.trim().length > 0) || unavailableInboundContent)
+    ((normalizedMessageType === "text" && text.trim().length > 0) || unavailableInboundContent || audioTranscript)
   ) {
     let memoryResult = await appendConversationTurnImpl({
       phone,
@@ -5255,7 +5295,7 @@ export async function handleYCloudWebhook(
   }
 
   if (
-    isAutomatedAppointmentMutationEnabled(automationMode) &&
+    !audioTranscript && isAutomatedAppointmentMutationEnabled(automationMode) &&
     patientAppointmentSelection &&
     !blocksAutomatedPatientMessages(patientRelationship)
   ) {
@@ -5311,7 +5351,7 @@ export async function handleYCloudWebhook(
   }
 
   if (
-    isAutomatedAppointmentMutationEnabled(automationMode) &&
+    !audioTranscript && isAutomatedAppointmentMutationEnabled(automationMode) &&
     patientAppointmentReply
   ) {
     const statusSync = await deliverSheetsAction(

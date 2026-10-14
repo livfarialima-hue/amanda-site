@@ -1,0 +1,96 @@
+{
+  "checkedAt": "2026-10-13T23:57:14.087Z",
+  "status": "read_only_verified_with_limitations",
+  "baseCommit": "872665ea0f0b04a6639034a8a67af1957861c3a7",
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "id": "6acebbd4a25f1e95fc6d90d3",
+    "commit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
+    "branch": "reestruturacao-site",
+    "state": "ready",
+    "publishedAt": "2026-10-13T23:18:33.483Z",
+    "functions": [
+      "appointment-reminder",
+      "appointment-review",
+      "attribution-journey",
+      "attribution-journey-purge",
+      "classify-leads",
+      "classify-leads-background",
+      "human-resume",
+      "human-resume-background",
+      "post-consult-followup",
+      "scheduled-followup",
+      "synthetic-integration-health",
+      "ycloud-recovery",
+      "ycloud-recovery-background",
+      "ycloud-webhook"
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ]
+  },
+  "appsScript": {
+    "scriptId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "registeredVersion": 162,
+    "liveCodeMatchesBase": true,
+    "liveCodeNormalizedSha256": "cc4563881793d65cd36e54fa10a1d457fa0ffd8b15fef8ec5d21d4b96fa54ade",
+    "newFileAbsent": true
+  },
+  "drive": {
+    "folderId": "1NZFwgLSC2cUefzi73Nbn1nFaeJX8g85n",
+    "parent": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
+    "restrictedUsers": 3,
+    "publicOrDomainSharing": false,
+    "createdEmpty": true
+  },
+  "leads": {
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "messageHeadersVerified": 14,
+    "matchedCaseMessages": 4,
+    "fullCaseAvailable": false
+  },
+  "env": {
+    "OPENAI_API_KEY": {
+      "presentInProduction": true,
+      "scopes": [
+        "builds",
+        "functions",
+        "runtime"
+      ]
+    },
+    "YCLOUD_API_KEY": {
+      "presentInProduction": true
+    },
+    "backgroundInboundProduction": true,
+    "audioFlagAbsent": true,
+    "archiveFlagAbsent": true
+  },
+  "limitations": [
+    "A imagem é estreita e ilegível; o contato indicado pelo usuário foi localizado, mas somente quatro mensagens foram encontradas no histórico integrado.",
+    "A conversa completa requer sessão YCloud; login e CAPTCHA apresentados. Nenhuma fala ilegível foi inferida.",
+    "O backup proposto cobre mensagens da integração gravadas no ledger; não comprova captura de eventos que o provedor não envia.",
+    "DriveApp ainda precisa de autorização na conta executora antes da ativação; revisão independente pendente."
+  ],
+  "patientMessagesSent": 0,
+  "operationalRoutinesManuallyRun": 0
+}

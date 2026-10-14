@@ -1,4 +1,5 @@
 import { UNKNOWN_CLARIFICATION_CODE } from "./knowledge-learning.mjs";
+import { hasApprovedSurgicalPriceDisclosure } from "./surgical-price-policy.mjs";
 
 export const CONTEXT_CLARIFICATION_CODE = "CONTEXT-CLARIFY-01";
 export const CONTEXT_REOPEN_CODE = "CONTEXT-REOPEN-01";
@@ -11,6 +12,8 @@ export const CONTEXTUAL_APPROVED_REPLY_CODES = Object.freeze([
   "AMANDA-CONSULTA-INFO-01",
   "LIFTING-FACIAL-INFORMATION-01",
   "LIFTING-SCOPE-COMPARISON-01",
+  "LIFTING-PRICE-RANGE-01",
+  "OTOPLASTY-PRICE-RANGE-01",
 ]);
 
 function factualLiterals(text) {
@@ -31,6 +34,10 @@ export function selectConfirmedReplyText(semanticResult, approvedResult) {
       !draft || draft.length > 1200 || factualLiterals(draft) !== factualLiterals(approved)) {
     return approved;
   }
+  // Wording is flexible, not the approved commercial facts. The outbound
+  // gate still checks procedure-specific amounts, clinical claims and effects.
+  if (["LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01"].includes(approvedResult.decision.replyCode) &&
+      !hasApprovedSurgicalPriceDisclosure(draft)) return approved;
   return draft;
 }
 

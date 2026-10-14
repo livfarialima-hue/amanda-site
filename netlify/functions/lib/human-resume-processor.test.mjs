@@ -16,6 +16,35 @@ const ACTIVE_ENV = {
 const INITIAL_PRICE_REPLY =
   "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 
+for (const scenario of ['complete','invalid_amount','veto','new_human']) {
+  test(`resumed photos and price preserve context and all guards: ${scenario}`,async()=>{
+    const deps=dependencies();
+    const text='Sou Helena. Tenho flacidez nas bochechas e linhas perto da boca. Posso mandar fotos minhas para avaliar e saber o preço do lifting facial? Estou planejando os gastos.';
+    deps.runOpenAIShadowImpl=async payload=>{
+      assert.ok(payload.replyContract.unresolvedIntents.includes('photo_assessment_request'));
+      assert.ok(payload.replyContract.unresolvedIntents.includes('appearance_concerns'));
+      assert.match(payload.policyHints.deterministicReplyPreview,/não é um orçamento fechado/);
+      const preview=payload.policyHints.deterministicReplyPreview;
+      const body=`Helena, entendi suas dúvidas sobre as bochechas e as linhas perto da boca. O orçamento do seu caso depende da avaliação com a médica; fotos, sozinhas, não permitem fechar esse plano.\n\n${preview}` + (scenario==='invalid_amount' ? ' Há uma taxa adicional de R$ 900.' : '');
+      return {status:'completed',decision:{route:scenario==='veto'?'human_review':'standard_reply',confidence:'high',automaticAllowed:scenario!=='veto',urgent:false,
+        professional:'amanda',procedure:'lifting_facial',replyCode:'LIFTING-PRICE-RANGE-01',suggestedReply:body,reviewReason:scenario==='veto'?'synthetic_review':''}};
+    };
+    if(scenario==='new_human')deps.readConversationTurnsImpl=async()=>({status:'completed',turns:[{role:'assistant',source:'equipe_humana',text:'Já estou atendendo.',at:'2026-07-28T15:20:00Z',eventId:'synthetic-photo-human'}]});
+    const result=await processHumanResumeJob(job({text,patientName:'Helena',recentConversation:[
+      {role:'user',source:'patient',text:'Gostaria de informações de lifting facial.'},
+      {role:'assistant',source:'bruna',text:'Sou a Bruna. Qual a sua dúvida?'},
+    ]}),{env:ACTIVE_ENV,now:NOW,...deps});
+    if(scenario!=='complete'){assert.equal(deps.patientMessages.length,0,JSON.stringify(result));return;}
+    assert.equal(deps.patientMessages.length,1,JSON.stringify(result));
+    const body=deps.patientMessages[0].body;
+    assert.match(body,/Helena.*bochechas.*boca/s);
+    assert.match(body,/R\$ 26 mil e R\$ 42 mil/);
+    assert.match(body,/orçamento.*avaliação.*fotos, sozinhas/s);
+    assert.doesNotMatch(body,/sou a Bruna|recebi|confirmar.*valor|R\$ 500/);
+    assert.equal(deps.alerts.length,0);
+  });
+}
+
 for (const scenario of ['both_topics','both_topics_veto','both_topics_new_human']) {
   test(`resumption shares the complete informational answer and human guard: ${scenario}`,async()=>{
     const deps=dependencies();

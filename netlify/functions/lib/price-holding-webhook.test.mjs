@@ -9,6 +9,58 @@ const SHEETS_URL = "https://sheets.example.test/webhook";
 const YCLOUD_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 
+for (const scenario of ['photo_price_complete','photo_price_invalid_amount','photo_price_veto','audio_photo_price_complete']) {
+  test(`webhook preserves the whole text/photo/price turn: ${scenario}`, async t => {
+    const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,
+      GOOGLE_SHEETS_WEBHOOK_SECRET:'synthetic',WHATSAPP_AUTOMATION_MODE:'active',WHATSAPP_INBOUND_BACKGROUND_ENABLED:'true',
+      WHATSAPP_AUDIO_TRANSCRIPTION_ENABLED:scenario.startsWith('audio_')?'true':'false',
+      WHATSAPP_HUMAN_REPLY_GUARD_MS:'0',WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS:'0',WHATSAPP_REPLY_DEBOUNCE_AI_MS:'0',
+      OPENAI_API_KEY:'synthetic',WHATSAPP_ALERT_NUMBER:'+5511900000002',YCLOUD_ALERT_TEMPLATE_NAME:'synthetic_review',YCLOUD_ALERT_TEMPLATE_LANGUAGE:'pt_BR'};
+    const previous=Object.fromEntries(Object.keys(settings).map(k=>[k,process.env[k]]));Object.assign(process.env,settings);
+    t.after(()=>{for(const[k,v]of Object.entries(previous)){if(v===undefined)delete process.env[k];else process.env[k]=v;}});
+    t.mock.method(console,'log',()=>{});
+    const sent=[];let modelCalls=0;
+    const turns=[
+      {role:'user',source:'patient',text:'Gostaria de informações de lifting facial.',at:'2026-10-11T15:00:00Z',eventId:`${scenario}-origin`},
+      {role:'assistant',source:'bruna',text:'Sou a Bruna. Qual a sua dúvida?',at:'2026-10-11T15:01:00Z',eventId:`${scenario}-intro`},
+      {role:'user',source:'patient',text:'Sou Helena, tenho flacidez nas bochechas e linhas perto da boca.',at:'2026-10-11T15:02:00Z',eventId:`${scenario}-concerns`},
+    ];
+    t.mock.method(globalThis,'fetch',async(url,options)=>{
+      const data=JSON.parse(options.body);
+      if(url===SHEETS_URL)return new Response(JSON.stringify(data.action==='get_conversation_context'?{ok:true,turns,professional:'amanda',opportunityId:scenario}:
+        {ok:true,sent:true,updated:true,duplicate:false,routed:true,routeStatus:'resolved',professional:'amanda',opportunityId:scenario,humanTakeoverToday:false,patientRelationship:{found:false}}),{status:200});
+      if(url==='https://api.openai.com/v1/responses'){
+        modelCalls++;const input=JSON.parse(data.input);
+        assert.match(input.currentMessage,/Helena/);
+        assert.match(input.currentMessage,/bochechas/);
+        assert.ok(input.replyContract.unresolvedIntents.includes('photo_assessment_request'));
+        assert.ok(input.replyContract.unresolvedIntents.includes('appearance_concerns'));
+        assert.match(input.policyHints.deterministicReplyPreview,/não é um orçamento fechado/);
+        const veto=scenario.endsWith('veto'), invalidAmount=scenario.endsWith('invalid_amount');
+        const preview=input.policyHints.deterministicReplyPreview;
+        const body=`Helena, entendi o que você quer avaliar nas bochechas e perto da boca. As fotos podem contextualizar seu pedido; a indicação e o orçamento individual dependem da consulta.\n\n${preview}` + (invalidAmount ? ' Há uma taxa adicional de R$ 900.' : '');
+        return new Response(JSON.stringify({model:'synthetic',output_text:JSON.stringify({route:veto?'human_review':'standard_reply',confidence:'high',automaticAllowed:!veto,urgent:false,
+          professional:'amanda',procedure:'lifting_facial',replyCode:'LIFTING-PRICE-RANGE-01',suggestedReply:body,reviewReason:veto?'synthetic_review':'',
+          conversationState:{activeTopic:'queixas, fotos e referência para planejamento',patientAct:'question',refersToEventId:'',lastClinicQuestion:'',lastClinicOffer:'',unresolvedQuestions:['queixas','fotos','valores'],factsAlreadyProvided:[],owner:veto?'human_team':'bruna',nextExpectedAction:'responder ao conjunto sem avaliação individual',ambiguity:'',contextConfidence:'high'}})}),{status:200});
+      }
+      assert.equal(url,YCLOUD_URL,'all external effects mocked');sent.push(data);return new Response('{"status":"accepted"}',{status:200});
+    });
+    const response=await handleYCloudWebhook(requestFor({id:`${scenario}-final`,type:'whatsapp.inbound_message.received',createTime:'2026-10-11T15:03:00Z',
+      whatsappInboundMessage:{id:`${scenario}-message`,from:'+5511900000000',to:'+5511900000001',sendTime:'2026-10-11T15:03:00Z',type:scenario.startsWith('audio_')?'audio':'text',text:{body:scenario.startsWith('audio_')?'':'Vou mandar fotos minhas para avaliar e ter um orçamento. Estou planejando os gastos.'}}}),
+      {livInboundBackground:true},{registerInboundRecoveryImpl:async()=>({status:'completed'}),
+        transcribeYCloudAudioImpl:async()=>({status:'transcribed',autoReplyEligible:true,text:'Vou mandar fotos minhas para avaliar e ter um orçamento. Estou planejando os gastos.'})});
+    const result=await response.json(), replies=sent.filter(m=>m.to==='+5511900000000');
+    assert.ok(modelCalls>0,JSON.stringify(result));
+    if(!scenario.endsWith('price_complete')){assert.equal(replies.length,0,JSON.stringify(result));return;}
+    assert.equal(replies.length,1,JSON.stringify(result));
+    const body=replies[0].text.body;
+    assert.match(body,/Helena.*bochechas.*boca/s);
+    assert.match(body,/R\$ 26 mil e R\$ 42 mil/);
+    assert.match(body,/fotos.*orçamento individual dependem da consulta/s);
+    assert.doesNotMatch(body,/Eu sou a Bruna|recebi|confirmar.*valor|R\$ 500/);
+  });
+}
+
 for (const scenario of ['both_topics','both_topics_semantic_veto']) {
   test(`webhook follows the actual offered pair without dropping the explanation: ${scenario}`,async t=>{
     const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,

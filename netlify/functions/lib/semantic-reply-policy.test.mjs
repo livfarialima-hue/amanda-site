@@ -4,6 +4,7 @@ import test from "node:test";
 import { prepareSemanticContextContinuationAction } from "./semantic-reply-policy.mjs";
 import { selectConfirmedReplyText } from "./semantic-reply-policy.mjs";
 import { validateOutboundReply } from "./outbound-reply-gate.mjs";
+import { SURGICAL_PRICE_DISCLOSURE } from "./surgical-price-policy.mjs";
 
 const approved = { status: "completed", decision: { route: "standard_reply", confidence: "high",
   automaticAllowed: true, urgent: false, professional: "amanda", procedure: "lifting_facial",
@@ -26,8 +27,8 @@ test("rewriting cannot alter or drop approved amounts and links", () => {
     assert.equal(selectConfirmedReplyText(contextual(text), withLink), withLink.decision.suggestedReply);
   }
 });
-test("price, agenda, insurance, pending tasks and unknown codes remain exact", () => {
-  for (const replyCode of ["LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "SURGICAL-PRICE-INITIAL-01",
+test("initial price guidance, agenda, insurance, pending tasks and unknown codes remain exact", () => {
+  for (const replyCode of ["SURGICAL-PRICE-INITIAL-01",
     "AMANDA-AGENDA-PREFERENCE-01", "INSURANCE-ACCEPTANCE-01", "AMANDA-CONSULTA-BUNDLE-01", "NEW-UNKNOWN-CODE"]) {
     const candidate = { ...approved, decision: { ...approved.decision, replyCode } };
     assert.equal(selectConfirmedReplyText(contextual("Outra redação com R$ 500.", { replyCode }), candidate), candidate.decision.suggestedReply);
@@ -38,6 +39,30 @@ test("wording permission cannot override semantic uncertainty, urgency or a diff
     assert.equal(selectConfirmedReplyText(contextual("Outra redação com R$ 500.", changes), approved), approved.decision.suggestedReply);
   }
 });
+
+for (const [replyCode, procedure, range] of [
+  ["LIFTING-PRICE-RANGE-01", "lifting_facial", "Para lifting facial, a faixa é entre R$ 26 mil e R$ 42 mil."],
+  ["LIFTING-PRICE-RANGE-01", "lifting_cervical", "Para lifting cervical, a faixa é entre R$ 18 mil e R$ 26 mil."],
+  ["OTOPLASTY-PRICE-RANGE-01", "otoplastia", "Para otoplastia, a faixa é entre R$ 8 mil e R$ 14 mil."],
+]) {
+  test(`approved ${procedure} facts permit natural wording without new amounts or promises`, () => {
+    const candidate = { ...approved, decision: { ...approved.decision, replyCode, procedure,
+      suggestedReply: `${range} ${SURGICAL_PRICE_DISCLOSURE}` } };
+    const natural = `Essa referência pode ajudar no seu planejamento. ${range} ${SURGICAL_PRICE_DISCLOSURE}`;
+    const model = text => contextual(text, { replyCode, procedure });
+    assert.equal(selectConfirmedReplyText(model(natural), candidate), natural);
+    for (const unsafe of [
+      natural + " Há uma taxa de R$ 900.",
+      natural.replace(SURGICAL_PRICE_DISCLOSURE, ""),
+      natural + " O orçamento é fechado e inclui tudo.",
+    ]) {
+      assert.equal(selectConfirmedReplyText(model(unsafe), candidate), candidate.decision.suggestedReply);
+    }
+    assert.equal(selectConfirmedReplyText(contextual(natural, {
+      replyCode, procedure, route: "human_review", automaticAllowed: false,
+    }), candidate), candidate.decision.suggestedReply, "selection does not authorize a vetoed route");
+  });
+}
 test("contextual wording still goes through clinical, appointment and question limits", () => {
   const conversationAction = { action: "respond", replyContract: { maxQuestions: 0, maxLinks: 0,
     allowCta: false, allowAppointmentConfirmation: false } };

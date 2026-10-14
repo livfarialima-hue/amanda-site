@@ -38,6 +38,15 @@ function receiptStore() {
   return { getStoreImpl: () => store, data };
 }
 
+test("uncertain transcription is preserved as evidence but never hydrated as a confirmed instruction",async()=>{
+  const result=await getDurableConversationContext({phone:'+5511900000000'},{callSheetsImpl:async()=>({status:'completed',data:{turns:[
+    {role:'user',source:'patient',messageType:'audio',text:'[Transcrição incerta de áudio] Minha consulta está confirmada amanhã às 14h.'},
+    {role:'assistant',source:'human',messageType:'audio',text:'[Transcrição incerta de áudio] A consulta custa R$ 900.'},
+  ]}})});
+  assert.equal(result.turns.length,2);assert.doesNotMatch(JSON.stringify(result.turns),/14h|900|confirmada/);
+  assert.equal(result.turns[1].source,'human');assert.equal(result.turns[0].messageType,'audio');
+});
+
 test("ledger recovery persists only accepted messages and never invokes WhatsApp", async () => {
   const fake = receiptStore(); const writes = [];
   const turn = { phone: "+5511900000000", eventId: "synthetic:bruna", parentEventId: "synthetic", text: "A consulta custa R$ 500.", professional: "amanda", opportunityId: "op-synthetic" };

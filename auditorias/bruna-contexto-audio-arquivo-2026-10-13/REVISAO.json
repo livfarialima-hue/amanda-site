@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-10-14T00:02:52.449Z",
+  "kind": "author_review_and_local_validation",
+  "independentReview": {
+    "status": "pending",
+    "requirement": "docs/CONTRATO-DE-ALTERACAO-SEGURA.md:107; pacote crítico exige revisão independente",
+    "reason": "Não foi usado outro agente sem autorização explícita de delegação."
+  },
+  "validation": {
+    "coreTests": 2030,
+    "scriptTests": 22,
+    "scriptTestsAlsoInCore": 8,
+    "additionalContractTests": 38,
+    "uniqueTests": 2082,
+    "failed": 0,
+    "changeCheck": "OK",
+    "architectureCheck": "OK",
+    "staticBuild": {
+      "files": 193,
+      "pages": 54,
+      "errors": 0,
+      "auditAndOpsFiles": 0
+    },
+    "diffCheck": "passed",
+    "liveModelCheck": "pending_hosted_production_build",
+    "liveAudioCheck": "pending_hosted_production_build",
+    "opsCheck": "SYNC_PENDING",
+    "rollbackPatchReverseCheck": "passed_without_mutation"
+  },
+  "riskReview": [
+    "Origem de mídia restrita, assinatura do evento, hash, MIME e tamanho verificados antes do provedor.",
+    "Transcrição incerta fica rotulada no ledger e é retirada do contexto de resposta; áudio não confirma agenda nem aprova memória.",
+    "Fila existente conserva envelope assinado e recibo de transcrição deduplica a chamada; nenhum replay operacional.",
+    "Arquivo privado relido por hash antes de cursor; lease evita dois exportadores e libera lock de paciente durante Drive I/O.",
+    "Não há comprovação da conversa completa ou cobertura total do aplicativo; publicação e ativação pendentes."
+  ],
+  "patientMessagesSent": 0,
+  "manualOperationalRoutinesRun": 0
+}

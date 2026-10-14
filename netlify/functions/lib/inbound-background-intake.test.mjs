@@ -3,6 +3,7 @@ import { createHmac } from "node:crypto";
 import test from "node:test";
 import { handleYCloudWebhook } from "../ycloud-webhook.mjs";
 import { processInboundRecoveryJob } from "../ycloud-recovery.mjs";
+import { PENDING_AUDIO_TEXT } from "./patient-turn-context.mjs";
 
 const secret = "synthetic-intake-secret";
 const payload = {
@@ -331,4 +332,75 @@ test('a worker with exhausted marker conflicts retries without replying or start
     markLatestInboundForReplyImpl:async()=>({status:'failed',reason:'concurrent_update'}),
   }));
   assert.equal(response.status,503);assert.equal((await response.json()).error,'inbound_marker_conflict');assert.equal(calls(),0);
+});
+
+test('audio intake stores its signed event and a pending context before attempting transcription', async t => {
+  setup(t, { WHATSAPP_AUDIO_TRANSCRIPTION_ENABLED: 'true' }); const order = [];
+  const audio = { ...payload, whatsappInboundMessage: { ...payload.whatsappInboundMessage, type: 'audio', text: {} } };
+  const response = await handleYCloudWebhook(request(audio), {}, dependencies({
+    registerInboundRecoveryImpl: async input => { assert.equal(JSON.parse(input.rawBody).whatsappInboundMessage.type, 'audio'); order.push('durable'); return {status:'completed'}; },
+    appendConversationTurnImpl: async turn => { assert.equal(turn.text,PENDING_AUDIO_TEXT); order.push('memory'); return {status:'completed'}; },
+    transcribeYCloudAudioImpl: async () => assert.fail('Intake must not download or transcribe'),
+    dispatchInboundRecoveryImpl: async () => { order.push('dispatch'); return {status:'dispatched'}; },
+  }));
+  assert.equal(response.status,202); assert.deepEqual(order,['durable','memory','dispatch']);
+});
+
+test('a retryable audio failure neither invents text nor sends a response', async t => {
+  const calls = setup(t, { WHATSAPP_AUDIO_TRANSCRIPTION_ENABLED: 'true' });
+  const audio = {...payload,whatsappInboundMessage:{...payload.whatsappInboundMessage,type:'audio',text:{}}};
+  const response = await handleYCloudWebhook(request(audio), {livInboundBackground:true}, dependencies({
+    transcribeYCloudAudioImpl: async()=>({status:'retry',text:''}),
+    appendConversationTurnImpl: async()=>assert.fail('No fabricated transcript'),
+  }));
+  assert.equal(response.status,503); assert.equal((await response.json()).recoveryStatus,'pending'); assert.equal(calls(),0);
+});
+
+test('an unsigned audio event cannot trigger transcription or storage', async t => {
+  const calls = setup(t, {WHATSAPP_AUDIO_TRANSCRIPTION_ENABLED:'true'});
+  const audio={...payload,whatsappInboundMessage:{...payload.whatsappInboundMessage,type:'audio',text:{}}};
+  const response=await handleYCloudWebhook(request(audio,{'YCloud-Signature':'invalid'}),{livInboundBackground:true},dependencies({
+    transcribeYCloudAudioImpl:async()=>assert.fail('Unauthenticated transcription'),
+    registerInboundRecoveryImpl:async()=>assert.fail('Unauthenticated storage'),
+  }));
+  assert.equal(response.status,401);assert.equal(calls(),0);
+});
+
+for (const uncertain of [false,true]) test(`human audio takes priority before transcription without confirming appointments or learning policy (uncertain=${uncertain})`,async t=>{
+  setup(t,{WHATSAPP_AUDIO_TRANSCRIPTION_ENABLED:'true'});const actions=[],order=[];let memory;
+  t.mock.method(globalThis,'fetch',async(url,options)=>{
+    assert.equal(String(url),'https://sheets.test/webhook');const input=JSON.parse(options.body);actions.push(input);
+    return Response.json({ok:true,created:true});
+  });
+  const echo={id:'synthetic-human-audio',type:'whatsapp.smb.message.echoes',createTime:payload.createTime,
+    whatsappMessage:{id:'synthetic-voice',type:'audio',from:'+5511900000001',to:'+5511900000000',sendTime:payload.createTime,audio:{}}};
+  const response=await handleYCloudWebhook(request(echo),{},dependencies({
+    markHumanTakeoverImpl:async()=>{order.push('pause');return {status:'completed'};},
+    transcribeYCloudAudioImpl:async()=>{order.push('transcribe');return {status:uncertain?'uncertain':'transcribed',autoReplyEligible:!uncertain,text:'Consulta confirmada amanhã às 14h com a Dra. Amanda. O valor é R$ 500.'};},
+    appendConversationTurnImpl:async turn=>{memory=turn;return {status:'completed',historyAfter:[turn]};},
+  }));
+  assert.equal(response.status,200);assert.deepEqual(order,['pause','transcribe']);
+  const body=await response.json();assert.equal(body.appointmentSyncStatus,'not_detected');assert.equal(body.humanLearningStatus,'nothing_pending');
+  assert.ok(actions.some(x=>x.action==='mark_human_takeover'));
+  assert.equal(actions.some(x=>/reserve|confirm_appointment|learn|external_professional/.test(x.action)),false);
+  assert.equal(memory.source,'human');
+  if(uncertain)assert.doesNotMatch(memory.text,/confirmada|500/);else assert.match(memory.text,/Transcrição automática/);
+});
+
+test('a transcribed inbound keeps audio provenance in the ledger and yields to human ownership', async t => {
+  setup(t, {WHATSAPP_AUDIO_TRANSCRIPTION_ENABLED:'true'}); const writes=[];
+  t.mock.method(globalThis,'fetch',async(url,options)=>{
+    assert.equal(String(url),'https://sheets.test/webhook');
+    writes.push(JSON.parse(options.body));
+    return Response.json({ok:true,inserted:true,routed:true,professional:'amanda',routeStatus:'resolved',
+      opportunityId:'synthetic',humanTakeoverToday:true,patientRelationship:{found:false}});
+  });
+  const audio={...payload,whatsappInboundMessage:{...payload.whatsappInboundMessage,type:'audio',text:{}}};
+  const response=await handleYCloudWebhook(request(audio),{livInboundBackground:true},dependencies({
+    readOutboundReplyStatusImpl:async()=> 'missing',
+    transcribeYCloudAudioImpl:async()=>({status:'transcribed',autoReplyEligible:true,text:'Qual o endereço da Clínica LIV?'}),
+  }));
+  const body=await response.json();assert.equal(body.humanTakeoverToday,true);assert.equal(body.aiActiveQueued,false);
+  const append=writes.find(w=>w.action==='append_lead');
+  assert.ok(append,JSON.stringify(body));assert.equal(append.lead.messageType,'audio');assert.match(append.lead.text,/^\[Transcrição automática de áudio\].*endereço/);
 });
