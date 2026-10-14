@@ -4656,8 +4656,27 @@
     "Synthetic gate does not prove conversion gain, cost reduction or stable future latency."
   ],
   "closeout": {
-    "status": "git_reconciliation_pending",
-    "functionalCommitUnchanged": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb"
+    "status": "reconciled",
+    "documentationCommit": "215272894d6be7742319cccf88d3bd854415bbc1",
+    "sourceAndReceiptsReconciled": true,
+    "opsCheck": {
+      "status": "OK",
+      "command": "npm.cmd run ops:check",
+      "branch": "reestruturacao-site",
+      "checkedCommit": "215272894d6be7742319cccf88d3bd854415bbc1",
+      "checkedAt": "2026-10-14T10:06:14.294Z",
+      "cleanWorktree": true
+    },
+    "remoteEquality": {
+      "branch": "origin/reestruturacao-site",
+      "commit": "215272894d6be7742319cccf88d3bd854415bbc1"
+    },
+    "changeSafety": {
+      "status": "OK",
+      "scopeFiles": 41
+    },
+    "functionalCommitUnchanged": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+    "automaticContinuation": "paused before publication decision; remains paused"
   },
   "independentPublicationReview": {
     "reviewer": "plugin_fallback_feasibility",
