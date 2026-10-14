@@ -1,3 +1,7 @@
+## 2026-10-14 — continuidade entre site e WhatsApp
+
+Correções do site e publicação autorizadas pelo usuário: convites de consulta sem promessa de horários, mensagens iniciais sem alegar leitura, destinos de seção compatíveis, remoção de breadcrumbs duplicados e abertura direta do guia de preço de lifting. Decisão canônica na seção 41 do Norte; recibos técnicos em auditorias/site-continuidade-2026-10-14/. Sem mudanças de mídia, preço, automação, qualificação ou agenda. Hipótese: reduzir atrito até conversa útil. Revisar integridade em 21/10 e etapas comerciais em 11/11 com maturação equivalente; não inferir causalidade de cada ajuste. Manter se coerente e íntegro; reverter somente o pacote diante de regressão comprovada.
+
 ## 2026-09-29 — próximo passo contextual até a consulta
 
 <!-- BRUNA-PONTE-CONSULTA-2026-09-29 -->

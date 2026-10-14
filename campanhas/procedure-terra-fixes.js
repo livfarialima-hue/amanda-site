@@ -24,7 +24,7 @@
   if(procedure==='procedimentos'){
     document.querySelectorAll('[data-procedure="procedimentos"][data-track="whatsapp"]').forEach(function(cta,index){
       if(index===0){cta.textContent='Falar com a equipe';cta.setAttribute('data-cta-location','nav');}
-      if(index===1){cta.textContent='Agendar avaliação';cta.setAttribute('data-cta-location','final');}
+      if(index===1){cta.textContent='Conversar sobre a consulta';cta.setAttribute('data-cta-location','final');}
     });
   }
 })();

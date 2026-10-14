@@ -610,10 +610,10 @@
     var heroCta = main.querySelector('.hero-actions a[data-track="whatsapp"]');
     var floating = document.querySelector('.whatsapp-float[data-track="whatsapp"]');
     var finalCta = main.querySelector('.cta a[data-track="whatsapp"]');
-    if (navCta) { navCta.textContent = 'Ver horários'; navCta.dataset.ctaLocation = 'header'; }
-    if (heroCta) { heroCta.textContent = 'Ver horários da consulta'; heroCta.dataset.ctaLocation = 'hero'; }
-    if (floating) { floating.textContent = 'Ver horários da consulta'; floating.dataset.ctaLocation = 'floating'; floating.setAttribute('aria-label', 'Ver horários da consulta pelo WhatsApp'); }
-    if (finalCta) { finalCta.textContent = 'Ver horários da consulta'; finalCta.dataset.ctaLocation = 'final_cta'; }
+    if (navCta) { navCta.textContent = 'Conversar sobre a consulta'; navCta.dataset.ctaLocation = 'header'; }
+    if (heroCta) { heroCta.textContent = 'Conversar sobre a consulta'; heroCta.dataset.ctaLocation = 'hero'; }
+    if (floating) { floating.textContent = 'Conversar sobre a consulta'; floating.dataset.ctaLocation = 'floating'; floating.setAttribute('aria-label', 'Conversar sobre a consulta pelo WhatsApp'); }
+    if (finalCta) { finalCta.textContent = 'Conversar sobre a consulta'; finalCta.dataset.ctaLocation = 'final_cta'; }
     main.querySelectorAll('.hero-actions .ghost').forEach(function (link) { link.hidden = true; });
     document.querySelectorAll('a[data-track="whatsapp"]').forEach(function (link) {
       if (link.dataset.ctaLocation) return;

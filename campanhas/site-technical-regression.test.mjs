@@ -11,12 +11,11 @@ import {
 } from "../scripts/static-site-artifact.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
-const trackingAssetVersion = "20260823-price-range-1";
-const trackingAssets = [
-  "conversion-tracking.js",
-  "tracking-config.js",
-  "tracking-loader.js",
-];
+const trackingAssetVersions = {
+  "conversion-tracking.js": "20261014-site-continuity",
+  "tracking-config.js": "20260823-price-range-1",
+  "tracking-loader.js": "20260823-price-range-1",
+};
 
 function writeFixtureFile(fixtureRoot, relativePath, content) {
   const target = path.join(fixtureRoot, relativePath);
@@ -458,14 +457,14 @@ test("OpenAI search and training crawlers have explicit independent rules", () =
   assert.match(robots, /User-agent:\s*GPTBot\s+Allow:\s*\//i);
 });
 
-test("all public pages use one current version for every tracking asset", () => {
+test("all public pages use the current version of each tracking asset", () => {
   const publicPageFiles = new Set(
     auditSite({ root }).pages
       .filter((page) => page.status === 200)
       .map((page) => page.file.replaceAll("\\", "/")),
   );
-  const expected = trackingAssets
-    .map((asset) => `${asset}?v=${trackingAssetVersion}`)
+  const expected = Object.entries(trackingAssetVersions)
+    .map(([asset, version]) => `${asset}?v=${version}`)
     .sort();
   const htmlFiles = planStaticArtifact({ root }).files
     .filter((file) => file.endsWith(".html"));
@@ -481,9 +480,10 @@ test("all public pages use one current version for every tracking asset", () => 
       assert.deepEqual(references, expected, file);
     } else {
       references.forEach((reference) => {
-        assert.match(
+        const asset = reference.split("?")[0];
+        assert.equal(
           reference,
-          new RegExp(`\\?v=${trackingAssetVersion}$`),
+          `${asset}?v=${trackingAssetVersions[asset]}`,
           file,
         );
       });
@@ -558,7 +558,7 @@ test("educational articles are concise, sourced and discoverable from the librar
     for (const paragraph of body.matchAll(/<p>([\s\S]*?)<\/p>/g)) {
       assert.ok(paragraph[1].replace(/<[^>]+>/g, " ").trim().split(/\s+/).length <= 85, article.file + " needs short paragraphs");
     }
-    assert.match(html, /(?:consulta com a|Na consulta, a|Converse com a) (?:Dra\. )?Amanda/i, article.file + " needs a clear, respectful invitation");
+    assert.match(html, /<a\b[^>]*data-track="whatsapp"[^>]*>Conversar sobre a consulta<\/a>/i, article.file + " needs a clear, respectful consultation invitation");
   }
 
   const library = readFileSync(path.join(root, "conteudos/index.html"), "utf8");

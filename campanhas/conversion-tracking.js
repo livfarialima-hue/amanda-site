@@ -24,13 +24,13 @@
   ];
   var marketingPrefillTemplateId = 'procedure_evaluation_v1';
   var cervicalCtaLabels = {
-    header: 'Conversar sobre avaliação',
-    hero: 'Conversar sobre a avaliação',
-    consultation: 'Conversar sobre a avaliação',
-    final: 'Conversar com a equipe',
-    footer: 'Conversar com a equipe',
-    sticky: 'Conversar sobre a avaliação',
-    video: 'Conversar sobre a avaliação'
+    header: 'Conversar sobre a consulta',
+    hero: 'Conversar sobre a consulta',
+    consultation: 'Conversar sobre a consulta',
+    final: 'Conversar sobre a consulta',
+    footer: 'Conversar sobre a consulta',
+    sticky: 'Conversar sobre a consulta',
+    video: 'Conversar sobre a consulta'
   };
   var procedureLabels = {
     'abdominoplastia': 'abdominoplastia',
@@ -80,7 +80,7 @@
       }
     }
     if (procedure === 'blefaroplastia-preco' && intent === 'price_planning') {
-      return 'Olá! Li sobre valores de blefaroplastia e gostaria de entender como o orçamento é montado e como funciona a avaliação.';
+      return 'Olá! Gostaria de entender como o orçamento da blefaroplastia é montado e como funciona a avaliação.';
     }
     return neutralPrefillMessage(link);
   }
@@ -89,7 +89,7 @@
     var procedure = String(link.dataset.procedure || '').trim().toLowerCase();
     if (procedure !== 'lifting-cervical') return;
     var location = String(link.dataset.ctaLocation || '').trim().toLowerCase();
-    link.textContent = cervicalCtaLabels[location] || 'Conversar sobre a avaliação';
+    link.textContent = cervicalCtaLabels[location] || 'Conversar sobre a consulta';
   }
 
   function googleMeasurementAvailable() {

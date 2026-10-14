@@ -1,0 +1,597 @@
+{
+  "schemaVersion": 1,
+  "changeId": "SITE-CONTINUIDADE-2026-10-14",
+  "status": "passed_local",
+  "baseCommit": "a2dc468942a74639bebb3f12489db79007ea4863",
+  "requiredCommands": [
+    "git diff --check",
+    "node --check campanhas/content-library.js",
+    "node --check campanhas/conversion-tracking.js",
+    "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+    "node --test campanhas/conversion-tracking.test.mjs campanhas/site-communication.test.mjs campanhas/cost-guides.test.mjs campanhas/lifting-price-page.test.mjs campanhas/seo-discovery.test.mjs",
+    "node --test campanhas/google-ads-ad-strength-20260913.test.mjs",
+    "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
+    "node --test campanhas/google-ads-settings.test.mjs",
+    "node --test campanhas/site-communication.test.mjs",
+    "node --test netlify/functions/lib/marketing-prefill.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/site-content.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs",
+    "npm.cmd run architecture:check",
+    "npm.cmd run change:check",
+    "npm.cmd run ops:check",
+    "npm.cmd run site:build",
+    "npm.cmd run site:check",
+    "npm.cmd test",
+    "node --test campanhas/cta-runtime.test.mjs",
+    "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+    "node --check campanhas/article-conversion.js",
+    "node --check campanhas/landing-behavior.js",
+    "node --check campanhas/procedure-terra-fixes.js",
+    "node --check campanhas/site-enhancements.js",
+    "node --check campanhas/secondary-conversion.js",
+    "node --check mama/mama.js",
+    "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+    "node --test apps-script/clinica-liv-leads/site-contrast.test.mjs"
+  ],
+  "checks": [
+    {
+      "name": "independent_focused_tests",
+      "status": "passed",
+      "passed": 89,
+      "failed": 0,
+      "command": "node --test campanhas/cta-runtime.test.mjs campanhas/conversion-tracking.test.mjs campanhas/site-communication.test.mjs campanhas/cost-guides.test.mjs campanhas/lifting-price-page.test.mjs campanhas/seo-discovery.test.mjs campanhas/site-technical-regression.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
+    },
+    {
+      "name": "static_runtime_prefill_equivalence",
+      "status": "passed",
+      "pages": 54,
+      "links": 257,
+      "mismatches": 0
+    },
+    {
+      "name": "git_diff_check",
+      "status": "passed"
+    },
+    {
+      "name": "contrast_cache_regression",
+      "status": "passed",
+      "passed": 6,
+      "failed": 0,
+      "command": "node --test apps-script/clinica-liv-leads/site-contrast.test.mjs"
+    },
+    {
+      "name": "change_safety",
+      "status": "passed",
+      "files": 80,
+      "command": "npm.cmd run change:check"
+    },
+    {
+      "command": "npm.cmd test",
+      "status": "passed",
+      "passed": 2175,
+      "failed": 0
+    },
+    {
+      "command": "node --test campanhas/cta-runtime.test.mjs",
+      "status": "passed",
+      "passed": 4,
+      "failed": 0,
+      "additionalToFullSuite": true
+    },
+    {
+      "command": "independent_focused_contract_tests",
+      "status": "passed",
+      "passed": 95,
+      "overlapsFullSuite": true
+    },
+    {
+      "command": "acquisition_contract_tests",
+      "status": "passed",
+      "passed": 163,
+      "overlapsFullSuite": true
+    },
+    {
+      "command": "governance_consumer_tests",
+      "status": "passed",
+      "passed": 90,
+      "overlapsFullSuite": true
+    },
+    {
+      "command": "declared node --check commands",
+      "status": "passed"
+    },
+    {
+      "command": "npm.cmd run architecture:check",
+      "status": "passed"
+    },
+    {
+      "command": "npm.cmd run change:check",
+      "status": "passed",
+      "files": 80
+    },
+    {
+      "command": "npm.cmd run site:build",
+      "status": "passed",
+      "files": 193,
+      "urls": 54,
+      "auditFiles": 0
+    },
+    {
+      "command": "npm.cmd run site:check",
+      "status": "passed"
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed"
+    },
+    {
+      "command": "npm.cmd run ops:check",
+      "status": "SYNC_PENDING",
+      "expectedBeforePublication": true
+    }
+  ],
+  "scopeVerification": "CHANGE_SAFETY_STATUS=OK; 80 files match exact scope",
+  "independentReview": {
+    "status": "passed_local",
+    "checkedAt": "2026-10-14T21:42:32.838913Z",
+    "baseCommit": "a2dc468942a74639bebb3f12489db79007ea4863",
+    "method": "Comparação independente do git show do baseline com o conteúdo final; análise estrutural HTML e execução direta do proprietário marketingPrefillMessage para os fallbacks; leitura integral do diff JS e testes.",
+    "publicPages": 54,
+    "whatsappLinks": 257,
+    "fallbacksEqualToRuntimeOwner": 257,
+    "protectedDataErrors": 0,
+    "preserved": [
+      "todos os atributos data-*",
+      "mídias e embeds",
+      "JSON-LD completo",
+      "destinos, telefone e queries não text dos links",
+      "sufixos Referência e Ref.",
+      "mensagens price_range_reference",
+      "IDs preexistentes",
+      "neutralPrefillMessage exato",
+      "consentimento, captura e transporte de atribuição",
+      "manifesto e código executável de atendimento"
+    ],
+    "allowedStructuralDifferences": [
+      "sete breadcrumbs visuais duplicadas removidas",
+      "alias #sobre no heading existente da home",
+      "alias #naturalidade no heading existente da otoplastia",
+      "abertura do guia de lifting reorganizada",
+      "copy dos CTAs e prefills autorizados",
+      "queries de cache dos proprietários alterados"
+    ],
+    "navigationHashes": {
+      "pages": 39,
+      "historicalReceiptsUntouched": true,
+      "newHashesIndependentlyComparedWithBaseline": true
+    },
+    "findings": [
+      {
+        "id": "runtime-cta-overwrite",
+        "severity": "blocking_before_fix",
+        "status": "resolved",
+        "description": "Scripts auxiliares ainda restauravam convites para horários após carregar. Corrigidos apenas texto e aria em seis proprietários; quatro testes de execução preservam identidade e cobrem ordenação, clones e CTAs gerados."
+      },
+      {
+        "id": "historical-bruna-receipt",
+        "severity": "blocking_before_fix",
+        "status": "resolved",
+        "description": "O teste de governança confundia o candidato site com a última Bruna publicada. O recibo histórico precisa coincidir em identidade e gates; fixtures negativos independentes impedem aceite de recibo ausente, alterado ou candidato Bruna não publicado."
+      }
+    ],
+    "clinicalScope": "Abertura mantém a pergunta de preço, informa componentes e limite do valor individual; sem faixa pública nova, promessa clínica ou revisão médica inventada.",
+    "runtimeSourceDiff": "Seis JS auxiliares alteram somente copy e aria; conversion-tracking altera rótulos cervicais e prefill BLEF previsto.",
+    "limitations": [
+      "Inspeção visual real e suíte completa são registradas separadamente pelo coordenador.",
+      "Não comprova publicação nem resultado comercial.",
+      "Nenhum envio real ou teste em paciente."
+    ],
+    "pageHashes": [
+      {
+        "file": "index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 7,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e"
+      },
+      {
+        "file": "dra-amanda-schroeder/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "a1958e8c53a0126098edfaba872e9bf7f560e4bcc45fadd5f99291c6760a1b78"
+      },
+      {
+        "file": "procedimentos/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 3,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "0d3d2140fdd11d988eeebd13f5b6fd0f4c7178c720cfa7dbcf92920337a2d495"
+      },
+      {
+        "file": "avaliacao-facial/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "cd762243867ff01dcf8858b36b0c6e00cf8e99fa3fa46d165c06ced41e181eea"
+      },
+      {
+        "file": "mama/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 7,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "b533254995bdc0eb101ee509aaf21fdc9ad2b91f5bf5ebf7c16ad2c07b964d7e"
+      },
+      {
+        "file": "mastopexia/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 5,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "8910fc6526948a63b9c0a072b1e02aa82233956edf0cc32943cf6163481fab56"
+      },
+      {
+        "file": "mastopexia-com-protese/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 5,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "ee760334a622ece15358311ad30e98033bb595ef1169a157e4f709e8dfe4a803"
+      },
+      {
+        "file": "mamoplastia-redutora/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 5,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "ab0d4f56354e32ff7b5a8d732971d953671741e50503f75f168efb4346d8d339"
+      },
+      {
+        "file": "protese-de-mama/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 5,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "90cba5c35961e8b9aecbe815316bb22364f4ac398c8d0e134567f86afcd3efbc"
+      },
+      {
+        "file": "injetaveis/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "a7bbaa9b91b211df613fc575b354e44182ecf5a8143a3ecd6850954e9e7fa167"
+      },
+      {
+        "file": "blefaroplastia/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "acc6a713c18f4d426d525c35bd5ed4c8dec2b3369bc94ec9b941fbf1e430d8e2"
+      },
+      {
+        "file": "lifting-facial/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "396e094ce801f87572bc17c73e5acd083eb56b3f953d2d6640f9b9072a116f85"
+      },
+      {
+        "file": "lifting-cervical/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033"
+      },
+      {
+        "file": "lipo-de-papada/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92"
+      },
+      {
+        "file": "lip-lifting/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "acc8f6fa3f1a7d3e0b79f8c74c53a24560bd3eec831440cec3f7438541cc06a8"
+      },
+      {
+        "file": "otoplastia/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 5,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "9a5848b5abd3553b967cca1b7df3bf7a6a00deef1627a7b0cde94098976b6787"
+      },
+      {
+        "file": "otoplastia-adulto/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 5,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "c4d93eda1617bad39557316be129c9336ad47fe02df429cbab176aa0d445d81a"
+      },
+      {
+        "file": "otoplastia-infantil/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 5,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "8544ecbac40d7b504b0a6af79f252ff0fadc107ea1280b90934a739228b43810"
+      },
+      {
+        "file": "contorno-corporal/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 7,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "bf990923591754ff54ed1bec76fd6e305834842b25300c160a44989661031b15"
+      },
+      {
+        "file": "lipoaspiracao/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "18b50603aa43f9f7f37bf5543e5e6ba6cad44abad145ed0ba686c47e55aba422"
+      },
+      {
+        "file": "abdominoplastia/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "3f3ce2b77d00f8ef05a8cae442dc28e310455651f36bfa9f69b7dab6a3f5f185"
+      },
+      {
+        "file": "pos-bariatrica/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "960d03f4f176a3de8246e412b135fe783bf4ec88dba50fed4ea5e9a80dfc07e9"
+      },
+      {
+        "file": "braquioplastia/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "5d72cf9879641abbda5b3735350648b189db47706a54d0f19c6e4edceddf97d6"
+      },
+      {
+        "file": "ninfoplastia/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "1bb3e604d13fa620e57c26fd536db9c66807fbe67e0cf24534941e000bf3412c"
+      },
+      {
+        "file": "conteudos/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 5,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "c37e2b913e9c0d7bb95ffa9e5697755ace6e824b4cc24094ca3ba54ac510f24a"
+      },
+      {
+        "file": "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 5,
+        "removedStructuralBreadcrumbs": 1,
+        "sha256": "81455243982f3fd760900885c57bb469fea77cbde3dd0e6f565ced81d4a16477"
+      },
+      {
+        "file": "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 1,
+        "sha256": "fc906104b029bf871138fc05816fec9ae72ab16946d5c0d2d7757771ab09ff37"
+      },
+      {
+        "file": "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 1,
+        "sha256": "e96bd2c75636bd0be66d72b7b6a368819a85ded06054382884dd682201228cbf"
+      },
+      {
+        "file": "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 1,
+        "sha256": "d8e048f109960d72f4d9330659ce371d4420230c1eead8e57a68b874ad00ffc0"
+      },
+      {
+        "file": "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 1,
+        "sha256": "9bf3f0b8342b9937ccd652ee0f6d41345cb170ee253a06a16d5c0199c4ea2d6e"
+      },
+      {
+        "file": "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 6,
+        "removedStructuralBreadcrumbs": 1,
+        "sha256": "7d402ca30f306370c94dfdc89f299090a66974fcd6411b85a2c893a45bfb6b34"
+      },
+      {
+        "file": "conteudos/lifting-facial-ou-injetaveis/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "14ab43082c7160845c6ea8cdd350c1353b5782a8e8a61add314b97a66a90afcd"
+      },
+      {
+        "file": "conteudos/blefaroplastia-quando-faz-sentido/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "3d811ac5093c3e631d63a3a4c51fa4754b62161719452fae854d5112bdeb2695"
+      },
+      {
+        "file": "conteudos/mastopexia-com-ou-sem-protese/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "22e6cc256a15456b262e7ec0e4989f9d39a99e5f2c2a7165cd91109a4665a054"
+      },
+      {
+        "file": "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "00a73272a340deca9dbf84bd48eb7f331cf6bab1008204aa538a6f271030d60a"
+      },
+      {
+        "file": "conteudos/recuperacao-lifting-facial/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "7d420c6cf3e5ea1923e7c32c21c7d6f8b6b37504056b0d7003de3d9d813a458f"
+      },
+      {
+        "file": "conteudos/cicatrizes-cirurgia-de-mama/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "a3d9b55fa64033b73df3ce4d4ef4dfd453ad04f03cd9e56fe12c5bcb202cc2cd"
+      },
+      {
+        "file": "conteudos/cirurgia-plastica-apos-emagrecimento/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "7049ca13047ff4972d43e3be9996b1d9fd981ffaf69b87e5e650c6e0f8251cfd"
+      },
+      {
+        "file": "conteudos/como-escolher-protese-de-mama/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "a20826ba2b713eaf46d0065e77dacdfe6e43fa832ce297e25382d28c018843d8"
+      },
+      {
+        "file": "conteudos/botox-preenchimento-bioestimulador/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "357a1227572da12ddcc09d6ba549f9b78473150225204aee0128b84e25ca4a07"
+      },
+      {
+        "file": "conteudos/consulta-cirurgia-plastica/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 5,
+        "removedStructuralBreadcrumbs": 1,
+        "sha256": "33e3f29a588cb2f293279ea57d2d0bb38b21148e8cd8ee99442f944e018bfd8f"
+      },
+      {
+        "file": "conteudos/seguranca-cirurgia-plastica/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 5,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "d5c8a986299cb79924901096937d9fb462fb9c630628d47159f1074f80982f49"
+      },
+      {
+        "file": "conteudos/naturalidade-envelhecimento/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 3,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "ea049030a992b455ad527581166dbbe8f74f0eb6a55d5fd43668d3d3d5d0d9be"
+      },
+      {
+        "file": "conteudos/lipoenxertia-facial/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 3,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "ad23923d2e8333ff56a85c5f503188e52ec8a15c04e6a65cd0162fdfa2311104"
+      },
+      {
+        "file": "conteudos/papada-contorno-cervical/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 3,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "34998753a1e07403a1d8438559d8d8cb36c22944131d6b2e4d7d5434ced1d368"
+      },
+      {
+        "file": "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 3,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "5f54d72b51e72fdab98f39eb46a82497ad7534b7f2129183b17ec0d007cd8bbb"
+      },
+      {
+        "file": "conteudos/como-escolher-cirurgiao-plastico/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "6a13f7ec955ce1b23988dbedc83b0dbf5ca7f4cd57d2fe5ec9471a8b3c0fb68f"
+      },
+      {
+        "file": "conteudos/recuperacao-blefaroplastia/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "b071770f475bf12040f836b23db9faaf495ba5b24d8f1140a8fec699ff833c0f"
+      },
+      {
+        "file": "conteudos/minilifting-lifting-facial-deep-plane/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "4c6a5b88165a6f3ea6e55074385276bd0e11978aa3b8bfa9e6d53d53b94af432"
+      },
+      {
+        "file": "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "ec5b41b30d2da08305195a51dec2fe947b9a5c3008016b9416508aef15de6377"
+      },
+      {
+        "file": "conteudos/recuperacao-lifting-cervical/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "5f6ac6ac88c10fd9a36f079ce0b4f5b92cb26976d2f1ac6fa7378440f9b51953"
+      },
+      {
+        "file": "conteudos/otomodelacao-ou-otoplastia/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "1e4a8840b96ec84c7268b168dbe3e27642cd2cf7d6ecb1e73407bc1197994348"
+      },
+      {
+        "file": "privacidade/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 0,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "b02dae7a72825bec64489c285a5b1cc482981927aef12f2ce9bbcd1dde968e6a"
+      },
+      {
+        "file": "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+        "equalProtectedData": true,
+        "whatsappLinks": 4,
+        "removedStructuralBreadcrumbs": 0,
+        "sha256": "19b4c73ea723bc3c93916c39d89c6b3e005d7f11de28248afdbf55fb27059a5b"
+      }
+    ]
+  },
+  "browserReview": {
+    "status": "passed_dom_and_geometry",
+    "tool": "CUA Chrome",
+    "patientMessagesSent": 0,
+    "pages": [
+      "lipoaspiracao",
+      "quanto-custa-blefaroplastia",
+      "home#sobre",
+      "otoplastia#naturalidade",
+      "quanto-custa-lifting-facial"
+    ],
+    "checks": [
+      "Seven lipoaspiracao CTAs preserve conversational label after complete runtime",
+      "Blepharoplasty planning prefill asks about budget and evaluation without claiming previous reading",
+      "Single visible breadcrumb on price guides",
+      "Both legacy fragments reach visible relevant headings",
+      "Lifting price CTA wholly within first viewport at 390x844 and360x800; no horizontal overflow",
+      "Desktop1440 viewport without horizontal overflow"
+    ],
+    "liftingMobile": {
+      "width": 390,
+      "height": 844,
+      "ctaTop": 521.14,
+      "ctaBottom": 571.14
+    },
+    "limitation": "Screenshot capture timed out; observed DOM and bounding rectangles recorded, not screenshot evidence."
+  },
+  "syntheticOnly": true,
+  "checkedAt": "2026-10-14T21:43:45.776Z"
+}

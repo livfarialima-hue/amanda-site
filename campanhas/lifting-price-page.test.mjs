@@ -43,7 +43,7 @@ const sitemap = readFileSync(new URL("../sitemap.xml", import.meta.url), "utf8")
 test("lifting price page answers the cost-composition intent above the first article block without monetary values", () => {
   const firstBlock = liftingPrice.indexOf('class="cv-article-body"');
   const individualBudget = liftingPrice.indexOf(
-    "O orçamento é definido depois da avaliação",
+    "O valor individual é definido após avaliação",
   );
 
   assert.ok(firstBlock > 0);
@@ -62,7 +62,7 @@ test("lifting price page answers the cost-composition intent above the first art
   );
   assert.match(liftingPrice.slice(0, firstBlock), /valor individual é definido após avaliação/i);
   assert.match(liftingPrice, /data-cta-location="price_range_reference"/);
-  assert.match(liftingPrice, />Conversar sobre uma faixa geral<\/a>/);
+  assert.match(liftingPrice, />Pedir uma referência de valores<\/a>/);
 
   for (const component of [
     /equipe médica/i,
@@ -115,6 +115,18 @@ test("the lifting mobile CTA has a distinct continuity-test location", () => {
   assert.match(liftingPrice, /data-cta-location="sticky_price_continuity_v1"/);
   assert.match(liftingPrice, />Conversar sobre faixa geral<\/a>/);
   assert.doesNotMatch(liftingPrice, /data-cta-location="sticky_price_range_reference"/);
+});
+
+test("lifting price reference is offered immediately after the short answer", () => {
+  const hero = liftingPrice.match(/<header class="cv-article-hero">[\s\S]*?<\/header>/)?.[0];
+  assert.ok(hero);
+  assert.match(hero, /<\/p><div class="cv-actions"><a\b[^>]*data-cta-location="price_range_reference"[^>]*>Pedir uma referência de valores<\/a>/);
+  assert.ok(hero.indexOf('data-cta-location="price_range_reference"') < hero.indexOf('class="cv-facts"'));
+  assert.doesNotMatch(hero, /class="cv-wide-card"|Quer uma noção mais concreta/);
+  assert.match(hero, /não é um orçamento fechado/);
+  assert.match(hero, /valor individual é definido após avaliação/);
+  assert.match(hero, /CRM-SP 191605/);
+  assert.match(hero, /RQE 110472/);
 });
 
 test("the generic guide and lifting page link to the specific price guide", () => {

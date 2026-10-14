@@ -2,6 +2,14 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import vm from "node:vm";
+import {
+  enforcePrefillOnlyClassificationGuard,
+  isLikelyClassifierMarketingPrefill,
+} from "../netlify/functions/lib/lead-classifier.mjs";
+import {
+  isSchedulingRequest,
+  planAutomation,
+} from "../netlify/functions/lib/whatsapp-automation.mjs";
 
 const conversionSource = readFileSync(
   new URL("./conversion-tracking.js", import.meta.url),
@@ -29,6 +37,27 @@ function storage(initial = {}) {
       values.delete(key);
     },
   };
+}
+
+function assertPrefillDoesNotQualify(link, text) {
+  const marketingPrefill = isLikelyClassifierMarketingPrefill({
+    templateId: link.dataset.templateId,
+  });
+  assert.equal(marketingPrefill, true);
+  assert.equal(isSchedulingRequest(text), false);
+  const classification = enforcePrefillOnlyClassificationGuard({
+    currentStatus: "Novo",
+    messages: [{ direction: "IN", messageType: "text", text, marketingPrefill }],
+    classification: {
+      recommendedStatus: "Qualificado",
+      appointmentOutcome: "scheduled",
+      procedureMilestone: "paid",
+    },
+  });
+  assert.equal(classification.recommendedStatus, "Novo");
+  assert.equal(classification.appointmentOutcome, "none");
+  assert.equal(classification.procedureMilestone, "none");
+  assert.equal(classification.expectedParty, "clinic");
 }
 
 function loadAttribution({
@@ -341,8 +370,73 @@ test("preserves the procedure-specific intent on the new price pages", () => {
   const blephMessage = new URL(blephLink.href).searchParams.get("text");
   assert.match(cervicalMessage, /faixa geral de valores para a cervicoplastia \(lifting cervical\)/);
   assert.match(cervicalMessage, /Ref\. SITE-lifting-cervical-preco$/);
-  assert.match(blephMessage, /valores de blefaroplastia.*como o orçamento é montado/);
+  assert.equal(
+    blephMessage.split("\n\n")[0],
+    "Olá! Gostaria de entender como o orçamento da blefaroplastia é montado e como funciona a avaliação.",
+  );
+  assert.doesNotMatch(blephMessage, /\bLi\b|R\$|\b(?:agendar|horários)\b/i);
   assert.match(blephMessage, /Ref\. SITE-blefaroplastia-preco$/);
+  assertPrefillDoesNotQualify(blephLink, blephMessage);
+  const plan = planAutomation({
+    text: blephMessage,
+    messageType: "text",
+    templateId: blephLink.dataset.templateId,
+  });
+  assert.equal(plan.route, "human_review");
+  assert.equal(plan.reason, "surgical_price_review");
+  assert.equal(plan.procedure, "blefaroplastia");
+  assert.equal(plan.automaticAllowed, false);
+});
+
+test("cervical consultation labels keep the neutral prefill and attributed journey", () => {
+  for (const location of ["header", "hero", "consultation", "final", "footer", "sticky", "video", "other"]) {
+    const link = {
+      addEventListener() {},
+      dataset: { ctaLocation: location, procedure: "lifting-cervical", track: "whatsapp" },
+      href: "https://wa.me/5511961957144?text=Ol%C3%A1.",
+      matches() { return true; },
+      textContent: "Conversar sobre a consulta",
+    };
+    const gclid = "CjwKCAjwsrbTBhAvEiwA0Bpp4consultation";
+    const { debug, localStorage } = loadAttribution({
+      consent: "denied",
+      journeyEnabled: true,
+      links: [link],
+      pathname: "/lifting-cervical/",
+      readyState: "complete",
+      search: `?utm_source=google&utm_medium=cpc&utm_campaign=G26CERV&gclid=${gclid}`,
+    });
+    const message = new URL(link.href).searchParams.get("text");
+    assert.equal(link.textContent, "Conversar sobre a consulta", location);
+    assert.equal(
+      message.split("\n\n")[0],
+      "Olá! Tenho interesse em cervicoplastia (lifting cervical) com a Dra. Amanda e gostaria de entender melhor como funciona a avaliação.",
+    );
+    assert.equal(link.dataset.procedure, "lifting-cervical");
+    assert.equal(link.dataset.ctaLocation, location);
+    assert.equal(link.dataset.track, "whatsapp");
+    assert.match(message, /Ref\. G26CERV-lifting-cervical/);
+    assert.match(message, /JID: J1_[A-Za-z0-9_-]{22}/);
+    assert.equal(message.includes(gclid), false);
+    assert.equal(localStorage.getItem("amanda_marketing_attribution"), null);
+    const envelope = debug.journeyEnvelopeForLink(link);
+    assert.equal(envelope.first_touch.campaign_code, "G26CERV");
+    assert.equal(envelope.click_ids.gclid, gclid);
+    assert.equal(envelope.cta.page_path, "/lifting-cervical/");
+    assert.equal(envelope.cta.location, location);
+    assert.equal(envelope.cta.template_id, "procedure_evaluation_v1");
+    assert.equal(envelope.conversion_path, "google_site_whatsapp");
+    assertPrefillDoesNotQualify(link, message);
+    const plan = planAutomation({
+      text: message,
+      messageType: "text",
+      templateId: link.dataset.templateId,
+    });
+    assert.equal(plan.route, "standard_reply");
+    assert.equal(plan.reason, "known_procedure");
+    assert.equal(plan.marketingPrefill, true);
+    assert.equal(plan.prefillTemplateId, "procedure_evaluation_v1");
+  }
 });
 
 test("keeps the Google click ID across pages in the same unconsented session", () => {
@@ -590,7 +684,7 @@ test("M26C02S carries the cervical campaign, creative, landing and CTA to WhatsA
   );
   assert.match(message, /Ref\. M26C02S-C07H01-lifting-cervical/);
   assert.match(message, /JID: J1_[A-Za-z0-9_-]{22}/);
-  assert.equal(link.textContent, "Conversar sobre a avaliação");
+  assert.equal(link.textContent, "Conversar sobre a consulta");
   assert.equal(envelope.first_touch.origin, "Meta Ads");
   assert.equal(envelope.first_touch.campaign_code, "M26C02S");
   assert.equal(envelope.first_touch.creative_code, "C07H01");

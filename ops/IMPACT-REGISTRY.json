@@ -46,7 +46,28 @@
         "otoplastia/index.html",
         "pos-bariatrica/index.html",
         "procedimentos/index.html",
-        "protese-de-mama/index.html"
+        "protese-de-mama/index.html",
+        "conteudos/cicatrizes-cirurgia-de-mama/index.html",
+        "conteudos/cirurgia-plastica-apos-emagrecimento/index.html",
+        "conteudos/como-escolher-cirurgiao-plastico/index.html",
+        "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+        "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
+        "conteudos/index.html",
+        "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+        "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
+        "conteudos/mastopexia-com-ou-sem-protese/index.html",
+        "conteudos/minilifting-lifting-facial-deep-plane/index.html",
+        "conteudos/otomodelacao-ou-otoplastia/index.html",
+        "conteudos/papada-contorno-cervical/index.html",
+        "conteudos/recuperacao-blefaroplastia/index.html",
+        "conteudos/recuperacao-lifting-cervical/index.html",
+        "campanhas/article-conversion.js",
+        "campanhas/landing-behavior.js",
+        "campanhas/procedure-terra-fixes.js",
+        "campanhas/site-enhancements.js",
+        "campanhas/secondary-conversion.js",
+        "mama/mama.js",
+        "campanhas/cta-runtime.test.mjs"
       ],
       "coveredPaths": [
         "abdominoplastia/index.html",
@@ -96,13 +117,36 @@
         "otoplastia/index.html",
         "pos-bariatrica/index.html",
         "procedimentos/index.html",
-        "protese-de-mama/index.html"
+        "protese-de-mama/index.html",
+        "conteudos/cicatrizes-cirurgia-de-mama/index.html",
+        "conteudos/cirurgia-plastica-apos-emagrecimento/index.html",
+        "conteudos/como-escolher-cirurgiao-plastico/index.html",
+        "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+        "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
+        "conteudos/index.html",
+        "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+        "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
+        "conteudos/mastopexia-com-ou-sem-protese/index.html",
+        "conteudos/minilifting-lifting-facial-deep-plane/index.html",
+        "conteudos/otomodelacao-ou-otoplastia/index.html",
+        "conteudos/papada-contorno-cervical/index.html",
+        "conteudos/recuperacao-blefaroplastia/index.html",
+        "conteudos/recuperacao-lifting-cervical/index.html",
+        "campanhas/article-conversion.js",
+        "campanhas/landing-behavior.js",
+        "campanhas/procedure-terra-fixes.js",
+        "campanhas/site-enhancements.js",
+        "campanhas/secondary-conversion.js",
+        "mama/mama.js",
+        "campanhas/cta-runtime.test.mjs"
       ],
       "requiredTestFiles": [
-        "campanhas/site-communication.test.mjs"
+        "campanhas/site-communication.test.mjs",
+        "campanhas/cta-runtime.test.mjs"
       ],
       "requiredCommands": [
-        "node --test campanhas/site-communication.test.mjs"
+        "node --test campanhas/site-communication.test.mjs",
+        "node --test campanhas/cta-runtime.test.mjs"
       ],
       "liveSystems": [
         "Site publico",
@@ -202,7 +246,11 @@
         "scripts/check-journey-module-boundaries.mjs",
         "scripts/check-operational-consistency.mjs",
         "scripts/check-operational-consistency.test.mjs",
-        "scripts/run-tests.mjs"
+        "scripts/run-tests.mjs",
+        "auditorias/site-continuidade-2026-10-14/PREFLIGHT.json",
+        "auditorias/site-continuidade-2026-10-14/PUBLICACAO.json",
+        "auditorias/site-continuidade-2026-10-14/RELATORIO.md",
+        "auditorias/site-continuidade-2026-10-14/REVISAO.json"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",
@@ -273,7 +321,12 @@
         "mastopexia-com-protese/index.html",
         "mastopexia/index.html",
         "otoplastia-adulto/index.html",
-        "otoplastia-infantil/index.html"
+        "otoplastia-infantil/index.html",
+        "campanhas/article-conversion.js",
+        "campanhas/landing-behavior.js",
+        "campanhas/procedure-terra-fixes.js",
+        "mama/mama.js",
+        "campanhas/cta-runtime.test.mjs"
       ],
       "coveredPaths": [
         ".netlifyignore",
@@ -358,7 +411,12 @@
         "scripts/check-site-technical.mjs",
         "scripts/run-tests.mjs",
         "scripts/seo-identity.mjs",
-        "sitemap.xml"
+        "sitemap.xml",
+        "campanhas/article-conversion.js",
+        "campanhas/landing-behavior.js",
+        "campanhas/procedure-terra-fixes.js",
+        "mama/mama.js",
+        "campanhas/cta-runtime.test.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/site-contrast.test.mjs",
@@ -367,13 +425,15 @@
         "campanhas/lifting-price-page.test.mjs",
         "campanhas/site-technical-regression.test.mjs",
         "scripts/check-site-technical.mjs",
-        "campanhas/seo-discovery.test.mjs"
+        "campanhas/seo-discovery.test.mjs",
+        "campanhas/cta-runtime.test.mjs"
       ],
       "requiredCommands": [
         "node --check campanhas/content-library.js",
         "npm.cmd run site:build",
         "npm.cmd run site:check",
-        "git diff --check"
+        "git diff --check",
+        "node --test campanhas/cta-runtime.test.mjs"
       ],
       "liveSystems": [
         "Netlify"

@@ -78,3 +78,12 @@ test("new guides are discoverable from the library, their hubs and the sitemap",
   assert.match(bodyHub, /quanto-custa-cirurgia-plastica-corporal-sao-paulo/);
   assert.match(library, /28 leituras educativas/);
 });
+
+test("cost and consultation guides present a single breadcrumb trail", () => {
+  const consultation = read("../conteudos/consulta-cirurgia-plastica/index.html");
+  for (const page of [breast, body, facial, lifting, bleph, cervical, consultation]) {
+    assert.equal([...page.matchAll(/<nav\b[^>]*aria-label="Você está aqui"/g)].length, 1);
+    assert.doesNotMatch(page, /aria-label="Navegação estrutural"/);
+    assert.match(page, /"@type"\s*:\s*"BreadcrumbList"/);
+  }
+});

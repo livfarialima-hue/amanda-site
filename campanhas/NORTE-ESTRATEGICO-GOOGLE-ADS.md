@@ -1,5 +1,17 @@
 # Norte estratégico de aquisição e conversão
 
+## 41. Continuidade do site — decisão autorizada em 14/10/2026
+
+**Decisão:** corrigir convites e mensagens de entrada do WhatsApp, destinos de navegação e breadcrumbs duplicados; simplificar a abertura do guia de preço de lifting facial com resposta breve e pedido de referência antes dos detalhes. O convite de consulta deve dizer “Conversar sobre a consulta”, sem simular disponibilidade. Pedido de preço mantém sua intenção própria. A mensagem preparada não afirma leitura, indicação, qualificação nem reserva.
+
+**Evidência e motivo:** inspeção do site identificou divergência entre rótulos de horários e mensagens de avaliação, destinos de seção ausentes, navegação duplicada e resposta de preço abaixo de conteúdo introdutório repetido. A nova abertura apresenta fatores do valor, referência informativa pelo WhatsApp e orçamento individual após avaliação, sem publicar faixa cirúrgica ou alterar condições vigentes.
+
+**Hipótese e métrica:** reduzir atrito entre busca, página e conversa, preservando atribuição e consentimento. Avaliar contatos válidos, qualificados, agendados e realizados por rota com mesma maturação e cobertura de classificação; clique isolado não comprova resultado. Como os reparos e a abertura entram no mesmo pacote, qualquer comparação será do conjunto, sem atribuição causal a uma frase.
+
+**Autorização e limites:** o usuário autorizou implementar e publicar este escopo. Campanhas, lances, orçamento, metas, preços, bot, Apps Script, agenda e dados permanecem fora do pacote. Nenhuma nova revisão médica é atribuída. Recibo técnico: auditorias/site-continuidade-2026-10-14/.
+
+**Revisão e reversão:** integridade após publicação e em 21/10/2026; avaliação comercial em 11/11/2026, admitindo resultado inconclusivo por baixa amostra. Daniel/equipe acompanha. Manter enquanto destino, texto e mensuração forem coerentes; corrigir imediatamente quebra de navegação, atribuição, intenção ou informação. Reversão restrita por novo commit e build verificado, preservando o atendimento publicado.
+
 **Decisão administrativa de 14/10/2026 — teleconsulta:** Daniel confirmou em 14/10/2026: a Dra. Amanda oferece teleconsulta por R$ 500, inclusive para pacientes no exterior. A modalidade pode ser informada diretamente; o preço é respondido quando solicitado. Isso não confirma horário, indicação cirúrgica individual, orçamento por foto, forma de pagamento remoto ou atendimento de outro profissional. Hipótese: responder à dúvida remota sem espera artificial reduz abandono. Métrica: respostas pertinentes, contatos qualificados e consultas efetivamente realizadas; resposta do bot não qualifica lead. Revisão: 16/10/2026, com conversas naturais. Manter se os fatos forem corretos e não houver confusão de profissional/agenda; conter ou reverter diante de qualquer confirmação indevida. Campanhas, lances, orçamento e exportações inalterados.
 
 <!-- BRUNA-PONTE-CONSULTA-2026-09-29 -->

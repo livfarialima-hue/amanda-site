@@ -64,7 +64,33 @@ test("every locked Bruna scenario remains unique and executable", async () => {
   }
 });
 
-test("the published manifest matches the current bundle and closes the candidate receipt", async () => {
+async function publishedReceipt(manifest, candidate, read = readJson) {
+  const pending = manifest.pendingRelease;
+  if (pending.changeId === candidate.changeId) {
+    assert.equal(candidate.status, "published_verified");
+    return { ...candidate.release, status: candidate.status, changeId: candidate.changeId };
+  }
+  // An independent site release must keep the closed Bruna release identity.
+  // A different active candidate is never evidence that Bruna was published.
+  assert.equal(pending.status, "published_verified");
+  assert.match(pending.changeId, /^[A-Z0-9]+(?:-[A-Z0-9]+)*$/);
+  const receipt = await read(`../../../../auditorias/${pending.changeId.toLowerCase()}/PUBLICACAO.json`);
+  assert.equal(receipt.status, "published_verified");
+  assert.equal(receipt.changeId, pending.changeId);
+  assert.equal(receipt.bundleVersion, manifest.bundleVersion);
+  assert.equal(receipt.approvedCommit, manifest.release.functionalCommit);
+  assert.equal(receipt.netlifyDeployId, manifest.release.functionalDeployId);
+  assert.equal(receipt.liveModel.status, "passed");
+  assert.equal(receipt.liveModel.passed, pending.liveModelScenarioCount);
+  assert.equal(receipt.liveModel.total, pending.liveModelScenarioCount);
+  assert.equal(receipt.liveModel.fullHistoryPassed, 2);
+  assert.equal(receipt.liveAudio.status, "passed");
+  assert.equal(receipt.liveAudio.passed, 3);
+  assert.equal(receipt.liveAudio.total, 3);
+  return receipt;
+}
+
+test("the published manifest matches the current bundle and closes its own candidate receipt", async () => {
   const [manifest, baseline] = await Promise.all([
     readJson("manifest.json"),
     readJson("regression-baseline.json"),
@@ -87,20 +113,20 @@ test("the published manifest matches the current bundle and closes the candidate
   if (manifest.pendingRelease) {
     assert.equal(manifest.pendingRelease.bundleVersion, manifest.bundleVersion);
     const candidate = await readJson("../../../../ops/CHANGE-CANDIDATE.json");
-    assert.equal(manifest.pendingRelease.changeId, candidate.changeId);
     if (manifest.pendingRelease.status === "published_verified") {
       // Retain the production build gates after closeout. Deleting this marker
       // would make the next Git production build silently skip the live checks.
-      assert.equal(candidate.status, "published_verified");
+      const receipt = await publishedReceipt(manifest, candidate);
       assert.equal(manifest.release.bundleVersion, manifest.bundleVersion);
       assert.equal(manifest.pendingRelease.sourceCommit, manifest.release.functionalCommit);
-      assert.equal(candidate.release.approvedCommit, manifest.release.functionalCommit);
-      assert.equal(candidate.release.netlifyDeployId, manifest.release.functionalDeployId);
+      assert.equal(receipt.approvedCommit, manifest.release.functionalCommit);
+      assert.equal(receipt.netlifyDeployId, manifest.release.functionalDeployId);
       assert.equal(manifest.pendingRelease.liveModelCheckRequired, true);
       assert.equal(manifest.pendingRelease.audioTranscriptionCheckRequired, true);
       assert.equal(manifest.pendingRelease.fullHistoryCheckRequired, true);
       assert.equal(manifest.pendingRelease.liveModelScenarioCount, 19);
     } else {
+      assert.equal(manifest.pendingRelease.changeId, candidate.changeId);
       assert.notEqual(manifest.release.bundleVersion, manifest.bundleVersion);
       assert.ok(["implementing_local", "tested_local", "committed"].includes(candidate.status));
     }
@@ -108,6 +134,33 @@ test("the published manifest matches the current bundle and closes the candidate
     assert.equal(manifest.release.bundleVersion, manifest.bundleVersion);
   }
   assert.equal(manifest.release.candidateStatus, "published_verified");
+});
+
+test("a different active candidate cannot hide a missing or altered Bruna publication receipt", async () => {
+  const manifest = {
+    bundleVersion: "test-bundle",
+    pendingRelease: { changeId: "BRUNA-TEST", status: "published_verified", liveModelScenarioCount: 19 },
+    release: { functionalCommit: "a".repeat(40), functionalDeployId: "b".repeat(24) },
+  };
+  const candidate = { changeId: "INDEPENDENT-SITE-CANDIDATE", status: "tested_local" };
+  const receipt = {
+    status: "published_verified", changeId: "BRUNA-TEST", bundleVersion: "test-bundle",
+    approvedCommit: "a".repeat(40), netlifyDeployId: "b".repeat(24),
+    liveModel: { status: "passed", passed: 19, total: 19, fullHistoryPassed: 2 },
+    liveAudio: { status: "passed", passed: 3, total: 3 },
+  };
+  assert.equal(await publishedReceipt(manifest, candidate, async (path) => {
+    assert.equal(path, "../../../../auditorias/bruna-test/PUBLICACAO.json");
+    return receipt;
+  }), receipt);
+  await assert.rejects(publishedReceipt(manifest, candidate, async () => { throw new Error("missing receipt"); }), /missing receipt/);
+  for (const field of ["status", "changeId", "bundleVersion", "approvedCommit", "netlifyDeployId"]) {
+    await assert.rejects(publishedReceipt(manifest, candidate, async () => ({ ...receipt, [field]: "altered" })), { name: "AssertionError" });
+  }
+  for (const field of ["liveModel", "liveAudio"]) {
+    await assert.rejects(publishedReceipt(manifest, candidate, async () => ({ ...receipt, [field]: { ...receipt[field], passed: 0 } })), { name: "AssertionError" });
+  }
+  await assert.rejects(publishedReceipt({ ...manifest, pendingRelease: { ...manifest.pendingRelease, status: "implementing_local" } }, candidate), { name: "AssertionError" });
 });
 
 test("Bruna's patient-facing identity stays human-readable and technology-neutral", async () => {

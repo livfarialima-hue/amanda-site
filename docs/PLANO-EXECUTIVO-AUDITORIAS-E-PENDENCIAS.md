@@ -4,6 +4,16 @@ Versão pública revisada em 14/10/2026 com autorização do responsável. O con
 
 ## Publicação verificada
 
+### Site — continuidade e guia de preço, 14/10/2026
+
+**Testado localmente; publicação autorizada e pendente de verificação externa.** Pacote restrito ao site: convites e mensagens do WhatsApp coerentes, destinos de seção, navegação estrutural única e abertura breve do guia de preço de lifting. As mensagens não presumem leitura nem reserva; códigos, consentimento e distinção de intenção são preservados. Nenhuma alteração de campanhas, atendimento automático, preços, Apps Script ou dados.
+
+Base: a2dc468942a74639bebb3f12489db79007ea4863, com produção funcional 4869b38a51d55b76176cf2b1cf8021c4f2ea46be / 6acfecf0d71ca630f8f9469a preservada. Recibos técnicos: auditorias/site-continuidade-2026-10-14/. Verificação pública e igualdade da projeção existente no Drive pendentes até o fechamento.
+
+Daniel/equipe: integridade imediata e em 21/10/2026; avaliação comercial em 11/11/2026 por etapas reais, com maturação equivalente. Reparos e abertura compõem um pacote, sem prova causal individual. Reverter somente esse pacote via novo commit/build diante de destino errado, perda de atribuição, mensagem incompatível ou informação indevida. Nenhuma automação nova.
+
+### Atendimento — publicação anterior preservada
+
 **2026-10-14.4 — publicado e verificado em 14/10/2026 às 18:01:55, America/Sao_Paulo.** O pacote impede que contexto remoto se transforme em consulta presencial por omissão. A confirmação estruturada consulta o histórico antes da sincronização. Áudio pode bloquear uma reserva conflitante, mas não autoriza identidade, data, hora ou aceite. A mensagem remota informa o horário de São Paulo e que o acesso precisa ser confirmado pela equipe.
 
 O código de atendimento permaneceu idêntico ao candidato já testado; a revisão adicional é documental. Passaram 2.170 testes integrais, 58 focados incluídos nesse total e a união de contratos de 1.572 testes, com sobreposição. Contrato, arquitetura, build e diff passaram. Os 19 cenários hospedados de modelo, incluindo histórico completo, e os três áudios sintéticos passaram e continuam obrigatórios no build de produção.

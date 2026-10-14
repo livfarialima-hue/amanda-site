@@ -66,7 +66,7 @@ test('the enhanced footer preserves the institutional link after JavaScript runs
  assert.ok(navigation.innerHTML.includes('href="/dra-amanda-schroeder/"'));
  assert.ok(navigation.innerHTML.includes('href="/conteudos/"'));
  assert.equal(navigation.dataset.sitemapEnhanced,'true');
- for(const {file,html} of pages)if(html.includes('site-enhancements.js'))assert.match(html,/site-enhancements\.js\?v=20260912-seo-profile-1/,file+' cache revision');
+ for(const {file,html} of pages)if(html.includes('site-enhancements.js'))assert.match(html,/site-enhancements\.js\?v=20261014-site-continuity/,file+' cache revision');
 });
 
 test('only enumerated static alias pages redirect; functions and index.html remain outside forced rules',()=>{
@@ -76,4 +76,13 @@ test('only enumerated static alias pages redirect; functions and index.html rema
  for(const [from,to,status] of alias){assert.equal(new URL(from).pathname,new URL(to).pathname);assert.equal(status,'301!');assert.ok(urls.includes(to));}
  assert.ok(rules.every(([from])=>!from.includes('*')&&!from.includes('/.netlify/')&&!from.endsWith('index.html')));
  assert.ok(rules.some(([from,to,status])=>from==='/conteudos/instagram/'&&to==='/conteudos/'&&status==='301'));
+});
+
+test('legacy ad fragment destinations lead to visible relevant content',()=>{
+ const home=read('index.html');
+ const otoplasty=read('otoplastia/index.html');
+ assert.match(home,/<section\b[^>]*id="quem-conduz"[\s\S]*?<h2 id="sobre">Uma indicação bem feita começa por escutar\.<\/h2>/);
+ assert.match(otoplasty,/<section\b[^>]*id="indicacao"[\s\S]*?<h3 id="naturalidade">Menos projeção, mas com relevo e identidade\.<\/h3>/);
+ assert.equal([...home.matchAll(/\bid="sobre"/g)].length,1);
+ assert.equal([...otoplasty.matchAll(/\bid="naturalidade"/g)].length,1);
 });

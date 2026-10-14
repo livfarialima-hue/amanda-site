@@ -95,10 +95,10 @@
     }
 
     var navCta = document.querySelector(".nav-cta[data-track='whatsapp']");
-    if (navCta) navCta.textContent = usesConsultationCopy ? "Ver horários" : "Dúvidas e horários";
+    if (navCta) navCta.textContent = "Conversar sobre a consulta";
 
     var heroCta = document.querySelector(".hero-actions [data-track='whatsapp']");
-    if (heroCta) heroCta.textContent = usesConsultationCopy ? "Ver horários da consulta" : "Ver horários para avaliação";
+    if (heroCta) heroCta.textContent = "Conversar sobre a consulta";
 
     var heroNote = document.querySelector(".hero-note");
     if (heroNote) heroNote.textContent = usesConsultationCopy
@@ -115,7 +115,7 @@
     if (!existing && anchor && sourceLink) {
       var practical = document.createElement("section");
       var practicalCtaAttributes = usesConsultationCopy ? ' data-original-reference="' + procedure + '"' : "";
-      var practicalCtaLabel = usesConsultationCopy ? "Ver horários da consulta" : "Ver horários para avaliação de " + config.label.toLowerCase();
+      var practicalCtaLabel = "Conversar sobre a consulta";
       practical.className = "secondary-practical";
       practical.dataset.section = "consultation_offer";
       practical.innerHTML =
@@ -134,15 +134,15 @@
 
     var finalCta = document.querySelector(".cta [data-track='whatsapp']");
     if (finalCta) {
-      finalCta.textContent = usesConsultationCopy ? "Ver horários da consulta" : "Ver horários para avaliação";
+      finalCta.textContent = "Conversar sobre a consulta";
       finalCta.dataset.ctaLocation = "final";
     }
 
     var floating = document.querySelector(".whatsapp-float[data-track='whatsapp']");
     if (floating) {
-      floating.textContent = usesConsultationCopy ? "Ver horários da consulta" : "Tirar dúvidas e ver horários";
+      floating.textContent = "Conversar sobre a consulta";
       floating.dataset.ctaLocation = "sticky";
-      floating.setAttribute("aria-label", usesConsultationCopy ? "Ver horários da consulta pelo WhatsApp" : "Tirar dúvidas e consultar horários pelo WhatsApp");
+      floating.setAttribute("aria-label", "Conversar sobre a consulta pelo WhatsApp");
     }
   }
 

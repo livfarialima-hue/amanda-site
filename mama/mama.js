@@ -107,7 +107,7 @@
 
     var finalCta = document.querySelector('.cta a[data-track="whatsapp"]');
     if (finalCta) {
-      finalCta.textContent = 'Agendar avaliação';
+      finalCta.textContent = 'Conversar sobre a consulta';
       finalCta.dataset.ctaLocation = 'final_cta';
     }
   }

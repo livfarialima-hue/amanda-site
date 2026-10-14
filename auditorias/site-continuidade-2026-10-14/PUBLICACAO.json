@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "changeId": "SITE-CONTINUIDADE-2026-10-14",
+  "status": "not_published",
+  "externalWritesPerformed": false,
+  "baseline": {
+    "productionFunctionalCommit": "4869b38a51d55b76176cf2b1cf8021c4f2ea46be",
+    "netlifyDeployId": "6acfecf0d71ca630f8f9469a",
+    "appsScriptVersion": 164
+  },
+  "approvedCommit": null,
+  "netlifyDeployId": null,
+  "verifiedAt": null,
+  "appsScriptChanged": false,
+  "functionsChanged": false,
+  "brunaManifestChanged": false,
+  "driveProjectionEquality": "pending",
+  "verification": [],
+  "note": "Recibo preparado; campos vazios não são evidência de publicação. Nenhuma informação privada integra este arquivo."
+}

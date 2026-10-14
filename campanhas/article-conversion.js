@@ -180,8 +180,8 @@
     }
 
     if (button) {
-      button.textContent = 'Ver horários para avaliação';
-      button.setAttribute('aria-label', 'Ver horários para avaliação pelo WhatsApp');
+      button.textContent = 'Conversar sobre a consulta';
+      button.setAttribute('aria-label', 'Conversar sobre a consulta pelo WhatsApp');
     }
 
     if (config.hubHref && !aside.querySelector('.text-link')) {
@@ -214,16 +214,16 @@
     const button = finalCta.querySelector('.btn');
     if (title) title.textContent = 'Saia da pesquisa com um plano para o seu caso.';
     if (copy) copy.textContent = 'A consulta conecta suas queixas, anatomia, prioridades e segurança. A indicação só é definida após avaliação médica individual.';
-    if (button) button.textContent = 'Ver horários para avaliação';
+    if (button) button.textContent = 'Conversar sobre a consulta';
   }
 
   const navCta = document.querySelector('.nav-cta');
-  if (navCta) navCta.textContent = 'Ver horários';
+  if (navCta) navCta.textContent = 'Conversar sobre a consulta';
 
   const floatingCta = document.querySelector('.whatsapp-float');
   if (floatingCta) {
-    floatingCta.textContent = 'Ver horários no WhatsApp';
-    floatingCta.setAttribute('aria-label', 'Ver horários para avaliação pelo WhatsApp');
+    floatingCta.textContent = 'Conversar sobre a consulta';
+    floatingCta.setAttribute('aria-label', 'Conversar sobre a consulta pelo WhatsApp');
   }
 
   document.querySelectorAll('a[data-track="whatsapp"]').forEach((link) => {
