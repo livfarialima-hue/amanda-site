@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "status": "published_platforms_drive_pending",
+  "status": "platforms_verified_drive_refresh_pending",
   "candidateFunctionalCommit": "bbf297da98946badd4460989064e4f2636f1211c",
-  "verifiedAt": "2026-10-14T12:21:06.606Z",
+  "verifiedAt": "2026-10-14T12:24:16.913Z",
   "authorization": {
     "source": "Daniel nesta conversa",
     "instruction": "A resposta nao teve a ver com o áudio. Identifiquei o problema, ajuste e publique.",
@@ -1305,7 +1305,7 @@
       ],
       "adsExportsUnchanged": true,
       "checkedAt": "2026-10-14T12:17:47.543Z",
-      "visibleChangeExplanation": "Planilha viva atualizada por atividade normal durante a janela; conferir campos canônicos preservados separadamente."
+      "visibleChangeExplanation": "Differences observed in postflight; canonical event/version predate this deployment. Projection write time and cause are not established."
     },
     "naturalActivity": {
       "messageCount": 5,
@@ -1316,9 +1316,12 @@
       "projectionOwnerMismatch": {
         "canonical": "human_team",
         "visible": "bruna",
-        "firstObservedAfterPreexistingInbound": true
+        "observed": "postflight",
+        "canonicalEventAndVersion": "before_deploy",
+        "projectionWriteTime": "unknown",
+        "cause": "not_verified"
       },
-      "note": "Projection owner differs from canonical CRM following pre-release inbound activity; human takeover was recorded. Not migrated in this release."
+      "note": "Human takeover was recorded. The projection differs from the canonical CRM in postflight; its write time and cause are not established. No migration performed."
     },
     "writeOperations": 0,
     "importAcceptanceVerified": false
@@ -1331,20 +1334,93 @@
     "sheetWrites": 0
   },
   "drive": {
-    "status": "pending",
-    "auditFolderId": "11wsX9piyWIsFY7Va5uHv-v3e9u9nkrgo"
+    "status": "refresh_pending_documentation_clarification",
+    "auditFolderId": "11wsX9piyWIsFY7Va5uHv-v3e9u9nkrgo",
+    "manual": {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "localPath": "docs/estrategia-abordagem-bruna.md",
+      "localSha256": "893217f2e9c9c7fb80568079134a8dfeb8a4e6c95a208f0eafa62b8a15c917d4",
+      "remoteSha256": "893217f2e9c9c7fb80568079134a8dfeb8a4e6c95a208f0eafa62b8a15c917d4",
+      "equal": true,
+      "verifiedAt": "2026-10-14T12:23:50.107Z"
+    },
+    "executivePlan": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "localPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "localSha256": "3840ec3b11fea1999a01ae2c5a2f68e30374215c7ace4725542735204f4cab60",
+      "remoteSha256": "3840ec3b11fea1999a01ae2c5a2f68e30374215c7ace4725542735204f4cab60",
+      "equal": true,
+      "verifiedAt": "2026-10-14T12:23:50.109Z"
+    },
+    "closedAudit": {
+      "fileId": "1mzCH4V6Tik7FCIAGUq3s-cKCrgDEqnAj",
+      "localPath": "auditorias/bruna-audio-contexto-2026-10-14/RELATORIO.md",
+      "localSha256": "61703d00c2188432aec584dd5edfad22d89ca62c1d1ae9a484d2b31e3cc87cd6",
+      "remoteSha256": "61703d00c2188432aec584dd5edfad22d89ca62c1d1ae9a484d2b31e3cc87cd6",
+      "equal": true,
+      "verifiedAt": "2026-10-14T12:23:50.076Z"
+    },
+    "readbacks": [
+      {
+        "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+        "localPath": "docs/estrategia-abordagem-bruna.md",
+        "localSha256": "893217f2e9c9c7fb80568079134a8dfeb8a4e6c95a208f0eafa62b8a15c917d4",
+        "remoteSha256": "893217f2e9c9c7fb80568079134a8dfeb8a4e6c95a208f0eafa62b8a15c917d4",
+        "equal": true,
+        "verifiedAt": "2026-10-14T12:23:50.107Z"
+      },
+      {
+        "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+        "localPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "localSha256": "3840ec3b11fea1999a01ae2c5a2f68e30374215c7ace4725542735204f4cab60",
+        "remoteSha256": "3840ec3b11fea1999a01ae2c5a2f68e30374215c7ace4725542735204f4cab60",
+        "equal": true,
+        "verifiedAt": "2026-10-14T12:23:50.109Z"
+      },
+      {
+        "fileId": "1mzCH4V6Tik7FCIAGUq3s-cKCrgDEqnAj",
+        "localPath": "auditorias/bruna-audio-contexto-2026-10-14/RELATORIO.md",
+        "localSha256": "61703d00c2188432aec584dd5edfad22d89ca62c1d1ae9a484d2b31e3cc87cd6",
+        "remoteSha256": "61703d00c2188432aec584dd5edfad22d89ca62c1d1ae9a484d2b31e3cc87cd6",
+        "equal": true,
+        "verifiedAt": "2026-10-14T12:23:50.076Z"
+      }
+    ]
   },
   "limitations": [
     "Patient audio was not listened to; the diagnosis is based on stored transcript and semantic event.",
     "Next real automated reply after this release was not observed.",
     "Teleconsultation availability and price as a reusable approved fact await Daniel.",
     "Google Ads import acceptance was not verified.",
-    "Visible responsibility projection differs from canonical CRM following an inbound before this release; phase, attribution and human pause are preserved."
+    "Visible responsibility projection differs from canonical CRM in postflight; the canonical event and version predate this deployment, but projection write time and cause are unknown. Human pauses, phase and attribution are preserved."
   ],
   "rollback": {
     "functionalCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
     "deployId": "6acf51c3102d74aed99ab751",
     "appsScriptVersion": 164,
     "method": "Git revert and a new verified Netlify deploy; preserve all data and receipts; no replay."
+  },
+  "closeout": {
+    "functionalCommit": "bbf297da98946badd4460989064e4f2636f1211c",
+    "platformsVerified": true,
+    "driveVerified": true,
+    "documentationCommit": "aa3eaab",
+    "opsCheck": "pending_final_canonical_sync",
+    "automation": "already_paused"
+  },
+  "independentPublicationReview": {
+    "reviewer": "audio_context_review",
+    "reviewedAt": "2026-10-14T12:25:32.327Z",
+    "status": "completed",
+    "checks": [
+      "16 real scenarios complete within deadlines",
+      "3 audio scenarios passed, silence blocked",
+      "2 full-history scenarios passed",
+      "gate before deploy, smoke after deploy",
+      "no actual personal data or secrets in receipt",
+      "Ads acceptance explicitly not verified"
+    ],
+    "blockingFunctionalFindings": 0,
+    "documentationClarification": "Canonical event/version predate deployment; projection divergence observed after deployment; cause and write time not proven."
   }
 }

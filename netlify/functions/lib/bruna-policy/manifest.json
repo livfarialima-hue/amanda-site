@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
-    "lastObservedProductionCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
-    "functionalDeployId": "6acf51c3102d74aed99ab751",
-    "lastObservedProductionDeployId": "6acf51c3102d74aed99ab751",
-    "rollbackCommit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
-    "rollbackDeployId": "6aceef108fbe857da62bcfac",
-    "rollbackConstraint": "Restaurar pela integração Git o pacote anterior e Apps Script v163 no mesmo deployment; preservar histórico ampliado, áudio/arquivo e suas flags, dados, filas, pausas e recibos; sem replay.",
-    "publishedAt": "2026-10-14T09:59:03.902Z",
+    "functionalCommit": "bbf297da98946badd4460989064e4f2636f1211c",
+    "lastObservedProductionCommit": "bbf297da98946badd4460989064e4f2636f1211c",
+    "functionalDeployId": "6acf71e94079694bfc8221a4",
+    "lastObservedProductionDeployId": "6acf71e94079694bfc8221a4",
+    "rollbackCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+    "rollbackDeployId": "6acf51c3102d74aed99ab751",
+    "rollbackConstraint": "Git revert and a new verified Netlify deploy; preserve all data and receipts; no replay.",
+    "publishedAt": "2026-10-14T12:16:27.301Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-14T10:03:00.141Z",
-    "candidateChangeId": "BRUNA-EFICIENCIA-INTEGRIDADE-2026-10-14",
+    "lastVerifiedAt": "2026-10-14T12:24:16.913Z",
+    "candidateChangeId": "BRUNA-AUDIO-CONTEXTO-2026-10-14",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-14.1",
+    "bundleVersion": "2026-10-14.2",
     "appsScriptVersion": 164
   },
   "documentation": {
@@ -38,12 +38,12 @@
     "driveActiveFolderId": "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue",
     "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
     "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
-    "driveClosedAuditFileId": "1EtUNUjSPjSMPobKGmRLRDA89KBDQLMHE",
+    "driveClosedAuditFileId": "1mzCH4V6Tik7FCIAGUq3s-cKCrgDEqnAj",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "9cbb487add833352e5ee913ff1278473cf078fa423d2bb03258b11937e5b5f00",
+    "driveProjectionSha256": "893217f2e9c9c7fb80568079134a8dfeb8a4e6c95a208f0eafa62b8a15c917d4",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU",
-    "driveProjectionVerifiedAt": "2026-10-14T10:05:00.7372232Z"
+    "driveProjectionVerifiedAt": "2026-10-14T12:23:50.107Z"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -51,7 +51,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-AUDIO-CONTEXTO-2026-10-14",
-    "status": "tested_local",
+    "status": "published_verified",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
@@ -59,6 +59,7 @@
     "baselineCommit": "a50fba8e496539c6c521213943012f8f9955b9a4",
     "bundleVersion": "2026-10-14.2",
     "baselineDeployId": "6acf51c3102d74aed99ab751",
-    "baselineAppsScriptVersion": 164
+    "baselineAppsScriptVersion": 164,
+    "sourceCommit": "bbf297da98946badd4460989064e4f2636f1211c"
   }
 }
