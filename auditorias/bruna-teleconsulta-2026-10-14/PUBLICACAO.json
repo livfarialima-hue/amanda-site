@@ -828,6 +828,13 @@
     "documentationCommit": "a5481e52cc9a8e9aba0e81007f1b360ac94c5bbd",
     "automation": "already_paused",
     "canonicalBranch": "reestruturacao-site",
-    "status": "pending_final_canonical_checks"
+    "status": "complete",
+    "opsCheck": "OK",
+    "changeCheck": "OK",
+    "canonicalOriginCommit": "d7e68fd3edbff135a352f719ce1c44f0cefafc55",
+    "checkedAt": "2026-10-14T14:33:20.048Z",
+    "productionDeployAtCloseout": "6acf8f3d0c1fdf2d868cceb3",
+    "functionalSourceEquality": "Only governance/receipt/documentation changes after bed7810; Apps Script source unchanged from candidate baseline",
+    "note": "Canonical branch clean and pushed; all release gates passed. This final receipt commit only records those observations and skips the functional build."
   }
 }
