@@ -421,7 +421,7 @@
     "status": "pending",
     "appsScriptVersion": 163,
     "blockers": [
-      "Novo build real de produção após correção de negação; ativação e recibos pendentes."
+      "Ativação aguarda novo build integral com diagnóstico agregado dos indicadores de confiança do áudio; nenhuma flexibilização de gate."
     ],
     "evidence": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
     "approvedSourceCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972"

@@ -1,10 +1,10 @@
 {
-  "status": "apps_script_published_correcting_netlify_gate",
+  "status": "activation_pending_confidence_diagnostics",
   "recordedAt": "2026-10-14T01:22:51.511Z",
   "candidateFunctionalCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
   "pullRequest": "https://github.com/livfarialima-hue/amanda-site/pull/11",
   "localValidation": {
-    "uniqueTests": 2117,
+    "uniqueTests": 2118,
     "failures": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -147,7 +147,81 @@
         "reason": "cta_type_not_allowed_for_context",
         "originalDraftAvailable": false,
         "diagnosis": "Local reproduction found negated scheduling phrases treated as both CTAs and scheduling intent. The actual original model draft was not retained, so attribution is probable, not established."
+      },
+      {
+        "deployId": "6acedb30a46df04a6964297d",
+        "commit": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+        "context": "production",
+        "purpose": "activation",
+        "status": "failed",
+        "checkedAt": "2026-10-14T01:32:36.268Z",
+        "passedScenarios": 10,
+        "failedScenario": "approved_price_with_photo_request",
+        "reason": "timeout",
+        "elapsedMs": 20047,
+        "timeoutMs": 20000,
+        "published": false,
+        "gateUnchanged": true,
+        "diagnosis": "One runtime API request exceeded its 20 second deadline; the same scenario passed in the previous complete production build. Full build retried without code, assertions or timeout changes."
+      },
+      {
+        "deployId": "6acedc00a4bddb2d9cdc9fd9",
+        "commit": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+        "context": "production",
+        "purpose": "activation_retry",
+        "status": "failed",
+        "checkedAt": "2026-10-14T01:36:30.917Z",
+        "passedScenarios": 15,
+        "failedScenario": "synthetic_audio",
+        "audioCheck": {
+          "status": "failed",
+          "syntheticOnly": true,
+          "patientMessagesSent": 0,
+          "apiCalls": 1,
+          "model": "gpt-4o-transcribe",
+          "elapsedMs": 1805,
+          "transcription": "Qual é o endereço da Clínica LIV?",
+          "quality": {
+            "meanLogprob": null,
+            "lowTokenFraction": null,
+            "tokenCount": 8
+          },
+          "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+        },
+        "published": false,
+        "gateUnchanged": true,
+        "diagnosis": "Synthetic text was intelligible but confidence data failed strict validation. Raw scores were not retained; exact malformed value unknown. Automatic eligibility remained false, correctly blocking release."
+      },
+      {
+        "deployId": "6acedd58d36d31f61891719f",
+        "commit": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+        "context": "production",
+        "purpose": "activation_retry",
+        "status": "failed",
+        "checkedAt": "2026-10-14T01:42:08.787Z",
+        "passedScenarios": 15,
+        "failedScenario": "synthetic_audio",
+        "audioCheck": {
+          "status": "failed",
+          "syntheticOnly": true,
+          "patientMessagesSent": 0,
+          "apiCalls": 1,
+          "model": "gpt-4o-transcribe",
+          "elapsedMs": 919,
+          "transcription": "Qual é o endereço da Clínica Liv?",
+          "quality": {
+            "meanLogprob": null,
+            "lowTokenFraction": null,
+            "tokenCount": 8
+          },
+          "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+        },
+        "published": false,
+        "gateUnchanged": true
       }
-    ]
+    ],
+    "lastPublishedDeployId": "6aced9d34e4ec2c5c72ec53a",
+    "lastPublishedCommit": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+    "newFeaturesActive": false
   }
 }

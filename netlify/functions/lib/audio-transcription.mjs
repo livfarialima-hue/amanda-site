@@ -30,6 +30,18 @@ export function assessTranscript(data) {
   const probabilities = Array.isArray(data?.logprobs) ? data.logprobs : [];
   const scores = probabilities.map(item => item?.logprob);
   const valid = scores.length > 0 && scores.every(score => typeof score === "number" && Number.isFinite(score) && score <= 0);
+  // Counts diagnose malformed provider confidence without retaining tokens,
+  // arbitrary values or response bodies, and never change eligibility.
+  const scoreDiagnostics = { missing: 0, nonNumeric: 0, nonFinite: 0, positive: 0, maxPositive: null };
+  for (const score of scores) {
+    if (score == null) scoreDiagnostics.missing++;
+    else if (typeof score !== "number") scoreDiagnostics.nonNumeric++;
+    else if (!Number.isFinite(score)) scoreDiagnostics.nonFinite++;
+    else if (score > 0) {
+      scoreDiagnostics.positive++;
+      scoreDiagnostics.maxPositive = Math.max(scoreDiagnostics.maxPositive || 0, score);
+    }
+  }
   // These are conservative quality heuristics, not a calibrated probability
   // that the patient's meaning is correct. Clinical gates still apply.
   const mean = valid ? scores.reduce((a, b) => a + b, 0) / scores.length : null;
@@ -38,7 +50,7 @@ export function assessTranscript(data) {
     mean >= -0.6 && lowFraction <= 0.1 && !/\[(?:inaud[ií]vel|incompreens[ií]vel|sil[eê]ncio)\]/i.test(text);
   return { status: usable ? "transcribed" : "uncertain", text: text.slice(0, 12000),
     truncated: text.length > 12000, autoReplyEligible: usable, model: MODEL,
-    quality: { meanLogprob: mean, lowTokenFraction: lowFraction, tokenCount: scores.length } };
+    quality: { meanLogprob: mean, lowTokenFraction: lowFraction, tokenCount: scores.length, scoreDiagnostics } };
 }
 
 async function boundedBytes(response, maximum, controller) {

@@ -153,5 +153,16 @@
     "appsScriptVersion": 163,
     "triggerCount": 11,
     "newFeaturesActive": false
+  },
+  "audioDiagnosticRefresh": {
+    "checkedAt": "2026-10-14T01:45:16.344Z",
+    "netlifyPublishedDeploy": "6aced9d34e4ec2c5c72ec53a",
+    "commit": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+    "appsScriptVersion": 163,
+    "featuresInPublishedDeploy": "off",
+    "productionFlagsConfiguredForNextSuccessfulBuild": true,
+    "archiveStartAt": "2026-10-14T01:29:30.574Z",
+    "providerConfidenceFailures": 2,
+    "rawScoresUnavailable": true
   }
 }

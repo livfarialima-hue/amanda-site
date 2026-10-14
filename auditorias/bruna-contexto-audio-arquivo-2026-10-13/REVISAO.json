@@ -30,11 +30,11 @@
     ]
   },
   "validation": {
-    "coreTests": 2065,
+    "coreTests": 2066,
     "scriptTests": 14,
     "scriptTestsAlsoInCore": 0,
     "additionalContractTests": 38,
-    "uniqueTests": 2117,
+    "uniqueTests": 2118,
     "failed": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -147,5 +147,27 @@
       "netlify/functions/lib/whatsapp-automation.mjs": "8a53b45b7e91625223da4c2fc05ce6465aba719df3d93ef490493815b51f69d6",
       "scripts/check-bruna-model-live.mjs": "2093ddb988d2549a04a901b401c5162fd4e4dc74bed4ff6b15c4c43e15f9b930"
     }
+  },
+  "activationFailureReview": {
+    "status": "completed_no_code_defect_identified",
+    "reviewer": "/root/revisao_independente",
+    "reviewedCommit": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+    "checkedAt": "2026-10-14T01:39:50.153Z",
+    "focusedTests": 12,
+    "explanation": "Eight reported scores with null aggregates imply strict validity failed. Exact malformed score is unavailable. Intelligible text alone must not bypass confidence validation. A full unchanged retry is reasonable; preserve receipts."
+  },
+  "audioDiagnosticsReview": {
+    "status": "completed_no_remaining_actionable_findings",
+    "reviewer": "/root/revisao_independente",
+    "reviewedBase": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+    "workingDiff": true,
+    "focusedTests": 13,
+    "checkedAt": "2026-10-14T01:45:55.446Z",
+    "normalization": "CRLF to LF",
+    "hashes": {
+      "audio-transcription.mjs": "cab5fdebbe22c7951b8e79467553a7d86198b23622208b67081f8a8a011c6c36",
+      "audio-transcription.test.mjs": "fc8629ad83eede0909cb321eb2fe66a9fa932e1fbf12789dde7a53e236708d91"
+    },
+    "behavior": "Only aggregate diagnostics. Validity, automatic eligibility, limits, model and timeouts unchanged."
   }
 }

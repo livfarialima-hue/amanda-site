@@ -88,3 +88,17 @@ test("uncertain, empty, unscored and overlong transcripts cannot enter automatic
     const result = assessTranscript(data); assert.equal(result.status, "uncertain"); assert.equal(result.autoReplyEligible, false);
   }
 });
+
+test("confidence diagnostics distinguish invalid scores without admitting them or disclosing raw values", () => {
+  const result = assessTranscript({ text: "Qual o endereço?", logprobs: [
+    {}, { logprob: null }, { logprob: "private-provider-detail" }, { logprob: {} },
+    { logprob: Infinity }, { logprob: NaN }, { logprob: 1e-7 }, { logprob: 0.2 }, { logprob: -0.1 },
+  ] });
+  assert.equal(result.autoReplyEligible, false);
+  assert.equal(result.quality.meanLogprob, null);
+  assert.deepEqual(result.quality.scoreDiagnostics, { missing: 2, nonNumeric: 2, nonFinite: 2, positive: 2, maxPositive: 0.2 });
+  assert.doesNotMatch(JSON.stringify(result), /private-provider-detail|Infinity|NaN/);
+  const valid = assessTranscript({ text: "Qual o endereço?", logprobs: [{ logprob: 0 }, { logprob: -0.1 }] });
+  assert.equal(valid.autoReplyEligible, true);
+  assert.deepEqual(valid.quality.scoreDiagnostics, { missing: 0, nonNumeric: 0, nonFinite: 0, positive: 0, maxPositive: null });
+});
