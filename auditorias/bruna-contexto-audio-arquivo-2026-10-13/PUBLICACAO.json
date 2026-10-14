@@ -71,7 +71,7 @@
   },
   "patientMessagesSent": 0,
   "manualOperationalRoutinesRun": 0,
-  "opsCheck": "SYNC_PENDING",
+  "opsCheck": "OK",
   "appsScriptStaged": {
     "commit": "6f48d89de65cbf862e57df952df9867b8ef868e5",
     "savedAndReloadedAt": "2026-10-14T00:45:21.037Z",
@@ -1506,7 +1506,16 @@
     }
   },
   "closeout": {
-    "documentationCommitPending": true,
-    "sourceAndReceiptsReconciled": true
+    "documentationCommit": "129ef60607b7569d31ebb59d095b9c1633122143",
+    "sourceAndReceiptsReconciled": true,
+    "opsCheck": {
+      "status": "OK",
+      "command": "npm.cmd run ops:check",
+      "branch": "reestruturacao-site",
+      "checkedCommit": "129ef60607b7569d31ebb59d095b9c1633122143",
+      "checkedAt": "2026-10-14T03:08:36.047Z",
+      "cleanWorktree": true
+    },
+    "functionalCommitUnchanged": "769cee33281516883b89ed150ba61ce8f6ccaaa4"
   }
 }

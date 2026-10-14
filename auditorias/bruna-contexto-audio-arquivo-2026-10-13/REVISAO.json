@@ -47,7 +47,7 @@
     "diffCheck": "passed",
     "liveModelCheck": "passed_15_hosted_production_scenarios",
     "liveAudioCheck": "passed_3_synthetic_audio_fixtures",
-    "opsCheck": "SYNC_PENDING",
+    "opsCheck": "OK",
     "rollbackPatchReverseCheck": "passed_without_mutation_for_769cee33281516883b89ed150ba61ce8f6ccaaa4",
     "status": "passed_local_and_production",
     "scopeFiles": 73,
