@@ -4,5 +4,43 @@
   "netlifyBaseline": "6acf71e94079694bfc8221a4",
   "appsScriptVersion": 164,
   "appsScriptChanged": false,
-  "drivePending": true
+  "drivePending": true,
+  "attempts": [
+    {
+      "commit": "b709344516fe47d7b11b76f10847e1a4c3f9dbc5",
+      "deployId": "6acf8bb4b1fbba04a8414db2",
+      "status": "blocked_before_publication",
+      "checkedAt": "2026-10-14T14:04:35.864Z",
+      "failure": {
+        "scenario": "remote_assessment_after_price_audio_context",
+        "errorCode": "timeout",
+        "elapsedMs": 20068,
+        "timeoutMs": 20000
+      },
+      "diagnostic": {
+        "diagnosticOnly": true,
+        "status": "completed",
+        "elapsedMs": 20007,
+        "decisionRoute": "human_review",
+        "automaticAllowed": false,
+        "reason": "unknown_digest:orcamento_online",
+        "syntheticReply": "A Dra. Amanda atende por consulta online, inclusive quem mora no exterior, e o valor é R$ 500. Para você planejar sua viagem, precisamos confirmar com a equipe se o orçamento cirúrgico poderá ser definido nessa avaliação e quais serão os próximos passos.",
+        "usage": {
+          "inputTokens": 21530,
+          "cachedInputTokens": 21527,
+          "outputTokens": 540,
+          "totalTokens": 22070
+        }
+      },
+      "audio": {
+        "passed": 3,
+        "model": "whisper-1",
+        "silenceAutoReplyEligible": false
+      },
+      "patientMessagesSent": 0,
+      "productionChanged": false,
+      "receiptSource": "Netlify production deploy WebSocket build log, full JSON parsed",
+      "note": "Diagnostic does not approve release. Old conversion appendix still required human confirmation of remote modality; fixed before another build. Deadline and model unchanged."
+    }
+  ]
 }

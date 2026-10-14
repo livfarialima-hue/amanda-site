@@ -215,7 +215,7 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
     /não apresente honorários isolados|faixa não representa honorários isolados/i,
   );
   assert.match(CONVERSATION_GUIDELINES, /quanto-custa-lifting-facial-sao-paulo/);
-  assert.match(CONVERSATION_GUIDELINES, /Se a faixa já tiver sido enviada no contexto recente, use human_review/i);
+  assert.match(CONVERSATION_GUIDELINES, /Em novo pedido de repetir ou negociar a mesma faixa já enviada no contexto recente, use human_review/i);
   assert.match(CONVERSATION_GUIDELINES, /valor individual é definido após avaliação/i);
   assert.doesNotMatch(
     CONVERSATION_GUIDELINES,

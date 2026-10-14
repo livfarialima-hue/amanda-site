@@ -6,6 +6,18 @@ import { buildConsultationQuestionBundle } from './consultation-question-bundle.
 import { decideConversationAction } from './conversation-action-controller.mjs';
 import { validateOutboundReply } from './outbound-reply-gate.mjs';
 import { buildMorningResumeOpening, buildContextualHumanSuggestion } from './extreme-night-policy.mjs';
+import { buildConversationGuidelines } from './conversation-guidelines.mjs';
+
+test('effective conversion prompt does not revoke the confirmed remote modality or transfer presencial payment conditions',()=>{
+  const prompt=buildConversationGuidelines({conversionExperienceEnabled:true});
+  assert.match(prompt,/A Dra\. Amanda atende por consulta online, inclusive quem está no exterior/);
+  assert.doesNotMatch(prompt,/Modalidade remota, frequência de retornos.*dependem de confirmação humana/);
+  assert.match(prompt,/orçamento individual depende da avaliação/);
+  assert.match(prompt,/sem afirmar que o orçamento será fechado online ou antes da viagem/);
+  assert.match(prompt,/condições de pagamento confirmadas para essa modalidade/);
+  assert.doesNotMatch(prompt,/Se a faixa já tiver sido enviada no contexto recente, use human_review/);
+  assert.match(prompt,/Uma pergunta nova sobre consulta ou modalidade recebe os fatos aprovados desse novo assunto/);
+});
 
 const patient = text => ({role:'user',source:'patient',text});
 const clinic = text => ({role:'assistant',source:'bruna',text});

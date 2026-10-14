@@ -1,11 +1,11 @@
 {
   "status": "passed_local",
-  "checkedAt": "2026-10-14T14:02:56.887Z",
+  "checkedAt": "2026-10-14T14:10:05.708Z",
   "syntheticOnly": true,
   "patientMessagesSent": 0,
   "operationalRoutinesExecuted": 0,
   "fullSuite": {
-    "passed": 2163,
+    "passed": 2164,
     "failed": 0,
     "log": "tmp/teleconsulta-full-tests.log"
   },
@@ -24,9 +24,9 @@
   "checks": {
     "change": "OK",
     "architecture": "OK",
-    "syntaxFiles": 14,
+    "syntaxFiles": 16,
     "diff": "OK",
-    "rollback": "All 27 staged files reverse-check passed; no reversal applied",
+    "rollback": "All 29 files against baseline reverse-check; no reversal applied",
     "ops": "SYNC_PENDING until verified publication and Drive readback"
   },
   "independentReviews": [
@@ -52,14 +52,26 @@
         "Negated or ambiguous remote/payment wording stays semantic",
         "Only consultation cost inherits confirmed remote modality",
         "Publication gate rejects denial of the approved remote fact without blocking budget or schedule boundaries"
-      ]
+      ],
+      "postFailureReview": {
+        "status": "approved",
+        "findingsResolved": [
+          "Conversion appendix contradicted confirmed remote availability",
+          "Generic payment instruction ignored modality",
+          "Prior surgical range blocked a new consultation question"
+        ],
+        "effectivePromptCharacters": 98917,
+        "timeoutCause": "not established; no latency claim",
+        "apiCallsByReviewer": 0
+      }
     }
   ],
   "liveModelGate": {
     "status": "pending_production_build",
     "scenarios": 18,
     "audioScenarios": 3,
-    "fullHistoryScenarios": 2
+    "fullHistoryScenarios": 2,
+    "failedAttempt": "6acf8bb4b1fbba04a8414db2"
   },
   "limits": [
     "First natural post-release conversation not observed",

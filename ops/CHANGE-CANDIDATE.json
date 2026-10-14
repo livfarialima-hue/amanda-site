@@ -26,12 +26,14 @@
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
+      "netlify/functions/lib/bruna-conversion-experience.mjs",
       "netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
       "netlify/functions/lib/consultation-question-bundle.mjs",
       "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/conversation-guidelines.test.mjs",
       "netlify/functions/lib/extreme-night-policy.mjs",
       "netlify/functions/lib/human-resume-processor.test.mjs",
       "netlify/functions/lib/outbound-reply-gate.mjs",
@@ -390,17 +392,17 @@
     ],
     "baseline": "50af5ccfafb1d37e529e53f96f814511516d6da5",
     "evidence": "auditorias/bruna-teleconsulta-2026-10-14/REVISAO.json",
-    "checkedAt": "2026-10-14T14:02:56.887Z",
+    "checkedAt": "2026-10-14T14:10:05.708Z",
     "executed": [
-      "npm.cmd test: 2163/2163",
+      "npm.cmd test: 2164/2164",
       "contract complementary union: 54/54",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd run architecture:check",
       "npm.cmd run change:check",
       "git diff --check",
-      "node --check: 14 files",
-      "git apply --reverse --check: 27 staged files"
+      "node --check: 16 files",
+      "git apply --reverse --check: 29 files against baseline"
     ]
   },
   "rollback": {
