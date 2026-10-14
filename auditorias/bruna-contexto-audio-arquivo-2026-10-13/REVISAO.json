@@ -34,7 +34,7 @@
     "scriptTests": 16,
     "scriptTestsAlsoInCore": 0,
     "additionalContractTests": 38,
-    "uniqueTests": 2122,
+    "uniqueTests": 2124,
     "failed": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -56,7 +56,7 @@
     "afterReviewFocusedTests": 58,
     "finalHistoryFocusedTests": 16,
     "finalNegationFocusedTests": 140,
-    "additionalTests": 53
+    "additionalTests": 55
   },
   "riskReview": [
     "Origem de mídia restrita, assinatura do evento, hash, MIME e tamanho verificados antes do provedor.",
@@ -254,5 +254,19 @@
       "netlify/functions/lib/conversation-guidelines.mjs": "053482ecfdbabc37c56e54a1cee728107a567d9373e66dae998656ce5c96294b"
     },
     "behavior": "Concise semantic state without duplicating the patient reply. All context, material facts, schema, limits, model, effort and guards remain. Latency improvement is a hypothesis, not a diagnosed root cause."
+  },
+  "timeoutMeasurementReview": {
+    "status": "completed_no_remaining_actionable_findings",
+    "reviewer": "/root/revisao_independente",
+    "reviewedBase": "c1773d4ed2639597edfc1d46b2f9c3da3263bb2d",
+    "workingDiff": true,
+    "focusedTests": 17,
+    "checkedAt": "2026-10-14T02:54:36.072Z",
+    "normalization": "CRLF to LF",
+    "hashes": {
+      "scripts/check-bruna-model-live.mjs": "27747bfb97a5374bb47b4e7759fd18221a64c869b07d1f70620f3635c0a7a73d",
+      "scripts/check-bruna-model-live.test.mjs": "9614b3cbf04c644870644ef8974634b4d4908eec1be7710f2d4fd97365425296"
+    },
+    "behavior": "One separate synthetic diagnostic after timeout. It never changes the original failed gate or runtime deadline. A new inference does not prove the cause of an earlier timeout."
   }
 }

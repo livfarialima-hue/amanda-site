@@ -1,10 +1,10 @@
 {
-  "status": "activation_pending_concise_state_validation",
+  "status": "activation_pending_timeout_measurement",
   "recordedAt": "2026-10-14T01:22:51.511Z",
   "candidateFunctionalCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
   "pullRequest": "https://github.com/livfarialima-hue/amanda-site/pull/11",
   "localValidation": {
-    "uniqueTests": 2122,
+    "uniqueTests": 2124,
     "failures": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -569,6 +569,94 @@
         },
         "published": false,
         "diagnosis": "All three real synthetic audio fixtures passed. Price/photo conversation exceeded the unchanged20s deadline. This is an observed timeout, not evidence of a provider root cause. No patient messages sent."
+      },
+      {
+        "deployId": "6aceed62c2f868a45ebbf5c6",
+        "commit": "c1773d4ed2639597edfc1d46b2f9c3da3263bb2d",
+        "context": "production",
+        "purpose": "concise_semantic_state",
+        "status": "failed",
+        "checkedAt": "2026-10-14T02:50:17.647Z",
+        "passedScenarios": 10,
+        "failedScenarios": [
+          {
+            "name": "approved_price_with_photo_request",
+            "errorCode": "timeout",
+            "elapsedMs": 20033
+          }
+        ],
+        "audioCheck": {
+          "status": "passed",
+          "syntheticOnly": true,
+          "patientMessagesSent": 0,
+          "model": "whisper-1",
+          "apiCalls": 3,
+          "elapsedMs": 6161,
+          "checks": [
+            {
+              "name": "address",
+              "passed": true,
+              "apiCalls": 1,
+              "model": "whisper-1",
+              "elapsedMs": 1523,
+              "transcription": "Qual é o endereço da Clínica Livre?",
+              "transcriptStatus": "transcribed",
+              "autoReplyEligible": true,
+              "quality": {
+                "kind": "segment_confidence",
+                "segmentCount": 1,
+                "fieldsValid": true,
+                "textAgrees": true,
+                "lowestSegmentMeanLogprob": -0.4130357801914215,
+                "highestNoSpeechProbability": 0.0008814543252810836,
+                "highestCompressionRatio": 0.8260869383811951
+              },
+              "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+            },
+            {
+              "name": "context",
+              "passed": true,
+              "apiCalls": 1,
+              "model": "whisper-1",
+              "elapsedMs": 3430,
+              "transcription": "Olá, quero deixar claro que não desejo agendar uma consulta agora. Estou apenas organizando as minhas dúvidas para uma conversa futura. Durante a semana, só consigo conversar depois das 15 horas, porque trabalho pela manhã. Meu nome é Elisa, e prefiro ser chamada assim. A equipe já confirmou que o documento foi enviado, então essa parte está resolvida. Ainda quero entender como funciona a avaliação presencial e o que devo levar no dia em que decidir marcar. Por enquanto, não procure horários para mim. Vou ler as informações com calma e depois entrar em contato novamente. Obrigada por guardar esse contexto e respeitar o meu tempo.",
+              "transcriptStatus": "transcribed",
+              "autoReplyEligible": true,
+              "quality": {
+                "kind": "segment_confidence",
+                "segmentCount": 9,
+                "fieldsValid": true,
+                "textAgrees": true,
+                "lowestSegmentMeanLogprob": -0.3264618515968323,
+                "highestNoSpeechProbability": 0.014948219060897827,
+                "highestCompressionRatio": 1.3806818723678589
+              },
+              "fixtureSha256": "8b3d5a7bfe2148eb579a0db08e1eebef28fba744dcf177f5969ba61b47e20cf4"
+            },
+            {
+              "name": "silence",
+              "passed": true,
+              "apiCalls": 1,
+              "model": "whisper-1",
+              "elapsedMs": 1204,
+              "transcription": "you",
+              "transcriptStatus": "uncertain",
+              "autoReplyEligible": false,
+              "quality": {
+                "kind": "segment_confidence",
+                "segmentCount": 1,
+                "fieldsValid": true,
+                "textAgrees": true,
+                "lowestSegmentMeanLogprob": -0.5146503448486328,
+                "highestNoSpeechProbability": 0.9428148865699768,
+                "highestCompressionRatio": 0.27272728085517883
+              },
+              "fixtureSha256": "d303811b8c84619667cd0501342f84ec6cbe69f7aa3856dcf52fabda374c92b8"
+            }
+          ]
+        },
+        "published": false,
+        "diagnosis": "Concise-state instruction did not prevent the20s timeout. Audio3/3passed. Separate synthetic measurement added for diagnosis; cannot turn a failed runtime call into a pass."
       }
     ],
     "lastPublishedDeployId": "6aced9d34e4ec2c5c72ec53a",

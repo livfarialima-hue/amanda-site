@@ -229,5 +229,15 @@
     "lastFailedDeploy": "6aceea9ab9eea03120abc4f9",
     "audioFixturesPassed": 3,
     "canonicalIdsRevalidated": true
+  },
+  "timeoutMeasurementRefresh": {
+    "checkedAt": "2026-10-14T02:53:13.198Z",
+    "remoteProductionHead": "c1773d4ed2639597edfc1d46b2f9c3da3263bb2d",
+    "netlifyPublishedDeploy": "6aced9d34e4ec2c5c72ec53a",
+    "netlifyPublishedCommit": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+    "appsScriptVersion": 163,
+    "featuresInPublishedDeploy": "off",
+    "lastFailedDeploy": "6aceed62c2f868a45ebbf5c6",
+    "audioFixturesPassed": 3
   }
 }
