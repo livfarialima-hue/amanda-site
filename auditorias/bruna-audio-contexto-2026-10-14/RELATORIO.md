@@ -1,6 +1,6 @@
 # Correção de contexto após áudio — 14/10/2026
 
-Estado: testado localmente; SYNC_PENDING até a publicação e verificação.
+Estado: publicado e verificado no Netlify em 14/10/2026, 09:16:27 BRT. Reconciliação documental e Drive registrada em PUBLICACAO.json.
 
 A transcrição canônica continha a pergunta sobre avaliação online. O registro semântico identificou consulta online, mas o ramo de espera de preço enviou uma cópia escolhida antes dessa decisão. Diagnóstico baseado na transcrição e nos eventos armazenados; o áudio original não foi ouvido.
 
@@ -20,4 +20,6 @@ Reprodução exclusivamente sintética do texto e áudio, mudança de assunto, s
 
 Antes da publicação, LEADS/CRM confirmou 556 oportunidades únicas, vínculo do caso à linha visível, fase Qualificado, responsável human_team e atribuição original. Há 12 eventos Ads ready e 12 transações únicas exportadas, com igualdade de clique, ação, data, valor e moeda. Isso não comprova aceite pelo Google Ads. Recibos sem dados pessoais em PREFLIGHT.json e REVISAO.json.
 
-O gate de produção exige 16 cenários com IA real, os três áudios sintéticos e histórico completo. Nenhum requisito foi dispensado. Publicação e Drive ainda pendentes. Reversão por novo commit equivalente à base funcional dcb5df99f91a, pela integração Git, preservando dados e recibos. Daniel/equipe: observar as primeiras conversas naturais e 48 horas; conter se houver assunto trocado, urgência perdida, duplicidade ou quebra da prioridade humana.
+O primeiro build de produção aprovou 16 cenários com IA real, os três áudios sintéticos e ambos os casos de histórico completo. O novo caso remoto passou em 12,349 s e preço/fotos em 19,259 s, dentro do limite de 20. Nenhum requisito foi dispensado. Commit bbf297da98946badd4460989064e4f2636f1211c; Netlify 6acf71e94079694bfc8221a4. Domínio, branch e endereço imutável conferidos: site/health 200 e POST sem assinatura 401. Reversão por novo commit equivalente à base funcional dcb5df99f91a, pela integração Git, preservando dados e recibos. Daniel/equipe: observar as primeiras conversas naturais e 48 horas; conter se houver assunto trocado, urgência perdida, duplicidade ou quebra da prioridade humana.
+
+Na releitura, 556 oportunidades únicas, fase, vínculo e atribuição preservados; exportação Ads igual à base. Atividade natural atualizou uma oportunidade antes do deploy, e a equipe respondeu depois, com pausa humana registrada. A projeção visível de responsável/aguardando difere do CRM canônico na mesma versão; atualização vinculada à entrada anterior à publicação. Essa divergência exige diagnóstico específico e está no painel executivo, sem migração por suposição. Não se afirma estabilidade de todos os campos da planilha nem entrega automática natural já validada.

@@ -48,10 +48,12 @@
     "Empty semantic reply code uses valid empty string; null is invalid."
   ],
   "liveModelGate": {
-    "status": "pending_production_build",
+    "status": "passed_production_build",
     "scenarios": 16,
     "audioScenarios": 3,
-    "fullHistoryRequired": true
+    "fullHistoryPassed": 2,
+    "attempts": 1,
+    "evidence": "auditorias/bruna-audio-contexto-2026-10-14/PUBLICACAO.json"
   },
   "limits": [
     "No original patient audio replayed; diagnosis uses stored transcription and canonical decision.",

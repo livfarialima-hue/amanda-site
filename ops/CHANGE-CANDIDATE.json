@@ -13,11 +13,12 @@
   "risk": {
     "level": "critical",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
       "auditorias/bruna-audio-contexto-2026-10-14/PREFLIGHT.json",
+      "auditorias/bruna-audio-contexto-2026-10-14/PUBLICACAO.json",
       "auditorias/bruna-audio-contexto-2026-10-14/RELATORIO.md",
       "auditorias/bruna-audio-contexto-2026-10-14/REVISAO.json",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
@@ -356,7 +357,11 @@
     ]
   },
   "release": {
-    "status": "not_published",
-    "externalWritesPerformed": false
+    "status": "platforms_verified_drive_pending",
+    "externalWritesPerformed": true,
+    "approvedCommit": "bbf297da98946badd4460989064e4f2636f1211c",
+    "netlifyDeployId": "6acf71e94079694bfc8221a4",
+    "appsScriptVersion": 164,
+    "verifiedAt": "2026-10-14T12:21:06.606Z"
   }
 }
