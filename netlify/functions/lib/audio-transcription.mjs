@@ -48,9 +48,17 @@ export function assessTranscript(data) {
   const lowFraction = valid ? scores.filter(score => score < -2).length / scores.length : null;
   const usable = text.length > 1 && text.length <= 4000 && /[\p{L}\p{N}]/u.test(text) && valid &&
     mean >= -0.6 && lowFraction <= 0.1 && !/\[(?:inaud[ií]vel|incompreens[ií]vel|sil[eê]ncio)\]/i.test(text);
+  // An optimistic bound is used only to veto retries when the known negative
+  // scores already fail quality. It can never make this assessment eligible.
+  const retryScores = !scoreDiagnostics.missing && !scoreDiagnostics.nonNumeric && !scoreDiagnostics.nonFinite
+    ? scores.map(score => Math.min(0, score)) : [];
+  const malformedConfidenceCanRetry = scoreDiagnostics.positive > 0 && !scoreDiagnostics.missing &&
+    !scoreDiagnostics.nonNumeric && !scoreDiagnostics.nonFinite && text.length > 1 && text.length <= 4000 &&
+    retryScores.reduce((a, b) => a + b, 0) / retryScores.length >= -0.6 &&
+    retryScores.filter(score => score < -2).length / retryScores.length <= 0.1;
   return { status: usable ? "transcribed" : "uncertain", text: text.slice(0, 12000),
     truncated: text.length > 12000, autoReplyEligible: usable, model: MODEL,
-    quality: { meanLogprob: mean, lowTokenFraction: lowFraction, tokenCount: scores.length, scoreDiagnostics } };
+    quality: { meanLogprob: mean, lowTokenFraction: lowFraction, tokenCount: scores.length, scoreDiagnostics, malformedConfidenceCanRetry } };
 }
 
 async function boundedBytes(response, maximum, controller) {
@@ -104,13 +112,35 @@ export async function transcribeYCloudAudio(message, { eventId, phone }, {
     const form = new FormData();
     form.set("model", MODEL); form.set("response_format", "json"); form.append("include[]", "logprobs");
     form.set("file", new Blob([bytes], { type: descriptor.mime }), `voice.${descriptor.extension}`);
-    const response = await fetchImpl("https://api.openai.com/v1/audio/transcriptions", {
-      method: "POST", headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` }, body: form,
-      redirect: "error", signal: controller.signal,
-    });
-    if (!response.ok) throw new Error("transcription_provider_failed");
-    const body = await boundedBytes(response, 200000, controller);
-    result = assessTranscript(JSON.parse(body.toString("utf8")));
+    const requestTranscript = async () => {
+      const response = await fetchImpl("https://api.openai.com/v1/audio/transcriptions", {
+        method: "POST", headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` }, body: form,
+        redirect: "error", signal: controller.signal,
+      });
+      if (!response.ok) throw new Error("transcription_provider_failed");
+      const body = await boundedBytes(response, 200000, controller);
+      return assessTranscript(JSON.parse(body.toString("utf8")));
+    };
+    result = await requestTranscript();
+    const diagnostics = result.quality.scoreDiagnostics;
+    // The provider has returned impossible positive log probabilities. Do not
+    // clamp them or retry a genuinely low-confidence result. One fresh reading
+    // may recover malformed confidence, within the same lease and 35s deadline.
+    // It must agree with the first text and independently pass every quality gate.
+    if (result.quality.malformedConfidenceCanRetry) {
+      const original = result;
+      const comparable = text => text.normalize("NFC").replace(/\s+/gu, " ").trim();
+      let outcome = "request_failed";
+      let confirmationQuality;
+      try {
+        const repeated = await requestTranscript();
+        confirmationQuality = repeated.quality;
+        outcome = comparable(original.text) !== comparable(repeated.text) ? "text_disagrees" :
+          repeated.autoReplyEligible ? "recovered" : "confidence_still_invalid_or_low";
+        if (outcome === "recovered") result = repeated;
+      } catch { /* Preserve the original uncertain transcript for human review. */ }
+      result = { ...result, confidenceRecovery: { attempts: 2, outcome, initialScoreDiagnostics: diagnostics, confirmationQuality } };
+    }
   } catch (error) {
     const permanent = ["audio_too_large", "empty_audio", "audio_expired", "audio_hash_mismatch", "audio_mime_mismatch"];
     const reason = permanent.includes(error?.message) ? error.message : "transcription_request_failed";

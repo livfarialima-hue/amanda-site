@@ -1,10 +1,10 @@
 {
-  "status": "activation_pending_independent_audio_diagnostic",
+  "status": "activation_pending_bounded_confidence_recovery",
   "recordedAt": "2026-10-14T01:22:51.511Z",
   "candidateFunctionalCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
   "pullRequest": "https://github.com/livfarialima-hue/amanda-site/pull/11",
   "localValidation": {
-    "uniqueTests": 2119,
+    "uniqueTests": 2126,
     "failures": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -237,6 +237,40 @@
         },
         "published": false,
         "gateUnchanged": true
+      },
+      {
+        "deployId": "6acee0cc10efdbc18a41e5e2",
+        "commit": "863878b2d1f147256b7eb313c1c2869f204ce9b5",
+        "context": "production",
+        "purpose": "independent_confidence_diagnostics",
+        "status": "failed",
+        "checkedAt": "2026-10-14T01:56:54.484Z",
+        "passedScenarios": 15,
+        "failedScenario": "synthetic_audio",
+        "audioCheck": {
+          "status": "failed",
+          "syntheticOnly": true,
+          "patientMessagesSent": 0,
+          "apiCalls": 1,
+          "model": "gpt-4o-transcribe",
+          "elapsedMs": 1761,
+          "transcription": "Qual é o endereço da Clínica Live?",
+          "quality": {
+            "meanLogprob": null,
+            "lowTokenFraction": null,
+            "tokenCount": 8,
+            "scoreDiagnostics": {
+              "missing": 0,
+              "nonNumeric": 0,
+              "nonFinite": 0,
+              "positive": 4,
+              "maxPositive": 0.000118255615234375
+            }
+          },
+          "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+        },
+        "published": false,
+        "diagnosis": "4 of 8 scores were positive, max 0.000118255615234375; the cause is unconfirmed. No tolerance introduced. Strict validation blocked release."
       }
     ],
     "lastPublishedDeployId": "6aced9d34e4ec2c5c72ec53a",

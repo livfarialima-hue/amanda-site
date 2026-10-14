@@ -33,7 +33,8 @@ test('conversation failure still collects audio confidence without allowing depl
     });
     assert.equal(result.status, 'failed');
     assert.equal(result.results[0].passed, false);
-    assert.deepEqual(destinations, ['https://api.openai.com/v1/responses', 'https://api.openai.com/v1/audio/transcriptions']);
+    assert.deepEqual(destinations, ['https://api.openai.com/v1/responses',
+      ...Array(logprob <= 0 ? 1 : 2).fill('https://api.openai.com/v1/audio/transcriptions')]);
     assert.equal(result.audioCheck.status, logprob <= 0 ? 'passed' : 'failed');
     assert.equal(result.audioCheck.quality.scoreDiagnostics.positive, logprob > 0 ? 1 : 0);
     assert.equal(result.patientMessagesSent, 0);

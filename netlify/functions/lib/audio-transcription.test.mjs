@@ -102,3 +102,111 @@ test("confidence diagnostics distinguish invalid scores without admitting them o
   assert.equal(valid.autoReplyEligible, true);
   assert.deepEqual(valid.quality.scoreDiagnostics, { missing: 0, nonNumeric: 0, nonFinite: 0, positive: 0, maxPositive: null });
 });
+
+const clearText = "Qual o endereço da clínica?";
+const invalidConfidence = { text: clearText, logprobs: [{ logprob: 0.000118255615234375 }, { logprob: -0.1 }] };
+const validConfidence = { text: clearText, logprobs: [{ logprob: -0.1 }] };
+function withTranscriptions(responses) {
+  const o = options(), baseFetch = o.fetchImpl;
+  let index = 0;
+  o.fetchImpl = async (url, init) => {
+    if (url.startsWith("https://api.ycloud.com/")) return baseFetch(url, init);
+    o.calls.push({ url, init });
+    const response = responses[index++];
+    if (typeof response === "function") return response(init);
+    assert.ok(response, "No unbounded transcription retry");
+    return Response.json(response);
+  };
+  return o;
+}
+
+test("malformed confidence can recover once only with matching text and strictly valid new scores", async () => {
+  const o = withTranscriptions([invalidConfidence, { ...validConfidence, text: "  Qual  o endereço da cli\u0301nica?  " }]);
+  const result = await transcribeYCloudAudio(message, identity, o);
+  assert.equal(result.autoReplyEligible, true);
+  assert.equal(result.confidenceRecovery.outcome, "recovered");
+  assert.equal(result.quality.meanLogprob, -0.1);
+  assert.equal(result.confidenceRecovery.initialScoreDiagnostics.positive, 1);
+  assert.equal(result.confidenceRecovery.confirmationQuality.scoreDiagnostics.positive, 0);
+  assert.equal(o.calls.length, 3);
+  assert.deepEqual(await transcribeYCloudAudio(message, identity, o), result);
+  assert.equal(o.calls.length, 3);
+  assert.equal(o.calls[1].init.signal, o.calls[2].init.signal);
+  assert.equal(o.calls[1].init.body, o.calls[2].init.body);
+});
+
+test("valid low confidence and known weak scores are never retried to obtain a better score", async () => {
+  for (const logprobs of [[{ logprob: -3 }], [{ logprob: -3 }, { logprob: 0.0001 }]]) {
+    const o = withTranscriptions([{ text: clearText, logprobs }]);
+    const result = await transcribeYCloudAudio(message, identity, o);
+    assert.equal(result.autoReplyEligible, false);
+    assert.equal(result.confidenceRecovery, undefined);
+    assert.equal(o.calls.length, 2);
+  }
+});
+
+test("disagreement, repeated malformed confidence and weak confirmation preserve the uncertain first text", async () => {
+  for (const confirmation of [
+    { ...validConfidence, text: "Não quero o endereço da clínica." },
+    { ...validConfidence, text: "Qual o endereço da clínica!" },
+    { ...validConfidence, text: "Qual o endereco da clínica?" },
+    { ...validConfidence, text: "Qual o endereço da Clínica?" },
+    invalidConfidence,
+    { text: clearText, logprobs: [{ logprob: -3 }] },
+  ]) {
+    const o = withTranscriptions([invalidConfidence, confirmation]);
+    const result = await transcribeYCloudAudio(message, identity, o);
+    assert.equal(result.status, "uncertain");
+    assert.equal(result.autoReplyEligible, false);
+    assert.equal(result.text, clearText);
+    assert.notEqual(result.confidenceRecovery.outcome, "recovered");
+    assert.equal(o.calls.length, 3);
+  }
+});
+
+test("a failed confirmation keeps the uncertain receipt without leaking provider errors", async () => {
+  const o = withTranscriptions([invalidConfidence, () => { throw new Error("private-provider-error"); }]);
+  const result = await transcribeYCloudAudio(message, identity, o);
+  assert.equal(result.status, "uncertain");
+  assert.equal(result.text, clearText);
+  assert.equal(result.confidenceRecovery.outcome, "request_failed");
+  assert.doesNotMatch(JSON.stringify(result), /private-provider-error|synthetic-openai|synthetic-provider/);
+  assert.deepEqual(await transcribeYCloudAudio(message, identity, o), result);
+  assert.equal(o.calls.length, 3);
+});
+
+test("the confirmation shares the original 35 second deadline", async t => {
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  let reachedConfirmation;
+  const entered = new Promise(resolve => { reachedConfirmation = resolve; });
+  const o = withTranscriptions([
+    () => { t.mock.timers.tick(10000); return Response.json(invalidConfidence); },
+    init => new Promise((_, reject) => {
+      init.signal.addEventListener("abort", () => reject(new Error("aborted")), { once: true });
+      reachedConfirmation();
+    }),
+  ]);
+  const pending = transcribeYCloudAudio(message, identity, o);
+  await entered;
+  t.mock.timers.tick(24999);
+  assert.equal(o.calls[2].init.signal.aborted, false);
+  t.mock.timers.tick(1);
+  assert.equal(o.calls[2].init.signal.aborted, true);
+  const result = await pending;
+  assert.equal(result.status, "uncertain");
+  assert.equal(result.confidenceRecovery.outcome, "request_failed");
+});
+
+test("a concurrent worker cannot duplicate a confidence recovery", async () => {
+  let release, reachedConfirmation;
+  const held = new Promise(resolve => { release = resolve; });
+  const entered = new Promise(resolve => { reachedConfirmation = resolve; });
+  const o = withTranscriptions([invalidConfidence, async () => { reachedConfirmation(); await held; return Response.json(validConfidence); }]);
+  const first = transcribeYCloudAudio(message, identity, o);
+  await entered;
+  assert.equal((await transcribeYCloudAudio(message, identity, o)).reason, "transcription_in_progress");
+  release();
+  const result = await first;
+  assert.equal(result.autoReplyEligible, true);
+  assert.equal(o.calls.length, 3);
+});

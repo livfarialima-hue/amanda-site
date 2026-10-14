@@ -28,8 +28,9 @@ export async function checkBrunaAudioLive({ env = process.env, manifest, fetchIm
         apiCalls++; return fetchImpl(target, options);
       },
     });
-  const passed = apiCalls === 1 && result.autoReplyEligible === true && /endere[çc]o/i.test(result.text) && /cl[ií]nica/i.test(result.text);
+  const requestCountValid = apiCalls === 1 || apiCalls === 2 && result.confidenceRecovery?.outcome === "recovered";
+  const passed = requestCountValid && result.autoReplyEligible === true && /endere[çc]o/i.test(result.text) && /cl[ií]nica/i.test(result.text);
   return { status: passed ? "passed" : "failed", syntheticOnly: true, patientMessagesSent: 0,
     apiCalls, model: result.model, elapsedMs: Date.now() - started, transcription: result.text,
-    quality: result.quality, reason: result.reason, fixtureSha256: createHash("sha256").update(bytes).digest("hex") };
+    quality: result.quality, confidenceRecovery: result.confidenceRecovery, reason: result.reason, fixtureSha256: createHash("sha256").update(bytes).digest("hex") };
 }

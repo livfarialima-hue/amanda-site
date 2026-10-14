@@ -30,11 +30,11 @@
     ]
   },
   "validation": {
-    "coreTests": 2066,
-    "scriptTests": 15,
+    "coreTests": 2072,
+    "scriptTests": 16,
     "scriptTestsAlsoInCore": 0,
     "additionalContractTests": 38,
-    "uniqueTests": 2119,
+    "uniqueTests": 2126,
     "failed": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -183,5 +183,22 @@
       "scripts/check-bruna-model-live.test.mjs": "92bc968327e13c1278a08b3f2e459408af462b392788419597c928d50b53f883"
     },
     "behavior": "Independent synthetic audio diagnostic executes even after a conversation failure. The build still requires every conversation and the required audio gate. No timeout, model, assertion or confidence change."
+  },
+  "confidenceRecoveryReview": {
+    "status": "completed_no_remaining_actionable_findings",
+    "reviewer": "/root/revisao_independente",
+    "reviewedBase": "863878b2d1f147256b7eb313c1c2869f204ce9b5",
+    "workingDiff": true,
+    "focusedTests": 32,
+    "normalization": "CRLF to LF",
+    "hashes": {
+      "netlify/functions/lib/audio-transcription.mjs": "51a1ff7c285464a89ed8aa3b60462563b7753863184bb52444c771fa3617a197",
+      "netlify/functions/lib/audio-transcription.test.mjs": "457e3ff06bca8e791ad8d19ef73cd9f21139febaa83c46e9248f37f709a42dc5",
+      "scripts/check-bruna-audio-live.mjs": "a8cfa14d60a9ec82f3c77953f1ffc47b3763374be0ca552477fb58c7dd45d096",
+      "scripts/check-bruna-audio-live.test.mjs": "e15451458c1ab425242b9bf6605dbd66e0a4a733497b175f8bc6d7b940a9a0b5",
+      "scripts/check-bruna-model-live.test.mjs": "5cac79a17c4e8f5f32a03847dc4d0c06a71367c76ea6eb59d941c8c1c2bea140"
+    },
+    "behavior": "One recovery request for malformed confidence; known weak scores veto retry. Exact text agreement after NFC/whitespace, unchanged strict second confidence, shared35s deadline, cache and concurrency. Errors or disagreement retain uncertain first transcript.",
+    "checkedAt": "2026-10-14T02:04:10.874Z"
   }
 }

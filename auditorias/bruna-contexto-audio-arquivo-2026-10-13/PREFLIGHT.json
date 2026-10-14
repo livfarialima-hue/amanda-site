@@ -175,5 +175,17 @@
     "productionFlagsConfiguredForNextSuccessfulBuild": true,
     "lastFailedDeploy": "6acedefd10fefd71591ff6fe",
     "lastFailure": "conversation_timeout_prevented_audio_diagnostic"
+  },
+  "confidenceRecoveryRefresh": {
+    "checkedAt": "2026-10-14T02:04:10.874Z",
+    "remoteProductionHead": "863878b2d1f147256b7eb313c1c2869f204ce9b5",
+    "netlifyPublishedDeploy": "6aced9d34e4ec2c5c72ec53a",
+    "netlifyPublishedCommit": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+    "appsScriptVersion": 163,
+    "featuresInPublishedDeploy": "off",
+    "productionFlagsConfiguredForNextSuccessfulBuild": true,
+    "lastFailedDeploy": "6acee0cc10efdbc18a41e5e2",
+    "all15ConversationsPassed": true,
+    "providerPositiveScoreObserved": true
   }
 }
