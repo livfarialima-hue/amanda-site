@@ -93,15 +93,15 @@ test("a nighttime price request for another surgery alerts and acknowledges rece
                 {
                   type: "output_text",
                   text: JSON.stringify({
-                    route: "standard_reply",
+                    route: "human_review",
                     confidence: "high",
-                    automaticAllowed: true,
+                    automaticAllowed: false,
                     urgent: false,
                     professional: "amanda",
                     procedure: "blefaroplastia",
-                    replyCode: "SURGICAL-PRICE-INITIAL-01",
+                    replyCode: "UNKNOWN-REVIEW-01",
                     suggestedReply: "A pergunta é sobre o valor da cirurgia.",
-                    reviewReason: "price_initial_information",
+                    reviewReason: "unknown_digest:preco_blefaroplastia",
                     conversationState: {
                       activeTopic: "preço da blefaroplastia",
                       patientAct: "question",

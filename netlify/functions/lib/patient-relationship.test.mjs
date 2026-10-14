@@ -9,6 +9,17 @@ import {
   patientRelationshipPromptContext,
 } from "./patient-relationship.mjs";
 
+test('a commitment follows the semantic subject without losing identity or a pending fallback', () => {
+  const input={eventId:'synthetic-current',phone:'+5511900000000',receivedAt:'2026-10-14T12:00:00Z',messageText:'E o orçamento?',
+    plan:{route:'human_review',reason:'lifting_price_range_already_sent_review'}};
+  const remote=buildPatientCommitment({...input,semanticDecision:{route:'human_review',reviewReason:'unknown_digest:consulta_online'}});
+  assert.equal(remote.kind,'human_review');assert.match(remote.summary,/avaliação online/);
+  assert.equal(remote.eventId,input.eventId);assert.equal(remote.phone,input.phone);assert.equal(remote.dueAt,'2026-10-14T16:00:00.000Z');
+  assert.equal(buildPatientCommitment(input).kind,'procedure_price','failed/missing assessment does not erase the original obligation');
+  const urgent=buildPatientCommitment({...input,semanticDecision:{route:'human_review',urgent:true,reviewReason:'possible_urgent_symptoms'}});
+  assert.equal(urgent.kind,'care_journey');assert.doesNotMatch(urgent.summary,/faixa|valor/);
+});
+
 test("permanent no-bot preference forces human review", () => {
   const result = applyPatientRelationshipPolicy(
     {

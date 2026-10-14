@@ -5,7 +5,7 @@ import { runOpenAIShadow } from '../netlify/functions/lib/openai-shadow.mjs';
 import { runLeadClassifier } from '../netlify/functions/lib/lead-classifier.mjs';
 import { reviewScheduledFollowupContext } from '../netlify/functions/lib/scheduled-followup-context-review.mjs';
 import { buildConsultationInformationReply, buildAdministrativeSideAnswer } from '../netlify/functions/lib/patient-replies.mjs';
-import { approvedPartialAnswer } from '../netlify/functions/lib/knowledge-learning.mjs';
+import { approvedPartialAnswer, buildUnknownHoldingReply } from '../netlify/functions/lib/knowledge-learning.mjs';
 import { buildLiftingFacialInformationReply } from '../netlify/functions/lib/lifting-information.mjs';
 import { selectConfirmedReplyText, semanticDecisionConfirmsDeterministicReply, deterministicReplyCoversPatientQuestions } from '../netlify/functions/lib/semantic-reply-policy.mjs';
 import { buildSurgicalPriceSuggestedReply } from '../netlify/functions/lib/surgical-price-review.mjs';
@@ -57,6 +57,12 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       i % 2 ? 'Entendido.' : `Estou apenas pesquisando e organizando minhas dúvidas, etapa ${i}.`,
     eventId: `synthetic-long-${i}`, at: new Date(Date.UTC(2026, 8, 1, 0, i)).toISOString() }));
   const scenarios = [
+    { name:'remote_assessment_after_price_audio_context', remoteAssessment:true, procedure:'lifting_facial',
+      text:'Moro no exterior e quero agendar online. Consigo fazer um orçamento online para planejar minha viagem e operar?',
+      recentConversation:[{role:'user',source:'patient',text:'Gostaria de informações de lifting facial.'},
+        {role:'assistant',source:'bruna',text:'O lifting facial tem uma referência entre R$ 26 mil e R$ 42 mil. É uma referência para planejamento, não é um orçamento fechado.'},
+        {role:'user',source:'patient',text:'Posso agendar online?'},
+        {role:'assistant',source:'bruna',text:'Você quer agendar por WhatsApp ou saber se a consulta pode ser online?'}] },
     { name: 'consultation_contextual', text: 'Quanto custa a consulta com a Dra. Amanda? Ainda estou só pesquisando.', procedure: 'unknown', code: 'AMANDA-CONSULTA-INFO-01', reason: 'consultation_information_request' },
     { name: 'lifting_information', text: 'Onde ficam as cicatrizes do lifting facial?', procedure: 'lifting_facial', code: 'LIFTING-FACIAL-INFORMATION-01', reason: 'lifting_facial_information_request' },
     { name: 'personal_question_with_reference', text: 'Quanto custa a consulta? Ref. G26LIFT. Ainda estou pesquisando.', procedure: 'lifting_facial', code: 'AMANDA-CONSULTA-INFO-01', reason: 'consultation_information_request',
@@ -126,7 +132,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     } else {
       // Reuse the actual owner of the reply contract. A hand-written partial
       // contract normalizes to risk=red/allowedResponseKind=none in the adapter.
-      const plan = scenario.priceWithPhotos ? enrichAutomationPlanFromConversation(planAutomation({text:scenario.text,messageType:'text'}),scenarioHistory) :
+      const plan = scenario.priceWithPhotos || scenario.remoteAssessment ? enrichAutomationPlanFromConversation(planAutomation({text:scenario.text,messageType:'text'}),scenarioHistory) :
         { route: scenario.fullHistoryResolved ? 'ignore' : scenario.urgent || scenario.review ? 'human_review' : 'standard_reply', professional: 'amanda', procedure: scenario.procedure,
         automaticAllowed: !scenario.urgent && !scenario.review, replyCode: scenario.code, reason: scenario.reason };
       const conversationAction = decideConversationAction({ text: scenario.text, plan, recentConversation: scenarioHistory, conversionExperienceEnabled: true });
@@ -142,6 +148,9 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         previousConversationState: scenario.previousConversationState, learningContext: scenario.learningContext,
         patientRelationship: scenario.patientRelationship,
         priorInteractionKnown: true, policyHints, replyContract, deterministicUrgent: !!scenario.urgent }, options);
+      if (scenario.remoteAssessment && result.status === 'completed') {
+        selectedReply = buildUnknownHoldingReply({currentText:scenario.text, reviewReason:result.decision?.reviewReason, procedure:scenario.procedure});
+      }
       if ((scenario.code || scenario.educational) && result.status === 'completed') {
         const candidate = {status:'completed', decision: { route: 'standard_reply', confidence: 'high', automaticAllowed: true, urgent: false,
           professional: 'amanda', procedure: scenario.procedure, replyCode: scenario.code, suggestedReply: preview } };
@@ -160,6 +169,8 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     const procedureMatches = result.decision?.procedure === scenario.procedure ||
       (scenario.knowledge === true && scenario.procedure === 'unknown' && result.decision?.procedure === '');
     const behaviorPassed = scenario.classification ? true : scenario.followup ? result.allowed === false :
+      scenario.remoteAssessment ? result.decision?.route === 'human_review' && result.decision?.automaticAllowed === false &&
+        result.decision?.replyCode === 'UNKNOWN-REVIEW-01' && /avaliação online/.test(selectedReply) && !/faixa|R\$|confirmada|agendad/i.test(selectedReply) :
       scenario.fullHistoryResolved ? result.decision?.route === 'ignore' && result.decision?.automaticAllowed === false && !result.decision?.suggestedReply :
       scenario.urgent ? result.decision?.automaticAllowed === false :
       scenario.review ? result.decision?.route === 'human_review' && result.decision?.automaticAllowed === false &&

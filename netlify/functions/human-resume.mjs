@@ -28,7 +28,7 @@ import {
 } from "./lib/human-resume-queue.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
 import { shouldSendOpenAIPatientReply, buildAdministrativeSideAnswer } from "./lib/patient-replies.mjs";
-import { approvedPartialAnswer, knowledgeRuleId } from "./lib/knowledge-learning.mjs";
+import { approvedPartialAnswer, knowledgeRuleId, buildUnknownHoldingReply, isUnknownReviewDecision } from "./lib/knowledge-learning.mjs";
 import {
   appendConversationTurn,
   readConversationTurns,
@@ -942,7 +942,9 @@ export async function processHumanResumeJob(
         job,
         reason,
         dependencies,
-        "",
+        isUnknownReviewDecision(aiResult.decision) && !aiResult.decision.urgent
+          ? buildUnknownHoldingReply({patientName:job.patientName, introduceBruna:false, currentText:job.text,
+              reviewReason:reason, procedure:aiResult.decision.procedure || job.procedure}) : "",
         aiResult.decision?.route === "human_review" && aiResult.decision?.confidence === "high" && !aiResult.decision?.urgent
           ? suggestedReply : "",
         {

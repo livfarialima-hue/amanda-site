@@ -250,6 +250,22 @@ test("the holding reply is transparent without exposing automation", () => {
   assert.doesNotMatch(reply, /\b(?:bot|inteligência artificial|fila|regra)\b/i);
 });
 
+test('a remote consultation review keeps its subject despite price and scheduling words', () => {
+  const reply = buildUnknownHoldingReply({currentText:'Quero agendar uma avaliação online para planejar o orçamento.',reviewReason:'unknown_digest:consulta_online',procedure:'lifting_facial'});
+  assert.match(reply,/avaliação online/);
+  assert.doesNotMatch(reply,/faixa|valor para|lifting|R\$|confirmada/);
+});
+
+test('the unresolved semantic subject replaces keyword precedence from the full question', () => {
+  const text='Quero saber o preço, se há desconto e quantos dias de afastamento. Preciso de relatório para reembolso.';
+  const recovery=buildUnknownHoldingReply({currentText:text,reviewReason:'unknown_digest:afastamento_lifting',procedure:'lifting_facial'});
+  assert.doesNotMatch(recovery,/valor|pagamento|desconto/);
+  const remote=buildUnknownHoldingReply({currentText:text,reviewReason:'unknown_digest:orcamento_avaliacao_a_distancia'});
+  assert.match(remote,/avaliação online/);
+  const unknown=buildUnknownHoldingReply({currentText:text,reviewReason:'unknown_digest:equipamento_especifico'});
+  assert.equal(unknown,'','an unrecognized subject must not invent a price promise');
+});
+
 test("an unmapped unknown stays silent instead of producing a generic holding reply", () => {
   assert.equal(
     buildUnknownHoldingReply({

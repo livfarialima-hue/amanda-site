@@ -1,0 +1,61 @@
+{
+  "status": "passed_local",
+  "checkedAt": "2026-10-14T12:12:47.875Z",
+  "syntheticOnly": true,
+  "patientMessagesSent": 0,
+  "operationalRoutinesExecuted": 0,
+  "fullSuite": {
+    "passed": 2134,
+    "failed": 0,
+    "log": "tmp/audio-context-full-tests-final.txt"
+  },
+  "complementary": {
+    "passed": 52,
+    "failed": 0,
+    "log": "tmp/audio-context-complementary.txt"
+  },
+  "build": {
+    "status": "passed",
+    "files": 193,
+    "sitemapUrls": 54,
+    "auditsInArtifact": 0
+  },
+  "checks": {
+    "change": "OK",
+    "architecture": "OK",
+    "diff": "OK",
+    "rollback": "tracked patch reverse check passed; new audit files contain no runtime",
+    "ops": "SYNC_PENDING expected until publication and Drive verification"
+  },
+  "independentReview": {
+    "reviewer": "audio_context_review",
+    "status": "completed",
+    "blockingFindings": 0,
+    "reviewOnly": true,
+    "findingsResolved": [
+      "stale price subject in alert",
+      "stale price subject in patient commitment",
+      "administrative priority above urgency",
+      "unknown holding selected by stale words",
+      "remote professional routing",
+      "remote semantic review without reply code"
+    ]
+  },
+  "testMaintenance": [
+    "Two legacy fixtures now return the human price review that their assertions already expected.",
+    "Urgency transport test reflects semantic assessment before commitment.",
+    "Impact registry covers existing overnight test and patient relationship owner.",
+    "Empty semantic reply code uses valid empty string; null is invalid."
+  ],
+  "liveModelGate": {
+    "status": "pending_production_build",
+    "scenarios": 16,
+    "audioScenarios": 3,
+    "fullHistoryRequired": true
+  },
+  "limits": [
+    "No original patient audio replayed; diagnosis uses stored transcription and canonical decision.",
+    "Teleconsultation availability and price as general approved facts await Daniel; no new factual promotion.",
+    "Google Ads import acceptance not verified."
+  ]
+}

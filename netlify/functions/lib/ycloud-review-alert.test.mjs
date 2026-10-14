@@ -590,7 +590,7 @@ test("urgent webhook alerts Daniel and never sends to the patient", async () => 
     );
     assert.equal(
       JSON.parse(requests[2].options.body).action,
-      "record_patient_commitment",
+      "get_bot_knowledge_context",
     );
     assert.equal(
       requests[3].url,
@@ -598,7 +598,7 @@ test("urgent webhook alerts Daniel and never sends to the patient", async () => 
     );
     assert.equal(
       JSON.parse(requests[3].options.body).action,
-      "get_bot_knowledge_context",
+      "record_patient_commitment",
     );
     assert.equal(
       requests[4].url,

@@ -16,6 +16,20 @@ const ACTIVE_ENV = {
 const INITIAL_PRICE_REPLY =
   "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 
+test('resumed remote assessment uses semantics without repeating a surgical price holding', async () => {
+  const deps=dependencies(); let calls=0;
+  deps.runOpenAIShadowImpl=async()=>{calls++;return {status:'completed',decision:{route:'human_review',confidence:'high',automaticAllowed:false,urgent:false,
+    professional:'amanda',procedure:'lifting_facial',replyCode:'UNKNOWN-REVIEW-01',reviewReason:'unknown_digest:consulta_online',suggestedReply:'Confirmar possibilidade de avaliação online.'}};};
+  await processHumanResumeJob(job({text:'Moro no exterior. Consigo fazer um orçamento online para planejar minha viagem?',
+    recentConversation:[{role:'user',text:'Gostaria de informações de lifting facial.'},
+      {role:'assistant',source:'bruna',text:'O lifting facial tem uma referência entre R$ 26 mil e R$ 42 mil.'}]}),{env:ACTIVE_ENV,now:NOW,...deps});
+  assert.equal(calls,1);
+  assert.equal(deps.patientMessages.length,1);
+  assert.match(deps.patientMessages[0].body,/avaliação online/);
+  assert.doesNotMatch(deps.patientMessages[0].body,/faixa|R\$|confirmada|agendad/);
+  assert.equal(deps.alerts.length,1);
+});
+
 for (const scenario of ['complete','invalid_amount','veto','new_human']) {
   test(`resumed photos and price preserve context and all guards: ${scenario}`,async()=>{
     const deps=dependencies();

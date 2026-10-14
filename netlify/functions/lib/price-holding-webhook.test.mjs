@@ -9,6 +9,70 @@ const SHEETS_URL = "https://sheets.example.test/webhook";
 const YCLOUD_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 
+for (const scenario of ['remote_text', 'remote_audio', 'remote_alert_failure', 'price_semantic_veto', 'price_semantic_without_code', 'price_ai_failure', 'price_alert_failure']) {
+  test(`current question owns the holding reply: ${scenario}`, async t => {
+    const settings = { YCLOUD_WEBHOOK_SECRET: WEBHOOK_SECRET, YCLOUD_API_KEY: 'synthetic',
+      GOOGLE_SHEETS_WEBHOOK_URL: SHEETS_URL, GOOGLE_SHEETS_WEBHOOK_SECRET: 'synthetic',
+      WHATSAPP_AUTOMATION_MODE: 'active', WHATSAPP_INBOUND_BACKGROUND_ENABLED: 'true',
+      WHATSAPP_AUDIO_TRANSCRIPTION_ENABLED: 'true', OPENAI_API_KEY: 'synthetic',
+      WHATSAPP_HUMAN_REPLY_GUARD_MS: '0', WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS: '0', WHATSAPP_REPLY_DEBOUNCE_AI_MS: '0',
+      WHATSAPP_ALERT_NUMBER: '+5511900000002', YCLOUD_ALERT_TEMPLATE_NAME: 'synthetic_review', YCLOUD_ALERT_TEMPLATE_LANGUAGE: 'pt_BR' };
+    const previous = Object.fromEntries(Object.keys(settings).map(k => [k, process.env[k]])); Object.assign(process.env, settings);
+    t.after(() => { for (const [k,v] of Object.entries(previous)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; } });
+    t.mock.method(console, 'log', () => {});
+    const sent = [], actions = [], order = [], alerts = [];
+    const remote = scenario.startsWith('remote_'), alertFailure = scenario.endsWith('alert_failure');
+    const text = remote ? 'Moro no exterior e quero agendar online. Consigo fazer um orçamento online para planejar minha viagem e operar?' : 'E o orçamento do lifting facial?';
+    const turns = [
+      { role:'user', source:'patient', eventId:`${scenario}-origin`, at:'2026-10-14T12:00:00Z', text:'Gostaria de informações de lifting facial.' },
+      { role:'assistant', source:'bruna', eventId:`${scenario}-range`, at:'2026-10-14T12:01:00Z', text:'O lifting facial tem uma referência entre R$ 26 mil e R$ 42 mil. É uma referência para planejamento, não é um orçamento fechado.' },
+      { role:'user', source:'patient', eventId:`${scenario}-online`, at:'2026-10-14T12:02:00Z', text:'Posso agendar online?' },
+      { role:'assistant', source:'bruna', eventId:`${scenario}-clarify`, at:'2026-10-14T12:03:00Z', text:'Você quer agendar pelo WhatsApp ou saber se a consulta pode ser online?' },
+    ];
+    t.mock.method(globalThis, 'fetch', async (url, options) => {
+      const data = JSON.parse(options.body);
+      if (url === SHEETS_URL) {
+        actions.push(data);
+        if (data.action === 'send_review_alert_email') { order.push('alert'); return Response.json({ok:!alertFailure,sent:!alertFailure},{status:alertFailure?500:200}); }
+        return Response.json(data.action === 'get_conversation_context' ? {ok:true,turns,professional:'amanda',opportunityId:scenario} :
+          {ok:true,updated:true,sent:true,routed:true,routeStatus:'resolved',professional:'amanda',opportunityId:scenario,humanTakeoverToday:false,patientRelationship:{found:false}});
+      }
+      if (url === 'https://api.openai.com/v1/responses') {
+        if (scenario === 'price_ai_failure') return Response.json({error:{code:'synthetic_unavailable'}},{status:503});
+        const topic = scenario === 'price_alert_failure' ? 'preco_cirurgia' : 'consulta_online';
+        return Response.json({model:'synthetic', output_text:JSON.stringify({route:'human_review',confidence:'high',automaticAllowed:false,
+          urgent:false, professional:'amanda',procedure:'lifting_facial',replyCode:scenario==='price_semantic_without_code'?'':'UNKNOWN-REVIEW-01',reviewReason:`unknown_digest:${topic}`,suggestedReply:'Confirmar a possibilidade de avaliação à distância com a equipe.',
+          conversationState:{activeTopic:topic,patientAct:'question',refersToEventId:'',lastClinicQuestion:'',lastClinicOffer:'',unresolvedQuestions:[topic],factsAlreadyProvided:['faixa cirúrgica'],owner:'human_team',nextExpectedAction:'conferir modalidade de avaliação',ambiguity:'',contextConfidence:'high'}})});
+      }
+      assert.equal(url, YCLOUD_URL, 'all external effects mocked');
+      if (data.to === '+5511900000002') {alerts.push(data);order.push('alert'); return Response.json({status:alertFailure?'failed':'accepted'},{status:alertFailure?500:200});}
+      order.push('patient'); sent.push(data); return Response.json({status:'accepted'});
+    });
+    const response = await handleYCloudWebhook(requestFor({id:`${scenario}-final`,type:'whatsapp.inbound_message.received',createTime:'2026-10-14T12:04:00Z',
+      whatsappInboundMessage:{id:`${scenario}-message`,from:'+5511900000000',to:'+5511900000001',sendTime:'2026-10-14T12:04:00Z',type:scenario==='remote_audio'?'audio':'text',text:{body:text}}}),
+      {livInboundBackground:true},{registerInboundRecoveryImpl:async()=>({status:'completed'}),transcribeYCloudAudioImpl:async()=>({status:'transcribed',autoReplyEligible:true,text})});
+    const result = await response.json();
+    const replies = sent.filter(x=>x.to === '+5511900000000');
+    if (scenario==='price_semantic_veto' || scenario==='price_semantic_without_code') {
+      assert.match(JSON.stringify([...alerts,...actions.filter(x=>x.action==='send_review_alert_email')]),/avaliação à distância/);
+      const commitment = actions.find(x=>x.action==='record_patient_commitment')?.commitment;
+      assert.equal(commitment?.kind,'human_review','LEADS commitment must follow the same semantic subject');
+      assert.match(commitment.summary,/avaliação online/);
+      assert.equal(commitment.opportunityId,scenario);assert.equal(commitment.professional,'amanda');
+      assert.equal(commitment.requestId,`${scenario}-final`);
+    }
+    if (scenario==='price_alert_failure') assert.equal(result.automaticWorkFinished,false,'failed alert remains recoverable');
+    if (!remote || alertFailure) {assert.equal(replies.length,0,JSON.stringify(result)); return;}
+    assert.equal(replies.length,1,JSON.stringify(result));
+    assert.match(replies[0].text.body,/avaliação online/);
+    assert.doesNotMatch(replies[0].text.body,/faixa|R\$|consulta confirmada|agendad|já está marcado/i);
+    assert.ok(order.indexOf('alert') < order.indexOf('patient'));
+    const inbound = actions.find(x=>x.action==='append_lead');
+    assert.ok(inbound,'canonical lead intake preserved');
+    if (scenario === 'remote_audio') assert.ok(actions.some(x=>JSON.stringify(x).includes('Transcrição automática de áudio')),'transcription provenance preserved');
+  });
+}
+
 for (const scenario of ['photo_price_complete','photo_price_invalid_amount','photo_price_veto','audio_photo_price_complete']) {
   test(`webhook preserves the whole text/photo/price turn: ${scenario}`, async t => {
     const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,

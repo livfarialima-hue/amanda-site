@@ -831,6 +831,14 @@ test("recognizes a price request preserved under a known-patient policy", () => 
   );
 });
 
+test('a semantic unknown subject cannot inherit the stale price plan', () => {
+  assert.equal(isSurgicalPriceReview({route:'human_review',replyCode:null,reviewReason:'orcamento_avaliacao_a_distancia'}),false);
+  assert.equal(isSurgicalPriceReview({route:'human_review',replyCode:'UNKNOWN-REVIEW-01',reviewReason:'unknown_digest:consulta_online'},
+    {reason:'lifting_price_range_already_sent_review'}),false);
+  assert.equal(isSurgicalPriceReview({route:'human_review',replyCode:'UNKNOWN-REVIEW-01',reviewReason:'unknown_digest:preco_cirurgia'},
+    {reason:'lifting_price_range_already_sent_review'}),true);
+});
+
 test("recognizes price decisions that must remain human-reviewed", () => {
   assert.equal(
     isSurgicalPriceReview(

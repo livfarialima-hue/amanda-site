@@ -1,4 +1,5 @@
 import { isCommercialSolicitation } from "./commercial-contact.mjs";
+import { consultationQuestionTopics } from "./patient-turn-context.mjs";
 
 const RELATIONSHIP_STATES = new Set([
   "new_lead",
@@ -205,6 +206,7 @@ export function buildPatientCommitment({
   appointmentReview = false,
   receivedAt,
   messageText,
+  semanticDecision,
 }) {
   if (
     !eventId ||
@@ -218,13 +220,21 @@ export function buildPatientCommitment({
     return null;
   }
 
-  const reason = [plan?.reason, plan?.requestReason]
+  // Keep identity, due time and existing pending work. Only the subject of this
+  // new commitment follows the completed semantic review when one is present.
+  const reviewed = semanticDecision?.route === 'human_review' ? semanticDecision : null;
+  const reason = reviewed ? String(reviewed.reviewReason || '').replace(/_/g,' ') : [plan?.reason, plan?.requestReason]
     .filter(Boolean)
     .join(" ");
   let kind = "human_review";
   let summary = "Revisar a solicitação e responder pelo WhatsApp.";
 
-  if (appointmentReview || /schedul|agenda|appointment/.test(reason)) {
+  if (reviewed?.urgent === true || plan?.reason === 'possible_urgent_symptoms') {
+    kind = 'care_journey';
+    summary = 'Revisar imediatamente os sintomas relatados e responder pelo WhatsApp.';
+  } else if (reviewed && consultationQuestionTopics(reason).includes('remote_consultation')) {
+    summary = 'Confirmar a possibilidade de avaliação online e orientar a paciente.';
+  } else if (appointmentReview || /schedul|agenda|appointment/.test(reason)) {
     kind = "scheduling";
     summary = "Conferir agenda e responder com opções válidas.";
   } else if (/hospital/.test(reason)) {

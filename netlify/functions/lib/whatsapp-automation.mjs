@@ -633,6 +633,17 @@ export function planAutomation({
     };
   }
 
+  if (matchesAny(normalizedText, URGENT_PATTERNS)) {
+    return {
+      route: "human_review",
+      reason: "possible_urgent_symptoms",
+      replyCode: "ALERT-URG-01",
+      professional: null,
+      procedure: procedure?.key || null,
+      automaticAllowed: false,
+    };
+  }
+
   if (matchesAny(normalizedText, PENDING_HOSPITAL_QUOTE_PATTERNS)) {
     return {
       route: "human_review",
@@ -649,17 +660,6 @@ export function planAutomation({
       route: "human_review",
       reason: "existing_patient_administrative_followup",
       replyCode: null,
-      professional: null,
-      procedure: procedure?.key || null,
-      automaticAllowed: false,
-    };
-  }
-
-  if (matchesAny(normalizedText, URGENT_PATTERNS)) {
-    return {
-      route: "human_review",
-      reason: "possible_urgent_symptoms",
-      replyCode: "ALERT-URG-01",
       professional: null,
       procedure: procedure?.key || null,
       automaticAllowed: false,
@@ -793,6 +793,13 @@ export function planAutomation({
       procedure: procedure?.key || null,
       automaticAllowed: false,
     };
+  }
+
+  // A remote assessment is a modality question even beside "orçamento".
+  // Keep its context for the AI; no booking or teleconsultation is authorized.
+  if (!marketingPrefilledMessage && questionTopics.includes('remote_consultation')) {
+    return {route:'standard_reply', reason:'open_question_for_ai', replyCode:null,
+      professional:mentionsAmanda || procedure ? 'amanda' : null, procedure:procedure?.key || null, automaticAllowed:true, currentText:normalizedText};
   }
 
   if (asksConsultationInformation) {

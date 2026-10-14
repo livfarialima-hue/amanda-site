@@ -16,6 +16,27 @@ test("conversation enrichment cannot revive a rejected procedure or choose one i
 });
 import test from "node:test";
 
+test('remote assessment questions keep semantic routing after an earlier surgical range', () => {
+  const history = [{role:'user',text:'Gostaria de informações sobre lifting facial.'},
+    {role:'assistant',source:'bruna',text:'O lifting facial tem uma referência entre R$ 26 mil e R$ 42 mil.'},
+    {role:'assistant',source:'bruna',text:'Você quer agendar por WhatsApp ou saber se a consulta pode ser online?'}];
+  for (const text of ['Moro no exterior e quero agendar online. Consigo fazer um orçamento online para planejar minha viagem?',
+    'É possível um orçamento por teleconsulta?', 'Queria um orçamento. A consulta pode ser por videochamada?']) {
+    const plan = enrichAutomationPlanFromConversation(planAutomation({text,messageType:'text'}),history);
+    assert.equal(plan.route,'standard_reply',text);
+    assert.equal(plan.reason,'open_question_for_ai',text);
+    assert.equal(plan.procedure,'lifting_facial',text);
+  }
+  const urgent=planAutomation({text:'Queria um orçamento online, mas estou no pós-operatório com falta de ar.',messageType:'text'});
+  assert.equal(urgent.reason,'possible_urgent_symptoms');
+  for (const text of ['Ainda aguardo o orçamento do hospital. Estou com falta de ar.','Preciso da nota fiscal e estou com falta de ar.']) {
+    assert.equal(planAutomation({text,messageType:'text'}).reason,'possible_urgent_symptoms');
+  }
+  const daniel=enrichAutomationPlanFromConversation(planAutomation({text:'Podemos conversar por videochamada?',messageType:'text'}),[
+    {role:'user',text:'Gostaria de uma consulta com o Dr. Daniel.'},{role:'assistant',source:'human',text:'Sou da equipe do Dr. Daniel.'}]);
+  assert.equal(daniel.professional,'daniel','remote modality cannot change professional');
+});
+
 test("an explicit price refusal is not an amount request, but a separate question remains actionable", () => {
   for (const text of ["Por favor, não quero valores", "Não preciso saber o preço", "Não gostaria de receber a faixa"]) {
     assert.notEqual(planAutomation({text,messageType:"text"}).priceRequestKind,"amount",text);

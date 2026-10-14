@@ -76,7 +76,7 @@ export function consultationQuestionTopics(text) {
     consultationPrice && 'price_consultation',
     surgeryPrice && 'price_surgery',
     /\b(?:convenio|plano de saude|bradesco|unimed|sulamerica|amil)\b/.test(value) && 'insurance',
-    /\b(?:online|on-line|teleconsulta|videochamada|videoconsulta|consulta (?:por video|remota|a distancia))\b/.test(value) && 'remote_consultation',
+    /\b(?:online|on-line|teleconsulta|videochamada|videoconsulta|(?:consulta|avaliacao|atendimento|orcamento) (?:por video|remot[oa]|a distancia))\b/.test(value) && 'remote_consultation',
     /\b(?:relatorio|laudo|documentacao|documentos?)\b[\s\S]{0,120}\breembolso\b|\breembolso\b[\s\S]{0,120}\b(?:relatorio|laudo|documentacao|documentos?)\b/.test(value) && 'reimbursement_document',
   ].filter(Boolean);
 }

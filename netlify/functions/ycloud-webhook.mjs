@@ -1536,7 +1536,7 @@ function logPatientReplyResult(eventId, phone, replyResult) {
 }
 
 function prepareReviewAlertInput(input, { decision, plan } = {}) {
-  const planReason = [plan?.reason, plan?.requestReason]
+  const planReason = decision?.route ? String(decision.reviewReason || '') : [plan?.reason, plan?.requestReason]
     .filter(Boolean)
     .join(" ");
   const reviewReason =
@@ -1555,6 +1555,7 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
     suggestionAvailable = false,
   }) => ({
     ...input,
+    urgent: input.urgent === true || decision?.urgent === true,
     messageText: formatHumanReviewEnvelope(
       buildHumanReviewEnvelope({
         reason: reviewReason,
@@ -1567,6 +1568,9 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
       }),
     ),
   });
+  if (decision?.urgent === true || plan?.reason === 'possible_urgent_symptoms') {
+    return wrap({messageText:buildRelationshipAlertMessage({messageText:input.messageText,patientName:input.patientName,relationship:input.relationship})});
+  }
   if (/\bintense_appearance_distress\b/.test(planReason)) {
     return wrap({
       messageText: [
@@ -1598,8 +1602,9 @@ function prepareReviewAlertInput(input, { decision, plan } = {}) {
   }
 
   const priceReview =
-    isSurgicalPriceReview(decision, plan) ||
+    isSurgicalPriceReview(decision, decision?.route ? undefined : plan) ||
     (
+      !decision?.route &&
       plan?.route === "human_review" &&
       /(?:price|preco|valor|orcamento)/i.test(planReason)
     );
@@ -5917,6 +5922,68 @@ export async function handleYCloudWebhook(
     }
   }
 
+  let semanticReviewAssessment = semanticRouteAssessment;
+  if (
+    shouldQueueReviewAlert &&
+    !semanticAssessmentAttempted &&
+    isSemanticTextAssessmentEligible({
+      delivery,
+      automationMode,
+      messageType: normalizedMessageType,
+      text,
+      exactDuplicate: suppressExactDuplicate,
+    })
+  ) {
+    const reviewLearningContext = await getBotKnowledgeContext({
+      phone,
+      eventId: String(eventId),
+      opportunityId: delivery.opportunityId || "",
+      professional: delivery.professional || "",
+      question: text,
+      procedure: automationPlan.procedure || "",
+    });
+    semanticAssessmentAttempted = true;
+    semanticReviewAssessment = await completeOpenAIShadow(
+      {
+        eventId: String(eventId),
+        opportunityId: delivery.opportunityId,
+        professional: delivery.professional,
+        receivedAt: String(
+          message.sendTime || payload.createTime || "",
+        ),
+        phone,
+        text,
+        platform: attribution.platform,
+        procedure: automationPlan.procedure,
+        sourceReference: attribution.reference,
+        referenceCategory: attribution.referenceCategory,
+        patientProfileName: patientDisplayName,
+        recentConversation: conversationHistory,
+        previousConversationState: conversationSemanticState,
+        priorInteractionKnown,
+        referralContext,
+        templateId: prefillTemplateId,
+        patientRelationship:
+          patientRelationshipPromptContext(patientRelationship),
+        learningContext: reviewLearningContext,
+        replyContract: conversationAction.replyContract,
+        deterministicUrgent:
+          automationPlan.reason === "possible_urgent_symptoms",
+      },
+      alertInput,
+      false,
+      automationPlan,
+      "review_assessment",
+    );
+    if (automationMode === "active") {
+      await persistSemanticAssessmentState({
+        phone,
+        eventId: String(eventId),
+        result: semanticReviewAssessment,
+      });
+    }
+  }
+
   const patientCommitment =
     delivery.ok &&
     !suppressExactDuplicate &&
@@ -5927,6 +5994,7 @@ export async function handleYCloudWebhook(
           plan: automationPlan,
           appointmentReview:
             shouldQueueAppointmentReview,
+          semanticDecision: semanticReviewAssessment?.status === 'completed' ? semanticReviewAssessment.decision : null,
           receivedAt: String(
             message.sendTime ||
               payload.createTime ||
@@ -6160,68 +6228,7 @@ export async function handleYCloudWebhook(
     }
   }
 
-  let semanticReviewAssessment = semanticRouteAssessment;
-  if (
-    shouldQueueReviewAlert &&
-    !semanticAssessmentAttempted &&
-    isSemanticTextAssessmentEligible({
-      delivery,
-      automationMode,
-      messageType: normalizedMessageType,
-      text,
-      exactDuplicate: suppressExactDuplicate,
-    })
-  ) {
-    const reviewLearningContext = await getBotKnowledgeContext({
-      phone,
-      eventId: String(eventId),
-      opportunityId: delivery.opportunityId || "",
-      professional: delivery.professional || "",
-      question: text,
-      procedure: automationPlan.procedure || "",
-    });
-    semanticAssessmentAttempted = true;
-    semanticReviewAssessment = await completeOpenAIShadow(
-      {
-        eventId: String(eventId),
-        opportunityId: delivery.opportunityId,
-        professional: delivery.professional,
-        receivedAt: String(
-          message.sendTime || payload.createTime || "",
-        ),
-        phone,
-        text,
-        platform: attribution.platform,
-        procedure: automationPlan.procedure,
-        sourceReference: attribution.reference,
-        referenceCategory: attribution.referenceCategory,
-        patientProfileName: patientDisplayName,
-        recentConversation: conversationHistory,
-        previousConversationState: conversationSemanticState,
-        priorInteractionKnown,
-        referralContext,
-        templateId: prefillTemplateId,
-        patientRelationship:
-          patientRelationshipPromptContext(patientRelationship),
-        learningContext: reviewLearningContext,
-        replyContract: conversationAction.replyContract,
-        deterministicUrgent:
-          automationPlan.reason === "possible_urgent_symptoms",
-      },
-      alertInput,
-      false,
-      automationPlan,
-      "review_assessment",
-    );
-    if (automationMode === "active") {
-      await persistSemanticAssessmentState({
-        phone,
-        eventId: String(eventId),
-        result: semanticReviewAssessment,
-      });
-    }
-  }
-
+  let reviewAlertReceipt = null;
   if (shouldQueueReviewAlert) {
     const alertPromise = completeReviewAlert(
       professionalFactReview
@@ -6240,7 +6247,11 @@ export async function handleYCloudWebhook(
     );
     reviewAlertQueued = true;
 
-    if (typeof context?.waitUntil === "function") {
+    if (shouldQueuePriceHolding) {
+      // A queued promise is not a delivered alert. Do not promise a return
+      // until the existing transport has an accepted WhatsApp or email receipt.
+      reviewAlertReceipt = await alertPromise;
+    } else if (typeof context?.waitUntil === "function") {
       try {
         context.waitUntil(alertPromise);
       } catch {
@@ -6271,7 +6282,19 @@ export async function handleYCloudWebhook(
     }
   }
 
-  if (shouldQueuePriceHolding) {
+  const semanticPriceHoldingAllowed = !semanticAssessmentAttempted ||
+    // Preserve the existing neutral procedure clarification when AI is not
+    // configured. It quotes no price and makes no promise of a team response.
+    (semanticReviewAssessment?.status === 'skipped' &&
+      semanticReviewAssessment.errorCode === 'configuration_missing' && !automationPlan.procedure) ||
+    (semanticReviewAssessment?.status === 'completed' &&
+      semanticReviewAssessment.decision?.urgent !== true &&
+      isSurgicalPriceReview(semanticReviewAssessment.decision));
+  const reviewAlertDelivered = reviewAlertReceipt?.status === 'completed' || reviewAlertReceipt?.emailStatus === 'completed';
+  if (shouldQueuePriceHolding && (!semanticPriceHoldingAllowed || !reviewAlertDelivered)) {
+    priceHoldingStatus = !semanticPriceHoldingAllowed ? 'semantic_review_veto' : 'review_alert_failed';
+  }
+  if (shouldQueuePriceHolding && semanticPriceHoldingAllowed && reviewAlertDelivered) {
     priceHoldingQueued = true;
     const priceHoldingBody = buildSurgicalPriceHoldingReply({
       patientName: patientDisplayName,
@@ -6864,6 +6887,7 @@ export async function handleYCloudWebhook(
     );
   const automaticWorkFinished =
     leadRoutingFinished &&
+    (!shouldQueuePriceHolding || reviewAlertDelivered) &&
     (!aiActiveQueued || !["failed", "deferred"].includes(aiActiveStatus)) &&
     (!priceHoldingQueued || terminalSendStatuses.has(priceHoldingStatus)) &&
     (!approvedPriceReplyQueued || terminalSendStatuses.has(approvedPriceReplyStatus)) &&

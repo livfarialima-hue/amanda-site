@@ -1,6 +1,6 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
 import { preservesKnowledgeLiterals } from "./knowledge-wording.mjs";
-import { isPatientPhotoAssessmentRequest } from "./patient-turn-context.mjs";
+import { isPatientPhotoAssessmentRequest, consultationQuestionTopics } from "./patient-turn-context.mjs";
 
 const KNOWLEDGE_PREFIX = "KB:";
 
@@ -327,13 +327,20 @@ export function buildUnknownHoldingReply({
   if (individualAssessmentReview && isPatientPhotoAssessmentRequest(currentText)) {
     return `${greeting}${introduction} Vou encaminhar seu pedido de avaliação individual à equipe.`;
   }
-  const combined = `${currentText} ${reviewReason}`;
+  // The unresolved subject is the semantic result, not every earlier word in
+  // the patient's request. Text-only callers keep their existing fallback.
+  const combined = reviewReason ? String(reviewReason).replace(/[_-]/g, ' ') : currentText;
   const procedureLabel = String(procedure || "")
     .replaceAll("_", " ")
     .trim();
   let pendingTopic = "";
 
-  if (/parcel|desconto|juros|condi[cç][aã]o\s+de\s+pagamento/i.test(combined)) {
+  // A confirmed semantic subject owns the acknowledgement; broad words such
+  // as "orçamento" or "agendar" must not replace the question being reviewed.
+  const reviewSubject = String(reviewReason).normalize('NFD').replace(/\p{M}/gu, '').replace(/[_-]/g, ' ');
+  if (consultationQuestionTopics(reviewSubject).includes('remote_consultation')) {
+    pendingTopic = "como pode ser feita a avaliação online para orientar seu planejamento";
+  } else if (/parcel|desconto|juros|condi[cç][aã]o\s+de\s+pagamento/i.test(combined)) {
     pendingTopic = "as condições de pagamento que você perguntou";
   } else if (/valor|pre[cç]o|or[cç]amento|faixa/i.test(combined)) {
     pendingTopic = procedureLabel

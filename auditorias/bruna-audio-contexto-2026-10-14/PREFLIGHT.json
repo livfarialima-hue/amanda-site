@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-10-14T12:11:58.157Z",
+  "baseCommit": "a50fba8e496539c6c521213943012f8f9955b9a4",
+  "functionalCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+  "netlifyDeployId": "6acf51c3102d74aed99ab751",
+  "appsScriptVersion": 164,
+  "readOnly": true,
+  "evidence": {
+    "source": "LEADS canônica: _WHATSAPP_MENSAGENS, _WHATSAPP_OPERACAO_EVENTOS e _CRM_OPORTUNIDADES, recorte de 14/10/2026",
+    "audio": "Transcrição automática presente, tipo audio e autoria paciente preservados; pergunta sobre avaliação online.",
+    "decision": "Registro da IA: human_review, unknown_digest:consulta_online, UNKNOWN-REVIEW-01. Resposta enviada por ramo price-holding do plano anterior.",
+    "human": "Respostas posteriores constam como equipe_humana, com pausa registrada.",
+    "crm": "Mesma oportunidade/profissional e linha visível, Qualificado, responsável human_team, atribuição original presente."
+  },
+  "limits": [
+    "Áudio original não ouvido; diagnóstico baseado na transcrição e decisão armazenadas, coerentes com o relato.",
+    "Marcadores de política nos eventos são antigos; não equivalem ao SHA publicado. Divergência registrada, fora desta correção.",
+    "Nenhuma mensagem de teste ou rotina operacional executada. Nenhum dado pessoal copiado para o relatório público."
+  ],
+  "leadsAndAdsBaseline": {
+    "checkedAt": "2026-10-14T12:11:58.157Z",
+    "opportunities": 556,
+    "uniqueIds": 556,
+    "incidentFound": true,
+    "incidentPhase": "Qualificado",
+    "incidentOwner": "human_team",
+    "incidentOriginalAttributionPresent": true,
+    "ads": {
+      "exportRows": 12,
+      "readyRows": 12,
+      "mismatches": 0,
+      "duplicateTransactions": 0
+    }
+  }
+}

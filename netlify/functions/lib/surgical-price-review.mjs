@@ -1,5 +1,5 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
-import { resolveOfferedInformationChoice } from "./patient-turn-context.mjs";
+import { resolveOfferedInformationChoice, consultationQuestionTopics } from "./patient-turn-context.mjs";
 import { approvedProcedureInformationFacts } from "./lifting-information.mjs";
 import { isAutomaticSurgicalPriceProcedure, facialPriceLines, earPriceScope, SURGICAL_PRICE_DISCLOSURE } from "./surgical-price-policy.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
@@ -687,6 +687,13 @@ export function buildSurgicalPriceHoldingReply({
 
 export function isSurgicalPriceReview(decision, plan) {
   if (decision?.route !== "human_review") return false;
+  if (consultationQuestionTopics(String(decision.reviewReason || '').replace(/_/g,' ')).includes('remote_consultation')) return false;
+
+  // UNKNOWN-REVIEW carries the actual unresolved subject. A price keyword in
+  // the earlier deterministic plan cannot overwrite that semantic decision.
+  if (decision.replyCode === 'UNKNOWN-REVIEW-01') {
+    return /(?:price|preco|valor|orcamento)/i.test(decision.reviewReason || '');
+  }
 
   const reason = [
     decision?.reviewReason,

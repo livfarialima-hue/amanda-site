@@ -3334,12 +3334,12 @@ test("a later price question with an updated lead does not reintroduce Bruna whe
         JSON.stringify(
           validResponse(
             validDecision({
-              route: "standard_reply",
-              automaticAllowed: true,
+              route: "human_review",
+              automaticAllowed: false,
               confidence: "high",
-              replyCode: "SURGICAL-PRICE-INITIAL-01",
+              replyCode: "UNKNOWN-REVIEW-01",
               suggestedReply: "A pergunta é sobre o valor da cirurgia.",
-              reviewReason: "price_initial_information",
+              reviewReason: "unknown_digest:preco_blefaroplastia",
             }),
           ),
         ),

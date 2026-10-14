@@ -1,5 +1,12 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-AUDIO-CONTEXTO-2026-10-14 -->
+**Pacote 2026-10-14.2 — TESTADO LOCALMENTE, SYNC_PENDING.** Correção da troca de assunto depois de áudio: a transcrição canônica preservou a pergunta sobre consulta/orçamento online e a IA reconheceu esse assunto, mas o ramo de espera de preço usou o plano anterior. O áudio original não foi ouvido; a causa é comprovada pelo texto e pelos eventos canônicos. Perguntas de modalidade seguem à análise semântica; o retorno humano mantém o assunto reconhecido. Uma decisão semântica não é substituída pelo plano anterior nem no texto à paciente nem no alerta à equipe. Promessa de retorno exige recibo aceito de encaminhamento; falha de alerta mantém recuperação pendente.
+
+LEADS/CRM, qualificação, atribuição, Ads, schema, agenda, histórico integral, áudio/autoria, filas, preços e prioridades humanas preservados. Apps Script v164 sem mudança funcional. Sem mensagem real de teste, execução operacional, replay, plugin ou nova memória. Gate real ampliado para 16 cenários, mantendo os três áudios e histórico ampliado. Passaram 2.134 testes integrais, 52 complementares, revisão independente, contrato, arquitetura, reversão e build. A precedência semântica também orienta o novo compromisso da LEADS; urgência vem antes de regras administrativas e o profissional é preservado. Disponibilidade e valor da teleconsulta como informação geral aguardam Daniel. Publicação/verificação ainda pendentes. Evidência: auditorias/bruna-audio-contexto-2026-10-14/RELATORIO.md. Reversão por commit que restaure o funcional dcb5df99f91a pela integração Git, sem apagar dados. Daniel/equipe: observar respostas ao assunto atual e recibos de encaminhamento nas primeiras conversas e em 48 horas.
+<!-- /BRUNA-AUDIO-CONTEXTO-2026-10-14 -->
+
+
 <!-- BRUNA-EFICIENCIA-INTEGRIDADE-2026-10-14 -->
 **Pacote 2026-10-14.1 — PUBLICADO E VERIFICADO NAS PLATAFORMAS.** Daniel autorizou o commit funcional dcb5df99f91afd39bcd76b1147f7ad5f7377bccb. Apps Script v164 publicado em 14/10/2026, 06:55 BRT, no mesmo deployment e URL. Os 28 arquivos vivos coincidiam com a base antes da escrita; somente KnowledgeBase.gs mudou, e a releitura após salvar/reabrir coincidiu integralmente com o arquivo aprovado. Netlify 6acf51c3102d74aed99ab751, produção pela integração Git de reestruturacao-site, publicado em 2026-10-14T09:59:03.902Z. Quinze funções e seis agendamentos preservados; nenhuma flag, acionador, rotina operacional, migração ou mensagem real de teste foi alterada/executada pela tarefa.
 
