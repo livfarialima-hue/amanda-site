@@ -313,6 +313,44 @@ test("manual SMB echo keeps semantic assessment but suppresses patient replies f
   }
 });
 
+test("a structured receipt with remote history cannot take the standalone in-person fast path", async () => {
+  const keys = ["YCLOUD_WEBHOOK_SECRET", "GOOGLE_SHEETS_WEBHOOK_URL", "GOOGLE_SHEETS_WEBHOOK_SECRET"];
+  const saved = Object.fromEntries(keys.map(key => [key, process.env[key]]));
+  const originalFetch = globalThis.fetch;
+  const actions = [];
+  process.env.YCLOUD_WEBHOOK_SECRET = WEBHOOK_SECRET;
+  process.env.GOOGLE_SHEETS_WEBHOOK_URL = SHEETS_URL;
+  process.env.GOOGLE_SHEETS_WEBHOOK_SECRET = "synthetic-secret";
+  globalThis.fetch = async (url, options) => {
+    assert.equal(url, SHEETS_URL);
+    const body = JSON.parse(options.body);
+    actions.push(body.action);
+    // Stop after the early sync boundary; no real service is contacted.
+    return new Response('{"ok":false}', { status: 504 });
+  };
+  try {
+    const response = await handleYCloudWebhook(signedRequest({
+      id: "synthetic-remote-receipt", type: "whatsapp.smb.message.echoes",
+      createTime: "2026-10-14T19:00:00Z",
+      whatsappMessage: { id: "synthetic-remote-message", wamid: "synthetic-remote-message",
+        status: "sent", from: "+5511961957144", to: "+5511900004567", type: "text",
+        sendTime: "2026-10-14T19:00:00Z",
+        text: { body: "Comprovante de Agendamento:\nNome: Paciente Sintetica\nData: 21/10/2026\nHorário: 10:00\nMédico: Dra. Amanda\nEndereço: Rua Pais Leme, 215" },
+      },
+    }), {}, {
+      appendConversationTurnImpl: async turn => ({ status: "completed",
+        historyAfter: [{ role: "user", text: "Preciso de teleconsulta." }, turn] }),
+    });
+    assert.equal(response.status, 502);
+    assert.deepEqual(actions, ["mark_human_takeover"]);
+  } finally {
+    globalThis.fetch = originalFetch;
+    for (const [key, value] of Object.entries(saved)) {
+      if (value === undefined) delete process.env[key]; else process.env[key] = value;
+    }
+  }
+});
+
 test("a structured Amanda receipt is booked before a failing takeover write", async () => {
   const patientPhone = "+5511900004567";
   const environmentKeys = [

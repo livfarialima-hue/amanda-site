@@ -99,7 +99,7 @@ test("the published manifest matches the current bundle and closes the candidate
       assert.equal(manifest.pendingRelease.liveModelCheckRequired, true);
       assert.equal(manifest.pendingRelease.audioTranscriptionCheckRequired, true);
       assert.equal(manifest.pendingRelease.fullHistoryCheckRequired, true);
-      assert.equal(manifest.pendingRelease.liveModelScenarioCount, 16);
+      assert.equal(manifest.pendingRelease.liveModelScenarioCount, 19);
     } else {
       assert.notEqual(manifest.release.bundleVersion, manifest.bundleVersion);
       assert.ok(["implementing_local", "tested_local", "committed"].includes(candidate.status));

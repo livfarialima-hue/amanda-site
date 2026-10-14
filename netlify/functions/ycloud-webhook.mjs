@@ -4342,7 +4342,7 @@ export async function handleYCloudWebhook(
       recentConversation: [],
       at: echoAt,
     });
-    const structuredAppointment =
+    let structuredAppointment =
       standaloneAppointment?.source ===
       "WhatsApp - comprovante estruturado de agendamento"
         ? standaloneAppointment
@@ -4394,6 +4394,15 @@ export async function handleYCloudWebhook(
       messageType: echo.type,
     });
     if (memoryResult.status === "failed") return json({ received: false, error: "human_memory_pending" }, 503);
+    // Even a self-contained receipt must not overwrite a remote conversation
+    // with an implicit in-person modality. Keep the same early sync ordering.
+    if (structuredAppointment) {
+      structuredAppointment = detectManualAppointment({
+        currentText: echoText,
+        recentConversation: memoryResult.historyAfter,
+        at: echoAt,
+      });
+    }
     // A mensagem estruturada é a confirmação final da equipe. A reserva
     // canônica precisa acontecer antes da persistência secundária da tomada
     // humana, que pode sofrer timeout sem invalidar o comprovante já enviado.

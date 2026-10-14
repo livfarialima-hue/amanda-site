@@ -1,0 +1,22 @@
+{
+  "changeId": "BRUNA-CONFIRMACAO-MODALIDADE-2026-10-14",
+  "checkedAt": "2026-10-14T20:54:30Z",
+  "baselineCommit": "fa68974be6b7a0ca9c2c9944e23fd37887a91e20",
+  "result": "verified_read_only_with_limits",
+  "publicationState": "not_published",
+  "publicationTargetRevalidated": {
+    "branchHead": "fa68974be6b7a0ca9c2c9944e23fd37887a91e20",
+    "productionCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
+    "productionDeployId": "6acf8f3d0c1fdf2d868cceb3",
+    "state": "ready",
+    "functions": 15,
+    "schedules": 6,
+    "scope": "Fresh branch and published deploy reads only; private source checks retain their original timestamps"
+  },
+  "scope": "Appointment modality consistency; no changes to external platform configuration",
+  "evidenceHandling": "Full target identifiers and operational observations retained in restricted evidence; omitted from public receipt",
+  "limits": [
+    "Read-only platform checks do not prove delivery or clinical outcomes",
+    "No runtime change outside the declared serverless code package"
+  ]
+}

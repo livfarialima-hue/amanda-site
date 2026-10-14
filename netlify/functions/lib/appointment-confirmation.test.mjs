@@ -710,6 +710,58 @@ test("flags a plausible manual closing for email review when acceptance is uncle
   assert.equal(result?.scheduledTime, "08:00");
 });
 
+test("remote context never falls back to an implicit in-person booking", () => {
+  // Synthetic regression: modality was discussed before an unlabelled slot.
+  const history = [
+    { role: "user", text: "Preciso de teleconsulta, estou fora do Brasil." },
+    { role: "assistant", source: "human", text: "Com a Dra. Amanda: 1. Quarta (21/10/2026) às 10:00" },
+  ];
+  assert.equal(detectPatientAppointmentSelection({
+    currentText: "Opção 1", recentConversation: history,
+    at: "2026-10-14T16:00:00-03:00", professionalHint: "amanda",
+  }), null);
+  assert.equal(detectManualAppointment({
+    currentText: "Confirmado seu agendamento para 21/10/2026 às 10h com a Dra. Amanda.",
+    recentConversation: history, at: "2026-10-14T16:00:00-03:00",
+  }), null);
+});
+
+test("a structured receipt cannot silently replace a remote modality with the clinic address", () => {
+  const receipt = `Comprovante de Agendamento:
+Nome: Paciente Sintetica
+Data: 21/10/2026
+Horário: 10:00
+Médico: Dra. Amanda
+Endereço: Rua Pais Leme, 215`;
+  const recentConversation = [{ role: "user", text: "Minha consulta será online." }];
+  assert.equal(detectManualAppointment({ currentText: receipt, recentConversation,
+    at: "2026-10-14T16:00:00-03:00" }), null);
+  assert.equal(detectManualAppointment({ currentText: receipt + "\nModalidade: Teleconsulta",
+    recentConversation, at: "2026-10-14T16:00:00-03:00" }), null);
+  const explicitRemote = receipt.replace("Endereço: Rua Pais Leme, 215", "Modalidade: Teleconsulta");
+  const result = detectManualAppointment({ currentText: explicitRemote,
+    recentConversation, at: "2026-10-14T16:00:00-03:00" });
+  assert.equal(result?.location, "Teleconsulta");
+});
+
+test("remote audio can block a conflicting default but cannot authorize a booking", () => {
+  const history = [{ role: "user", messageType: "audio", text: "Preciso de teleconsulta." }];
+  assert.equal(detectManualAppointment({
+    currentText: "Confirmado seu agendamento com a Dra. Amanda para 21/10/2026 às 10h.",
+    recentConversation: history, at: "2026-10-14T16:00:00-03:00",
+  }), null);
+});
+
+test("remote confirmation states Sao Paulo time without a physical address or invented access link", () => {
+  const reply = buildBookedAppointmentReply({ patientName: "Paciente Sintetica",
+    scheduledDate: "2026-10-21", scheduledTime: "10:00", professional: "Dra. Amanda",
+    location: "Teleconsulta" });
+  assert.match(reply, /horário de São Paulo/);
+  assert.match(reply, /teleconsulta/);
+  assert.match(reply, /orientações de acesso.*equipe/);
+  assert.doesNotMatch(reply, /enviaremos um lembrete|Pais Leme|https?:|estacionamento/);
+});
+
 test("builds a complete deterministic booking confirmation", () => {
   const reply = buildBookedAppointmentReply({
     patientName: "Maria Silva",

@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-10-14.3",
-  "promptVersion": "bruna-concierge-2026-10-14.3",
+  "bundleVersion": "2026-10-14.4",
+  "promptVersion": "bruna-concierge-2026-10-14.4",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-10-14.3",
+  "knowledgeSnapshot": "kb-2026-10-14.4",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -35,31 +35,25 @@
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
     "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-    "driveActiveFolderId": "1XI_oPePsxFftbMoHCJ3rC2kmGB-0acue",
-    "driveHistoryFolderId": "1mDGKPd6Vqh5Aq9LIee58WK6-H4TVFWlJ",
-    "driveReleaseFolderId": "1GDKy0bmEW-2ORpwtFeNiYJ3pFlQQeOPO",
-    "driveClosedAuditFileId": "13IJpbRic6dvUSFFhv3Ad3iiKgHAno-WX",
-    "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
     "driveProjectionSha256": "74086bc8f5e30c7b00b155bb2923f236f7946951f6607712b34502341d53da3e",
-    "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU",
-    "driveProjectionVerifiedAt": "2026-10-14T14:31:50.013Z"
+    "driveProjectionVerifiedAt": "2026-10-14T14:31:50.013Z",
+    "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata."
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
-    "changeId": "BRUNA-TELECONSULTA-2026-10-14",
-    "status": "published_verified",
+    "changeId": "BRUNA-CONFIRMACAO-MODALIDADE-2026-10-14",
+    "status": "tested_local",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
     "liveModelScenarioCount": 19,
-    "baselineCommit": "50af5ccfafb1d37e529e53f96f814511516d6da5",
-    "bundleVersion": "2026-10-14.3",
-    "baselineDeployId": "6acf71e94079694bfc8221a4",
-    "baselineAppsScriptVersion": 164,
-    "sourceCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d"
+    "baselineCommit": "fa68974be6b7a0ca9c2c9944e23fd37887a91e20",
+    "bundleVersion": "2026-10-14.4",
+    "baselineDeployId": "6acf8f3d0c1fdf2d868cceb3",
+    "baselineAppsScriptVersion": 164
   }
 }

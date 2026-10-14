@@ -259,6 +259,20 @@ function detectConsultationType(text) {
   return "Consulta presencial";
 }
 
+function hasRemoteAppointmentContext(text) {
+  return /\b(?:teleconsulta|online|videochamada|consulta remota|atendimento remoto)\b/.test(normalize(text));
+}
+
+// A remote mention is a reason to withhold an implicit physical booking, not
+// proof of consent or a source of date/time. Audio may only add this veto.
+function appointmentModalityNeedsReview(text, history = []) {
+  const comparable = normalize(text);
+  const remote = hasRemoteAppointmentContext(text);
+  const physical = /\b(?:presencial|pais leme|estacionamento)\b/.test(comparable);
+  if (remote && (physical || /\bnao\b.{0,35}\b(?:teleconsulta|online|remota|remoto)\b/.test(comparable))) return true;
+  return !remote && history.some(turn => hasRemoteAppointmentContext(turn?.text));
+}
+
 function cleanStructuredFieldValue(value) {
   return String(value || "")
     .trim()
@@ -460,6 +474,7 @@ function offeredAppointmentSlots(
   recentConversation,
   at = new Date(),
   professionalHint = "",
+  modalityHistory = recentConversation,
 ) {
   const turns = Array.isArray(recentConversation)
     ? recentConversation.slice(-12)
@@ -477,6 +492,7 @@ function offeredAppointmentSlots(
     }
 
     const text = String(turn?.text || "");
+    if (appointmentModalityNeedsReview(text, modalityHistory)) continue;
     const matches = [
       ...text.matchAll(
         /(?:^|\n)\s*(\d{1,2})[.)-]\s*[^\n(]*\((\d{1,2})\/(\d{1,2})\/(\d{4})\)\s*(?:às|as)\s*(\d{1,2}):(\d{2})/giu,
@@ -672,6 +688,7 @@ export function detectPatientAppointmentSelection({
   professionalHint = "",
 } = {}) {
   if (audioAppointmentEvidence({ text: currentText })) return null;
+  const modalityHistory = Array.isArray(recentConversation) ? recentConversation : [];
   recentConversation = appointmentTextHistory(recentConversation);
   if (!hasSelectionIntent(currentText)) return null;
 
@@ -702,6 +719,7 @@ export function detectPatientAppointmentSelection({
       professionalHint,
     );
     if (!professional) return null;
+    if (appointmentModalityNeedsReview(contextText, modalityHistory)) return null;
     const consultationType = detectConsultationType(contextText);
 
     return {
@@ -723,6 +741,7 @@ export function detectPatientAppointmentSelection({
     recentConversation,
     at,
     professionalHint,
+    modalityHistory,
   );
   if (!slots.length) return null;
 
@@ -924,6 +943,9 @@ export function detectManualAppointment({
   professionalHint = "",
 } = {}) {
   if (audioAppointmentEvidence({ text: currentText })) return null;
+  // The final human confirmation must explicitly preserve remote modality.
+  // Never infer a switch to the clinic from an unlabelled receipt/address.
+  if (appointmentModalityNeedsReview(currentText, Array.isArray(recentConversation) ? recentConversation : [])) return null;
   recentConversation = appointmentTextHistory(recentConversation);
   const baseDate = new Date(at);
   if (Number.isNaN(baseDate.getTime())) return null;
@@ -1052,11 +1074,14 @@ export function buildBookedAppointmentReply({
     location === "Teleconsulta"
       ? "por teleconsulta"
       : `na ${location}`;
+  const nextStep = location === "Teleconsulta"
+    ? "As orientações de acesso precisam ser confirmadas pela equipe por aqui."
+    : "Mais perto da data, enviaremos um lembrete por aqui.";
 
   return (
     `${greeting} Sua consulta com ${professional} ficou agendada ` +
     `para ${dateLabel}, às ${displayAppointmentTime(scheduledTime)}, ` +
-    `${locationLabel}. Mais perto da data, enviaremos um lembrete por aqui.`
+    `${locationLabel} (horário de São Paulo). ${nextStep}`
   );
 }
 

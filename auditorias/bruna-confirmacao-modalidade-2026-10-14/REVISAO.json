@@ -1,0 +1,50 @@
+{
+  "status": "passed_local",
+  "checkedAt": "2026-10-14T20:15:41Z",
+  "environment": {
+    "node": "v24.19.0",
+    "timezone": "America/Sao_Paulo",
+    "dependencies": "npm ci --ignore-scripts --no-audit --no-fund"
+  },
+  "focusedTests": {
+    "passed": 58,
+    "failed": 0,
+    "includedInFullSuite": true
+  },
+  "baselineNewFailures": 4,
+  "crossConsumerRegressionAdded": true,
+  "fullSuite": {
+    "passed": 2170,
+    "failed": 0
+  },
+  "contractUnion": {
+    "passed": 1572,
+    "failed": 0,
+    "overlapsFullSuite": true
+  },
+  "baselineIssues": {
+    "stalePublishedGate": "Baseline assertion expected 16 but published manifest required 19; corrected assertion to 19 without reducing live gates.",
+    "timezone": "Preexisting Apps Script timezone assumptions reproduced on the unchanged baseline; full suite and contract union pass with canonical America/Sao_Paulo."
+  },
+  "build": {
+    "files": 193,
+    "urls": 54,
+    "auditFiles": 0,
+    "siteCheck": "passed"
+  },
+  "gates": {
+    "change": "OK",
+    "architecture": "OK",
+    "diff": "OK",
+    "ops": "SYNC_PENDING expected before release; not a completed release"
+  },
+  "review": {
+    "performedBy": "implementation agent",
+    "scope": "Full changed source/tests/docs/receipts inspected; no independent-agent review claimed.",
+    "findings": "No publication blocker in the declared code patch. Operational findings retained in restricted evidence."
+  },
+  "rollback": {
+    "method": "Reverse exact declared diff by new commit; never replay queues",
+    "rehearsal": "git apply --reverse --check passed for all 17 declared files before commit"
+  }
+}
