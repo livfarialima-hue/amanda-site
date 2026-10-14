@@ -104,6 +104,7 @@ function normalizeTurn(turn, now) {
     eventId: text(turn.eventId, 200),
     at: timestamp(turn.at, now),
     source: conversationSource(turn),
+    messageType: turn.messageType === "audio" || /^\[(?:Transcrição|Áudio)/i.test(turn.text) ? "audio" : (turn.messageType || "unknown"),
     templateId: text(turn.templateId, 80).toLowerCase(),
   };
 }
@@ -237,6 +238,7 @@ export async function appendConversationTurn(
     phone,
     role,
     text: turnText,
+    messageType,
     eventId,
     at,
     source,
@@ -266,7 +268,7 @@ export async function appendConversationTurn(
     const existing = normalized.conversation;
     const historyBefore = existing.turns;
     const normalizedEventId = text(eventId, 200);
-    const nextTurn = normalizeTurn({ role, text: turnText, eventId: normalizedEventId, at, source, templateId }, now);
+    const nextTurn = normalizeTurn({ role, text: turnText, messageType, eventId: normalizedEventId, at, source, templateId }, now);
     const previousTurn = historyBefore.find(turn => turn.eventId === normalizedEventId);
 
     if (
@@ -446,6 +448,7 @@ export function toOpenAIConversation(turns) {
         text: text(turn.text, MAX_OPENAI_TURN_TEXT_LENGTH),
         ...(eventId ? { eventId } : {}),
         ...(templateId ? { templateId } : {}),
+        ...(turn.messageType === "audio" ? { messageType: "audio" } : {}),
         ...(hasValidAt ? { at: parsedAt.toISOString() } : {}),
         source:
           conversationSource(turn) === "human"

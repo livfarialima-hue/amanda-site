@@ -1,4 +1,5 @@
 import { readYCloudAcceptance } from "./ycloud-message-observability.mjs";
+import { fetchWithConversationArchive } from "./conversation-archive-outbox.mjs";
 
 const YCLOUD_MESSAGES_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
@@ -162,7 +163,7 @@ export async function sendYCloudAppointmentReminder(
       appointmentId,
       reminderKind,
     );
-    const response = await fetchImpl(YCLOUD_MESSAGES_URL, {
+    const response = await fetchWithConversationArchive(YCLOUD_MESSAGES_URL, {
       method: "POST",
       headers: {
         "content-type": "application/json; charset=utf-8",
@@ -196,7 +197,7 @@ export async function sendYCloudAppointmentReminder(
         },
       }),
       signal: controller.signal,
-    });
+    }, { env, fetchImpl, source: "appointment_reminder_template", text: `Olá, ${parameters[0]}! Este é um lembrete da sua consulta com ${parameters[1]}, marcada para ${parameters[2]} às ${parameters[3]}, ${parameters[4]}. Se precisar ajustar o horário, responda por aqui.` });
 
     if (!response.ok) {
       return {

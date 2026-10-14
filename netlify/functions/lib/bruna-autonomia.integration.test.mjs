@@ -72,12 +72,12 @@ test("learning proposes a general draft without approval and refuses clinical or
 });
 
 test("administrative help excludes clinical, combined, explicit human and unrelated professional requests", () => {
-  for (const text of ["Onde vocês ficam?", "Pode me passar o endereço?", "Vocês emitem nota fiscal?", "Vocês trabalham com plano?"]) {
+  for (const text of ["Onde vocês ficam?", "Pode me passar o endereço?", "Envia oendereco.por fafor.", "Pode enviar o endereço, porfavor?", "Vocês emitem nota fiscal?", "Vocês trabalham com plano?"]) {
     assert.ok(buildAdministrativeSideAnswer({ text, professional: "amanda" }), text);
     assert.equal(buildAdministrativeSideAnswer({ text, professional: "daniel" }), null);
     assert.equal(buildAdministrativeSideAnswer({ text, professional: "amanda", relationship: { neverBotReply: true } }), null);
   }
-  for (const text of ["Onde fica e posso tomar remédio?", "Quero aguardar a médica", "Quanto custa minha cirurgia?", "Não quero o endereço", "Onde fica o hospital?"]) {
+  for (const text of ["Envia o endereço e remarca para as 10h", "Envia o endereço. Estou com falta de ar", "Onde fica e posso tomar remédio?", "Quero aguardar a médica", "Quanto custa minha cirurgia?", "Não quero o endereço", "Onde fica o hospital?"]) {
     assert.equal(buildAdministrativeSideAnswer({ text, professional: "amanda" }), null, text);
   }
 });

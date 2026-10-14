@@ -1,3 +1,4 @@
+import { queueConversationArchive } from "./conversation-archive-outbox.mjs";
 import { callClassificationSheets } from "./sheets-classification-client.mjs";
 import { getStore } from "@netlify/blobs";
 import { createHash } from "node:crypto";
@@ -194,13 +195,17 @@ export async function recordDurableConversationTurn(
     professional = "",
     templateId = "",
   },
-  { callSheetsImpl = callClassificationSheets } = {},
+  { callSheetsImpl = callClassificationSheets, queueArchiveImpl = queueConversationArchive } = {},
 ) {
   const normalizedText = boundedText(text, 4_000);
   if (!phone || !eventId || !normalizedText) {
     return { status: "skipped" };
   }
 
+  const archived = await queueArchiveImpl({ phone, eventId, messageId: messageId || `bruna:${eventId}`,
+    text, at, direction: source === "patient" ? "IN" : "OUT", author: source,
+    source: "accepted_conversation_turn", messageType: "text", deliveryState: "accepted_not_delivered" });
+  if (archived.status === "failed") return archived;
   const result = await callSheetsImpl("record_conversation_turn", {
     conversation: {
       phone,

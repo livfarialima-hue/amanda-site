@@ -239,11 +239,11 @@ test("an unanswered unknown creates an operational response review with context"
 
 test("administrative catalog matches an isolated question and rejects broader or clinical requests",()=>{
   const c=runtime();
-  for(const text of ["Qual o endereço?","Onde fica a clínica?","Qual o valor da consulta?","Parcelam a consulta?","Como funciona a avaliação?"]){
+  for(const text of ["Envia oendereco.por fafor.","Pode enviar o endereço, porfavor?","Qual o endereço?","Onde fica a clínica?","Qual o valor da consulta?","Parcelam a consulta?","Como funciona a avaliação?"]){
     assert.ok(c.classificarPerguntaAdministrativaSegura_(text,"amanda"),text);
     assert.equal(c.classificarPerguntaAdministrativaSegura_(text,"daniel"),null,text);
   }
-  for(const text of ["Quanto custa a cirurgia?","Qual o endereço e posso operar tomando remédio?","Estou com febre","Não quero saber o endereço","Qual o endereço da outra clínica?","Pode confirmar amanhã às 10?"])
+  for(const text of ["Envia o endereço e remarca para as 10h","Envia o endereço. Estou com falta de ar","Quanto custa a cirurgia?","Qual o endereço e posso operar tomando remédio?","Estou com febre","Não quero saber o endereço","Qual o endereço da outra clínica?","Pode confirmar amanhã às 10?"])
     assert.equal(c.classificarPerguntaAdministrativaSegura_(text,"amanda"),null,text);
 });
 

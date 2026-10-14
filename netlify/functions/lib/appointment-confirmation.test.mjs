@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { appendConversationTurn, hydrateConversationMemory } from "./conversation-memory.mjs";
 import {
   buildBookedAppointmentReply,
   detectConfirmedAppointment,
@@ -8,6 +9,28 @@ import {
   detectPatientAppointmentReply,
   isManualAppointmentSyncCommand,
 } from "./appointment-confirmation.mjs";
+
+test("audio evidence cannot authorize a later appointment after memory persistence or ledger hydration", async () => {
+  let value, etag = 0;
+  const options = { now: Date.parse("2026-10-14T12:00:00Z"), getStoreImpl: () => ({
+    getWithMetadata: async () => value ? { data: structuredClone(value), etag: String(etag) } : null,
+    setJSON: async (_key, next) => { value = structuredClone(next); return { modified: true, etag: String(++etag) }; },
+  }) };
+  const phone = "+5511900000000", at = "2026-10-14T11:59:00Z";
+  const text = "Sua consulta com a Dra. Amanda ficou agendada para 16/10/2026 às 14:00.";
+  await appendConversationTurn({ phone, role: "assistant", source: "human", messageType: "audio", eventId: "voice", at, text }, options);
+  assert.equal(value.turns[0].messageType, "audio");
+  for (const history of [value.turns, [{ role: "assistant", source: "human", text: "[Transcrição automática de áudio] " + text, at }]]) {
+    for (const detect of [detectPatientAppointmentSelection, detectManualAppointment, detectConfirmedAppointment]) {
+      assert.equal(detect({ currentText: "Ok", recentConversation: history, at, professionalHint: "amanda" }), null);
+    }
+  }
+  const hydrated = await hydrateConversationMemory({ phone, turns: [{ role: "user", source: "patient", messageType: "audio", eventId: "voice-patient", at: "2026-10-14T11:59:05Z", text: "Quero o primeiro horário." }] }, options);
+  assert.equal(hydrated.historyAfter.find(t => t.eventId === "voice-patient").messageType, "audio");
+  const oldOffer = { role: "assistant", text: "Sua consulta com a Dra. Amanda ficou agendada para 16/10/2026 às 14:00.", at };
+  assert.equal(detectPatientAppointmentSelection({ currentText: "Ok", recentConversation: [oldOffer, ...hydrated.historyAfter], at, professionalHint: "amanda" }), null);
+  assert.ok(detectPatientAppointmentSelection({ currentText: "Ok", recentConversation: [...hydrated.historyAfter, oldOffer], at, professionalHint: "amanda" }));
+});
 
 test("detects a confirmed appointment from recent Portuguese context", () => {
   const result = detectConfirmedAppointment({

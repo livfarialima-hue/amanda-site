@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-13T23:57:14.087Z",
+  "checkedAt": "2026-10-14T00:40:31.913Z",
   "status": "read_only_verified_with_limitations",
   "baseCommit": "872665ea0f0b04a6639034a8a67af1957861c3a7",
   "netlify": {
@@ -54,7 +54,16 @@
     "registeredVersion": 162,
     "liveCodeMatchesBase": true,
     "liveCodeNormalizedSha256": "cc4563881793d65cd36e54fa10a1d457fa0ffd8b15fef8ec5d21d4b96fa54ade",
-    "newFileAbsent": true
+    "newFileAbsent": true,
+    "CodeNormalizedSha256": "cc4563881793d65cd36e54fa10a1d457fa0ffd8b15fef8ec5d21d4b96fa54ade",
+    "KnowledgeBaseNormalizedSha256": "2942a6179f62f73dedad92a47ce5f8c8a5f34ecc3189dd41462f7c4b2598298b",
+    "sourcesCheckedAt": "2026-10-14T00:39:50.698Z",
+    "liveVersion": 162,
+    "deploymentSettings": {
+      "executeAs": "owner",
+      "access": "anyone",
+      "sameIdAndUrl": true
+    }
   },
   "drive": {
     "folderId": "1NZFwgLSC2cUefzi73Nbn1nFaeJX8g85n",
@@ -66,8 +75,11 @@
   "leads": {
     "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
     "messageHeadersVerified": 14,
-    "matchedCaseMessages": 4,
-    "fullCaseAvailable": false
+    "matchedCaseMessages": 45,
+    "fullCaseAvailable": true,
+    "humanCaseRecords": 22,
+    "initialHomonymDiscarded": true,
+    "missingProviderTurnsObserved": true
   },
   "env": {
     "OPENAI_API_KEY": {
@@ -86,11 +98,21 @@
     "archiveFlagAbsent": true
   },
   "limitations": [
-    "A imagem é estreita e ilegível; o contato indicado pelo usuário foi localizado, mas somente quatro mensagens foram encontradas no histórico integrado.",
-    "A conversa completa requer sessão YCloud; login e CAPTCHA apresentados. Nenhuma fala ilegível foi inferida.",
-    "O backup proposto cobre mensagens da integração gravadas no ledger; não comprova captura de eventos que o provedor não envia.",
-    "DriveApp ainda precisa de autorização na conta executora antes da ativação; revisão independente pendente."
+    "O provedor contém mensagens ausentes no ledger; a causa de cada lacuna não foi estabelecida.",
+    "Timeouts em echoes não provam falha de todas as gravações; parte consta no ledger.",
+    "O arquivo cobre eventos que chegam à integração; não recupera histórico nunca entregue.",
+    "DriveApp requer confirmação do acesso do executor antes da ativação. Primeiro recibo real pendente."
   ],
   "patientMessagesSent": 0,
-  "operationalRoutinesManuallyRun": 0
+  "operationalRoutinesManuallyRun": 0,
+  "ycloud": {
+    "authenticated": true,
+    "canonicalWebhookVerified": true,
+    "activeEndpoints": 1,
+    "deliveryTimeoutsObserved": true,
+    "manualReplay": false,
+    "caseContainsAudio": false,
+    "authorshipVerified": "WhatsApp Business App / API distinguished; text signature alone is not authorship"
+  },
+  "remoteBranchStillBaseline": true
 }

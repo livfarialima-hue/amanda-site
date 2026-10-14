@@ -404,3 +404,37 @@ test('a transcribed inbound keeps audio provenance in the ledger and yields to h
   const append=writes.find(w=>w.action==='append_lead');
   assert.ok(append,JSON.stringify(body));assert.equal(append.lead.messageType,'audio');assert.match(append.lead.text,/^\[Transcrição automática de áudio\].*endereço/);
 });
+
+test('an ignored transcribed voice retains audio provenance for subsequent turns', async t => {
+  setup(t, {WHATSAPP_AUDIO_TRANSCRIPTION_ENABLED:'true'}); let memory;
+  const audio={...payload,whatsappInboundMessage:{...payload.whatsappInboundMessage,type:'audio',text:{}}};
+  const response=await handleYCloudWebhook(request(audio),{livInboundBackground:true},dependencies({
+    transcribeYCloudAudioImpl:async()=>({status:'transcribed',autoReplyEligible:true,text:'Vamos jantar amanhã às 14h?'}),
+    appendConversationTurnImpl:async turn=>{memory=turn;return {status:'completed',historyAfter:[turn]};},
+  }));
+  const body=await response.json();assert.equal(body.ignored,true);assert.equal(memory.messageType,'audio');
+  assert.equal(memory.source,'patient');assert.equal(body.appointmentReplySyncStatus,'not_detected');
+});
+
+test('human context is retained before a failed secondary Sheets write', async t => {
+  setup(t);const order=[];
+  t.mock.method(globalThis,'fetch',async()=>{order.push('sheets');return Response.json({ok:false,error:'synthetic_unavailable'},{status:503});});
+  const echo={id:'synthetic-human-context',type:'whatsapp.smb.message.echoes',createTime:payload.createTime,
+    whatsappMessage:{id:'synthetic-human-message',type:'text',from:'+5511900000001',to:'+5511900000000',sendTime:payload.createTime,text:{body:'Pode deixar, já enviei o endereço.'}}};
+  const response=await handleYCloudWebhook(request(echo),{},dependencies({
+    markHumanTakeoverImpl:async()=>{order.push('pause');return {status:'completed'};},
+    appendConversationTurnImpl:async turn=>{order.push('memory');assert.equal(turn.source,'human');assert.equal(turn.text,echo.whatsappMessage.text.body);return {status:'completed',historyAfter:[turn]};},
+  }));
+  assert.equal(response.status,502);assert.deepEqual(order.slice(0,3),['pause','memory','sheets']);
+});
+
+test('failed human memory remains retryable before secondary writes', async t => {
+  const remoteCalls=setup(t);
+  const echo={id:'synthetic-human-memory-failure',type:'whatsapp.smb.message.echoes',createTime:payload.createTime,
+    whatsappMessage:{id:'synthetic-human-message',type:'text',from:'+5511900000001',to:'+5511900000000',sendTime:payload.createTime,text:{body:'Vou conferir para você.'}}};
+  const response=await handleYCloudWebhook(request(echo),{},dependencies({
+    markHumanTakeoverImpl:async()=>({status:'completed'}),
+    appendConversationTurnImpl:async()=>({status:'failed',historyAfter:[]}),
+  }));
+  assert.equal(response.status,503);assert.equal((await response.json()).error,'human_memory_pending');assert.equal(remoteCalls(),0);
+});

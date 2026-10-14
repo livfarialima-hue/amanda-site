@@ -1,3 +1,4 @@
+import { archiveEnabled, archiveRecordFromEnvelope, queueConversationArchive } from "./lib/conversation-archive-outbox.mjs";
 import { isReactionMessageType } from "./lib/inbound-message-kind.mjs";
 import { extractInboundText } from "./lib/extract-inbound-text.mjs";
 import { audioTranscriptionEnabled, transcribeYCloudAudio } from "./lib/audio-transcription.mjs";
@@ -3965,6 +3966,7 @@ export async function handleYCloudWebhook(
     dispatchInboundRecoveryImpl = dispatchInboundRecovery,
     transcribeYCloudAudioImpl = transcribeYCloudAudio,
     markHumanTakeoverImpl = markHumanTakeover,
+    queueConversationArchiveImpl = queueConversationArchive,
   } = {},
 ) {
   const webhookSecret = process.env.YCLOUD_WEBHOOK_SECRET;
@@ -4070,6 +4072,17 @@ export async function handleYCloudWebhook(
     });
     return json({ ok: false, error: "invalid_json" }, 400);
   }
+
+  let archiveHumanControl = null;
+  if (archiveEnabled(process.env) && payload.type === "whatsapp.smb.message.echoes") {
+    const echo = payload.whatsappMessage || {}, phone = normalizePhone(echo.to);
+    if (phone && !isInternalTeamPhone(phone) && !isWhatsAppBusinessAutomaticGreeting(echo)) {
+      archiveHumanControl = await markHumanTakeoverImpl({ phone, eventId: String(payload.id || echo.id || echo.wamid || ""),
+        at: String(echo.sendTime || echo.createTime || payload.createTime || "") });
+    }
+  }
+  const archiveCapture = await queueConversationArchiveImpl(archiveRecordFromEnvelope(payload));
+  if (archiveCapture.status === "failed") return json({ received: false, error: archiveCapture.errorCode }, 503);
 
   if (payload.type === "whatsapp.message.updated") {
     const normalized = normalizeYCloudMessageUpdated(payload);
@@ -4239,13 +4252,16 @@ export async function handleYCloudWebhook(
       echo.sendTime || echo.createTime || payload.createTime || "",
     );
     const humanAudio = String(echo.type || "").toLowerCase() === "audio" && audioTranscriptionEnabled();
-    let humanResumeControl = null;
+    let humanResumeControl = archiveHumanControl;
     if (humanAudio) {
       // Pause before the potentially slow transcription. Audio cannot create
       // appointments, learn clinic policy or change professional ownership.
-      humanResumeControl = await markHumanTakeoverImpl({ phone: patientPhone, eventId: String(eventId), at: echoAt });
+      if (!humanResumeControl) humanResumeControl = await markHumanTakeoverImpl({ phone: patientPhone, eventId: String(eventId), at: echoAt });
       const transcript = await transcribeYCloudAudioImpl(echo, { eventId: String(eventId), phone: patientPhone });
       if (transcript.status === "retry") return json({ received: false, error: "human_audio_transcription_pending" }, 503);
+      const archiveTranscript = await queueConversationArchiveImpl({ ...archiveRecordFromEnvelope(payload), text: transcript.text,
+        transcription: transcript.autoReplyEligible ? "automatic" : transcript.status === "uncertain" ? "uncertain" : "unavailable" });
+      if (archiveTranscript.status === "failed") return json({ received: false, error: archiveTranscript.errorCode }, 503);
       echoText = transcript.autoReplyEligible
         ? `[Transcrição automática de áudio] ${transcript.text}`
         : `[Transcrição incerta de áudio] ${transcript.text || "Conteúdo indisponível; conferir o áudio no WhatsApp."}`;
@@ -4335,6 +4351,18 @@ export async function handleYCloudWebhook(
     if (!humanResumeControl) {
       humanResumeControl = await markHumanTakeoverImpl({ phone: patientPhone, eventId: String(eventId), at: echoAt });
     }
+    // Preserve the team's turn before slow secondary persistence. Otherwise a
+    // Sheets timeout can hide an already-sent answer from the next patient turn.
+    const memoryResult = await appendConversationTurnImpl({
+      phone: patientPhone,
+      role: "assistant",
+      text: echoText.startsWith("[Transcrição incerta de áudio]") ? "[Áudio da equipe com conteúdo não confirmado.]" : echoText,
+      eventId: String(eventId),
+      at: echoAt,
+      source: "human",
+      messageType: echo.type,
+    });
+    if (memoryResult.status === "failed") return json({ received: false, error: "human_memory_pending" }, 503);
     // A mensagem estruturada é a confirmação final da equipe. A reserva
     // canônica precisa acontecer antes da persistência secundária da tomada
     // humana, que pode sofrer timeout sem invalidar o comprovante já enviado.
@@ -4381,14 +4409,6 @@ export async function handleYCloudWebhook(
       );
     }
 
-    const memoryResult = await appendConversationTurnImpl({
-      phone: patientPhone,
-      role: "assistant",
-      text: echoText.startsWith("[Transcrição incerta de áudio]") ? "[Áudio da equipe com conteúdo não confirmado.]" : echoText,
-      eventId: String(eventId),
-      at: echoAt,
-      source: "human",
-    });
     const humanLearning = echoText.trim() && !humanAudio
       ? await recordHumanLearningAnswer({
           phone: patientPhone,
@@ -4525,6 +4545,11 @@ export async function handleYCloudWebhook(
   let audioTranscript = null;
   if (audioEnabled && backgroundExecution) {
     audioTranscript = await transcribeYCloudAudioImpl(message, { eventId: String(eventId), phone });
+    if (audioTranscript.status !== "retry") {
+      const archiveTranscript = await queueConversationArchiveImpl({ ...archiveRecordFromEnvelope(payload), text: audioTranscript.text,
+        transcription: audioTranscript.autoReplyEligible ? "automatic" : audioTranscript.status === "uncertain" ? "uncertain" : "unavailable" });
+      if (archiveTranscript.status === "failed") return json({ received: false, error: archiveTranscript.errorCode }, 503);
+    }
     if (audioTranscript.status === "retry") return json({ received: false, error: "audio_transcription_pending",
       automaticWorkFinished: false, recoveryStatus: "pending" }, 503);
     // Only a result produced after authenticated intake can become text. The
@@ -4824,10 +4849,11 @@ export async function handleYCloudWebhook(
       String(message.type || "").toLowerCase() === "text" &&
       text.trim()
     ) {
-      const ignoredMemory = await appendConversationTurn({
+      const ignoredMemory = await appendConversationTurnImpl({
         phone,
         role: "user",
         text,
+        messageType: originalMessageType,
         eventId: String(eventId),
         at: contactAt,
         source: "patient",
@@ -5008,6 +5034,7 @@ export async function handleYCloudWebhook(
       phone,
       role: "user",
       text: conversationInboundText,
+      messageType: originalMessageType,
       eventId: inboundHistoryEventId,
       at: contactAt,
       source: "patient",

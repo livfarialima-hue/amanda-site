@@ -22,6 +22,8 @@
       "apps-script/clinica-liv-leads/Code.schema.test.mjs",
       "apps-script/clinica-liv-leads/ConversationArchive.gs",
       "apps-script/clinica-liv-leads/ConversationArchive.test.mjs",
+      "apps-script/clinica-liv-leads/KnowledgeBase.gs",
+      "apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
       "apps-script/clinica-liv-leads/README.md",
       "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json",
       "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
@@ -31,27 +33,37 @@
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "netlify/functions/conversation-archive.mjs",
+      "netlify/functions/lib/appointment-confirmation.mjs",
+      "netlify/functions/lib/appointment-confirmation.test.mjs",
       "netlify/functions/lib/audio-transcription.mjs",
       "netlify/functions/lib/audio-transcription.test.mjs",
+      "netlify/functions/lib/bruna-autonomia.integration.test.mjs",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
       "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/conversation-archive-outbox.mjs",
+      "netlify/functions/lib/conversation-archive-outbox.test.mjs",
       "netlify/functions/lib/conversation-guidelines.mjs",
       "netlify/functions/lib/conversation-ledger.mjs",
       "netlify/functions/lib/conversation-ledger.test.mjs",
       "netlify/functions/lib/conversation-memory.mjs",
       "netlify/functions/lib/conversation-memory.test.mjs",
       "netlify/functions/lib/human-resume-processor.test.mjs",
+      "netlify/functions/lib/human-takeover.test.mjs",
       "netlify/functions/lib/inbound-background-intake.test.mjs",
       "netlify/functions/lib/inbound-burst-context.mjs",
       "netlify/functions/lib/inbound-reply-context.mjs",
       "netlify/functions/lib/inbound-reply-context.test.mjs",
       "netlify/functions/lib/knowledge-learning.mjs",
+      "netlify/functions/lib/patient-replies.mjs",
       "netlify/functions/lib/patient-turn-context.mjs",
       "netlify/functions/lib/price-holding-webhook.test.mjs",
       "netlify/functions/lib/semantic-reply-policy.mjs",
       "netlify/functions/lib/semantic-reply-policy.test.mjs",
       "netlify/functions/lib/surgical-price-policy.mjs",
+      "netlify/functions/lib/ycloud-appointment-reminder.mjs",
+      "netlify/functions/lib/ycloud-patient-message.mjs",
+      "netlify/functions/lib/ycloud-post-consult.mjs",
       "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json",
@@ -208,104 +220,104 @@
     "liveReadOnlyPreflight": [
       {
         "contract": "site-editorial-copy",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "appointment-reminders",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "patient-journey-funnel-followups",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "professional-routing",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "bot-decision-observability",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "ycloud-delivery-cost-observability",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "patient-lifecycle-governance",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "bruna-regression-governance",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "patient-care-milestones",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "durable-storage-conditional-writes",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "website-conversation-continuity",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "reply-continuity",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "followup-message-copy",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "bruna-model-runtime",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       },
       {
         "contract": "conversation-audio-archive",
-        "system": "Netlify / Apps Script / LEADS / Drive",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       }
     ]
   },
   "verification": {
-    "status": "passed_local",
+    "status": "passed",
     "commands": [
       "git diff --check",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -341,8 +353,10 @@
       "node --test netlify/functions/lib/bruna-runtime.test.mjs",
       "node --test netlify/functions/lib/bruna-sol61.integration.test.mjs",
       "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
+      "node --test netlify/functions/lib/conversation-archive-outbox.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs",
       "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
       "node --test netlify/functions/lib/human-resume-runtime.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-ledger.test.mjs",
+      "node --test netlify/functions/lib/human-takeover.test.mjs",
       "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/inbound-reply-context.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
       "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/sheets-action-timeout.test.mjs",
       "node --test netlify/functions/lib/inbound-recovery-runtime.test.mjs",
@@ -384,9 +398,7 @@
     "status": "pending",
     "appsScriptVersion": 162,
     "blockers": [
-      "Revisão independente exigida para o pacote crítico.",
-      "Histórico completo do caso não acessível sem autenticação YCloud.",
-      "Publicação coordenada, autorização Google e ativação com recibos pendentes."
+      "Publicação coordenada, autorização Google se necessária, ativação e recibos pendentes."
     ],
     "evidence": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json"
   }

@@ -14,7 +14,7 @@ const BOT_KNOWLEDGE_CONFIG = Object.freeze({
 const BRUNA_ADMIN_KNOWLEDGE_20260918 = Object.freeze([
   { id: "KB-ADMIN-LOCAL", subject: "Localização da clínica",
     examples: "Onde fica a clínica?; Qual o endereço?; Onde vocês atendem?",
-    pattern: "^(?:onde fica(?: a clinica)?|qual (?:e )?o endereco(?: da clinica)?|onde voces atendem)$",
+    pattern: "^(?:onde fica(?: a clinica)?|qual (?:e )?o endereco(?: da clinica)?|onde voces (?:atendem|ficam)|(?:(?:pode|podem|consegue)(?: me)? (?:passar|mandar|enviar)|(?:me )?(?:envia|envie|manda|mande|passa|passe)) o endereco(?: da clinica)?)$",
     answer: "A Clínica LIV fica na R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150." },
   { id: "KB-ADMIN-CONSULTA-VALOR", subject: "Valor da consulta presencial com a Dra. Amanda",
     examples: "Qual o valor da consulta?; Quanto custa a avaliação?; A consulta é paga?",
@@ -37,6 +37,7 @@ const BRUNA_ADMIN_KNOWLEDGE_20260918 = Object.freeze([
 function classificarPerguntaAdministrativaSegura_(text, professional) {
   if (professional !== "amanda") return null;
   const value = String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    .replace(/\boendereco\b/g, "o endereco").replace(/\bpor\s*fafor\b|\bporfavor\b/g, "por favor")
     .replace(/^(?:oi|ola|bom dia|boa tarde|boa noite)[,! .]+/, "")
     .replace(/[,! .]+(?:por favor|por gentileza|obrigad[ao])[.!? ]*$/, "")
     .replace(/[.!?]+$/, "").trim();

@@ -1,10 +1,18 @@
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import test from "node:test";
-import webhook, {
+import {
+  handleYCloudWebhook,
   isImmediateHumanContextContinuationCandidate,
   isSemanticHumanContextContinuationCandidate,
 } from "../ycloud-webhook.mjs";
+
+// This suite exercises the Sheets/provider consumers. Give the now-required
+// early durable memory write an explicit in-memory boundary, not a missing
+// production Blobs configuration.
+const webhook = (request, context = {}) => handleYCloudWebhook(request, context, {
+  appendConversationTurnImpl: async turn => ({ status: "completed", historyBefore: [], historyAfter: [turn] }),
+});
 
 const WEBHOOK_SECRET = "webhook-test-secret";
 const SHEETS_URL = "https://sheets.example.test/webhook";

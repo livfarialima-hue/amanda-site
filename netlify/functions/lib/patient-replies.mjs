@@ -69,11 +69,12 @@ const CLINIC_ADDRESS =
 export function buildAdministrativeSideAnswer({ text, professional, relationship } = {}) {
   if (professional !== "amanda" || relationship?.neverBotReply === true) return null;
   const value = String(text || "").normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase()
+    .replace(/\boendereco\b/g, "o endereco").replace(/\bpor\s*fafor\b|\bporfavor\b/g, "por favor")
     .replace(/^(?:oi|ola|bom dia|boa tarde|boa noite)[,! .]+/, "")
     .replace(/[,! .]+(?:por favor|por gentileza|obrigad[ao])[.!? ]*$/, "")
     .replace(/[.!?]+$/, "").trim();
   const facts = [
-    { code: "ADMIN-SIDE-LOCATION-01", pattern: /^(?:onde (?:fica(?: a clinica)?|voces (?:ficam|atendem))|qual (?:e )?o endereco(?: da clinica)?|(?:pode|podem|consegue) me (?:passar|mandar) o endereco(?: da clinica)?)$/, answer: `A Clínica LIV fica na ${CLINIC_ADDRESS}.` },
+    { code: "ADMIN-SIDE-LOCATION-01", pattern: /^(?:onde (?:fica(?: a clinica)?|voces (?:ficam|atendem))|qual (?:e )?o endereco(?: da clinica)?|(?:(?:pode|podem|consegue)(?: me)? (?:passar|mandar|enviar)|(?:me )?(?:envia|envie|manda|mande|passa|passe)) o endereco(?: da clinica)?)$/, answer: `A Clínica LIV fica na ${CLINIC_ADDRESS}.` },
     { code: "ADMIN-SIDE-INVOICE-01", pattern: /^(?:(?:voces )?(?:emitem|fornecem|dao) nota fiscal(?: da consulta)?|(?:a )?consulta (?:tem|inclui) nota fiscal)$/, answer: "Emitimos nota fiscal da consulta." },
     { code: "ADMIN-SIDE-INSURANCE-01", pattern: /^(?:(?:voces )?(?:aceitam|atendem|trabalham com)(?: por)? (?:convenio|plano(?: de saude)?)|a consulta e particular|a consulta tem reembolso)$/, answer: AMANDA_PRIVATE_REIMBURSEMENT_REPLY },
   ];

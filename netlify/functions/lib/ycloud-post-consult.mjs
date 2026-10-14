@@ -1,4 +1,5 @@
 import { readYCloudAcceptance } from "./ycloud-message-observability.mjs";
+import { fetchWithConversationArchive } from "./conversation-archive-outbox.mjs";
 
 const YCLOUD_MESSAGES_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
@@ -78,7 +79,7 @@ export async function sendYCloudPostConsult(
 
   try {
     const externalId = externalIdFor(appointmentId);
-    const response = await fetchImpl(YCLOUD_MESSAGES_URL, {
+    const response = await fetchWithConversationArchive(YCLOUD_MESSAGES_URL, {
       method: "POST",
       headers: {
         "content-type": "application/json; charset=utf-8",
@@ -114,7 +115,7 @@ export async function sendYCloudPostConsult(
         },
       }),
       signal: controller.signal,
-    });
+    }, { env, fetchImpl, source: "post_consult_template", text: `Olá! Aqui é a Bruna, concierge da Clínica LIV Faria Lima. Passando para saber se ficou alguma dúvida depois da sua consulta com ${professionalName}. Se quiser conversar sobre alguma orientação ou próximo passo, pode responder por aqui. Estamos à disposição.` });
 
     if (!response.ok) {
       return {

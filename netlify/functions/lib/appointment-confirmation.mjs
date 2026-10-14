@@ -1,3 +1,13 @@
+function audioAppointmentEvidence(turn) {
+  return turn?.messageType === "audio" || /^(?:\[Transcrição (?:automática|incerta) de áudio\]|\[Áudio)/i.test(String(turn?.text || ""));
+}
+
+function appointmentTextHistory(turns) {
+  const history = Array.isArray(turns) ? turns : [];
+  const lastAudio = history.findLastIndex(audioAppointmentEvidence);
+  return history.slice(lastAudio + 1);
+}
+
 import { usableProfileFirstName } from "./profile-name.mjs";
 import {
   findProfessionalMentions,
@@ -661,6 +671,8 @@ export function detectPatientAppointmentSelection({
   at = new Date(),
   professionalHint = "",
 } = {}) {
+  if (audioAppointmentEvidence({ text: currentText })) return null;
+  recentConversation = appointmentTextHistory(recentConversation);
   if (!hasSelectionIntent(currentText)) return null;
 
   const baseDate = new Date(at);
@@ -911,6 +923,8 @@ export function detectManualAppointment({
   at = new Date(),
   professionalHint = "",
 } = {}) {
+  if (audioAppointmentEvidence({ text: currentText })) return null;
+  recentConversation = appointmentTextHistory(recentConversation);
   const baseDate = new Date(at);
   if (Number.isNaN(baseDate.getTime())) return null;
 
@@ -1104,6 +1118,8 @@ export function detectPatientAppointmentReply({
   at = new Date(),
   appointmentScheduled = false,
 } = {}) {
+  if (audioAppointmentEvidence({ text: currentText })) return null;
+  recentConversation = appointmentTextHistory(recentConversation);
   const baseDate = new Date(at);
   if (Number.isNaN(baseDate.getTime())) return null;
 

@@ -1627,7 +1627,8 @@
       "id": "conversation-audio-archive",
       "ownerFiles": [
         "netlify/functions/lib/audio-transcription.mjs",
-        "apps-script/clinica-liv-leads/ConversationArchive.gs"
+        "apps-script/clinica-liv-leads/ConversationArchive.gs",
+        "netlify/functions/lib/conversation-archive-outbox.mjs"
       ],
       "consumerFiles": [
         "netlify/functions/ycloud-webhook.mjs",
@@ -1636,7 +1637,11 @@
         "netlify/functions/lib/conversation-memory.mjs",
         "netlify/functions/lib/inbound-reply-context.mjs",
         "apps-script/clinica-liv-leads/Code.gs",
-        "scripts/check-bruna-model-live.mjs"
+        "scripts/check-bruna-model-live.mjs",
+        "netlify/functions/lib/appointment-confirmation.mjs",
+        "netlify/functions/lib/ycloud-patient-message.mjs",
+        "netlify/functions/lib/ycloud-appointment-reminder.mjs",
+        "netlify/functions/lib/ycloud-post-consult.mjs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/ConversationArchive.gs",
@@ -1652,7 +1657,10 @@
         "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json",
         "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
         "auditorias/bruna-contexto-audio-arquivo-2026-10-13/REVISAO.json",
-        ".gitattributes"
+        ".gitattributes",
+        "netlify/functions/lib/conversation-archive-outbox.mjs",
+        "netlify/functions/lib/conversation-archive-outbox.test.mjs",
+        "netlify/functions/lib/human-takeover.test.mjs"
       ],
       "requiredTestFiles": [
         "netlify/functions/lib/audio-transcription.test.mjs",
@@ -1660,11 +1668,16 @@
         "scripts/check-bruna-audio-live.test.mjs",
         "netlify/functions/lib/inbound-background-intake.test.mjs",
         "netlify/functions/lib/inbound-reply-context.test.mjs",
-        "netlify/functions/lib/price-holding-webhook.test.mjs"
+        "netlify/functions/lib/price-holding-webhook.test.mjs",
+        "netlify/functions/lib/conversation-archive-outbox.test.mjs",
+        "netlify/functions/lib/appointment-confirmation.test.mjs",
+        "netlify/functions/lib/human-takeover.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/audio-transcription.test.mjs apps-script/clinica-liv-leads/ConversationArchive.test.mjs scripts/check-bruna-audio-live.test.mjs",
-        "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/inbound-reply-context.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs"
+        "node --test netlify/functions/lib/inbound-background-intake.test.mjs netlify/functions/lib/inbound-reply-context.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
+        "node --test netlify/functions/lib/conversation-archive-outbox.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs",
+        "node --test netlify/functions/lib/human-takeover.test.mjs"
       ],
       "requiresReadOnlyPreflight": true
     }
