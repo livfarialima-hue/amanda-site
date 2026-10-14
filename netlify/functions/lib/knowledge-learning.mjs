@@ -6,6 +6,7 @@ const KNOWLEDGE_PREFIX = "KB:";
 
 export const UNKNOWN_CLARIFICATION_CODE = "UNKNOWN-CLARIFY-01";
 export const UNKNOWN_REVIEW_CODE = "UNKNOWN-REVIEW-01";
+export const HUMAN_LEARNING_PROTOCOL = "human-learning-v2";
 
 const HIGH_RISK_PATTERNS = [
   /\b(?:urg[eê]ncia|emerg[eê]ncia|samu|pronto\s+socorro)\b/i,
@@ -72,8 +73,12 @@ export function normalizeKnowledgeContext(value) {
       pending && typeof pending === "object"
         ? {
             id: limitText(pending.id || pending.eventId, 200),
+            questionRevision: limitText(pending.questionRevision, 64),
+            conversationRevision: limitText(pending.conversationRevision, 64),
+            opportunityId: limitText(pending.opportunityId, 120),
+            professional: limitText(pending.professional, 80),
             subject: limitText(pending.subject, 160),
-            question: limitText(pending.question, 500),
+            question: limitText(pending.question, 3_000),
             risk: limitText(pending.risk, 40),
             procedure: limitText(pending.procedure, 120),
             clarificationCount: Math.max(

@@ -1,0 +1,67 @@
+{
+  "checkedAt": "2026-10-14T03:16:56.000Z",
+  "crm": {
+    "rows": 555,
+    "professionals": {
+      "amanda": 525,
+      "nonpatient": 19,
+      "external": 4,
+      "daniel": 7
+    },
+    "states": {
+      "open": 531,
+      "voided": 24
+    },
+    "phases": {
+      "Novo": 389,
+      "Qualificado": 89,
+      "Não qualificado": 40,
+      "Paciente convertido": 8,
+      "Consulta agendada": 23,
+      "Consulta realizada": 6
+    }
+  },
+  "questions": {
+    "Aguardando resposta humana": 37,
+    "Aguardando esclarecimento": 1
+  },
+  "classification": {
+    "done": 552,
+    "excluded": 24,
+    "waiting_messages": 1,
+    "orphaned": 4
+  },
+  "approvedFacts": 5,
+  "ads": {
+    "ledger": 18,
+    "states": {
+      "quarantined_legacy": 5,
+      "invalidated_downgraded_to_new": 2,
+      "ready": 11
+    },
+    "exportRows": 11,
+    "uniqueTransactions": 11,
+    "singleClickIdentifier": 11,
+    "readyMatchedExport": 11,
+    "acceptanceVerified": false
+  },
+  "git": {
+    "baseCommit": "63e764133411e1db81ce6d679d7c6974af43aa5e",
+    "functionalCommit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
+    "productionDeploy": "6aceef108fbe857da62bcfac",
+    "appsScriptVersion": 163,
+    "opsCheck": "OK",
+    "source": "Receipts plus live Netlify API, public health and bounded LEADS reads; Apps Script version from reconciled release receipt."
+  },
+  "health": {
+    "audioTranscription": "enabled",
+    "conversationArchive": "enabled",
+    "automationMode": "active",
+    "processingMode": "durable_background_intake"
+  },
+  "limits": [
+    "No real patient messages, operational routines or private conversation exports.",
+    "Google Ads receipt/attribution not verified; ready/export are preparation only.",
+    "No pending/running classification backlog in observed cut; no reason to raise concurrency."
+  ]
+}

@@ -1,5 +1,6 @@
 import { UNKNOWN_CLARIFICATION_CODE } from "./knowledge-learning.mjs";
 import { hasApprovedSurgicalPriceDisclosure } from "./surgical-price-policy.mjs";
+import { preservesProtectedFacts } from "./protected-facts.mjs";
 
 export const CONTEXT_CLARIFICATION_CODE = "CONTEXT-CLARIFY-01";
 export const CONTEXT_REOPEN_CODE = "CONTEXT-REOPEN-01";
@@ -16,13 +17,6 @@ export const CONTEXTUAL_APPROVED_REPLY_CODES = Object.freeze([
   "OTOPLASTY-PRICE-RANGE-01",
 ]);
 
-function factualLiterals(text) {
-  const value = String(text || "");
-  const links = [...new Set(value.match(/https?:\/\/[^\s<>]+/g) || [])].sort();
-  const numbers = [...new Set(value.replace(/https?:\/\/[^\s<>]+/g, "").match(/\d+(?:[.,]\d+)*/g) || [])].sort();
-  return JSON.stringify({ links, numbers });
-}
-
 // This selects wording only. The confirmed route and the final outbound gate
 // remain authoritative; protected operational copies are never rewritten here.
 export function selectConfirmedReplyText(semanticResult, approvedResult) {
@@ -31,7 +25,7 @@ export function selectConfirmedReplyText(semanticResult, approvedResult) {
   if (!semanticDecisionConfirmsDeterministicReply(semanticResult, approvedResult) ||
       semanticResult.decision.replyWording !== "contextual" ||
       !CONTEXTUAL_APPROVED_REPLY_CODES.includes(approvedResult.decision.replyCode) ||
-      !draft || draft.length > 1200 || factualLiterals(draft) !== factualLiterals(approved)) {
+      !draft || draft.length > 1200 || !preservesProtectedFacts(draft, approved)) {
     return approved;
   }
   // Wording is flexible, not the approved commercial facts. The outbound

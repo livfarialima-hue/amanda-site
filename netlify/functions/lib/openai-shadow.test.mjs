@@ -25,6 +25,89 @@ import webhook, {
 
 const PHONE = "+5511961957144";
 
+test("inference telemetry records all initial and revised usage once, including a rejected revision", async () => {
+  for (const revisionOutcome of ["accepted", "invalid", "incomplete", "http", "timeout", "network", "json"]) {
+    const logs = [];
+    let calls = 0;
+    const initial = validResponse(validDecision({ replyCode: "AMANDA-CONSULTA-INFO-01", replyWording: "contextual",
+      procedure: "lifting_facial", suggestedReply: "A consulta presencial custa R$ 500. Posso verificar horários?" }));
+    const revised = validResponse(validDecision({ replyCode: "AMANDA-CONSULTA-INFO-01", replyWording: "contextual",
+      procedure: "lifting_facial", suggestedReply: "A consulta presencial custa R$ 500. Seguimos sem ver horários agora." }));
+    revised.usage = { input_tokens: 100, output_tokens: 200, total_tokens: 300,
+      input_tokens_details: { cached_tokens: 80 }, output_tokens_details: { reasoning_tokens: 150 } };
+    if (revisionOutcome === "invalid") revised.output[0].content[0].text = "{}";
+    if (revisionOutcome === "incomplete") revised.status = "incomplete";
+    const result = await runOpenAIShadow({ phone: PHONE, text: "Pode sim. Não quero ver horários agora.",
+      recentConversation: [{ role: "assistant", source: "bruna", text: "Posso te passar o valor da consulta presencial?" }],
+      replyContract: { experienceVersion: "bruna-conversion-v1", allowedResponseKind: "direct_answer", allowedCtaTypes: [],
+        allowCta: false, maxQuestions: 1, maxLinks: 0, owner: "bruna", risk: "green", unresolvedIntents: ["consultation_information"] } },
+    { env: { OPENAI_API_KEY: "test-key", BRUNA_CONVERSION_EXPERIENCE_V1: "true" }, logImpl: value => logs.push(value),
+      fetchImpl: async () => {
+        calls++;
+        if (calls === 1) return Response.json(initial);
+        if (revisionOutcome === "http") return new Response("rejected", { status: 429 });
+        if (["timeout", "network"].includes(revisionOutcome)) {
+          const error = new Error("private failure detail");
+          error.name = revisionOutcome === "timeout" ? "AbortError" : "Error";
+          throw error;
+        }
+        if (revisionOutcome === "json") return new Response("invalid json", { status: 200 });
+        return Response.json(revised);
+      } });
+    assert.equal(calls, 2, revisionOutcome);
+    assert.equal(logs.length, 1, revisionOutcome);
+    assert.equal(result.decision.route, revisionOutcome === "accepted" ? "standard_reply" : "human_review");
+    const execution = logs[0].fields.aiExecution;
+    assert.equal(execution.attemptCount, 2);
+    const bothReported = ["accepted", "invalid", "incomplete"].includes(revisionOutcome);
+    assert.equal(execution.usageCoverage, bothReported ? "complete" : "partial");
+    assert.equal(execution.knownUsage.total_tokens, bothReported ? 330 : 30);
+    assert.equal(execution.unknownAttempts, bothReported ? 0 : 1);
+    assert.equal(execution.attempts[1].outcome, { accepted: "completed", invalid: "invalid_response", incomplete: "incomplete_response",
+      http: "http_error", timeout: "timeout", network: "request_failed", json: "invalid_response" }[revisionOutcome]);
+    assert.doesNotMatch(JSON.stringify(logs), /test-key|private failure|Posso verificar|5511961957144/);
+  }
+});
+
+test("initial failures retain observed usage and distinguish unknown usage without retrying", async () => {
+  for (const outcome of ["incomplete", "invalid", "timeout", "http", "json"]) {
+    const logs = [];
+    let calls = 0;
+    const result = await runOpenAIShadow({ phone: PHONE, text: "Endereço?" }, {
+      env: { OPENAI_API_KEY: "test-key" }, logImpl: value => logs.push(value),
+      fetchImpl: async () => {
+        calls++;
+        if (outcome === "timeout") throw Object.assign(new Error("private"), { name: "AbortError" });
+        if (outcome === "http") return new Response("private", { status: 503 });
+        if (outcome === "json") return new Response("private", { status: 200 });
+        const response = validResponse();
+        if (outcome === "incomplete") response.status = "incomplete";
+        else response.output[0].content[0].text = "{}";
+        return Response.json(response);
+      },
+    });
+    assert.equal(calls, 1);
+    assert.equal(result.status, "failed");
+    assert.equal(logs.length, 1);
+    const execution = logs[0].fields.aiExecution;
+    assert.equal(execution.usageCoverage, ["incomplete", "invalid"].includes(outcome) ? "complete" : "unknown");
+    assert.equal(execution.knownUsage?.total_tokens ?? null, ["incomplete", "invalid"].includes(outcome) ? 30 : null);
+  }
+});
+
+test("the shared inference adapter emits once without a webhook and telemetry failure has no behavioral effect", async () => {
+  for (const failLogging of [false, true, "async"]) {
+    let calls = 0, logs = 0;
+    const result = await runOpenAIShadow({ phone: PHONE, text: "Endereço?" }, {
+      env: { OPENAI_API_KEY: "test-key" }, fetchImpl: async () => { calls++; return Response.json(validResponse()); },
+      logImpl: () => { logs++; if (failLogging === "async") return Promise.reject(new Error("logger failed")); if (failLogging) throw new Error("logger failed"); },
+    });
+    assert.equal(result.status, "completed");
+    assert.equal(calls, 1);
+    assert.equal(logs, 1);
+  }
+});
+
 test("a safe acknowledgement of declined hours needs no revision even after twelve seconds", async () => {
   const realNow = Date.now;
   try {
@@ -74,13 +157,18 @@ test("a missing full source is declared and does not erase the latest human corr
 test("history retrieval consumes the existing model deadline instead of adding a second deadline", async () => {
   const realNow = Date.now;
   let elapsed = 0;
+  const logs = [];
   try {
     Date.now = () => 100000 + elapsed;
     const result = await runOpenAIShadow({ phone: PHONE, text: "Endereço?" }, { env: { OPENAI_API_KEY: "test-key", WHATSAPP_FULL_HISTORY_ENABLED: "true" },
       getDurableConversationContextImpl: async () => { elapsed = 20001; return { status: "failed" }; },
-      fetchImpl: () => { throw new Error("No model request after deadline"); } });
+      fetchImpl: () => { throw new Error("No model request after deadline"); }, logImpl: value => logs.push(value) });
     assert.equal(result.status, "failed");
     assert.equal(result.errorCode, "timeout");
+    assert.equal(logs.length, 1);
+    assert.equal(logs[0].fields.aiExecution.attemptCount, 0);
+    assert.equal(logs[0].fields.aiExecution.usageCoverage, "not_requested");
+    assert.equal(logs[0].fields.aiExecution.knownUsage, null);
   } finally { Date.now = realNow; }
 });
 
@@ -2208,6 +2296,7 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
   const originalLog = console.log;
   const requests = [];
   const pending = [];
+  const operationalLogs = [];
 
   Object.assign(process.env, {
     YCLOUD_WEBHOOK_SECRET: "webhook-test-secret",
@@ -2219,7 +2308,7 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
   });
   delete process.env.WHATSAPP_ALERT_NUMBER;
   delete process.env.YCLOUD_ALERT_TEMPLATE_NAME;
-  console.log = () => {};
+  console.log = value => { try { operationalLogs.push(JSON.parse(value)); } catch {} };
   globalThis.fetch = async (url, options) => {
     requests.push({ url, options });
 
@@ -2297,6 +2386,13 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
     assert.equal(body.aiShadowQueued, false);
     assert.equal(body.aiActiveQueued, true);
     assert.equal(body.patientReplyQueued, false);
+    const inferenceLogs = operationalLogs.filter(record => record.category === "ai_usage");
+    assert.equal(inferenceLogs.length, 1);
+    assert.equal(inferenceLogs[0].aiExecution.attemptCount,
+      requests.filter(request => request.url === "https://api.openai.com/v1/responses").length);
+    const decisionLogs = operationalLogs.filter(record => record.category === "openai_decision");
+    assert.ok(decisionLogs.length > 0);
+    assert.ok(decisionLogs.every(record => record.recordKind === "decision" && !Object.hasOwn(record, "usage") && !Object.hasOwn(record, "aiExecution")));
 
     const patientRequests = requests.filter(
       (request) =>

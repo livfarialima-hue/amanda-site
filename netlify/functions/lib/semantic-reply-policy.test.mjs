@@ -27,6 +27,32 @@ test("rewriting cannot alter or drop approved amounts and links", () => {
     assert.equal(selectConfirmedReplyText(contextual(text), withLink), withLink.decision.suggestedReply);
   }
 });
+
+test("equivalent Brazilian real formatting can retain contextual wording", () => {
+  const text = "A consulta presencial custa R$ 500,00. A decisão sobre a cirurgia pode ficar para depois.";
+  assert.equal(selectConfirmedReplyText(contextual(text), approved), text);
+  assert.equal(validateOutboundReply({ body: text, currentText: "Qual o valor da consulta?",
+    conversationAction: { action: "respond", replyContract: { maxQuestions: 0, maxLinks: 0, allowCta: false, allowAppointmentConfirmation: false } },
+  }).allowed, true);
+});
+
+test("BRL normalization cannot introduce a second charge or reverse the monetary sign", () => {
+  for (const draft of ["A consulta custa R$ 500. Cada retorno custa R$ 500,00.",
+    "A consulta custa -R$ 500.", "A consulta custa R$ -500."]) {
+    assert.equal(selectConfirmedReplyText(contextual(draft), approved), approved.decision.suggestedReply);
+  }
+});
+
+test("contextual wording preserves protected quantity units and institutional denial", () => {
+  for (const [source, draft] of [
+    ["Atividades leves podem voltar em cerca de 10 a 14 dias.", "Atividades leves podem voltar em cerca de 10 a 14 semanas."],
+    ["Não atendemos por convênio.", "Atendemos por convênio."],
+    ["A consulta não vira crédito para a cirurgia.", "A consulta vira crédito para a cirurgia."],
+  ]) {
+    const candidate = { ...approved, decision: { ...approved.decision, suggestedReply: source } };
+    assert.equal(selectConfirmedReplyText(contextual(draft), candidate), source);
+  }
+});
 test("initial price guidance, agenda, insurance, pending tasks and unknown codes remain exact", () => {
   for (const replyCode of ["SURGICAL-PRICE-INITIAL-01",
     "AMANDA-AGENDA-PREFERENCE-01", "INSURANCE-ACCEPTANCE-01", "AMANDA-CONSULTA-BUNDLE-01", "NEW-UNKNOWN-CODE"]) {
@@ -70,8 +96,11 @@ test("contextual wording still goes through clinical, appointment and question l
     "A consulta custa R$ 500. A melhor cirurgia para você é o lifting.",
     "A consulta custa R$ 500. Qual dia prefere?"]) {
     const body = selectConfirmedReplyText(contextual(text), approved);
-    assert.equal(body, text);
-    assert.equal(validateOutboundReply({ body, currentText: "Qual o valor da consulta?", conversationAction }).allowed, false);
+    // A newly added protected promise now falls back to the approved answer.
+    // Other unsafe meanings remain the final gate's responsibility.
+    assert.equal(body, /confirmada/.test(text) ? approved.decision.suggestedReply : text);
+    assert.equal(validateOutboundReply({ body: text, currentText: "Qual o valor da consulta?", conversationAction }).allowed, false);
+    if (body !== text) assert.equal(validateOutboundReply({ body, currentText: "Qual o valor da consulta?", conversationAction }).allowed, true);
   }
 });
 

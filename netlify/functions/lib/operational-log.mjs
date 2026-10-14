@@ -1,4 +1,5 @@
 import { createHmac } from "node:crypto";
+import { sanitizeAIExecution } from "./ai-usage.mjs";
 
 const LOG_CORRELATION_FORMAT_VERSION = "lc1";
 const DEFAULT_LOG_KEY_VERSION = "k1";
@@ -69,6 +70,11 @@ function sanitizeLogValue(value, depth = 0) {
 function sanitizeLogFields(fields, depth = 0) {
   const sanitized = {};
   for (const [key, value] of Object.entries(fields || {})) {
+    if (key === "aiExecution") {
+      const execution = sanitizeAIExecution(value);
+      if (execution) sanitized.aiExecution = execution;
+      continue;
+    }
     if (key === "correlationId") {
       sanitized.correlationId = normalizeLogCode(value, "lc1-k1-unavailable");
       continue;

@@ -824,7 +824,9 @@ export async function processHumanResumeJob(
   const runOpenAI =
     dependencies.runOpenAIShadowImpl || runOpenAIShadow;
   const knowledge = await (dependencies.callClassificationSheetsImpl || callClassificationSheets)(
-    "get_bot_knowledge_context", { knowledge: { phone: job.phone, question: job.text, procedure: enrichedPlan.procedure || job.procedure || "" } }, { env });
+    "get_bot_knowledge_context", { knowledge: { phone: job.phone, eventId: job.eventId,
+      opportunityId: job.opportunityId || "", professional: job.professional || "",
+      question: job.text, procedure: enrichedPlan.procedure || job.procedure || "" } }, { env });
   const learningContext = knowledge.status === "completed" ? knowledge.data : null;
   const aiResult = await runOpenAI(
     {

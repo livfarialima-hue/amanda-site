@@ -140,4 +140,22 @@ for (const [label, buildLog] of BUILDERS) {
     assert.equal(record.loggedAt, "2026-08-15T12:00:00.000Z");
     assert.match(record.correlationId, /^lc1-k7-[a-f0-9]{24}$/);
   });
+
+  test(`${label} inference evidence preserves only the closed numeric usage schema`, () => {
+    const record = buildLog({ source: "openai_inference", fields: {
+      input_tokens: "private", output_text: "private", usage: { input_tokens: 99, body: "private" },
+      aiExecution: { knownUsage: { total_tokens: 999 }, body: "private", attempts: [{
+        stage: "initial", outcome: "completed", durationMs: 20, httpStatus: 200, requestId: "private",
+        usage: { input_tokens: 10, output_tokens: 5, total_tokens: 15,
+          input_tokens_details: { cached_tokens: 3, text: "private" },
+          output_tokens_details: { reasoning_tokens: 2 }, body: "private" },
+      }] },
+    }, env: TEST_ENV });
+    assert.deepEqual(record.aiExecution.knownUsage, { input_tokens: 10, output_tokens: 5, total_tokens: 15,
+      input_tokens_details: { cached_tokens: 3 }, output_tokens_details: { reasoning_tokens: 2 } });
+    assert.equal(record.aiExecution.usageCoverage, "complete");
+    assert.doesNotMatch(JSON.stringify(record), /private|999|requestId/);
+    assert.equal("input_tokens" in record, false);
+    assert.deepEqual(record.usage, {});
+  });
 }

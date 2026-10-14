@@ -215,9 +215,15 @@ for (const scenario of ["address", "invoice", "semantic_veto", "new_human", "new
     const relationship = { state: "active_postop", professional: scenario === "unknown_professional" ? "" : "amanda", hasPendingHumanTask: true };
     deps.rescheduleHumanResumeImpl = async () => ({ status: "rescheduled" });
     let relationshipReads = 0, historyReads = 0;
-    deps.callClassificationSheetsImpl = async action => action === "get_bot_knowledge_context"
-      ? { status: "completed", data: { candidates: [] } }
-      : { status: "completed", data: { relationship: { ...relationship, neverBotReply: scenario === "opt_out" && ++relationshipReads > 1 } } };
+    deps.callClassificationSheetsImpl = async (action, payload) => {
+      if (action === "get_bot_knowledge_context") {
+        assert.equal(payload.knowledge.eventId, "patient-1");
+        assert.equal(payload.knowledge.opportunityId, "synthetic-opportunity");
+        assert.equal(payload.knowledge.professional, scenario === "unknown_professional" ? "" : "amanda");
+        return { status: "completed", data: { candidates: [] } };
+      }
+      return { status: "completed", data: { relationship: { ...relationship, neverBotReply: scenario === "opt_out" && ++relationshipReads > 1 } } };
+    };
     deps.getDurableConversationContextImpl = async () => ({ status: "completed", turns: [], pendingCommitments: [{ eventId: "synthetic-clinical-task", kind: "care", status: "pending", owner: "human_team" }] });
     deps.readConversationTurnsImpl = async () => ({ status: "completed", turns: ++historyReads > 1 && ["new_human", "new_patient"].includes(scenario)
       ? [{ role: scenario === "new_human" ? "assistant" : "user", source: scenario === "new_human" ? "human" : "patient", text: "Outra mensagem", at: "2026-07-28T15:29:00Z" }] : [] });
@@ -229,7 +235,7 @@ for (const scenario of ["address", "invoice", "semantic_veto", "new_human", "new
         urgent: false, professional: "amanda", procedure: "", replyCode: input.policyHints.deterministicReplyCode,
         suggestedReply: input.policyHints.deterministicReplyPreview || "A equipe vai conferir.", reviewReason: veto ? "wait_for_team" : "" } };
     };
-    const result = await processHumanResumeJob(job({ professional: scenario === "unknown_professional" ? "" : "amanda", text: scenario === "clinical" ? "Posso tomar remédio?" : scenario === "invoice" ? "Vocês emitem nota fiscal?" : "Pode me passar o endereço?",
+    const result = await processHumanResumeJob(job({ opportunityId: "synthetic-opportunity", professional: scenario === "unknown_professional" ? "" : "amanda", text: scenario === "clinical" ? "Posso tomar remédio?" : scenario === "invoice" ? "Vocês emitem nota fiscal?" : "Pode me passar o endereço?",
       receivedAt: scenario === "too_early" ? "2026-07-28T15:25:00Z" : "2026-07-28T15:00:00Z" }), { env: ACTIVE_ENV, now: NOW, ...deps });
     if (["address", "invoice"].includes(scenario)) {
       assert.equal(deps.patientMessages.length, 1, JSON.stringify(result));

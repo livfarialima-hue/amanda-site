@@ -20,6 +20,16 @@ async function readJsonLines(name) {
     .map((line) => JSON.parse(line));
 }
 
+test("missing-content transport delegates its response to the current welcoming policy", async () => {
+  const rules = await readJsonLines("rules.jsonl");
+  const transport = rules.find((rule) => rule.id === "missing_inbound_text");
+  const response = rules.find((rule) => rule.id === transport.responsePolicy);
+  assert.equal(response?.id, "missing_content_welcoming_without_technical_gap");
+  assert.match(response.rule, /Não dizer que a mensagem veio incompleta, não solicitar reenvio/);
+  assert.doesNotMatch(transport.rule, /enviar.*dizendo que a mensagem não apareceu completa/);
+  assert.match(transport.rule, /idempotência/);
+});
+
 test("every locked Bruna scenario remains unique and executable", async () => {
   const [baseline, conversationEvals, rules] = await Promise.all([
     readJson("regression-baseline.json"),

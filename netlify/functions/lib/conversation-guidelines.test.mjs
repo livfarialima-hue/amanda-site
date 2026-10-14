@@ -5,6 +5,17 @@ import {
   CONVERSATION_GUIDELINES,
 } from "./conversation-guidelines.mjs";
 
+test("name collection never overrides a useful question or demands a name before answering", () => {
+  assert.doesNotMatch(CONVERSATION_GUIDELINES, /responda brevemente à intenção e termine com a única pergunta/);
+  assert.match(CONVERSATION_GUIDELINES, /pergunte "Como posso te chamar\?" somente se não houver outra pergunta útil/);
+  assert.match(CONVERSATION_GUIDELINES, /Em continuidade, siga sem nome/);
+});
+
+test("nighttime price guidance does not reinstate an unsolicited mandatory guide", () => {
+  assert.doesNotMatch(CONVERSATION_GUIDELINES, /com as ressalvas e o guia correspondente/);
+  assert.match(CONVERSATION_GUIDELINES, /com as ressalvas obrigatórias; o guia só entra se solicitado/);
+});
+
 test("personal concerns get brief useful information without copying human sales scripts", () => {
   for (const pattern of [/não é uma nova fonte de fatos clínicos/, /não acrescente um link apenas porque está disponível/, /Não repita o relato como pergunta de confirmação/, /Papada não significa indicação de lipo/, /não pede orientação para emagrecer/, /Não confunda residência na UNICAMP/, /Uma pergunta só cabe se/]) assert.match(CONVERSATION_GUIDELINES,pattern);
   assert.doesNotMatch(CONVERSATION_GUIDELINES,/Só deixe de usá-lo se a rota final/);
@@ -481,7 +492,7 @@ test("playbook treats structured prefills only as context", () => {
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /termine com a única pergunta "Como posso te chamar\?"/,
+    /pergunte "Como posso te chamar\?" somente se não houver outra pergunta útil/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,

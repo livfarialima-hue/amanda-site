@@ -1,4 +1,6 @@
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
+import { normalizeAIUsage, summarizeAIExecution } from "./ai-usage.mjs";
+import { writeOperationalLog } from "./operational-log.mjs";
 import { buildConversationGuidelines } from "./conversation-guidelines.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
@@ -977,7 +979,7 @@ export async function runOpenAIShadow(
     priorInteractionKnown = false,
     deterministicUrgent = false,
   },
-  { env = process.env, fetchImpl = fetch, getDurableConversationContextImpl = getDurableConversationContext } = {},
+  { env = process.env, fetchImpl = fetch, getDurableConversationContextImpl = getDurableConversationContext, logImpl = writeOperationalLog } = {},
 ) {
   const apiKey = env.OPENAI_API_KEY;
 
@@ -990,6 +992,43 @@ export async function runOpenAIShadow(
   const controller = new AbortController();
   const startedAt = Date.now();
   const timeout = setTimeout(() => controller.abort(), BRUNA_CONVERSATION_TIMEOUT_MS);
+  const attempts = [];
+  // Emitted once here, including calls made by human-resume. A consumer may
+  // reuse the resulting decision without counting this inference a second time.
+  const emitExecution = () => {
+    try {
+      const logging = logImpl({ source: "openai_inference", category: "ai_usage", reason: "execution_recorded",
+        sourceId: randomUUID(),
+        fields: { model, aiExecution: summarizeAIExecution(attempts, Math.max(0, Date.now() - startedAt)) } });
+      if (logging && typeof logging.catch === "function") logging.catch(() => {});
+    } catch { /* Telemetry must never change a decision or retry an inference. */ }
+  };
+  const fetchAttempt = async (request, stage) => {
+    const attempt = { stage, outcome: "request_failed", usage: null };
+    attempts.push(attempt);
+    const attemptStartedAt = Date.now();
+    try {
+      const response = await fetchImpl(OPENAI_RESPONSES_URL, request);
+      attempt.httpStatus = response.status;
+      if (!response.ok) {
+        attempt.outcome = "http_error";
+        return { response, attempt };
+      }
+      try {
+        const data = await response.json();
+        attempt.usage = normalizeAIUsage(data?.usage);
+        return { response, data, attempt };
+      } catch (error) {
+        attempt.outcome = error?.name === "AbortError" ? "timeout" : "invalid_response";
+        return { response, attempt, invalidJson: true };
+      }
+    } catch (error) {
+      attempt.outcome = error?.name === "AbortError" ? "timeout" : "request_failed";
+      throw error;
+    } finally {
+      attempt.durationMs = Math.max(0, Date.now() - attemptStartedAt);
+    }
+  };
   let continuityFallback = null;
   const normalizedConversation = normalizeRecentConversation(
     recentConversation,
@@ -1103,7 +1142,8 @@ export async function runOpenAIShadow(
       }),
       signal: controller.signal,
     };
-    const response = await fetchImpl(OPENAI_RESPONSES_URL, request);
+    const initialAttempt = await fetchAttempt(request, "initial");
+    const { response, data: responseData } = initialAttempt;
 
     if (!response.ok) {
       return result("failed", {
@@ -1112,11 +1152,7 @@ export async function runOpenAIShadow(
       });
     }
 
-    let responseData;
-
-    try {
-      responseData = await response.json();
-    } catch {
+    if (initialAttempt.invalidJson) {
       return result("failed", {
         httpStatus: response.status,
         errorCode: "invalid_response",
@@ -1141,6 +1177,7 @@ export async function runOpenAIShadow(
       conversionExperienceEnabled,
     };
     const parsed = parseOpenAIShadowResponse(responseData, model, parseOptions);
+    initialAttempt.attempt.outcome = parsed.status === "completed" ? "completed" : parsed.errorCode;
     if (!conversionExperienceEnabled || parsed.status !== "completed" ||
         parsed.decision?.route !== "standard_reply" || parsed.decision.confidence !== "high" ||
         !parsed.decision.automaticAllowed || parsed.decision.urgent) return parsed;
@@ -1167,9 +1204,12 @@ export async function runOpenAIShadow(
       replyContract: normalizedReplyContract,
       instruction: "Reescreva a resposta a partir da informação nova da paciente e dos approvedClinicalFacts disponíveis. Corrija styleFailure respeitando os limites de perguntas, links e CTA do replyContract; use uma conversa natural, sem menu. A descrição já recebida responde à descoberta: ofereça uma informação específica útil, sem repetir a explicação geral da consulta, presumir sofrimento ou pedir novamente região/objetivo. Não acrescente fatos, promessas, indicação ou agenda sem base. Encerre sem pergunta quando suficiente; se não houver resposta útil e segura, mantenha revisão humana.",
     } });
-    const revisedResponse = await fetchImpl(OPENAI_RESPONSES_URL, { ...request, body: JSON.stringify(revisionRequest) });
+    const revisionAttempt = await fetchAttempt({ ...request, body: JSON.stringify(revisionRequest) }, "revision");
+    const revisedResponse = revisionAttempt.response;
     if (!revisedResponse.ok) return continuityFallback;
-    const revised = parseOpenAIShadowResponse(await revisedResponse.json(), model, parseOptions);
+    if (revisionAttempt.invalidJson) return continuityFallback;
+    const revised = parseOpenAIShadowResponse(revisionAttempt.data, model, parseOptions);
+    revisionAttempt.attempt.outcome = revised.status === "completed" ? "completed" : revised.errorCode;
     if (revised.status !== "completed") return continuityFallback;
     if (revised.decision?.route !== "standard_reply" || !revised.decision.automaticAllowed || revised.decision.urgent) return revised;
     if (revised.decision.confidence !== "high") return continuityFallback;
@@ -1184,5 +1224,6 @@ export async function runOpenAIShadow(
     });
   } finally {
     clearTimeout(timeout);
+    emitExecution();
   }
 }

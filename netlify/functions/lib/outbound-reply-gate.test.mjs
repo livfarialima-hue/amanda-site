@@ -921,6 +921,26 @@ test("controlled send delivers once and suppresses a retry", async () => {
   assert.equal(sends, 1);
 });
 
+test("an explicit denial reaches controlled delivery once but cannot bypass a new human action", async () => {
+  for (const humanIntervened of [false, true]) {
+    const bodies = [];
+    let rechecks = 0;
+    const input = { from: "+5511000000000", to: "+5511900000000", eventId: `synthetic-denial-${humanIntervened}`,
+      body: "O valor da consulta não é descontado da cirurgia.", currentText: "O valor da consulta vira desconto?",
+      recentConversation: [], conversationAction: respond };
+    const options = { ...fakeBlobs(),
+      beforeSendImpl: async () => ++rechecks < 2 || !humanIntervened,
+      sendYCloudPatientTextImpl: async ({ body }) => { bodies.push(body); return { status: "completed" }; },
+      appendConversationTurnImpl: async () => ({ status: "completed" }),
+      recordDurableConversationTurnImpl: async () => ({ status: "completed" }),
+    };
+    const result = await sendControlledPatientReply(input, options);
+    assert.equal(result.status, humanIntervened ? "superseded" : "completed");
+    assert.deepEqual(bodies, humanIntervened ? [] : [input.body]);
+    if (!humanIntervened) assert.equal((await sendControlledPatientReply(input, options)).status, "duplicate");
+  }
+});
+
 test("controlled send uses the validated trimmed body", async () => {
   const blobs = fakeBlobs();
   let deliveredBody = "";
@@ -1152,6 +1172,46 @@ test("semantic validation blocks unsafe medical, commercial and contextual claim
       currentText: "Pode me orientar?",
       conversationAction: respond,
     });
+    assert.equal(result.allowed, false, body);
+    assert.equal(result.reason, reason, body);
+  }
+});
+
+test("explicit denial of a protected promise is not the promise itself", () => {
+  for (const body of [
+    "O valor da consulta não é descontado da cirurgia.",
+    "O valor da consulta não será abatido da cirurgia.",
+    "A consulta não vira crédito para a cirurgia.",
+    "A consulta ainda não está confirmada; a equipe vai conferir o horário com você.",
+    "O horário não foi reservado.",
+    "Não existe reembolso garantido; a cobertura depende do seu plano.",
+    "O reembolso não é garantido pelo plano.",
+    "Não há abatimento no Imposto de Renda confirmado pela clínica.",
+    "Não podemos afirmar que será possível abater o valor no imposto de renda.",
+  ]) {
+    const result = validateOutboundReply({ body, currentText: "Como funciona?", conversationAction: respond });
+    assert.equal(result.allowed, true, `${body}: ${result.reason}`);
+  }
+});
+
+test("negation cannot hide another positive or ambiguous protected claim", () => {
+  const cases = [
+    ["Não há custo extra. O valor da consulta será descontado da cirurgia.", "consultation_credit_claim"],
+    ["O valor da consulta não é descontado, mas será abatido da cirurgia.", "consultation_credit_claim"],
+    ["O valor da consulta não é apenas descontado; ele vira crédito para a cirurgia.", "consultation_credit_claim"],
+    ["Não se preocupe, a consulta está confirmada para amanhã.", "unverified_appointment_confirmation"],
+    ["A consulta não está confirmada, mas o horário está reservado.", "unverified_appointment_confirmation"],
+    ["A consulta não deixa de estar confirmada.", "unverified_appointment_confirmation"],
+    ["A consulta não está não confirmada.", "unverified_appointment_confirmation"],
+    ["Não existe reembolso garantido. O reembolso integral é garantido pelo plano.", "reimbursement_promise"],
+    ["O reembolso não é apenas parcial: o reembolso total é garantido.", "reimbursement_promise"],
+    ["Não podemos afirmar que não será possível abater o valor no imposto de renda.", "tax_benefit_claim"],
+    ["Não há abatimento confirmado. A nota permite deduzir o valor no imposto de renda.", "tax_benefit_claim"],
+    ["Não há abatimento no imposto de renda, mas é possível deduzir.", "tax_benefit_claim"],
+    ["Não há abatimento no imposto de renda. Porém você pode deduzir.", "tax_benefit_claim"],
+  ];
+  for (const [body, reason] of cases) {
+    const result = validateOutboundReply({ body, currentText: "Como funciona?", conversationAction: respond });
     assert.equal(result.allowed, false, body);
     assert.equal(result.reason, reason, body);
   }

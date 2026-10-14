@@ -7,6 +7,7 @@ const BOT_KNOWLEDGE_CONFIG = Object.freeze({
   maximumCandidates: 40,
   maximumOpenQuestionsInDigest: 12,
   maximumRulesInDigest: 8,
+  humanLearningProtocol: "human-learning-v2",
 });
 
 // Administrative facts already approved in patient-replies.mjs. This catalog
@@ -311,25 +312,95 @@ function regraConhecimentoAtiva_(row, now, activeSnapshot) {
     (!validUntil || validUntil.getTime() >= now.getTime());
 }
 
-function obterDuvidaPendentePorTelefone_(sheet, phone) {
-  if (!sheet || sheet.getLastRow() < 2 || !phone) return null;
-  const values = sheet
-    .getRange(2, 1, sheet.getLastRow() - 1, BOT_UNKNOWN_HEADERS.length)
-    .getValues();
-  const pendingStatuses = new Set([
-    "aguardando esclarecimento",
-    "aguardando resposta humana",
-  ]);
+function hashRevisaoConhecimento_(value) {
+  const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,
+    JSON.stringify(value), Utilities.Charset.UTF_8);
+  return digest.map(function (value) { return (value & 255).toString(16).padStart(2, "0"); }).join("");
+}
 
-  for (let index = values.length - 1; index >= 0; index -= 1) {
-    if (
-      normalizarTelefoneConhecimento_(values[index][1]) === phone &&
-      pendingStatuses.has(normalizarTextoConhecimento_(values[index][9]))
-    ) {
-      return { row: index + 2, values: values[index] };
-    }
+function revisaoDuvidaConhecimento_(row) {
+  return hashRevisaoConhecimento_(row.slice(0, BOT_UNKNOWN_HEADERS.length));
+}
+
+function obterReciboConhecimento_(spreadsheet, key) {
+  const sheet = spreadsheet.getSheetByName && spreadsheet.getSheetByName(BOT_KNOWLEDGE_CONFIG.reviewSheetName);
+  if (!key || !sheet || sheet.getLastRow() < 2) return null;
+  const match = sheet.getRange(2, 12, sheet.getLastRow() - 1, 1).createTextFinder(key).matchEntireCell(true).findNext();
+  return match ? { sheet: sheet, row: match.getRow(), values: sheet.getRange(match.getRow(), 1, 1, 13).getValues()[0] } : null;
+}
+
+function reciboConhecimentoExiste_(spreadsheet, key) {
+  return Boolean(obterReciboConhecimento_(spreadsheet, key));
+}
+
+function concluirReciboEsclarecimento_(receipt, now) {
+  if (!receipt) return;
+  receipt.sheet.getRange(receipt.row, 9).setValue("Aplicado");
+  receipt.sheet.getRange(receipt.row, 13).setValue(now);
+}
+
+function eventoAprendizadoProcessado_(spreadsheet, eventId) {
+  return Boolean(eventId && reciboConhecimentoExiste_(spreadsheet, "knowledge-answer:" + eventId));
+}
+
+// Identity comes from persisted messages, never the newest lead for a phone.
+// An absent or ambiguous legacy link leaves the question for human review.
+function obterDuvidaPendentePorTelefone_(sheet, phone, spreadsheet, input) {
+  if (!sheet || sheet.getLastRow() < 2 || !phone) return null;
+  input = input || {};
+  const values = sheet.getRange(2, 1, sheet.getLastRow() - 1, BOT_UNKNOWN_HEADERS.length).getValues();
+  const pendingStatuses = new Set(["aguardando esclarecimento", "aguardando resposta humana"]);
+  const pendingRows = values.map(function (row, index) { return { row: index + 2, values: row }; })
+    .filter(function (item) { return normalizarTelefoneConhecimento_(item.values[1]) === phone &&
+      pendingStatuses.has(normalizarTextoConhecimento_(item.values[9])); });
+  if (!pendingRows.length) return null;
+  const messageSheet = spreadsheet && spreadsheet.getSheetByName && spreadsheet.getSheetByName(CONFIG.messageSheetName);
+  if (!messageSheet || messageSheet.getLastRow() < 2 || !input.eventId) return null;
+  const messages = messageSheet.getRange(2, 1, messageSheet.getLastRow() - 1, 14).getValues()
+    .filter(function (row) { return normalizarTelefoneConhecimento_(row[0]) === phone; });
+  function evento_(id) {
+    const rows = messages.filter(function (row) { return String(row[4] || "") === id; });
+    if (rows.length !== 1 || !rows[0][7] || !rows[0][8]) return null;
+    return rows[0];
   }
-  return null;
+  const current = evento_(String(input.eventId));
+  if (!current || input.opportunityId && String(input.opportunityId) !== String(current[7]) ||
+      input.professional && String(input.professional) !== String(current[8])) return null;
+  if (input.forLearning && (current[1] !== "OUT" || current[10] !== "human" ||
+      eventoAprendizadoProcessado_(spreadsheet, String(input.eventId)))) return null;
+  const conversationRevision = hashRevisaoConhecimento_(messages);
+  if (input.conversationRevision && input.conversationRevision !== conversationRevision) return null;
+  if (input.forLearning) {
+    const humanAt = dataConhecimentoValida_(current[2]);
+    if (!humanAt || messages.some(function (row) {
+      const at = dataConhecimentoValida_(row[2]);
+      return !at || at.getTime() > humanAt.getTime();
+    }) || messages[messages.length - 1] !== current) return null;
+    if (input.answer && (Array.from(String(input.answer).trim()).length > 2000 ||
+        textoSeguroConhecimento_(current[5], 2000) !== textoSeguroConhecimento_(input.answer, 2000))) return null;
+  }
+
+  const matches = [];
+  const relatedMessageId = String(input.relatedMessageId || current[13] || "");
+  if (input.relatedMessageId && String(input.relatedMessageId) !== String(current[13] || "")) return null;
+  if (input.forLearning && !input.sourceQuestionId && !relatedMessageId && pendingRows.length !== 1) return null;
+  for (const item of pendingRows) {
+      const row = item.values;
+      if (input.sourceQuestionId && String(row[0]) !== String(input.sourceQuestionId)) continue;
+      const origin = evento_(String(row[0]));
+      // A legacy unresolved question could belong to either opportunity.
+      if (!origin) return null;
+      if (String(origin[7]) !== String(current[7]) || String(origin[8]) !== String(current[8])) continue;
+      if (relatedMessageId && String(origin[3]) !== relatedMessageId) continue;
+      const questionAt = dataConhecimentoValida_(origin[2]);
+      const currentAt = dataConhecimentoValida_(current[2]);
+      if (!questionAt || !currentAt || currentAt.getTime() < questionAt.getTime()) return null;
+      const revisedAt = dataConhecimentoValida_(row[12]);
+      if (input.forLearning && (!revisedAt || currentAt.getTime() < revisedAt.getTime())) return null;
+      matches.push({ ...item, opportunityId: String(origin[7]), professional: String(origin[8]),
+        questionRevision: revisaoDuvidaConhecimento_(row), conversationRevision: conversationRevision });
+  }
+  return matches.length === 1 ? matches[0] : null;
 }
 
 function obterContextoConhecimentoBot_(input) {
@@ -387,9 +458,10 @@ function obterContextoConhecimentoBot_(input) {
   candidates.sort(function (left, right) {
     return right.score - left.score;
   });
-  const pending = obterDuvidaPendentePorTelefone_(questionsSheet, phone);
+  const pending = obterDuvidaPendentePorTelefone_(questionsSheet, phone, spreadsheet, input);
 
   return {
+    humanLearningProtocol: BOT_KNOWLEDGE_CONFIG.humanLearningProtocol,
     snapshotVersion: activeSnapshot,
     candidateCount: candidates.length,
     catalogTruncated: candidates.length > BOT_KNOWLEDGE_CONFIG.maximumCandidates,
@@ -397,6 +469,10 @@ function obterContextoConhecimentoBot_(input) {
     candidates: candidates.slice(0, BOT_KNOWLEDGE_CONFIG.maximumCandidates),
     pendingQuestion: pending ? {
       eventId: String(pending.values[0] || "").trim(),
+      questionRevision: pending.questionRevision,
+      conversationRevision: pending.conversationRevision,
+      opportunityId: pending.opportunityId,
+      professional: pending.professional,
       question: String(pending.values[4] || "").trim(),
       subject: String(pending.values[5] || "").trim(),
       risk: String(pending.values[7] || "Médio").trim(),
@@ -488,6 +564,11 @@ function registrarDuvidaBot_(input) {
   const now = new Date();
   const risk = textoSeguroConhecimento_(input.risk || "Médio", 40);
   const context = textoSeguroConhecimento_(input.context, 1000);
+  let clarificationReceipt = obterReciboConhecimento_(spreadsheet, "knowledge-clarification:" + eventId);
+  let receiptBinding = null;
+  if (clarificationReceipt) {
+    try { receiptBinding = JSON.parse(String(clarificationReceipt.values[9] || "")); } catch (_) { /* Preserve the new question separately. */ }
+  }
   function finalizarRegistro_(result, recordedQuestion) {
     const review = registrarRevisaoDuvidaBot_(
       spreadsheet,
@@ -501,13 +582,26 @@ function registrarDuvidaBot_(input) {
   }
   const duplicateRow = encontrarDuvidaPorEvento_(sheet, eventId);
   if (duplicateRow) {
+    concluirReciboEsclarecimento_(clarificationReceipt, now);
     return finalizarRegistro_(
       { ok: true, duplicate: true, row: duplicateRow },
       question,
     );
   }
+  if (clarificationReceipt && clarificationReceipt.values[8] === "Aplicado") {
+    return finalizarRegistro_({ ok: true, duplicate: true }, question);
+  }
+  if (receiptBinding) {
+    const parentRow = encontrarDuvidaPorEvento_(sheet, receiptBinding.sourceQuestionId);
+    const parentValues = parentRow ? sheet.getRange(parentRow, 1, 1, BOT_UNKNOWN_HEADERS.length).getValues()[0] : null;
+    if (parentValues && revisaoDuvidaConhecimento_(parentValues) === receiptBinding.afterRevision) {
+      concluirReciboEsclarecimento_(clarificationReceipt, now);
+      return finalizarRegistro_({ ok: true, duplicate: true, updated: true, row: parentRow }, parentValues[4]);
+    }
+  }
 
-  const pending = obterDuvidaPendentePorTelefone_(sheet, phone);
+  const pending = input.sourceQuestionId && input.questionRevision && input.conversationRevision
+    ? obterDuvidaPendentePorTelefone_(sheet, phone, spreadsheet, input) : null;
   const clarificationCount = Math.min(
     Math.max(Number(input.clarificationCount || 0), 0),
     1,
@@ -517,14 +611,15 @@ function registrarDuvidaBot_(input) {
     80,
   );
 
-  if (pending && normalizarTextoConhecimento_(pending.values[9]) ===
-      "aguardando esclarecimento") {
+  if (pending && input.questionRevision === pending.questionRevision && normalizarTextoConhecimento_(pending.values[9]) ===
+      "aguardando esclarecimento" && Array.from(String(pending.values[4]) + "\nEsclarecimento: " + question).length <= 3000) {
     const originalQuestion = String(pending.values[4] || "").trim();
     const recordedQuestion = textoSeguroConhecimento_(
       originalQuestion + "\nEsclarecimento: " + question,
       3000,
     );
-    sheet.getRange(pending.row, 5, 1, 11).setValues([[
+    const operationAt = clarificationReceipt ? dataConhecimentoValida_(clarificationReceipt.values[2]) || now : now;
+    const updatedColumns = [
       recordedQuestion,
       textoSeguroConhecimento_(input.subject || pending.values[5], 160),
       context || textoSeguroConhecimento_(pending.values[6], 1000),
@@ -533,16 +628,33 @@ function registrarDuvidaBot_(input) {
       status,
       "",
       "",
-      now,
+      operationAt,
       textoSeguroConhecimento_(input.priority || "Resumo diário", 40),
       textoSeguroConhecimento_(input.procedure || pending.values[14], 120),
-    ]]);
-    return finalizarRegistro_(
-      { ok: true, updated: true, row: pending.row },
-      recordedQuestion,
-    );
+    ];
+    const updatedRow = pending.values.slice();
+    updatedRow.splice(4, 11, ...updatedColumns);
+    const binding = { sourceQuestionId: String(pending.values[0]), beforeRevision: pending.questionRevision,
+      afterRevision: revisaoDuvidaConhecimento_(updatedRow) };
+    if (!clarificationReceipt || receiptBinding && receiptBinding.sourceQuestionId === binding.sourceQuestionId &&
+        receiptBinding.beforeRevision === binding.beforeRevision && receiptBinding.afterRevision === binding.afterRevision) {
+      if (!clarificationReceipt) {
+        registrarRevisaoBot_(spreadsheet, { type: "Esclarecimento de dúvida", phone: phone, at: operationAt,
+          context: recordedQuestion, status: "Em preparo", key: "knowledge-clarification:" + eventId,
+          teamDecision: JSON.stringify(binding) });
+        clarificationReceipt = obterReciboConhecimento_(spreadsheet, "knowledge-clarification:" + eventId);
+      }
+      sheet.getRange(pending.row, 5, 1, 11).setValues([updatedColumns]);
+      concluirReciboEsclarecimento_(clarificationReceipt, now);
+      return finalizarRegistro_(
+        { ok: true, updated: true, row: pending.row },
+        recordedQuestion,
+      );
+    }
   }
 
+  // A changed/ambiguous parent or an oversized clarification stays as a new
+  // question. Neither the original nor the new patient request is discarded.
   sheet.appendRow([
     eventId,
     phone,
@@ -560,6 +672,7 @@ function registrarDuvidaBot_(input) {
     textoSeguroConhecimento_(input.priority || "Resumo diário", 40),
     textoSeguroConhecimento_(input.procedure, 120),
   ]);
+  concluirReciboEsclarecimento_(clarificationReceipt, now);
   return finalizarRegistro_(
     { ok: true, created: true, row: sheet.getLastRow() },
     question,
@@ -625,6 +738,12 @@ function registrarRevisaoBot_(spreadsheet, input) {
 }
 
 function registrarRespostaHumanaAprendizado_(input) {
+  if (!input || input.humanLearningProtocol !== BOT_KNOWLEDGE_CONFIG.humanLearningProtocol) {
+    return { ok: true, captured: false, correction: false, reason: "human_learning_protocol_unavailable" };
+  }
+  // The versioned field also fails closed if deployment rolls back after the
+  // capability read: an older receiver requires `answer` and rejects this body.
+  input = { ...input, answer: input.humanAnswer };
   const phone = normalizarTelefoneConhecimento_(input && input.phone);
   const answer = textoSeguroConhecimento_(input && input.answer, 2000);
   if (!phone || !answer) {
@@ -633,7 +752,11 @@ function registrarRespostaHumanaAprendizado_(input) {
 
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
   const questionsSheet = obterPlanilhaDuvidasBot_(spreadsheet);
-  const pending = obterDuvidaPendentePorTelefone_(questionsSheet, phone);
+  if (eventoAprendizadoProcessado_(spreadsheet, input.eventId)) {
+    return { ok: true, captured: false, duplicate: true, reason: "human_answer_already_processed" };
+  }
+  const pending = input.sourceQuestionId && input.questionRevision && input.conversationRevision
+    ? obterDuvidaPendentePorTelefone_(questionsSheet, phone, spreadsheet, { ...input, forLearning: true }) : null;
   const now = dataConhecimentoValida_(input.at) || new Date();
   // A partial reply can leave another question pending. An explicit correction
   // must still suspend the rule already used before capturing that other answer.
@@ -644,8 +767,12 @@ function registrarRespostaHumanaAprendizado_(input) {
     const eventId = String(pending.values[0] || "").trim();
     // Bind the proposal to the exact question read before inference. Another
     // patient turn may have arrived while the model was drafting it.
-    const proposal = validarPropostaConhecimento_(input.proposal, pending.values);
-    if (input.proposal && !proposal) return { ok: true, captured: false, reason: "proposal_context_changed_or_unsafe" };
+    const proposal = input.questionRevision === pending.questionRevision &&
+      input.proposal && input.proposal.opportunityId === pending.opportunityId &&
+      input.proposal.conversationRevision === pending.conversationRevision &&
+      input.proposal.professional === pending.professional && !respostaPendenteConhecimento_(answer)
+      ? validarPropostaConhecimento_(input.proposal, pending.values) : null;
+    if (!proposal) return { ok: true, captured: false, correction: Boolean(explicitCorrection), reason: "proposal_missing_context_changed_or_unsafe" };
     const approvedSheet = obterPlanilhaRespostasAprovadas_(spreadsheet);
     const rows = approvedSheet.getLastRow() < 2 ? [] : approvedSheet.getRange(2, 1, approvedSheet.getLastRow() - 1, BOT_KNOWLEDGE_HEADERS.length).getValues();
     const duplicate = proposal ? rows.find(function (row) {
@@ -656,13 +783,6 @@ function registrarRespostaHumanaAprendizado_(input) {
     }) : null;
     const ruleId = proposal ? (duplicate ? String(duplicate[0]) : idRegraConhecimento_(eventId, now)) : "";
     const risk = String(pending.values[7] || "Médio").trim();
-    questionsSheet.getRange(pending.row, 10, 1, 4).setValues([[
-      "Resposta capturada",
-      answer,
-      ruleId,
-      now,
-    ]]);
-
     if (proposal && !duplicate) approvedSheet.appendRow([
       ruleId,
       "Revisar",
@@ -681,7 +801,9 @@ function registrarRespostaHumanaAprendizado_(input) {
       0,
       "Proposta geral extraída de resposta humana; requer revisão de conteúdo e limites",
     ]);
-    if (!duplicate) registrarRevisaoBot_(spreadsheet, {
+    // This existing review key is also the durable receipt for the human event.
+    // Write it before closing the question; a partial failure stays for review.
+    registrarRevisaoBot_(spreadsheet, {
       type: "Regra de resposta",
       priority: risk === "Alto" ? "Alta" : "Normal",
       at: now,
@@ -690,9 +812,13 @@ function registrarRespostaHumanaAprendizado_(input) {
       context: pending.values[4],
       suggestion: proposal ? proposal.answer : "Resposta preservada na dúvida original. Sem regra geral segura; conferir manualmente.",
       confidence: proposal ? "Proposta geral — não aprovada" : "Resposta individual — não reutilizar",
-      status: "Aguardando aprovação",
-      key: "knowledge:" + (ruleId || eventId),
+      status: duplicate ? "Consolidada" : "Aguardando aprovação",
+      teamDecision: "Pergunta: " + eventId + "; candidata: " + ruleId + "; sem aprovação automática",
+      key: "knowledge-answer:" + input.eventId,
     });
+    questionsSheet.getRange(pending.row, 10, 1, 4).setValues([[
+      "Resposta capturada", answer, ruleId, now,
+    ]]);
     return { ok: true, captured: true, ruleId: ruleId, consolidated: Boolean(duplicate), proposalCreated: Boolean(proposal && !duplicate) };
   }
 
@@ -705,8 +831,13 @@ function registrarRespostaHumanaAprendizado_(input) {
   return { ok: true, captured: false, correction: correction };
 }
 
+function respostaPendenteConhecimento_(answer) {
+  return /\b(?:vou|vamos|iremos|preciso|precisamos)\s+(?:verificar|conferir|confirmar|consultar|perguntar|checar)|\b(?:aguarde|ainda nao sei|nao sei informar)\b/.test(normalizarTextoConhecimento_(answer));
+}
+
 function validarPropostaConhecimento_(proposal, pending) {
-  if (!proposal || proposal.version !== "learning-proposal-v1" || proposal.risk !== "Baixo" ||
+  if (!proposal || proposal.version !== "learning-proposal-v2" || proposal.risk !== "Baixo" ||
+      proposal.answersQuestion !== true || proposal.questionRevision !== revisaoDuvidaConhecimento_(pending) ||
       proposal.sourceQuestionId !== String(pending[0] || "") || normalizarTextoConhecimento_(pending[7]) !== "baixo") return null;
   const nameParts = normalizarTextoConhecimento_(pending[2]).split(" ").filter(function (part) { return part.length >= 3; });
   const output = {};

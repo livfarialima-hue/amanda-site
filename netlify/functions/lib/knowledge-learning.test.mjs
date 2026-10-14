@@ -9,8 +9,17 @@ import {
   buildUnknownHoldingReply,
   classifyLearningRisk,
   isMinorContext,
+  normalizeKnowledgeContext,
   shouldDigestLearningDecision,
 } from "./knowledge-learning.mjs";
+
+test("pending knowledge preserves its exact binding and the complete clarified question", () => {
+  const pending = { eventId: "synthetic-question", questionRevision: "a".repeat(64), conversationRevision: "b".repeat(64), opportunityId: "synthetic-opportunity",
+    professional: "amanda", question: "Pergunta com esclarecimentos. ".repeat(40).trim(), risk: "Baixo" };
+  const result = normalizeKnowledgeContext({ pendingQuestion: pending }).pendingQuestion;
+  assert.equal(result.id, pending.eventId);
+  for (const field of ["questionRevision", "conversationRevision", "opportunityId", "professional", "question"]) assert.equal(result[field], pending[field]);
+});
 
 function decision(overrides = {}) {
   return {

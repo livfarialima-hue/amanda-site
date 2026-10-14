@@ -190,7 +190,10 @@
         "auditorias/bruna-preco-acolhedor-2026-09-27/RELATORIO.md",
         "auditorias/bruna-autonomia-2026-10-11/PREFLIGHT.json",
         "auditorias/bruna-autonomia-2026-10-11/PUBLICACAO.json",
-        "auditorias/bruna-autonomia-2026-10-11/RELATORIO.md"
+        "auditorias/bruna-autonomia-2026-10-11/RELATORIO.md",
+        "auditorias/bruna-eficiencia-integridade-2026-10-14/PREFLIGHT.json",
+        "auditorias/bruna-eficiencia-integridade-2026-10-14/RELATORIO.md",
+        "auditorias/bruna-eficiencia-integridade-2026-10-14/REVISAO.json"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",
@@ -384,7 +387,8 @@
         "netlify/functions/lib/patient-turn-context.mjs",
         "netlify/functions/lib/knowledge-learning.mjs",
         "netlify/functions/lib/knowledge-candidate.mjs",
-        "netlify/functions/lib/knowledge-wording.mjs"
+        "netlify/functions/lib/knowledge-wording.mjs",
+        "netlify/functions/lib/protected-facts.mjs"
       ],
       "consumerFiles": [
         "apps-script/clinica-liv-leads/Code.gs",
@@ -410,7 +414,9 @@
         "netlify/functions/lib/inbound-message-kind.mjs",
         "netlify/functions/lib/extract-inbound-text.mjs",
         "netlify/functions/lib/bruna-conversion-experience.mjs",
-        "netlify/functions/lib/outbound-reply-gate.mjs"
+        "netlify/functions/lib/outbound-reply-gate.mjs",
+        "netlify/functions/lib/knowledge-wording.mjs",
+        "netlify/functions/lib/semantic-reply-policy.mjs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/Code.gs",
@@ -507,7 +513,9 @@
         "netlify/functions/lib/knowledge-candidate.mjs",
         "netlify/functions/lib/knowledge-wording.mjs",
         "netlify/functions/lib/bruna-autonomia.integration.test.mjs",
-        "netlify/functions/lib/bruna-preco-fotos.integration.test.mjs"
+        "netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
+        "netlify/functions/lib/protected-facts.mjs",
+        "netlify/functions/lib/protected-facts.test.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/Code.schema.test.mjs",
@@ -541,7 +549,8 @@
         "netlify/functions/lib/knowledge-learning.test.mjs",
         "netlify/functions/lib/bruna-autonomia.integration.test.mjs",
         "apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
-        "netlify/functions/lib/bruna-preco-fotos.integration.test.mjs"
+        "netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
+        "netlify/functions/lib/protected-facts.test.mjs"
       ],
       "requiredCommands": [
         "npm.cmd run architecture:check",
@@ -562,7 +571,8 @@
         "node --test netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
         "node --test netlify/functions/lib/knowledge-learning.test.mjs",
         "node --test netlify/functions/lib/bruna-autonomia.integration.test.mjs apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
-        "node --test netlify/functions/lib/bruna-preco-fotos.integration.test.mjs"
+        "node --test netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
+        "node --test netlify/functions/lib/protected-facts.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",
@@ -1055,12 +1065,16 @@
       "id": "bot-decision-observability",
       "ownerFiles": [
         "apps-script/clinica-liv-leads/OperationalEvents.gs",
-        "netlify/functions/lib/human-review-envelope.mjs"
+        "netlify/functions/lib/human-review-envelope.mjs",
+        "netlify/functions/lib/ai-usage.mjs",
+        "netlify/functions/lib/operational-log.mjs"
       ],
       "consumerFiles": [
         "netlify/functions/ycloud-webhook.mjs",
         "netlify/functions/lib/ycloud-review-alert.mjs",
-        "apps-script/clinica-liv-leads/Code.gs"
+        "apps-script/clinica-liv-leads/Code.gs",
+        "netlify/functions/human-resume.mjs",
+        "netlify/functions/lib/openai-shadow.mjs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/OperationalEvents.gs",
@@ -1073,13 +1087,19 @@
         "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
         "auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md",
         "netlify/functions/lib/ycloud-review-alert.mjs",
-        "netlify/functions/lib/ycloud-review-alert.test.mjs"
+        "netlify/functions/lib/ycloud-review-alert.test.mjs",
+        "netlify/functions/lib/ai-usage.mjs",
+        "netlify/functions/lib/ai-usage.test.mjs",
+        "netlify/functions/lib/operational-log.mjs",
+        "netlify/functions/lib/operational-log-safety.test.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/OperationalEvents.test.mjs",
         "netlify/functions/lib/human-review-envelope.test.mjs",
         "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
-        "netlify/functions/lib/ycloud-review-alert.test.mjs"
+        "netlify/functions/lib/ycloud-review-alert.test.mjs",
+        "netlify/functions/lib/ai-usage.test.mjs",
+        "netlify/functions/lib/operational-log-safety.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
@@ -1088,7 +1108,8 @@
         "npm.cmd test",
         "npm.cmd run ops:check",
         "git diff --check",
-        "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs"
+        "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "node --test netlify/functions/lib/ai-usage.test.mjs netlify/functions/lib/operational-log-safety.test.mjs netlify/functions/lib/openai-shadow.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",

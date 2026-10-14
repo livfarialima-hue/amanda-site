@@ -14,6 +14,7 @@ import { recordDurableConversationTurn, prepareConversationLedgerReceipt,
   markConversationLedgerAccepted, completeConversationLedgerReceipt } from "./conversation-ledger.mjs";
 import { hasInternalReferenceExposure } from "./internal-reference-guard.mjs";
 import { withoutNegatedSchedulingMentions } from "./patient-turn-context.mjs";
+import { hasAssertedProtectedClaim } from "./protected-facts.mjs";
 import { APPROVED_SURGICAL_RANGE_PATTERNS, containsApprovedSurgicalRange, hasOnlyApprovedSurgicalAmounts, hasApprovedSurgicalPriceDisclosure } from "./surgical-price-policy.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
@@ -242,21 +243,15 @@ function semanticUnsafeReplyReason(
     return "generic_holding_reply";
   }
 
-  if (
-    /\b(?:valor|pre[cç]o|investimento)\s+da\s+consulta\b[\s\S]{0,100}\b(?:abatid[oa]|descontad[oa]|creditad[oa]|devolvid[oa]|reembolsad[oa])\b/i.test(raw) ||
-    /\bconsulta\b[\s\S]{0,100}\b(?:vira|entra\s+como|fica\s+como)\s+(?:cr[eé]dito|desconto)\b/i.test(raw)
-  ) {
+  if (hasAssertedProtectedClaim(raw, "consultation_credit")) {
     return "consultation_credit_claim";
   }
 
-  if (/\b(?:abatimento|abater|deduzir|dedu[cç][aã]o)\b[\s\S]{0,60}\b(?:ir|imposto\s+de\s+renda)\b/i.test(raw)) {
+  if (hasAssertedProtectedClaim(raw, "tax")) {
     return "tax_benefit_claim";
   }
 
-  if (
-    /\b(?:garant(?:e|ido)|certamente|com\s+certeza)\b[\s\S]{0,60}\breembolso\b/i.test(raw) ||
-    /\breembolso\b[\s\S]{0,60}\b(?:garant(?:e|ido)|integral|total)\b/i.test(raw)
-  ) {
+  if (hasAssertedProtectedClaim(raw, "reimbursement")) {
     return "reimbursement_promise";
   }
 
@@ -292,7 +287,7 @@ function semanticUnsafeReplyReason(
   }
 
   if (
-    /\b(?:consulta|agendamento|hor[áa]rio|data|vaga)\b[\s\S]{0,100}\b(?:confirmad[oa]|marcad[oa]|agendad[oa]|reservad[oa])\b/i.test(raw) &&
+    hasAssertedProtectedClaim(raw, "appointment") &&
     contract.allowAppointmentConfirmation !== true
   ) {
     return "unverified_appointment_confirmation";

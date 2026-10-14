@@ -96,6 +96,7 @@ import {
   knowledgeRuleId,
   learningSubject,
   shouldDigestLearningDecision,
+  HUMAN_LEARNING_PROTOCOL,
 } from "./lib/knowledge-learning.mjs";
 import {
   checkLatestInboundReply,
@@ -1186,6 +1187,7 @@ async function getBotKnowledgeContext(knowledge) {
         candidates: result.responseData?.candidates || [],
         pendingQuestion: result.responseData?.pendingQuestion || null,
         learningCandidates: result.responseData?.learningCandidates || [],
+        humanLearningProtocol: result.responseData?.humanLearningProtocol || "",
       }
     : { candidates: [], pendingQuestion: null };
 }
@@ -1201,12 +1203,27 @@ export async function recordHumanLearningAnswer(answer, dependencies = {}) {
   const getContext = dependencies.getBotKnowledgeContextImpl || getBotKnowledgeContext;
   const deliver = dependencies.deliverSheetsActionImpl || deliverSheetsAction;
   const propose = dependencies.proposeKnowledgeCandidateImpl || proposeKnowledgeCandidate;
-  const context = await getContext({ phone: answer.phone, question: "", forLearning: true });
+  const context = await getContext({ phone: answer.phone, eventId: answer.eventId,
+    relatedMessageId: answer.relatedMessageId || "", sourceQuestionId: answer.sourceQuestionId || "",
+    opportunityId: answer.opportunityId || "", professional: answer.professional || "",
+    question: "", forLearning: true });
+  if (context?.humanLearningProtocol !== HUMAN_LEARNING_PROTOCOL) {
+    return deliveryResult(false, null, "none", { errorCode: "human_learning_protocol_unavailable",
+      responseData: { captured: false, correction: false } });
+  }
   const pendingQuestion = normalizeKnowledgeContext(context).pendingQuestion;
-  const proposal = pendingQuestion ? await propose({ answer: answer.answer, pendingQuestion, existingCandidates: context.learningCandidates || [] }) : null;
+  let proposal = null;
+  try {
+    proposal = pendingQuestion ? await propose({ answer: answer.answer, pendingQuestion, existingCandidates: context.learningCandidates || [] }) : null;
+  } catch { /* A failed inference cannot resolve a pending question. */ }
+  const { answer: humanAnswer, ...identity } = answer;
   return deliver(
     "record_human_learning_answer",
-    { learning: { ...answer, ...(proposal ? { proposal } : {}) } },
+    { learning: { ...identity, humanAnswer, humanLearningProtocol: HUMAN_LEARNING_PROTOCOL,
+      ...(pendingQuestion ? { sourceQuestionId: pendingQuestion.id,
+      questionRevision: pendingQuestion.questionRevision, conversationRevision: pendingQuestion.conversationRevision,
+      opportunityId: pendingQuestion.opportunityId,
+      professional: pendingQuestion.professional } : {}), ...(proposal ? { proposal } : {}) } },
   );
 }
 
@@ -1430,7 +1447,7 @@ function logOpenAIResult(eventId, result, executionMode = "shadow") {
   if (result.status === "completed") {
     writeOperationalLog({
       source: `openai_${executionMode}_completed`,
-      category: "openai_execution",
+      category: "openai_decision",
       reason: "completed",
       sourceId: eventId,
       fields: {
@@ -1450,7 +1467,7 @@ function logOpenAIResult(eventId, result, executionMode = "shadow") {
             ? BRUNA_CONVERSION_EXPERIENCE_VERSION
             : "off",
         schemaVersion: "bruna-decision-v2",
-        usage: result.usage,
+        recordKind: "decision",
       },
     });
     return;
@@ -1458,10 +1475,11 @@ function logOpenAIResult(eventId, result, executionMode = "shadow") {
 
   writeOperationalLog({
     source: `openai_${executionMode}_failed`,
-    category: "openai_execution",
+    category: "openai_decision",
     reason: "failed",
     sourceId: eventId,
     fields: {
+      recordKind: "decision",
       httpStatus: result.httpStatus ?? null,
       errorCode: result.errorCode || "unknown_failure",
     },
@@ -2441,6 +2459,9 @@ async function completeOpenAIActive({
         precomputedSemanticResult = null;
         input.learningContext = await getBotKnowledgeContext({
           phone: to,
+          eventId: String(input.eventId),
+          opportunityId: input.opportunityId || "",
+          professional: input.professional || "",
           question: input.text,
           procedure: plan.procedure || "",
         });
@@ -2979,6 +3000,11 @@ async function completeOpenAIActive({
     if (unknownClarification || unknownReview) {
       await recordBotUnknownQuestion({
         eventId: String(input.eventId),
+        opportunityId: input.opportunityId || "",
+        professional: input.professional || "",
+        sourceQuestionId: input.learningContext?.pendingQuestion?.eventId || input.learningContext?.pendingQuestion?.id || "",
+        questionRevision: input.learningContext?.pendingQuestion?.questionRevision || "",
+        conversationRevision: input.learningContext?.pendingQuestion?.conversationRevision || "",
         phone: to,
         patientName: input.patientProfileName,
         receivedAt: input.receivedAt || "",
@@ -4414,6 +4440,7 @@ export async function handleYCloudWebhook(
           phone: patientPhone,
           answer: echoText,
           eventId: String(eventId),
+          relatedMessageId: String(echo.context?.id || ""),
           at: echoAt,
         })
       : deliveryResult(true, null, "none", {
@@ -5234,6 +5261,9 @@ export async function handleYCloudWebhook(
     });
     const semanticRouteLearningContext = await getBotKnowledgeContext({
       phone,
+      eventId: String(eventId),
+      opportunityId: delivery.opportunityId || "",
+      professional: delivery.professional || "",
       question: text,
       procedure: semanticRoutePlan.procedure || "",
     });
@@ -6144,6 +6174,9 @@ export async function handleYCloudWebhook(
   ) {
     const reviewLearningContext = await getBotKnowledgeContext({
       phone,
+      eventId: String(eventId),
+      opportunityId: delivery.opportunityId || "",
+      professional: delivery.professional || "",
       question: text,
       procedure: automationPlan.procedure || "",
     });
@@ -6420,6 +6453,9 @@ export async function handleYCloudWebhook(
     )
       ? await getBotKnowledgeContext({
           phone,
+          eventId: String(eventId),
+          opportunityId: delivery.opportunityId || "",
+          professional: delivery.professional || "",
           question: text,
           procedure: openAIActivePlan.procedure || "",
         })

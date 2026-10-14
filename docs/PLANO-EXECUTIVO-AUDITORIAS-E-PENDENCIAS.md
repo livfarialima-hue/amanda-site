@@ -1,5 +1,11 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-EFICIENCIA-INTEGRIDADE-2026-10-14 -->
+**Candidato local 2026-10-14.1 — testado localmente, aguardando autorização de publicação do commit; não publicado.** A reanálise começou somente após o fechamento do pacote de histórico, áudio e arquivo (Netlify 6aceef108fbe857da62bcfac / 769cee3, Apps Script v163, fechamento local 63e7641). Correções limitadas a negações de afirmações proibidas, equivalência de fatos protegidos, instruções contraditórias, registro completo de tentativas de IA e vínculo/estado das dúvidas de aprendizado. Histórico completo, áudio, arquivo, valores, prioridade humana, qualificação e exportação Ads são preservados. Nenhuma escrita operacional ou mensagem real de teste. Evidência: auditorias/bruna-eficiencia-integridade-2026-10-14/RELATORIO.md. Testes e revisão independente concluídos; publicação depende de autorização do commit concreto e novo preflight vivo. SYNC_PENDING é esperado.
+Passaram 2.121 testes integrais, 38 complementares, revisão independente, contrato, arquitetura, check das fontes e ensaio de reversão. Após Daniel liberar espaço, o build passou: 193 arquivos, 54 páginas e zero auditorias no artefato. Candidato tested_local no worktree isolado bruna-eficiencia-integridade. A publicação autorizada deve preservar os gates reais de 15 cenários, áudio e histórico, publicar Apps Script antes de Netlify e verificar ambos; a projeção no Drive e os recibos só serão reconciliados então. Ponte direta Aníbal→aprendizado e aceite Ads permanecem pendentes conforme o relatório.
+<!-- /BRUNA-EFICIENCIA-INTEGRIDADE-2026-10-14 -->
+
+
 <!-- BRUNA-CONTEXTO-AUDIO-ARQUIVO-2026-10-13 -->
 **Pacote 2026-10-13.1 — PUBLICADO E VERIFICADO EM PRODUÇÃO.** Commit funcional 769cee33281516883b89ed150ba61ce8f6ccaaa4; Netlify 6aceef108fbe857da62bcfac, publicado em 2026-10-14T02:58:01.208Z. Apps Script v163 publicado primeiro, às 22:12 BRT de 13/10/2026, no deployment canônico existente. Quatro fontes salvas e relidas iguais a 4c74ed2 e sem diferenças funcionais neste commit final. ID, URL, acesso e onze acionadores preservados; sem migração ou novo acionador Apps Script.
 

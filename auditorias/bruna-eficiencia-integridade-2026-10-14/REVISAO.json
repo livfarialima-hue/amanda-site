@@ -1,0 +1,148 @@
+{
+  "status": "passed_local",
+  "verifiedAt": "2026-10-14T03:45:29.490Z",
+  "externalWritesPerformed": false,
+  "patientMessagesSent": 0,
+  "baselineCommit": "63e764133411e1db81ce6d679d7c6974af43aa5e",
+  "worktree": "C:/Users/danie/.codex/worktrees/bruna-eficiencia-integridade/amanda-site",
+  "branch": "codex/bruna-eficiencia-integridade-20261014",
+  "checks": [
+    {
+      "command": "npm.cmd test",
+      "status": "passed",
+      "tests": 2121,
+      "failed": 0,
+      "skipped": 0,
+      "finalFunctionalChangesIncluded": true
+    },
+    {
+      "command": "node --test campanhas/conversion-tracking.test.mjs campanhas/google-ads-ad-strength-20260913.test.mjs campanhas/google-ads-lift-max-conversions-20260913.test.mjs campanhas/google-ads-settings.test.mjs",
+      "status": "passed",
+      "tests": 38
+    },
+    {
+      "command": "npm.cmd run change:check",
+      "status": "passed",
+      "files": 38
+    },
+    {
+      "command": "npm.cmd run architecture:check",
+      "status": "passed"
+    },
+    {
+      "command": "npm.cmd run site:check",
+      "status": "passed_source_only",
+      "pages": 54,
+      "plannedArtifactFiles": 193,
+      "auditFilesInPlannedArtifact": 0
+    },
+    {
+      "command": "npm.cmd audit --json",
+      "status": "passed",
+      "vulnerabilities": 0
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed"
+    },
+    {
+      "command": "npm.cmd run site:build",
+      "status": "failed",
+      "reason": "ENOSPC",
+      "plannedArtifactBytes": 305853875,
+      "freeBytesObserved": 2535424
+    },
+    {
+      "command": "npm.cmd run ops:check",
+      "status": "SYNC_PENDING",
+      "codes": [
+        "CHANGE_PUBLICATION_PENDING",
+        "DRIVE_PROJECTION_HASH_DIVERGENCE",
+        "WRONG_BRANCH",
+        "DIRTY_WORKTREE"
+      ]
+    },
+    {
+      "command": "git apply --reverse --check (tracked and seven added files, in-memory patch)",
+      "status": "passed",
+      "files": 38,
+      "filesystemChanged": false
+    },
+    {
+      "command": "npm.cmd run site:build",
+      "status": "passed",
+      "checkedAt": "2026-10-14T09:28:11.420Z",
+      "artifactFiles": 193,
+      "sitemapUrls": 54,
+      "auditFilesInArtifact": 0,
+      "errors": []
+    }
+  ],
+  "independentReviews": [
+    {
+      "reviewer": "conversation_rules_audit",
+      "scope": "Knowledge capture, revisions, identity, partial writes, protocol",
+      "focusedTests": 150,
+      "status": "passed",
+      "findingClosed": "Clarification receipt was marked complete before question update; recoverable before/after revision receipts now verified."
+    },
+    {
+      "reviewer": "plugin_fallback_feasibility",
+      "scope": "Protected claims/currency and LEADS/CRM/Ads/agenda",
+      "protectedFactTests": 86,
+      "knowledgeTests": 78,
+      "crmAdsAgendaTestFiles": 13,
+      "status": "passed",
+      "findingClosed": "Tax context and monetary multiplicity/order/sign/scale bypasses reproduced and corrected; old receiver rejects v2 payload before sheet access."
+    },
+    {
+      "reviewer": "conversation_rules_audit",
+      "scope": "AI usage logging",
+      "focusedTests": 21,
+      "status": "passed"
+    },
+    {
+      "reviewer": "conversation_rules_audit",
+      "scope": "Final diff and 38-file scope after disk recovery",
+      "status": "passed",
+      "checkedAt": "2026-10-14T09:28:43.696Z",
+      "unexpectedFunctionalChanges": false,
+      "accidentalArtifacts": false,
+      "realPatientDataOrCredentialsDetected": false
+    }
+  ],
+  "publication": {
+    "status": "not_published",
+    "candidateStatus": "tested_local",
+    "liveModelGateRequired": true,
+    "liveScenarios": 15,
+    "audioGateRequired": true,
+    "fullHistoryGateRequired": true,
+    "publicationApprovalRequiredForExactCommit": true,
+    "nextAction": "Commit exact reviewed scope, then request authorization for that concrete commit; production and Drive projection still pending."
+  },
+  "limitations": [
+    "Google Ads import acceptance was not verified; 11 ready/exported rows matched in dated read-only preflight.",
+    "No live model, audio or patient sends in this task; real model production gates remain required.",
+    "Direct Anibal chat learning bridge was not implemented; current capture requires a persisted human WhatsApp echo.",
+    "Legacy recent-rule correction is still linked by phone; it can suspend review but cannot approve a rule.",
+    "Usage telemetry covers reply adapter attempts, not every AI subsystem or business cost attribution.",
+    "Pending-question ledger read latency was not measured against production."
+  ],
+  "localCloseoutAt": "2026-10-14T09:28:11.420Z",
+  "resolvedBlockers": [
+    {
+      "code": "ENOSPC",
+      "requiredAction": "Free at least 1 GB before rebuilding. Automatic approval review rejected removal of the task artifact, giving only blocked by policy. No cleanup bypass was used.",
+      "nextSteps": [
+        "Rebuild and verify generated artifact",
+        "Review final diff and rerun change:check",
+        "Set tested_local only after all gates pass and commit exact scope",
+        "Request publication approval for concrete commit",
+        "Pause heartbeat when ready for that decision"
+      ],
+      "resolvedAt": "2026-10-14T09:28:11.420Z",
+      "resolution": "Daniel reported disk space freed; observed 1894690816 free bytes, standard build then passed."
+    }
+  ]
+}
