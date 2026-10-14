@@ -17,27 +17,27 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
-    "lastObservedProductionCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
-    "functionalDeployId": "6acf8f3d0c1fdf2d868cceb3",
-    "lastObservedProductionDeployId": "6acf8f3d0c1fdf2d868cceb3",
-    "rollbackCommit": "bbf297da98946badd4460989064e4f2636f1211c",
-    "rollbackDeployId": "6acf71e94079694bfc8221a4",
+    "functionalCommit": "4869b38a51d55b76176cf2b1cf8021c4f2ea46be",
+    "lastObservedProductionCommit": "4869b38a51d55b76176cf2b1cf8021c4f2ea46be",
+    "functionalDeployId": "6acfecf0d71ca630f8f9469a",
+    "lastObservedProductionDeployId": "6acfecf0d71ca630f8f9469a",
+    "rollbackCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
+    "rollbackDeployId": "6acf8f3d0c1fdf2d868cceb3",
     "rollbackConstraint": "Git revert and a new verified Netlify deploy; preserve all data and receipts; no replay.",
-    "publishedAt": "2026-10-14T14:21:55.624Z",
+    "publishedAt": "2026-10-14T21:01:55.019Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-14T14:32:26.769Z",
-    "candidateChangeId": "BRUNA-TELECONSULTA-2026-10-14",
+    "lastVerifiedAt": "2026-10-14T21:04:06Z",
+    "candidateChangeId": "BRUNA-CONFIRMACAO-MODALIDADE-2026-10-14",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-14.3",
+    "bundleVersion": "2026-10-14.4",
     "appsScriptVersion": 164
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
     "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "74086bc8f5e30c7b00b155bb2923f236f7946951f6607712b34502341d53da3e",
-    "driveProjectionVerifiedAt": "2026-10-14T14:31:50.013Z",
+    "driveProjectionSha256": "d7ec928bd163879e144957c22529d984a87528a5b71a82e8237384b9e94432d9",
+    "driveProjectionVerifiedAt": "2026-10-14T21:04:06Z",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata."
   },
   "reliabilityContract": "durable-storage-conditional-writes",
@@ -46,7 +46,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-CONFIRMACAO-MODALIDADE-2026-10-14",
-    "status": "tested_local",
+    "status": "published_verified",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
@@ -54,6 +54,9 @@
     "baselineCommit": "fa68974be6b7a0ca9c2c9944e23fd37887a91e20",
     "bundleVersion": "2026-10-14.4",
     "baselineDeployId": "6acf8f3d0c1fdf2d868cceb3",
-    "baselineAppsScriptVersion": 164
+    "baselineAppsScriptVersion": 164,
+    "sourceCommit": "4869b38a51d55b76176cf2b1cf8021c4f2ea46be",
+    "netlifyDeployId": "6acfecf0d71ca630f8f9469a",
+    "verifiedAt": "2026-10-14T21:04:06Z"
   }
 }

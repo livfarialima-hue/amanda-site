@@ -1,8 +1,10 @@
 # Confirmação de modalidade — 14/10/2026
 
-Estado: testado localmente; publicação ainda não executada.
+Estado: publicado e verificado em 14/10/2026 às 18:01:55, America/Sao_Paulo. Commit funcional 4869b38a51d55b76176cf2b1cf8021c4f2ea46be; deploy 6acfecf0d71ca630f8f9469a.
 
-Autorização específica recebida em 14/10/2026 às 17:51:29, America/Sao_Paulo: manter no manifest público o identificador da projeção privada do manual e seu hash, além do recibo técnico de arquivos, testes e controles em CHANGE-CANDIDATE. A autorização resolve a pendência anterior da revisão automática; não altera permissões nem publica conteúdo restrito. Os gates vigentes foram preservados. A publicação aguarda o preflight do commit exato e os controles hospedados.
+Autorização específica recebida em 14/10/2026 às 17:51:29, America/Sao_Paulo: manter no manifest público o identificador da projeção privada do manual e seu hash, além do recibo técnico de arquivos, testes e controles em CHANGE-CANDIDATE. O preflight passou no commit exato, com worktree limpo, antes da atualização da branch operacional. A revisão automática também pediu comprovação sobre o manual: leitura HTTP anônima confirmou que o conteúdo retido já estava público; o acréscimo limita-se ao recibo técnico autorizado. Nenhum gate ou permissão foi alterado.
+
+Passaram 19/19 cenários reais do modelo, incluindo dois casos de histórico completo, e 3/3 áudios sintéticos. Produção, alias da branch e URL imutável retornaram HTTP 200; requisições sem assinatura retornaram HTTP 401. O deploy ativo contém 15 funções e seis rotinas agendadas. As mesmas projeções de manual e plano no Drive foram substituídas e relidas, com igualdade exata ao conteúdo local. Recibos em PUBLICACAO.json. Nenhuma mensagem real foi enviada pelos testes; ainda não houve revisão de conversa natural posterior à publicação.
 
 Revisão documental autorizada: o envio anterior do plano integral ao repositório público foi bloqueado pela revisão automática. O responsável autorizou a retirada das informações internas. Foram preservadas cópias integrais fechadas em área restrita, sem permissão pública; plano público sem contatos, gastos ou identificadores de campanhas, e manuais com regras gerais preservadas e cronologia operacional detalhada removida. O histórico Git anterior não foi apagado. Nenhuma nova mudança no comportamento do código.
 

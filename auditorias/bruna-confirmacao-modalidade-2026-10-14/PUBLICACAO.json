@@ -1,5 +1,70 @@
 {
-  "status": "not_published",
+  "status": "published_verified",
   "changeId": "BRUNA-CONFIRMACAO-MODALIDADE-2026-10-14",
-  "externalWritesPerformed": false
+  "externalWritesPerformed": true,
+  "bundleVersion": "2026-10-14.4",
+  "approvedCommit": "4869b38a51d55b76176cf2b1cf8021c4f2ea46be",
+  "netlifyDeployId": "6acfecf0d71ca630f8f9469a",
+  "publishedAt": "2026-10-14T21:01:55.019Z",
+  "verifiedAt": "2026-10-14T21:04:06Z",
+  "branch": "reestruturacao-site",
+  "productionState": "ready",
+  "releasePreflight": "CHANGE_SAFETY_STATUS=OK on exact clean commit before branch update",
+  "approval": {
+    "by": "Daniel",
+    "at": "2026-10-14T20:51:29Z",
+    "scope": "Reviewed modality correction plus expressly authorized public technical metadata and receipts"
+  },
+  "liveModel": {
+    "status": "passed",
+    "passed": 19,
+    "total": 19,
+    "fullHistoryPassed": 2,
+    "model": "gpt-6.1-sol",
+    "checkedAt": "2026-10-14T21:01:40.056Z",
+    "evidence": "Netlify production build log"
+  },
+  "liveAudio": {
+    "status": "passed",
+    "passed": 3,
+    "total": 3,
+    "model": "whisper-1"
+  },
+  "syntheticOnly": true,
+  "patientMessagesSent": 0,
+  "health": {
+    "checkedAt": "2026-10-14T21:02:40.904Z",
+    "targets": [
+      "production",
+      "branch_alias",
+      "immutable_deploy"
+    ],
+    "homepageHttpStatus": 200,
+    "webhookHealthHttpStatus": 200,
+    "unsignedWebhookHttpStatus": 401,
+    "signatureProtection": "active",
+    "functions": 15,
+    "schedules": 6
+  },
+  "appsScript": {
+    "version": 164,
+    "changed": false,
+    "runtimeInspected": false
+  },
+  "documentation": {
+    "manualSha256": "d7ec928bd163879e144957c22529d984a87528a5b71a82e8237384b9e94432d9",
+    "planSha256": "f216c2e143f09182d0709a084602f14ade335265f46a24fa1a971a7bd6a55e5c",
+    "sameProjectionIdsPreserved": true,
+    "exactReadbackVerifiedAt": "2026-10-14T21:04:06Z"
+  },
+  "rollback": {
+    "functionalCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
+    "netlifyDeployId": "6acf8f3d0c1fdf2d868cceb3",
+    "method": "New Git revert commit and verified build; preserve data, queues and receipts; no replay"
+  },
+  "naturalPostReleaseConversationsReviewed": 0,
+  "limits": [
+    "Synthetic checks and endpoint health do not prove a natural patient interaction or conversion improvement.",
+    "Unresolved calendar identities and internal-alert delivery investigation remain outside this release."
+  ]
 }

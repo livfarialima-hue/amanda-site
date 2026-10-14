@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONFIRMACAO-MODALIDADE-2026-10-14",
   "title": "Impedir confirmação presencial implícita após contexto de teleconsulta",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "fa68974be6b7a0ca9c2c9944e23fd37887a91e20",
   "authorization": {
     "required": true,
@@ -257,8 +257,32 @@
     ]
   },
   "release": {
-    "status": "not_published",
-    "externalWritesPerformed": false,
-    "receipt": "auditorias/bruna-confirmacao-modalidade-2026-10-14/PUBLICACAO.json"
+    "status": "published_verified",
+    "externalWritesPerformed": true,
+    "approvedCommit": "4869b38a51d55b76176cf2b1cf8021c4f2ea46be",
+    "approvedAt": "2026-10-14T20:51:29Z",
+    "approvedBy": "Daniel",
+    "approvalReference": "Explicit conversation authorization to resolve and publish this reviewed package, including technical metadata and receipts; bound to exact tested commit by release:preflight.",
+    "netlifyDeployId": "6acfecf0d71ca630f8f9469a",
+    "publishedAt": "2026-10-14T21:01:55.019Z",
+    "verifiedAt": "2026-10-14T21:04:06Z",
+    "appsScriptVersion": 164,
+    "appsScriptChanged": false,
+    "driveManualSha256": "d7ec928bd163879e144957c22529d984a87528a5b71a82e8237384b9e94432d9",
+    "drivePlanSha256": "f216c2e143f09182d0709a084602f14ade335265f46a24fa1a971a7bd6a55e5c",
+    "driveProjectionEquality": "Exact readback of the same two existing projection files",
+    "liveModel": {
+      "passed": 19,
+      "total": 19,
+      "fullHistoryPassed": 2,
+      "checkedAt": "2026-10-14T21:01:40.056Z"
+    },
+    "liveAudio": {
+      "passed": 3,
+      "total": 3,
+      "model": "whisper-1"
+    },
+    "receipt": "auditorias/bruna-confirmacao-modalidade-2026-10-14/PUBLICACAO.json",
+    "naturalPostReleaseConversationsReviewed": 0
   }
 }

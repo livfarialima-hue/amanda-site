@@ -46,5 +46,17 @@
   "rollback": {
     "method": "Reverse exact declared diff by new commit; never replay queues",
     "rehearsal": "git apply --reverse --check passed for all 17 declared files before commit"
+  },
+  "postPublication": {
+    "closeoutGovernanceTests": { "passed": 9, "failed": 0 },
+    "verifiedAt": "2026-10-14T21:04:06Z",
+    "receipt": "auditorias/bruna-confirmacao-modalidade-2026-10-14/PUBLICACAO.json",
+    "liveModelPassed": 19,
+    "liveModelTotal": 19,
+    "liveAudioPassed": 3,
+    "liveAudioTotal": 3,
+    "fullHistoryPassed": 2,
+    "exactProductionCommit": "4869b38a51d55b76176cf2b1cf8021c4f2ea46be",
+    "exactProjectionReadback": true
   }
 }

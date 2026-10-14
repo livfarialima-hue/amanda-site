@@ -2,9 +2,11 @@
 
 Edição pública revisada em 14/10/2026. O conteúdo integral anterior foi preservado como evidência fechada em área restrita. Este documento não publica contatos, IDs de contas, configuração de ambiente, códigos de campanha, credenciais ou observações individuais. Não apaga o histórico Git anterior.
 
-## Correção em preparação
+## Correção publicada
 
-Pacote 2026-10-14.4, testado localmente, ainda não publicado. O proprietário da interpretação de agendamento bloqueia a modalidade presencial implícita diante de contexto remoto. Confirmação remota deve ser inequívoca. Áudio pode acrescentar um veto e não comprova identidade, aceite ou data. O consumidor verifica o contexto antes do efeito externo.
+Pacote 2026-10-14.4, publicado e verificado em 14/10/2026. O proprietário da interpretação de agendamento bloqueia a modalidade presencial implícita diante de contexto remoto. Confirmação remota deve ser inequívoca. Áudio pode acrescentar um veto e não comprova identidade, aceite ou data. O consumidor verifica o contexto antes do efeito externo.
+
+Commit funcional 4869b38a51d55b76176cf2b1cf8021c4f2ea46be; deploy 6acfecf0d71ca630f8f9469a, publicado às 18:01:55, America/Sao_Paulo. Passaram 19 cenários hospedados de modelo, incluindo histórico completo, e três áudios sintéticos. Serviço respondeu HTTP 200 e requisição sem assinatura foi recusada com HTTP 401; 15 funções e seis rotinas agendadas preservadas. Reversão por novo commit equivalente ao baseline bed7810a3dda4bbef39913edc48999b5a31aa06d / 6acf8f3d0c1fdf2d868cceb3, sem restaurar deploy por atalho ou reproduzir filas.
 
 A resposta de confirmação remota informa o horário de São Paulo e a necessidade de confirmação das orientações de acesso pela equipe. Não inventa endereço, link, disponibilidade ou conclusão de etapa administrativa.
 

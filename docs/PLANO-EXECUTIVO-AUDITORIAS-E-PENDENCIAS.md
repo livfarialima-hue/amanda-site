@@ -2,11 +2,13 @@
 
 Versão pública revisada em 14/10/2026 com autorização do responsável. O conteúdo integral anterior foi preservado como histórico fechado em área restrita. Esta edição remove contatos, gastos, identificadores de contas/campanhas e registros operacionais detalhados; não cancela decisões ou pendências anteriores. Não altera permissões de arquivos nem apaga o histórico Git já existente.
 
-## Publicação em preparação
+## Publicação verificada
 
-**2026-10-14.4 — testado localmente, ainda não publicado.** O pacote impede que contexto remoto se transforme em consulta presencial por omissão. A confirmação estruturada consulta o histórico antes da sincronização. Áudio pode bloquear uma reserva conflitante, mas não autoriza identidade, data, hora ou aceite. A mensagem remota informa o horário de São Paulo e que o acesso precisa ser confirmado pela equipe.
+**2026-10-14.4 — publicado e verificado em 14/10/2026 às 18:01:55, America/Sao_Paulo.** O pacote impede que contexto remoto se transforme em consulta presencial por omissão. A confirmação estruturada consulta o histórico antes da sincronização. Áudio pode bloquear uma reserva conflitante, mas não autoriza identidade, data, hora ou aceite. A mensagem remota informa o horário de São Paulo e que o acesso precisa ser confirmado pela equipe.
 
-O código de atendimento permaneceu idêntico ao candidato já testado; a revisão adicional é documental. Passaram 2.170 testes integrais, 58 focados incluídos nesse total e a união de contratos de 1.572 testes, com sobreposição. Contrato, arquitetura, build e diff passaram. Os 19 cenários hospedados de modelo, histórico completo e três áudios continuam obrigatórios no build de produção.
+O código de atendimento permaneceu idêntico ao candidato já testado; a revisão adicional é documental. Passaram 2.170 testes integrais, 58 focados incluídos nesse total e a união de contratos de 1.572 testes, com sobreposição. Contrato, arquitetura, build e diff passaram. Os 19 cenários hospedados de modelo, incluindo histórico completo, e os três áudios sintéticos passaram e continuam obrigatórios no build de produção.
+
+Commit funcional: 4869b38a51d55b76176cf2b1cf8021c4f2ea46be. Deploy funcional: 6acfecf0d71ca630f8f9469a. Produção, alias da branch e URL imutável responderam HTTP 200; webhook sem assinatura foi recusado com HTTP 401. Foram preservadas 15 funções e seis rotinas agendadas. Nenhuma mensagem a paciente foi enviada pelos testes. Apps Script v164 não foi alterado.
 
 Nenhum envio a paciente, convite, mudança de preço, campanha, flag, schema ou Apps Script integra este pacote. Este registro contém somente escopo técnico e resultados de testes sintéticos.
 
@@ -25,7 +27,7 @@ Os identificadores abaixo são referências de releases públicos de software, j
 
 | Tema | Estado | Próxima ação |
 |---|---|---|
-| Modalidade de consulta | Testado, publicação pendente | Publicar o commit exato após preflight e verificar o deploy |
+| Modalidade de consulta | Publicado e verificado | Observar primeira confirmação natural e revisar as 48 horas após a publicação |
 | Integridade da agenda | Contrato preservado | Exigir identidade, consentimento e modalidade inequívocos antes de qualquer efeito |
 | Outras pendências operacionais | Fora deste registro público | Consultar as fontes restritas antes de definir qualquer ação |
 | Campanhas e orçamento | Fora deste release | Consultar decisões vigentes e obter autorização própria para qualquer mudança |
