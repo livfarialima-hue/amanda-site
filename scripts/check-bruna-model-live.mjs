@@ -27,11 +27,15 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
   if (!env.OPENAI_API_KEY || /\*{3,}|•{3,}/u.test(env.OPENAI_API_KEY)) {
     return { status: 'failed', reason: 'production_key_unavailable' };
   }
-  const adapterEnv = { OPENAI_API_KEY: env.OPENAI_API_KEY, BRUNA_CONVERSION_EXPERIENCE_V1: 'enabled' };
+  const adapterEnv = { OPENAI_API_KEY: env.OPENAI_API_KEY, BRUNA_CONVERSION_EXPERIENCE_V1: 'enabled', WHATSAPP_FULL_HISTORY_ENABLED: 'true', CONTEXT: 'production' };
   const history = [
     { direction: 'IN', role: 'user', text: 'Gostaria de entender a avaliação.', at: '2026-10-11T13:00:00Z' },
     { direction: 'OUT', role: 'assistant', source: 'bruna', text: 'A avaliação é individual. O que você gostaria de esclarecer?', at: '2026-10-11T13:01:00Z' },
   ];
+  const longHistory = Array.from({ length: 80 }, (_, i) => ({ role: i % 2 ? 'assistant' : 'user', source: i % 2 ? 'human' : 'patient',
+    text: i === 0 ? 'Meu nome no perfil é Helena, mas me chame de Elisa, por favor.' : i === 1 ? 'Claro, Elisa.' :
+      i % 2 ? 'Entendido.' : `Estou apenas pesquisando e organizando minhas dúvidas, etapa ${i}.`,
+    eventId: `synthetic-long-${i}`, at: new Date(Date.UTC(2026, 8, 1, 0, i)).toISOString() }));
   const scenarios = [
     { name: 'consultation_contextual', text: 'Quanto custa a consulta com a Dra. Amanda? Ainda estou só pesquisando.', procedure: 'unknown', code: 'AMANDA-CONSULTA-INFO-01', reason: 'consultation_information_request' },
     { name: 'lifting_information', text: 'Onde ficam as cicatrizes do lifting facial?', procedure: 'lifting_facial', code: 'LIFTING-FACIAL-INFORMATION-01', reason: 'lifting_facial_information_request' },
@@ -51,6 +55,10 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     { name: 'consultation_preparation', text: 'O que devo levar para a primeira consulta?', procedure: 'unknown', educational: true },
     { name: 'clinical_urgency', text: 'Estou no pós-operatório e com falta de ar agora.', procedure: 'unknown', urgent: true },
     { name: 'approved_price_with_photo_request', text: 'Sou Helena. Gostaria de informações de lifting facial; tenho flacidez nas bochechas e linhas perto da boca. Vou mandar fotos minhas para avaliar e ter um orçamento. Estou planejando os gastos.', procedure: 'lifting_facial', code: 'LIFTING-PRICE-RANGE-01', priceWithPhotos: true },
+    { name: 'full_history_name_correction', text: 'Pode usar o nome que pedi no início e me dizer quanto custa a consulta presencial? Ainda estou pesquisando.', procedure: 'unknown', code: 'AMANDA-CONSULTA-INFO-01', reason: 'consultation_information_request',
+      fullHistory: longHistory, recentConversation: longHistory.slice(-32), fullHistoryName: true },
+    { name: 'full_history_resolved_human_task', text: 'Obrigada, recebi o documento. Era só isso.', procedure: 'unknown', fullHistoryResolved: true,
+      recentConversation: longHistory.slice(-32), fullHistory: [...longHistory, { role: 'assistant', source: 'human', text: 'O documento solicitado já foi enviado por e-mail. Está resolvido.', eventId: 'synthetic-resolved', at: '2026-10-13T13:00:00Z' }] },
     { name: 'classification', classification: true },
     { name: 'followup_declined', followup: true },
   ];
@@ -73,7 +81,12 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         status: data.status, usage: data.usage, errorCode: data.error?.code });
       return response;
     };
-    const options = { env: adapterEnv, fetchImpl: auditedFetch };
+    // Synthetic source only: the hosted gate must never query a real patient's
+    // ledger or send a WhatsApp message while exercising full-history loading.
+    const options = { env: adapterEnv, fetchImpl: auditedFetch, getDurableConversationContextImpl: async () => ({
+      status: 'completed', historyMode: 'full', turns: scenario.fullHistory || scenarioHistory,
+      coverage: { availableTurns: (scenario.fullHistory || scenarioHistory).length, omittedTurns: 0 },
+    }) };
     let result, selectedReply, gate;
     if (scenario.classification) {
       result = await runLeadClassifier({ phone: '+5511900000000', currentStatus: 'Novo', currentProfessional: 'amanda', messages: history }, options);
@@ -84,7 +97,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       // Reuse the actual owner of the reply contract. A hand-written partial
       // contract normalizes to risk=red/allowedResponseKind=none in the adapter.
       const plan = scenario.priceWithPhotos ? enrichAutomationPlanFromConversation(planAutomation({text:scenario.text,messageType:'text'}),scenarioHistory) :
-        { route: scenario.urgent || scenario.review ? 'human_review' : 'standard_reply', professional: 'amanda', procedure: scenario.procedure,
+        { route: scenario.fullHistoryResolved ? 'ignore' : scenario.urgent || scenario.review ? 'human_review' : 'standard_reply', professional: 'amanda', procedure: scenario.procedure,
         automaticAllowed: !scenario.urgent && !scenario.review, replyCode: scenario.code, reason: scenario.reason };
       const conversationAction = decideConversationAction({ text: scenario.text, plan, recentConversation: scenarioHistory, conversionExperienceEnabled: true });
       const replyContract = conversationAction.replyContract;
@@ -95,7 +108,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         : buildLiftingFacialInformationReply({ text: scenario.text, procedure: scenario.procedure });
       const policyHints = scenario.code && !scenario.knowledge ? { route: 'standard_reply', reason: scenario.reason, professional: 'amanda', procedure: scenario.procedure, automaticAllowed: true,
         deterministicReplyCode: scenario.code, deterministicReplyProfessional: 'amanda', deterministicReplyProcedure: scenario.procedure, deterministicReplyPreview: preview } : undefined;
-      result = await runOpenAIShadow({ phone: '+5511900000000', text: scenario.text, procedure: scenario.procedure, recentConversation: scenarioHistory,
+      result = await runOpenAIShadow({ phone: '+5511900000000', opportunityId: 'synthetic-only-opportunity', professional: 'amanda', text: scenario.text, procedure: scenario.procedure, recentConversation: scenarioHistory,
         previousConversationState: scenario.previousConversationState, learningContext: scenario.learningContext,
         patientRelationship: scenario.patientRelationship,
         priorInteractionKnown: true, policyHints, replyContract, deterministicUrgent: !!scenario.urgent }, options);
@@ -117,6 +130,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     const procedureMatches = result.decision?.procedure === scenario.procedure ||
       (scenario.knowledge === true && scenario.procedure === 'unknown' && result.decision?.procedure === '');
     const behaviorPassed = scenario.classification ? true : scenario.followup ? result.allowed === false :
+      scenario.fullHistoryResolved ? result.decision?.route === 'ignore' && result.decision?.automaticAllowed === false && !result.decision?.suggestedReply :
       scenario.urgent ? result.decision?.automaticAllowed === false :
       scenario.review ? result.decision?.route === 'human_review' && result.decision?.automaticAllowed === false &&
         result.decision?.replyCode === 'UNKNOWN-REVIEW-01' && /equipamento/i.test(result.decision?.conversationState?.unresolvedQuestions?.join(' ')) &&
@@ -125,6 +139,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       gate?.allowed === true && result.decision?.route === 'standard_reply' && result.decision?.automaticAllowed === true &&
         result.decision?.confidence === 'high' && result.decision?.urgent !== true &&
         result.decision?.replyCode === scenario.code && procedureMatches &&
+        (!scenario.fullHistoryName || (/Elisa/.test(selectedReply) && !/Helena|qual.*nome/i.test(selectedReply))) &&
         (!scenario.priceWithPhotos || (/Helena/i.test(selectedReply) && /bochechas/i.test(selectedReply) && /boca/i.test(selectedReply) &&
           /R\$ 26 mil e R\$ 42 mil/.test(selectedReply) && /fotos/i.test(selectedReply) && !/confirmar.*valor|recebi.*foto|R\$ 500/i.test(selectedReply))) &&
         !/qual.*(?:dia|período)|quer.*(?:horário|agendar)/i.test(selectedReply);

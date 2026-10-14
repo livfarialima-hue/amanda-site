@@ -1786,7 +1786,7 @@ function normalizeLead_(input) {
     nameSubject: input.nameSubject === "self" ? "self" : "contact_only",
     messageType: safeText_(input.messageType, 30).toLowerCase(),
     relatedMessageId: safeText_(input.relatedMessageId, 500),
-    text: safeText_(input.text, 4000),
+    text: safeText_(input.text, 32768),
     templateId:
       String(input.templateId || "").trim().toLowerCase() ===
       "procedure_evaluation_v1"
@@ -2266,7 +2266,7 @@ function registrarAtendimentoHumano_(input) {
       CONFIG.timezone,
       "yyyy-MM-dd",
     ),
-    safeText_(input.text, 4000),
+    safeText_(input.text, 32768),
   ]);
 
   const opportunity =
@@ -2295,7 +2295,7 @@ function registrarAtendimentoHumano_(input) {
         contactAt: takenAt,
         messageId,
         eventId,
-        text: safeText_(input.text, 4000),
+        text: safeText_(input.text, 32768),
         opportunityId: opportunity && opportunity.opportunityId,
         professional: opportunity && opportunity.professional,
         leadSheetName: opportunity && opportunity.sheetName,

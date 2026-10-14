@@ -1,5 +1,7 @@
 # Apps Script da Clínica LIV
 
+**Candidato ainda não publicado:** o pacote de contexto/áudio/arquivo inclui `LeadClassification.gs`: `get_conversation_context` em modo `full` consulta a identidade explícita da oportunidade/profissional, preserva texto/autoria/datas/citações e declara limites e lacunas. A janela operacional recente permanece separada. Publicar também Code.gs, KnowledgeBase.gs e ConversationArchive.gs; ativar `WHATSAPP_FULL_HISTORY_ENABLED` somente após equivalência e gate real.
+
 **Versão canônica atual: v162**, publicada e verificada em 13/10/2026; registro em `production-target.json` e recibo em `auditorias/bruna-autonomia-2026-10-11/PUBLICACAO.json`. O histórico abaixo conserva as publicações anteriores.
 
 <!-- BRUNA-RECUPERACAO-CONTEUDO-2026-09-25 -->

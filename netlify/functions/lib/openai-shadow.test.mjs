@@ -25,6 +25,55 @@ import webhook, {
 
 const PHONE = "+5511961957144";
 
+test("every model reply loads the scoped full transcript without enlarging operational history", async () => {
+  let payload, request;
+  const turns = Array.from({ length: 80 }, (_, i) => ({ role: i % 2 ? "assistant" : "user", source: i % 2 ? "human" : "patient",
+    text: `Mensagem ${i}`, eventId: `history-${i}`, at: new Date(Date.UTC(2026, 8, 1, 0, i)).toISOString() }));
+  turns[1].text = "Contexto anterior. ".repeat(130) + "CORREÇÃO IMPORTANTE NO MEIO" + " Continuação. ".repeat(130);
+  await runOpenAIShadow({ phone: PHONE, opportunityId: "synthetic-opp", professional: "amanda", text: "Quanto custa a consulta?",
+    recentConversation: turns.slice(-32) }, { env: { OPENAI_API_KEY: "test-key", WHATSAPP_FULL_HISTORY_ENABLED: "true" },
+    getDurableConversationContextImpl: async identity => { request = identity; return { status: "completed", historyMode: "full", turns, coverage: { availableTurns: 80 } }; },
+    fetchImpl: async (_url, options) => { payload = JSON.parse(JSON.parse(options.body).input); return Response.json(validResponse()); } });
+  assert.deepEqual(request, { phone: PHONE, opportunityId: "synthetic-opp", professional: "amanda", historyMode: "full" });
+  assert.equal(payload.fullConversation.turns.length, 80);
+  assert.equal(payload.fullConversation.turns[1].text, turns[1].text.trim());
+  assert.equal(payload.fullConversation.coverage.status, "all_available");
+  assert.equal(payload.recentConversation.length, 32);
+  assert.equal(JSON.stringify(payload).includes(PHONE), false);
+});
+
+test("a missing full source is declared and does not erase the latest human correction", async () => {
+  let payload;
+  await runOpenAIShadow({ phone: PHONE, text: "Obrigada", recentConversation: [{ role: "assistant", source: "human", text: "Corrigido pela equipe", eventId: "fresh" }] },
+    { env: { OPENAI_API_KEY: "test-key", WHATSAPP_FULL_HISTORY_ENABLED: "true" }, getDurableConversationContextImpl: async () => { throw new Error("Unavailable"); },
+      fetchImpl: async (_url, options) => { payload = JSON.parse(JSON.parse(options.body).input); return Response.json(validResponse()); } });
+  assert.equal(payload.fullConversation.coverage.status, "partial");
+  assert.equal(payload.fullConversation.turns.at(-1).text, "Corrigido pela equipe");
+});
+
+test("history retrieval consumes the existing model deadline instead of adding a second deadline", async () => {
+  const realNow = Date.now;
+  let elapsed = 0;
+  try {
+    Date.now = () => 100000 + elapsed;
+    const result = await runOpenAIShadow({ phone: PHONE, text: "Endereço?" }, { env: { OPENAI_API_KEY: "test-key", WHATSAPP_FULL_HISTORY_ENABLED: "true" },
+      getDurableConversationContextImpl: async () => { elapsed = 20001; return { status: "failed" }; },
+      fetchImpl: () => { throw new Error("No model request after deadline"); } });
+    assert.equal(result.status, "failed");
+    assert.equal(result.errorCode, "timeout");
+  } finally { Date.now = realNow; }
+});
+
+test("full-history reads are default-off and never activated in deploy previews", async () => {
+  for (const env of [{ OPENAI_API_KEY: "test" }, { OPENAI_API_KEY: "test", WHATSAPP_FULL_HISTORY_ENABLED: "true", CONTEXT: "deploy-preview" }]) {
+    let payload;
+    await runOpenAIShadow({ phone: PHONE, opportunityId: "synthetic", professional: "amanda", text: "Endereço?" }, { env,
+      getDurableConversationContextImpl: () => { throw new Error("Should not read private ledger"); },
+      fetchImpl: async (_url, options) => { payload = JSON.parse(JSON.parse(options.body).input); return Response.json(validResponse()); } });
+    assert.equal(payload.fullConversation.coverage.reason, "full_history_disabled");
+  }
+});
+
 test("only active mode may mutate an appointment from an inbound reply", () => {
   assert.equal(isAutomatedAppointmentMutationEnabled("active"), true);
   assert.equal(isAutomatedAppointmentMutationEnabled("shadow"), false);
@@ -1347,7 +1396,7 @@ test("urgency forces silent human review without a patient reply", () => {
 
 test("only OpenAI is called and the request omits the raw phone", async () => {
   const calls = [];
-  const longText = "a".repeat(2_100);
+  const longText = "a".repeat(34_000);
   const result = await runOpenAIShadow(
     { phone: PHONE, text: longText, platform: "Meta" },
     {
@@ -1372,7 +1421,7 @@ test("only OpenAI is called and the request omits the raw phone", async () => {
   assert.equal(body.safety_identifier.includes(PHONE), false);
   assert.equal(calls[0].options.body.includes(PHONE), false);
   const input = JSON.parse(body.input);
-  assert.equal(input.currentMessage.length, 2_000);
+  assert.equal(input.currentMessage.length, 32_768);
   assert.equal(input.whatsappProfileName, "");
   assert.deepEqual(input.recentConversation, []);
   assert.equal(body.text.verbosity, "low");
@@ -1383,7 +1432,7 @@ test("only OpenAI is called and the request omits the raw phone", async () => {
 test("model context preserves the final correction, human authorship and prefill provenance", async () => {
   let payload;
   await runOpenAIShadow({ phone: PHONE,
-    text: "Tenho uma dúvida. " + "Contexto anterior. ".repeat(150) + "Na verdade prefiro pensar mais.",
+    text: "Tenho uma dúvida. " + "Contexto anterior. ".repeat(2000) + "Na verdade prefiro pensar mais.",
     recentConversation: [
       { role: "assistant", source: "human", text: "Texto longo. ".repeat(120) + "Ainda vou conferir o horário.", eventId: "human-1" },
       { role: "patient", source: "patient", text: "Quero informações", templateId: "procedure_evaluation_v1" },

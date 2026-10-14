@@ -829,6 +829,8 @@ export async function processHumanResumeJob(
   const aiResult = await runOpenAI(
     {
       phone: job.phone,
+      opportunityId: job.opportunityId,
+      professional: job.professional,
       text: job.text,
       platform: job.platform,
       procedure: enrichedPlan.procedure || job.procedure,

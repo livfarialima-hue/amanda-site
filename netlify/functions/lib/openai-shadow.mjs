@@ -7,6 +7,9 @@ import {
 } from "./bruna-conversion-experience.mjs";
 import { getRecommendedSiteResource, isDirectSiteRequest, websiteEntryContext } from "./site-content.mjs";
 import { normalizeConversationSemanticState, toOpenAIConversation } from "./conversation-memory.mjs";
+import { buildFullConversationContext, FULL_CONVERSATION_TURN_CHARACTERS } from "./conversation-history.mjs";
+import { getDurableConversationContext } from "./conversation-ledger.mjs";
+import { callClassificationSheets } from "./sheets-classification-client.mjs";
 import {
   applyKnowledgeDecisionGuard,
   normalizeKnowledgeContext,
@@ -29,7 +32,7 @@ import {
   BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS,
   BRUNA_TEXT_VERBOSITY, BRUNA_CONVERSATION_TIMEOUT_MS, BRUNA_REVISION_MIN_REMAINING_MS,
 } from "./bruna-model-config.mjs";
-const MAX_USER_TEXT_LENGTH = 2_000;
+const MAX_USER_TEXT_LENGTH = FULL_CONVERSATION_TURN_CHARACTERS;
 const MAX_REFERRAL_FIELD_LENGTH = 300;
 const PATIENT_RELATIONSHIP_STATES = new Set([
   "new_lead",
@@ -956,6 +959,8 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
 export async function runOpenAIShadow(
   {
     phone,
+    opportunityId,
+    professional,
     text,
     platform,
     procedure,
@@ -972,7 +977,7 @@ export async function runOpenAIShadow(
     priorInteractionKnown = false,
     deterministicUrgent = false,
   },
-  { env = process.env, fetchImpl = fetch } = {},
+  { env = process.env, fetchImpl = fetch, getDurableConversationContextImpl = getDurableConversationContext } = {},
 ) {
   const apiKey = env.OPENAI_API_KEY;
 
@@ -1023,6 +1028,19 @@ export async function runOpenAIShadow(
           });
 
   try {
+    let durable;
+    try {
+      durable = env.WHATSAPP_FULL_HISTORY_ENABLED === "true" && (!env.CONTEXT || env.CONTEXT === "production")
+        ? await getDurableConversationContextImpl({ phone, opportunityId, professional, historyMode: "full" }, {
+        callSheetsImpl: (action, payload, options) => callClassificationSheets(action, payload, { ...options, env }),
+      }) : { status: "skipped", errorCode: "full_history_disabled" };
+    } catch {
+      durable = { status: "failed", errorCode: "full_history_unavailable" };
+    }
+    if (controller.signal.aborted || Date.now() - startedAt >= BRUNA_CONVERSATION_TIMEOUT_MS) {
+      return result("failed", { errorCode: "timeout" });
+    }
+    const fullConversation = buildFullConversationContext(durable, recentConversation);
     const request = {
       method: "POST",
       headers: {
@@ -1068,6 +1086,7 @@ export async function runOpenAIShadow(
             historyMayBePartial: true,
             previousStateIsAdvisory: true,
           },
+          fullConversation,
           recentConversation: normalizedConversation,
           replyContinuity: buildReplyContinuityContext({ currentMessage: text, recentConversation: normalizedConversation }),
           currentMessage: limitUserText(text),

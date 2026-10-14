@@ -51,12 +51,14 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-CONTEXTO-AUDIO-ARQUIVO-2026-10-13",
-    "status": "committed",
+    "status": "tested_local",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "baselineCommit": "872665ea0f0b04a6639034a8a67af1957861c3a7",
     "bundleVersion": "2026-10-13.1",
-    "googleConsentPending": true,
-    "sourceCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5"
+    "googleConsentPending": false,
+    "sourceCommit": null,
+    "fullHistoryCheckRequired": true,
+    "liveModelScenarioCount": 15
   }
 }

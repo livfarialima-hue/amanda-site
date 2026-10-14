@@ -1680,6 +1680,37 @@
         "node --test netlify/functions/lib/human-takeover.test.mjs"
       ],
       "requiresReadOnlyPreflight": true
+    },
+    {
+      "id": "conversation-full-history",
+      "ownerFiles": [
+        "netlify/functions/lib/conversation-history.mjs"
+      ],
+      "consumerFiles": [
+        "apps-script/clinica-liv-leads/LeadClassification.gs",
+        "netlify/functions/lib/conversation-ledger.mjs",
+        "netlify/functions/lib/openai-shadow.mjs",
+        "netlify/functions/ycloud-webhook.mjs",
+        "netlify/functions/human-resume.mjs",
+        "netlify/functions/lib/conversation-guidelines.mjs",
+        "scripts/check-bruna-model-live.mjs"
+      ],
+      "coveredPaths": [
+        "netlify/functions/lib/conversation-history.mjs",
+        "netlify/functions/lib/conversation-history.test.mjs",
+        "apps-script/clinica-liv-leads/ConversationHistory.test.mjs"
+      ],
+      "requiredTestFiles": [
+        "netlify/functions/lib/conversation-history.test.mjs",
+        "apps-script/clinica-liv-leads/ConversationHistory.test.mjs",
+        "netlify/functions/lib/openai-shadow.test.mjs",
+        "netlify/functions/lib/human-resume-processor.test.mjs",
+        "scripts/check-bruna-model-live.test.mjs"
+      ],
+      "requiredCommands": [
+        "node --test netlify/functions/lib/conversation-history.test.mjs apps-script/clinica-liv-leads/ConversationHistory.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/human-resume-processor.test.mjs scripts/check-bruna-model-live.test.mjs"
+      ],
+      "requiresReadOnlyPreflight": true
     }
   ]
 }

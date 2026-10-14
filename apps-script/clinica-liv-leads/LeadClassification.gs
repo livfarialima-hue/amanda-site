@@ -1767,13 +1767,13 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
     if (normalizePhone_(prior[0]) !== phone || String(prior[1]) !== (direction === "OUT" ? "OUT" : "IN") ||
         new Date(prior[2]).getTime() !== at.getTime()) return null;
     if (direction === "IN" && String(prior[5] || "").trim() && String(lead.text || "").trim() &&
-        String(prior[5]) !== safeText_(lead.text, 4000)) return null;
+        String(prior[5]) !== safeText_(lead.text, String(prior[5]).length > 4000 ? 32768 : 4000)) return null;
     canonicalEventId = String(prior[4] || eventId);
     if (direction === "IN" && !String(prior[5] || "").trim() &&
         ["", "unknown", "unsupported", "text"].includes(String(prior[12] || "")) &&
         lead.messageType === "text" && String(lead.text || "").trim()) {
       messageSheet.getRange(existingMessageRow, 6, 1, 8).setValues([[
-        safeText_(lead.text, 4000), ...prior.slice(6, 12), "text",
+        safeText_(lead.text, 32768), ...prior.slice(6, 12), "text",
       ]]);
       enriched = true;
       contentRecovered = true;
@@ -1786,7 +1786,7 @@ function recordLeadMessageOnly_(spreadsheet, leadRow, lead, direction) {
       at,
       messageId,
       eventId,
-      safeText_(lead.text, 4000),
+      safeText_(lead.text, 32768),
       Number(leadRow) > 0 ? Number(leadRow) : "",
       safeText_(lead.opportunityId, 120),
       safeText_(lead.professional, 80),
@@ -2095,6 +2095,8 @@ function collectLeadMessagesForOpportunity_(
   professional,
   limit,
   includeUnassignedUnknown,
+  preserveUnknownAuthorship,
+  requireOpportunityLink,
 ) {
   if (!messageSheet || messageSheet.getLastRow() < 2) return [];
   const values = messageSheet
@@ -2113,6 +2115,7 @@ function collectLeadMessagesForOpportunity_(
       })
     : -1;
   const matching = values.filter(function matchMessage(row, index) {
+    if (requireOpportunityLink && String(row[7] || "") !== String(opportunityId)) return false;
     if (opportunityId && String(row[7] || "") === String(opportunityId)) {
       return matchesLinkedIdentity(row);
     }
@@ -2148,7 +2151,9 @@ function collectLeadMessagesForOpportunity_(
       messageId: String(row[3] || ""),
       eventId: String(row[4] || ""),
       text: String(row[5] || ""),
-      source: normalizeLeadMessageSource_(
+      source: preserveUnknownAuthorship && direction === "OUT" &&
+        ["bruna", "bot", "automatic", "automatica", "automático", "human", "humano", "equipe_humana", "equipe humana"].indexOf(String(row[10] || "").trim().toLowerCase()) < 0
+        ? "unknown" : normalizeLeadMessageSource_(
         direction,
         row[10],
         row[3],
@@ -2262,7 +2267,7 @@ function registrarTurnoConversa_(input) {
   const phone = normalizePhone_(input.phone);
   const eventId = safeText_(input.eventId, 200);
   const messageId = safeText_(input.messageId || eventId, 500);
-  const text = safeText_(input.text, 4000);
+  const text = safeText_(input.text, 32768);
   const at = new Date(input.at || Date.now());
   if (!phone || !eventId || !messageId || !text || Number.isNaN(at.getTime())) {
     return { ok: false, error: "invalid_conversation_turn" };
@@ -2333,6 +2338,10 @@ function obterContextoConversa_(input) {
   const phone = normalizePhone_(input.phone);
   if (!phone) return { ok: false, error: "invalid_conversation_identity" };
 
+  // The full transcript is evidence for semantic interpretation only. Require
+  // the caller's routed identity; never guess a different/latest opportunity.
+  if (input.historyMode === "full") return obterHistoricoCompletoConversa_(input, phone);
+
   const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
   const latest = typeof localizarOportunidadeMaisRecentePorTelefone_ === "function"
     ? localizarOportunidadeMaisRecentePorTelefone_(spreadsheet, phone)
@@ -2396,6 +2405,93 @@ function obterContextoConversa_(input) {
     turns: turns,
     pendingCommitments: pendingCommitments,
   };
+}
+
+function obterHistoricoCompletoConversa_(input, phone) {
+  const opportunityId = safeText_(input.opportunityId, 120);
+  const professional = safeText_(input.professional, 80);
+  if (!opportunityId || ["amanda", "daniel"].indexOf(professional) < 0) {
+    return { ok: false, error: "full_history_identity_required" };
+  }
+  const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+  const messageSheet = spreadsheet.getSheetByName(CONFIG.messageSheetName);
+  const rows = messageSheet && messageSheet.getLastRow() >= 2
+    ? messageSheet.getRange(2, 1, messageSheet.getLastRow() - 1, LEAD_MESSAGE_HEADERS.length).getValues() : [];
+  const linked = rows.filter(function sameOpportunity(row) { return String(row[7] || "") === opportunityId; });
+  if (!linked.some(function confirmedProfessional(row) { return row[8] === professional; }) || linked.some(function conflicts(row) {
+    return normalizePhone_(row[0]) !== phone ||
+      (row[8] && row[8] !== "unknown" && row[8] !== professional);
+  })) return { ok: false, error: "full_history_identity_unconfirmed" };
+
+  const messages = collectLeadMessagesForOpportunity_(messageSheet, opportunityId, phone,
+    professional, Number.MAX_SAFE_INTEGER, false, true, true);
+  const ids = {};
+  messages.forEach(function indexMessage(message) {
+    if (message.eventId) ids["event:" + message.eventId] = true;
+    if (message.messageId) ids["message:" + message.messageId] = true;
+  });
+  const humanTurns = collectHumanTakeoverMessagesForPhone_(
+    spreadsheet.getSheetByName(CONFIG.humanTakeoverSheetName), phone, Number.MAX_SAFE_INTEGER);
+  // Legacy takeover rows carry no professional/opportunity. Only a matching
+  // canonical message proves their scope. Do not cross a patient's care teams.
+  const linkedHuman = humanTurns.filter(function scopedHuman(turn) {
+    return ids["event:" + turn.eventId] || ids["message:" + turn.messageId];
+  });
+  linkedHuman.forEach(function recoverLinkedHumanEvidence(human) {
+    const canonical = messages.find(function sameMessage(message) {
+      return (human.eventId && message.eventId === human.eventId) ||
+        (human.messageId && message.messageId === human.messageId);
+    });
+    if (!canonical || canonical.direction !== "OUT") return;
+    // Enrich the read-only DTO before the legacy first-copy deduplicator. This
+    // never rewrites a stored row or changes known Bruna authorship/media type.
+    if (canonical.source === "unknown") canonical.source = "equipe_humana";
+    if (canonical.source === "equipe_humana" && String(human.text || "").length > String(canonical.text || "").length) {
+      canonical.text = human.text;
+    }
+  });
+  const all = mergeConversationMessages_([messages, linkedHuman], Number.MAX_SAFE_INTEGER)
+    .map(function fullTurn(message) {
+      const original = String(message.text || "");
+      return {
+        role: message.direction === "OUT" ? "assistant" : "user",
+        source: message.direction !== "OUT" ? "patient" : message.source === "bruna" ? "bruna" :
+          message.source === "equipe_humana" ? "human" : "unknown",
+        at: message.at, eventId: safeText_(message.eventId, 200),
+        messageId: safeText_(message.messageId, 500),
+        relatedMessageId: safeText_(message.relatedMessageId, 500),
+        templateId: safeText_(message.templateId, 80),
+        text: boundedConversationText_(original, 32768),
+        // Ingress caps UTF-16 units before persistence. Saturation can mean the
+        // tail was already lost, including legacy 4000-unit rows and the extra
+        // apostrophe used to neutralize spreadsheet formulas.
+        textTruncated: original.length >= 32768 || original.length === 4000 ||
+          (original.length === 4001 && /^'[=+\-@]/.test(original)),
+        messageType: message.messageType || "unknown",
+      };
+    });
+  const budget = 120000;
+  let turns = all;
+  if (JSON.stringify(all).length > budget) {
+    const head = [], tail = [];
+    let used = 2;
+    for (let index = 0; index < all.length; index += 1) {
+      const size = JSON.stringify(all[index]).length + 1;
+      if (used + size > budget / 4) break;
+      head.push(all[index]); used += size;
+    }
+    for (let index = all.length - 1; index >= head.length; index -= 1) {
+      const size = JSON.stringify(all[index]).length + 1;
+      if (used + size > budget) break;
+      tail.unshift(all[index]); used += size;
+    }
+    turns = head.concat(tail);
+  }
+  return { ok: true, historyMode: "full", opportunityId: opportunityId, professional: professional,
+    turns: turns, pendingCommitments: [],
+    coverage: { availableTurns: all.length, returnedTurns: turns.length, omittedTurns: all.length - turns.length,
+      excludedUnlinkedLedgerTurns: rows.filter(function unlinked(row) { return normalizePhone_(row[0]) === phone && !row[7]; }).length,
+      excludedUnlinkedHumanTurns: humanTurns.length - linkedHuman.length } };
 }
 
 function relationshipFromCanonicalLeadStatus_(status) {

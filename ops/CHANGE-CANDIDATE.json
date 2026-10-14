@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONTEXTO-AUDIO-ARQUIVO-2026-10-13",
   "title": "Continuidade contextual, transcrição de áudio e arquivo privado de conversas em texto",
-  "status": "committed",
+  "status": "tested_local",
   "baseCommit": "872665ea0f0b04a6639034a8a67af1957861c3a7",
   "authorization": {
     "required": true,
@@ -22,8 +22,10 @@
       "apps-script/clinica-liv-leads/Code.schema.test.mjs",
       "apps-script/clinica-liv-leads/ConversationArchive.gs",
       "apps-script/clinica-liv-leads/ConversationArchive.test.mjs",
+      "apps-script/clinica-liv-leads/ConversationHistory.test.mjs",
       "apps-script/clinica-liv-leads/KnowledgeBase.gs",
       "apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
+      "apps-script/clinica-liv-leads/LeadClassification.gs",
       "apps-script/clinica-liv-leads/README.md",
       "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json",
       "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
@@ -33,6 +35,7 @@
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "netlify/functions/conversation-archive.mjs",
+      "netlify/functions/human-resume.mjs",
       "netlify/functions/lib/appointment-confirmation.mjs",
       "netlify/functions/lib/appointment-confirmation.test.mjs",
       "netlify/functions/lib/audio-transcription.mjs",
@@ -44,6 +47,8 @@
       "netlify/functions/lib/conversation-archive-outbox.mjs",
       "netlify/functions/lib/conversation-archive-outbox.test.mjs",
       "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/conversation-history.mjs",
+      "netlify/functions/lib/conversation-history.test.mjs",
       "netlify/functions/lib/conversation-ledger.mjs",
       "netlify/functions/lib/conversation-ledger.test.mjs",
       "netlify/functions/lib/conversation-memory.mjs",
@@ -55,6 +60,8 @@
       "netlify/functions/lib/inbound-reply-context.mjs",
       "netlify/functions/lib/inbound-reply-context.test.mjs",
       "netlify/functions/lib/knowledge-learning.mjs",
+      "netlify/functions/lib/openai-shadow.mjs",
+      "netlify/functions/lib/openai-shadow.test.mjs",
       "netlify/functions/lib/patient-replies.mjs",
       "netlify/functions/lib/patient-turn-context.mjs",
       "netlify/functions/lib/price-holding-webhook.test.mjs",
@@ -93,7 +100,8 @@
       "reply-continuity",
       "followup-message-copy",
       "bruna-model-runtime",
-      "conversation-audio-archive"
+      "conversation-audio-archive",
+      "conversation-full-history"
     ]
   },
   "impact": {
@@ -166,6 +174,7 @@
       "netlify/functions/lib/business-number-registry.mjs",
       "netlify/functions/lib/consultation-question-bundle.mjs",
       "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/conversation-guidelines.mjs",
       "netlify/functions/lib/conversation-ledger.mjs",
       "netlify/functions/lib/conversation-memory.mjs",
       "netlify/functions/lib/external-professional-context.mjs",
@@ -313,6 +322,12 @@
         "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
         "status": "verified",
         "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
+      },
+      {
+        "contract": "conversation-full-history",
+        "system": "Netlify / Apps Script / LEADS / Drive / YCloud",
+        "status": "verified",
+        "reference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json"
       }
     ]
   },
@@ -354,6 +369,7 @@
       "node --test netlify/functions/lib/bruna-sol61.integration.test.mjs",
       "node --test netlify/functions/lib/business-number-registry.test.mjs netlify/functions/lib/attribution-journey-store.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/conversation-memory.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/inbound-recovery.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/patient-reply-throttle.test.mjs netlify/functions/lib/review-alert-throttle.test.mjs netlify/functions/lib/reply-debounce.test.mjs netlify/functions/lib/scheduled-care.test.mjs",
       "node --test netlify/functions/lib/conversation-archive-outbox.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs",
+      "node --test netlify/functions/lib/conversation-history.test.mjs apps-script/clinica-liv-leads/ConversationHistory.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/human-resume-processor.test.mjs scripts/check-bruna-model-live.test.mjs",
       "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
       "node --test netlify/functions/lib/human-resume-runtime.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-ledger.test.mjs",
       "node --test netlify/functions/lib/human-takeover.test.mjs",
@@ -384,7 +400,7 @@
   },
   "rollback": {
     "local": "Reverter somente este pacote; preservar df072a3 e outras worktrees.",
-    "production": "Desligar flags de áudio/arquivo; restaurar Netlify 6acebbd4a25f1e95fc6d90d3 e Apps Script v162 no mesmo deployment. Preservar filas, backups, transcrições e recibos; sem replay."
+    "production": "Desligar flags de histórico, áudio e arquivo; restaurar Netlify 6acebbd4a25f1e95fc6d90d3 e Apps Script v162 no mesmo deployment. Preservar dados, filas, backups, transcrições e recibos; sem replay."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
@@ -398,10 +414,11 @@
     "status": "pending",
     "appsScriptVersion": 162,
     "blockers": [
-      "Google exige autorização do acesso ao Drive; intervenção solicitada ao usuário na janela do Chrome.",
-      "Nova versão Apps Script, build Git Netlify com IA real, ativação e primeiro recibo pendentes."
+      "Apps Script: salvar e publicar as fontes revisadas no deployment canônico.",
+      "Netlify: novo build Git de produção com 15 cenários reais e transcrição sintética, seguido de verificação e ativação.",
+      "Recibos finais e projeções existentes do Drive pendentes."
     ],
     "evidence": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
-    "approvedSourceCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5"
+    "approvedSourceCommit": ""
   }
 }

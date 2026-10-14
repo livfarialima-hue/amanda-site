@@ -1,7 +1,71 @@
 {
-  "checkedAt": "2026-10-14T00:40:31.897Z",
+  "checkedAt": "2026-10-14T01:10:36.746Z",
   "kind": "independent_review_and_local_validation",
   "independentReview": {
+    "status": "completed_no_remaining_actionable_findings",
+    "authorizedBy": "Daniel",
+    "authorization": "Sim, delegue a revisão independente",
+    "reviewer": "/root/revisao_independente",
+    "reviewedHead": "f07dee195e2be69e8f36eca218422931f0eabc9a",
+    "reviewedWorkingDiff": true,
+    "completedAt": "2026-10-14T01:10:36.746Z",
+    "focusedTests": 90,
+    "normalization": "CRLF to LF",
+    "fileSha256": {
+      "apps-script/clinica-liv-leads/Code.gs": "7b0cc937eaa145b36023d4341b05b23b49ecc240b2f424ac0b4cd07f65ab1a94",
+      "apps-script/clinica-liv-leads/LeadClassification.gs": "c30604b88b41e2ddb92d4a82aecb963ae662519ceb75a6dc9a9a5b40fb6398cd",
+      "netlify/functions/human-resume.mjs": "e655b50b9b10445dd50ca6737ea2cb51122d0bdfa5dc208ab0d6a38913e9c2d1",
+      "netlify/functions/lib/conversation-guidelines.mjs": "ec7c46d1fc8ae11166966ee0104113280698da7bcf38ea138fd89841107a4f1a",
+      "netlify/functions/lib/conversation-history.mjs": "43d026ea5b8e5fadebbdf1b70c29d6ff548c502d96619ec8d83c43336ad736db",
+      "netlify/functions/lib/conversation-ledger.mjs": "0ea435005450b1e6fe6db0b42e2571884125e5da0b45fe4dc742d88b81c32655",
+      "netlify/functions/lib/openai-shadow.mjs": "9d630a467a5279b02176da3510cbb2c8c5ff17c14b484f7e0a110470bc23f759",
+      "netlify/functions/ycloud-webhook.mjs": "be7111ca049ded7eecc9d50704e832a455e0b31b726751bfd437b7e487f8765d",
+      "scripts/check-bruna-model-live.mjs": "59222ab2be0cf6636f98178977ffe3d07520da53934b92aa5af82a8989f4a99a"
+    },
+    "findingsAddressed": [
+      "Isolamento por oportunidade e profissional explícitos",
+      "Recuperação de autoria e texto humanos vinculados antes da deduplicação",
+      "Aliases de evento e mensagem, citações e proveniência de áudio",
+      "Cortes no cache e saturação de texto no ingresso sinalizados como histórico parcial"
+    ]
+  },
+  "validation": {
+    "coreTests": 2061,
+    "scriptTests": 14,
+    "scriptTestsAlsoInCore": 0,
+    "additionalContractTests": 38,
+    "uniqueTests": 2113,
+    "failed": 0,
+    "changeCheck": "OK",
+    "architectureCheck": "OK",
+    "staticBuild": {
+      "files": 193,
+      "pages": 54,
+      "errors": 0,
+      "auditAndOpsFiles": 0
+    },
+    "diffCheck": "passed",
+    "liveModelCheck": "pending_hosted_production_build",
+    "liveAudioCheck": "pending_hosted_production_build",
+    "opsCheck": "SYNC_PENDING",
+    "rollbackPatchReverseCheck": "pending_after_commit",
+    "status": "passed_local",
+    "scopeFiles": 63,
+    "liveModelScenarios": 15,
+    "fullHistoryFocusedTests": 173,
+    "afterReviewFocusedTests": 58,
+    "finalHistoryFocusedTests": 16
+  },
+  "riskReview": [
+    "Origem de mídia restrita, assinatura do evento, hash, MIME e tamanho verificados antes do provedor.",
+    "Transcrição incerta fica rotulada no ledger e é retirada do contexto de resposta; áudio não confirma agenda nem aprova memória.",
+    "Fila existente conserva envelope assinado e recibo de transcrição deduplica a chamada; nenhum replay operacional.",
+    "Revisões imutáveis por evento; recibo de hash exato antes de remover texto da fila.",
+    "Caso correto auditado em YCloud; autoria humana distinguida; lacunas do ledger registradas."
+  ],
+  "patientMessagesSent": 0,
+  "manualOperationalRoutinesRun": 0,
+  "previousPackageReview": {
     "status": "completed_no_remaining_actionable_findings",
     "authorizedBy": "Daniel",
     "authorization": "Sim, delegue a revisão independente",
@@ -62,37 +126,5 @@
       "scripts/check-bruna-model-live.test.mjs": "c7b17c443e9b116c703a9559196b33c2a03ff3b082719bdc7ffb18dc50da13df",
       "scripts/fixtures/bruna-audio-address.wav": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
     }
-  },
-  "validation": {
-    "coreTests": 2041,
-    "scriptTests": 14,
-    "scriptTestsAlsoInCore": 0,
-    "additionalContractTests": 38,
-    "uniqueTests": 2093,
-    "failed": 0,
-    "changeCheck": "OK",
-    "architectureCheck": "OK",
-    "staticBuild": {
-      "files": 193,
-      "pages": 54,
-      "errors": 0,
-      "auditAndOpsFiles": 0
-    },
-    "diffCheck": "passed",
-    "liveModelCheck": "pending_hosted_production_build",
-    "liveAudioCheck": "pending_hosted_production_build",
-    "opsCheck": "SYNC_PENDING",
-    "rollbackPatchReverseCheck": "passed_without_mutation",
-    "status": "passed",
-    "scopeFiles": 56
-  },
-  "riskReview": [
-    "Origem de mídia restrita, assinatura do evento, hash, MIME e tamanho verificados antes do provedor.",
-    "Transcrição incerta fica rotulada no ledger e é retirada do contexto de resposta; áudio não confirma agenda nem aprova memória.",
-    "Fila existente conserva envelope assinado e recibo de transcrição deduplica a chamada; nenhum replay operacional.",
-    "Revisões imutáveis por evento; recibo de hash exato antes de remover texto da fila.",
-    "Caso correto auditado em YCloud; autoria humana distinguida; lacunas do ledger registradas."
-  ],
-  "patientMessagesSent": 0,
-  "manualOperationalRoutinesRun": 0
+  }
 }

@@ -137,11 +137,15 @@ function normalizePendingCommitment(commitment) {
 }
 
 export async function getDurableConversationContext(
-  { phone, opportunityId = "", professional = "", limit = MAX_TURNS },
+  { phone, opportunityId = "", professional = "", limit = MAX_TURNS, historyMode = "recent" },
   { callSheetsImpl = callClassificationSheets } = {},
 ) {
   if (!phone) {
     return { status: "skipped", turns: [], pendingCommitments: [] };
+  }
+  const full = historyMode === "full";
+  if (full && (!opportunityId || !["amanda", "daniel"].includes(professional))) {
+    return { status: "failed", errorCode: "full_history_identity_required", turns: [], pendingCommitments: [] };
   }
 
   const result = await callSheetsImpl("get_conversation_context", {
@@ -149,6 +153,7 @@ export async function getDurableConversationContext(
       phone,
       opportunityId: boundedText(opportunityId, 120),
       professional: boundedText(professional, 80),
+      ...(full ? { historyMode: "full" } : {}),
       limit: Math.max(1, Math.min(MAX_TURNS, Number(limit) || MAX_TURNS)),
     },
   }, { timeoutMs: 6_000 });
@@ -159,6 +164,16 @@ export async function getDurableConversationContext(
       turns: [],
       pendingCommitments: [],
     };
+  }
+
+  if (full) {
+    if (result.data?.historyMode !== "full" || result.data.opportunityId !== opportunityId || result.data.professional !== professional) {
+      return { status: "failed", errorCode: "full_history_identity_or_protocol_mismatch", turns: [], pendingCommitments: [] };
+    }
+    // The full-history adapter owns text/metadata normalization. Do not run
+    // these turns through the 32-turn operational projection below.
+    return { status: "completed", historyMode: "full", opportunityId, professional,
+      turns: Array.isArray(result.data.turns) ? result.data.turns : [], coverage: result.data.coverage || {} };
   }
 
   const turns = (Array.isArray(result.data?.turns) ? result.data.turns : [])

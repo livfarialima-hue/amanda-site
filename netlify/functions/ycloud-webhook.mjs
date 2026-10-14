@@ -5242,6 +5242,8 @@ export async function handleYCloudWebhook(
     semanticRouteAssessment = await completeOpenAIShadow(
       {
         eventId: String(eventId),
+        opportunityId: delivery.opportunityId,
+        professional: delivery.professional,
         receivedAt: String(
           message.sendTime || payload.createTime || "",
         ),
@@ -6149,6 +6151,8 @@ export async function handleYCloudWebhook(
     semanticReviewAssessment = await completeOpenAIShadow(
       {
         eventId: String(eventId),
+        opportunityId: delivery.opportunityId,
+        professional: delivery.professional,
         receivedAt: String(
           message.sendTime || payload.createTime || "",
         ),
@@ -6461,6 +6465,8 @@ export async function handleYCloudWebhook(
     const shadowPromise = completeOpenAIShadow(
       {
         eventId: String(eventId),
+        opportunityId: delivery.opportunityId,
+        professional: delivery.professional,
         receivedAt: String(
           message.sendTime || payload.createTime || "",
         ),
@@ -6508,6 +6514,8 @@ export async function handleYCloudWebhook(
     const assessmentPromise = completeOpenAIShadow(
       {
         eventId: String(eventId),
+        opportunityId: delivery.opportunityId,
+        professional: delivery.professional,
         receivedAt: String(
           message.sendTime || payload.createTime || "",
         ),

@@ -114,5 +114,36 @@
     "caseContainsAudio": false,
     "authorshipVerified": "WhatsApp Business App / API distinguished; text signature alone is not authorship"
   },
-  "remoteBranchStillBaseline": true
+  "remoteBranchStillBaseline": true,
+  "fullHistoryRefresh": {
+    "checkedAt": "2026-10-14T01:06:08.940Z",
+    "remoteProductionHead": "872665ea0f0b04a6639034a8a67af1957861c3a7",
+    "pr11HeadBeforeExtension": "f07dee195e2be69e8f36eca218422931f0eabc9a",
+    "netlifyPublishedDeployId": "6acebbd4a25f1e95fc6d90d3",
+    "netlifyState": "ready",
+    "appsScriptDeploymentVersion": 162,
+    "canonicalIdsVerified": true,
+    "accessPreserved": "execute owner; anyone",
+    "driveFolderPrivate": true,
+    "drivePermissionTypes": [
+      "user",
+      "user",
+      "user"
+    ],
+    "googleAuthorizationConfirmedByUser": true,
+    "readOnlyArchiveDiagnostic": {
+      "verifiedAt": "2026-10-14T01:00:24Z",
+      "ok": true,
+      "initialized": false,
+      "startAt": null,
+      "lastReceipt": null
+    },
+    "leadClassificationLiveMatchesBaseline": true,
+    "leadClassificationNormalizedSha256": "75510feb62ad66157de516c90c55796d02f186c0eb8df78dfbc56bf2ce1496b6",
+    "codeLiveMatchesPreviouslySaved6f48d89": true,
+    "openAiKeyPresentInProductionBuild": true,
+    "featureFlagsPresentBeforeRelease": false,
+    "patientMessagesSent": 0,
+    "manualOperationalRoutinesRun": 0
+  }
 }

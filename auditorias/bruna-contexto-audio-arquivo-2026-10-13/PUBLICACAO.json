@@ -1,28 +1,19 @@
 {
-  "status": "source_saved_waiting_google_consent_not_published",
-  "recordedAt": "2026-10-14T00:46:56.554Z",
-  "candidateFunctionalCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5",
+  "status": "tested_reviewed_awaiting_publication",
+  "recordedAt": "2026-10-14T01:10:36.746Z",
+  "candidateFunctionalCommit": null,
   "pullRequest": "https://github.com/livfarialima-hue/amanda-site/pull/11",
   "localValidation": {
-    "uniqueTests": 2093,
+    "uniqueTests": 2113,
     "failures": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
     "buildCheck": "passed",
     "releasePreflight": {
-      "status": "passed",
-      "approvedCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5",
-      "authorizationRecordedAt": "2026-10-14T00:40:18Z",
-      "livePreflightAt": "2026-10-14T00:40:18Z",
-      "reference": "PREFLIGHT.json",
-      "remainingConditions": [
-        "Google Drive access authorization by project owner",
-        "Apps Script new version in existing deployment",
-        "Production Git build with real model and audio gates",
-        "Activation and first archive receipt"
-      ]
+      "status": "pending_for_new_exact_commit",
+      "previousPassedCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5"
     },
-    "independentReview": "completed_no_actionable_findings"
+    "independentReview": "completed_no_remaining_actionable_findings"
   },
   "productionUnchanged": {
     "appsScriptVersion": 162,
@@ -72,15 +63,24 @@
       }
     },
     "versionBefore": 162,
-    "publicationStatus": "waiting_google_authorization",
+    "publicationStatus": "google_authorized_new_source_pending",
     "operationalRoutinesRun": 0,
     "patientMessagesSent": 0,
     "readOnlyDiagnostic": {
       "function": "diagnosticarArquivoConversas",
-      "status": "waiting_google_authorization",
-      "executed": false,
-      "reason": "Google displayed unverified app warning and requests new Drive access; owner handoff requested."
-    }
+      "status": "completed",
+      "executed": true,
+      "verifiedAt": "2026-10-14T01:00:24Z",
+      "result": {
+        "ok": true,
+        "configured": true,
+        "initialized": false,
+        "startAt": null,
+        "lastReceipt": null
+      }
+    },
+    "additionalFileRequired": "LeadClassification.gs",
+    "codeUpdateRequired": true
   },
   "providerReadOnlyAudit": {
     "authenticated": true,
@@ -89,5 +89,6 @@
     "humanRows": 22,
     "providerDeliveryTimeoutsObserved": true,
     "historicalGapsRemain": true
-  }
+  },
+  "previousCandidateFunctionalCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5"
 }
