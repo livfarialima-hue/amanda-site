@@ -77,8 +77,16 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       const response = await fetchImpl(url, options);
       const data = await response.clone().json();
       // Never log headers, credentials, or provider error text (which can echo a key).
+      let syntheticDraft;
+      if (response.ok && data.status === 'completed') {
+        try {
+          const output = data.output_text || data.output?.flatMap(item => item.content || []).find(item => item.type === 'output_text')?.text;
+          const draft = JSON.parse(output).suggestedReply;
+          if (typeof draft === 'string') syntheticDraft = draft.slice(0, 4000).replaceAll(env.OPENAI_API_KEY, '[redacted]');
+        } catch { /* A malformed response still fails in the real adapter. */ }
+      }
       requests.push({ httpStatus: response.status, elapsedMs: Date.now() - start, model: data.model,
-        status: data.status, usage: data.usage, errorCode: data.error?.code });
+        status: data.status, usage: data.usage, errorCode: data.error?.code, syntheticDraft });
       return response;
     };
     // Synthetic source only: the hosted gate must never query a real patient's

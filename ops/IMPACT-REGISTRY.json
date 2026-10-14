@@ -408,7 +408,9 @@
         "netlify/functions/lib/professional-fact-review.mjs",
         "netlify/functions/appointment-review.mjs",
         "netlify/functions/lib/inbound-message-kind.mjs",
-        "netlify/functions/lib/extract-inbound-text.mjs"
+        "netlify/functions/lib/extract-inbound-text.mjs",
+        "netlify/functions/lib/bruna-conversion-experience.mjs",
+        "netlify/functions/lib/outbound-reply-gate.mjs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/Code.gs",

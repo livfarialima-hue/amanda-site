@@ -86,6 +86,18 @@ test("CTA classifier distinguishes the gradual progression levels", () => {
   );
 });
 
+test("a local scheduling refusal is not an offer but positive and interrogative offers remain CTAs", () => {
+  for (const text of ["Seguimos sem ver horários agora.", "Não vou verificar horários agora.",
+    "Você não precisa ver horários agora.", "Entendi que você não quer ver horários agora."]) {
+    assert.equal(classifyBrunaCta(text), "", text);
+  }
+  for (const text of ["Não quer ver horários?", "Não só posso verificar horários como posso explicar a consulta.",
+    "Sem problemas, posso verificar horários.", "Não vamos agendar agora, mas posso verificar horários.",
+    "Sem ver horários agora. Se quiser, posso verificar horários depois."]) {
+    assert.equal(classifyBrunaCta(text), BRUNA_CTA_TYPES.AVAILABILITY, text);
+  }
+});
+
 test("mechanical internal safeguards are detected but natural medical limits remain allowed", () => {
   assert.equal(
     patientFacingPolicyLanguageReason(

@@ -1,7 +1,7 @@
 import { liftingFacialInformationTopics } from "./lifting-information.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
 import { buildReplyContinuityContext } from "./reply-continuity.mjs";
-import { isClearInformationAcceptance, isPersonalAppearanceConcern, isPatientPhotoAssessmentRequest, isPriceAmountInquiry, isConsultationCostInquiry, isProcedureExplanationInquiry, resolveOfferedInformationChoice } from "./patient-turn-context.mjs";
+import { isClearInformationAcceptance, isPersonalAppearanceConcern, isPatientPhotoAssessmentRequest, isPriceAmountInquiry, isConsultationCostInquiry, isProcedureExplanationInquiry, resolveOfferedInformationChoice, withoutNegatedSchedulingMentions } from "./patient-turn-context.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   BRUNA_CTA_TYPES,
@@ -402,10 +402,11 @@ function inferUnresolvedIntents({
     add("price_surgery");
   }
   if (PAYMENT_PATTERN.test(value)) add("payment_terms");
+  const schedulingText = withoutNegatedSchedulingMentions(valueWithoutSocialGreeting);
   if (
-    schedulingRequest ||
-    (SCHEDULING_PATTERN.test(valueWithoutSocialGreeting) &&
-      (plan?.reason !== 'consultation_question_bundle' || /\b(?:agendar|marcar|hor[aá]rio|disponibilidade)\b/i.test(valueWithoutSocialGreeting)))
+    (schedulingRequest && (schedulingText === valueWithoutSocialGreeting || /\b(?:remarcar|reagendar)\b/i.test(schedulingText))) ||
+    (SCHEDULING_PATTERN.test(schedulingText) &&
+      (plan?.reason !== 'consultation_question_bundle' || /\b(?:agendar|marcar|hor[aá]rio|disponibilidade)\b/i.test(schedulingText)))
   ) {
     add("scheduling");
   }
@@ -534,13 +535,14 @@ function buildReplyContract({
       : 1;
   const silenceReason = canWrite ? "" : reason || "reply_not_authorized";
   const allowedCtaTypes = [];
-  const declinesAvailability = /\b(?:n[aã]o\s+(?:quero|pretendo|vou)|sem\s+(?:querer|intenc[aã]o\s+de))\s+(?:agendar|marcar)|\b(?:vou\s+pensar|prefiro\s+pensar|s[oó]\s+(?:estou\s+)?pesquisando)\b/i.test(value);
+  const declinesAvailability = withoutNegatedSchedulingMentions(value) !== value || /\b(?:n[aã]o\s+(?:quero|pretendo|vou)|sem\s+(?:querer|intenc[aã]o\s+de))\s+(?:agendar|marcar)|\b(?:vou\s+pensar|prefiro\s+pensar|s[oó]\s+(?:estou\s+)?pesquisando)\b/i.test(value);
   const history = (Array.isArray(recentConversation) ? recentConversation : []).slice(-16);
   const clinicTurn = turn => turn?.role === "assistant" || ["bruna", "human", "equipe_humana"].includes(turn?.source);
   const priorAvailabilityOffer = history.filter(clinicTurn).some(turn =>
     classifyBrunaCta(turn?.text) === BRUNA_CTA_TYPES.AVAILABILITY ||
     classifyBrunaCta(turn?.text) === BRUNA_CTA_TYPES.PREFERENCE);
   const declinedEarlier = history.filter(turn => !clinicTurn(turn)).some(turn =>
+    withoutNegatedSchedulingMentions(String(turn?.text || "")) !== String(turn?.text || "") ||
     EXPLICIT_DEFERRAL_PATTERN.test(String(turn?.text || "")) ||
     /\b(?:n[aã]o\s+(?:quero|pretendo|vou)\s+(?:agendar|marcar)|s[oó]\s+(?:estou\s+)?pesquisando|sem\s+interesse)\b/i.test(String(turn?.text || "")));
   const mayOfferAvailability = !declinesAvailability && !declinedEarlier && !priorAvailabilityOffer;

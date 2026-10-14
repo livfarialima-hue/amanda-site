@@ -1,5 +1,39 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { isSchedulingRequest, isAvailabilityRequest } from "./whatsapp-automation.mjs";
+import { validateOutboundReply } from "./outbound-reply-gate.mjs";
+import { withoutNegatedSchedulingMentions } from "./patient-turn-context.mjs";
+
+test("accepting information while declining hours does not authorize a scheduling preference", () => {
+  const text = "Pode sim. Não quero ver horários agora.";
+  assert.equal(isSchedulingRequest(text), false);
+  assert.equal(isAvailabilityRequest(text), false);
+  const recentConversation = [{role:"assistant",source:"bruna",text:"Posso te passar o valor da consulta presencial?"}];
+  const action = decideConversationAction({text,messageType:"text",schedulingRequest:isSchedulingRequest(text),
+    plan:{route:"standard_reply",reason:"consultation_information_request",professional:"amanda",procedure:"lifting_facial",automaticAllowed:true},
+    recentConversation,conversionExperienceEnabled:true});
+  assert.equal(action.action,"respond");
+  assert.ok(!action.replyContract.unresolvedIntents.includes("scheduling"));
+  assert.equal(action.replyContract.consultationNextStep,"answer_only");
+  assert.ok(!action.replyContract.allowedCtaTypes.includes("preference_capture"));
+  const gate = body => validateOutboundReply({body,currentText:text,recentConversation,conversationAction:action});
+  assert.equal(gate("A consulta custa R$ 500. Seguimos sem ver horários agora.").allowed,true);
+  assert.equal(gate("Quais dias funcionam melhor?").allowed,false);
+  assert.equal(gate("A consulta custa R$ 500. Não quer ver horários?").allowed,false);
+  assert.equal(gate("A consulta custa R$ 500. Não quer ver horários agora, quer?").allowed,false);
+  assert.equal(gate("A consulta custa R$ 500. Não quer ver horários, então?").allowed,false);
+});
+
+test("negated hours do not swallow a later explicit scheduling or rescheduling request", () => {
+  assert.equal(isSchedulingRequest("Não quero ver horários agora, mas quero marcar uma consulta."),true);
+  for(const text of ["Não consigo terça; preciso remarcar minha consulta.","Não quero cancelar; quero reagendar minha consulta."]) {
+    assert.equal(withoutNegatedSchedulingMentions(text),text,"rescheduling evidence must remain intact for its owner");
+  }
+  assert.equal(isAvailabilityRequest("Sem ver horários agora, mas pode consultar disponibilidade para sexta?"),true);
+  const changed=decideConversationAction({text:"Não quero ver horários agora, mas preciso remarcar minha consulta.",schedulingRequest:true,
+    plan:{route:"human_review",reason:"appointment_change_request",automaticAllowed:false},conversionExperienceEnabled:true});
+  assert.ok(changed.replyContract.unresolvedIntents.includes("scheduling"));
+});
 
 test("a personal concern has no unsolicited links or availability pitch", () => {
   const action = decideConversationAction({text: "Minha papada me incomoda e estou acima do peso.",

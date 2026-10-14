@@ -25,6 +25,26 @@ import webhook, {
 
 const PHONE = "+5511961957144";
 
+test("a safe acknowledgement of declined hours needs no revision even after twelve seconds", async () => {
+  const realNow = Date.now;
+  try {
+    for (const safe of [true,false]) {
+      let elapsed=0,calls=0;
+      Date.now=()=>100000+elapsed;
+      const body = safe ? "A consulta presencial custa R$ 500. Seguimos sem ver horários agora." : "A consulta presencial custa R$ 500. Posso verificar horários?";
+      const result=await runOpenAIShadow({phone:PHONE,text:"Pode sim. Não quero ver horários agora.",
+        recentConversation:[{role:"assistant",source:"bruna",text:"Posso te passar o valor da consulta presencial?"}],
+        replyContract:{experienceVersion:"bruna-conversion-v1",allowedResponseKind:"direct_answer",allowedCtaTypes:[],allowCta:false,maxQuestions:1,maxLinks:0,owner:"bruna",risk:"green",unresolvedIntents:["consultation_information"]}},
+        {env:{OPENAI_API_KEY:"test-key",BRUNA_CONVERSION_EXPERIENCE_V1:"true"},fetchImpl:async()=>{
+          calls++;elapsed=12001;return Response.json(validResponse(validDecision({replyCode:"AMANDA-CONSULTA-INFO-01",replyWording:"contextual",procedure:"lifting_facial",suggestedReply:body})));
+        }});
+      assert.equal(calls,1);
+      assert.equal(result.decision.route,safe?"standard_reply":"human_review",JSON.stringify(result));
+      assert.equal(result.decision.suggestedReply,safe?body:"");
+    }
+  } finally {Date.now=realNow;}
+});
+
 test("every model reply loads the scoped full transcript without enlarging operational history", async () => {
   let payload, request;
   const turns = Array.from({ length: 80 }, (_, i) => ({ role: i % 2 ? "assistant" : "user", source: i % 2 ? "human" : "patient",

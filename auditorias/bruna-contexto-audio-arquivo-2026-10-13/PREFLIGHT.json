@@ -145,5 +145,13 @@
     "featureFlagsPresentBeforeRelease": false,
     "patientMessagesSent": 0,
     "manualOperationalRoutinesRun": 0
+  },
+  "releaseFixRefresh": {
+    "checkedAt": "2026-10-14T01:22:51.511Z",
+    "remoteProductionHead": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
+    "netlifyStillBaselineAfterFailedBuild": true,
+    "appsScriptVersion": 163,
+    "triggerCount": 11,
+    "newFeaturesActive": false
   }
 }

@@ -13,6 +13,7 @@ import { sendYCloudPatientText } from "./ycloud-patient-message.mjs";
 import { recordDurableConversationTurn, prepareConversationLedgerReceipt,
   markConversationLedgerAccepted, completeConversationLedgerReceipt } from "./conversation-ledger.mjs";
 import { hasInternalReferenceExposure } from "./internal-reference-guard.mjs";
+import { withoutNegatedSchedulingMentions } from "./patient-turn-context.mjs";
 import { APPROVED_SURGICAL_RANGE_PATTERNS, containsApprovedSurgicalRange, hasOnlyApprovedSurgicalAmounts, hasApprovedSurgicalPriceDisclosure } from "./surgical-price-policy.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
@@ -333,7 +334,7 @@ function semanticUnsafeReplyReason(
 
   const ctaPattern =
     /\b(?:se\s+(?:fizer\s+sentido|quiser)|quer\s+que\s+eu|posso\s+(?:te|lhe)\s+ajudar|podemos\s+agendar|prefere\s+(?:manh[aã]|tarde))\b/i;
-  const containsCta = ctaPattern.test(raw);
+  const containsCta = ctaPattern.test(withoutNegatedSchedulingMentions(raw));
   if (contract.allowCta === false && containsCta) {
     return "cta_not_allowed_for_context";
   }

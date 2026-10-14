@@ -30,11 +30,11 @@
     ]
   },
   "validation": {
-    "coreTests": 2061,
+    "coreTests": 2065,
     "scriptTests": 14,
     "scriptTestsAlsoInCore": 0,
     "additionalContractTests": 38,
-    "uniqueTests": 2113,
+    "uniqueTests": 2117,
     "failed": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
@@ -48,13 +48,14 @@
     "liveModelCheck": "pending_hosted_production_build",
     "liveAudioCheck": "pending_hosted_production_build",
     "opsCheck": "SYNC_PENDING",
-    "rollbackPatchReverseCheck": "pending_after_commit",
+    "rollbackPatchReverseCheck": "passed_without_mutation_for_4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
     "status": "passed_local",
-    "scopeFiles": 63,
+    "scopeFiles": 69,
     "liveModelScenarios": 15,
     "fullHistoryFocusedTests": 173,
     "afterReviewFocusedTests": 58,
-    "finalHistoryFocusedTests": 16
+    "finalHistoryFocusedTests": 16,
+    "finalNegationFocusedTests": 140
   },
   "riskReview": [
     "Origem de mídia restrita, assinatura do evento, hash, MIME e tamanho verificados antes do provedor.",
@@ -125,6 +126,26 @@
       "scripts/check-bruna-model-live.mjs": "f372c248c9fb2a62cadfdcaac010d9d4359115200c0e651c37c9afb50fc11f58",
       "scripts/check-bruna-model-live.test.mjs": "c7b17c443e9b116c703a9559196b33c2a03ff3b082719bdc7ffb18dc50da13df",
       "scripts/fixtures/bruna-audio-address.wav": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+    }
+  },
+  "releaseGateFollowup": {
+    "status": "completed_no_remaining_actionable_findings",
+    "changedBehavior": "Negated scheduling phrases cannot become scheduling intent or CTA. Positive clauses and local questions remain detectable.",
+    "liveGateUnchanged": true,
+    "deadlineUnchanged": true,
+    "reviewer": "/root/revisao_independente",
+    "reviewedHead": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
+    "reviewedWorkingDiff": true,
+    "focusedTests": 285,
+    "reviewedAt": "2026-10-14T01:24:13.590Z",
+    "normalization": "CRLF to LF",
+    "fileSha256": {
+      "netlify/functions/lib/patient-turn-context.mjs": "e437781bd8ca8de591a89ae67d4884b467f8b5b6d77233ace24879e7b9de5216",
+      "netlify/functions/lib/bruna-conversion-experience.mjs": "73534ed4616f09249ad0854236b24879623ef9594401363b524da9e3bb50c5c4",
+      "netlify/functions/lib/conversation-action-controller.mjs": "111e1cfbcd09a57dbc737a591924529b7ae8e76e595daa0a1833bfd208277c4f",
+      "netlify/functions/lib/outbound-reply-gate.mjs": "85d39fad97d55e97efbf0ca4df30dd599b63ea9115ea38fc5985451d48c5e133",
+      "netlify/functions/lib/whatsapp-automation.mjs": "8a53b45b7e91625223da4c2fc05ce6465aba719df3d93ef490493815b51f69d6",
+      "scripts/check-bruna-model-live.mjs": "2093ddb988d2549a04a901b401c5162fd4e4dc74bed4ff6b15c4c43e15f9b930"
     }
   }
 }

@@ -3,6 +3,20 @@
 export const UNAVAILABLE_PATIENT_TEXT = "[Mensagem de texto indisponível na integração.]";
 export const PENDING_AUDIO_TEXT = "[Áudio recebido; transcrição em andamento.]";
 
+// Remove only a locally negated scheduling phrase. Keep other clauses (including
+// a positive request after "mas") so a refusal is neither consent nor a global veto.
+export function withoutNegatedSchedulingMentions(value) {
+  return String(value || "").replace(/\b(?:n[aã]o\s+(?:quero|quer|queremos|pretendo|pretende|vou|vamos|posso|podemos|preciso|precisa|precisamos)|prefiro\s+n[aã]o|sem(?:\s+(?:precisar|necessidade|inten[cç][aã]o)\s+de)?)\s+(?:(?:ver|verificar|consultar|conferir|escolher)\s+(?:(?:as?|os?)\s+)?(?:op[cç][oõ]es\s+de\s+)?(?:hor[aá]rios?|disponibilidade)|(?:reagendar|remarcar|agendar|marcar)(?:\s+(?:a|uma|minha)\s+(?:consulta|avalia[cç][aã]o))?|hor[aá]rios?|agendamento)(?:\s+(?:agora|ainda|por\s+enquanto|no\s+momento))?/gi,
+    (match, offset, original) => {
+      // "Não quer ver horários?" is still an offer, not a refusal. A comma or
+      // adversative clause ends this local question scope.
+      const remaining = original.slice(offset + match.length);
+      if (/^\s*,\s*(?:quer|ent[aã]o|certo|n[eé]|n[aã]o|pode\s+ser|tudo\s+bem)\s*\?/.test(remaining)) return match;
+      const tail = remaining.split(/[.,;!\n]|\b(?:mas|por[eé]m|s[oó]\s+que)\b/i)[0];
+      return /^[^?]{0,50}\?/.test(tail) ? match : "";
+    });
+}
+
 // Same linguistic signal for planning and the outbound contract. It identifies a
 // question about cost, not consent to a range, a booking, or a price objection.
 const PRICE_AMOUNT_PATTERN = /\b(?:precos?|custos?(?![\s-]*beneficio)|valor(?:es)?|investimento|media|orcamento|faixa|quanto\s+(?:custa|fica|sai|e)(?!\s+(?:(?:o|a|um|uma)\s+)?(?:tempo|prazo|periodo|risco|tamanho|inchaco|inchad[oa]|vermelh[oa]|dolorid[oa]|sensivel|afastad[oa]|internad[oa])\b))\b/i;

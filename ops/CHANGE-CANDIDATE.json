@@ -27,6 +27,7 @@
       "apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
       "apps-script/clinica-liv-leads/LeadClassification.gs",
       "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/production-target.json",
       "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json",
       "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
       "auditorias/bruna-contexto-audio-arquivo-2026-10-13/RELATORIO.md",
@@ -41,9 +42,12 @@
       "netlify/functions/lib/audio-transcription.mjs",
       "netlify/functions/lib/audio-transcription.test.mjs",
       "netlify/functions/lib/bruna-autonomia.integration.test.mjs",
+      "netlify/functions/lib/bruna-conversion-experience.mjs",
+      "netlify/functions/lib/bruna-conversion-experience.test.mjs",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
       "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/conversation-action-controller.test.mjs",
       "netlify/functions/lib/conversation-archive-outbox.mjs",
       "netlify/functions/lib/conversation-archive-outbox.test.mjs",
       "netlify/functions/lib/conversation-guidelines.mjs",
@@ -62,12 +66,14 @@
       "netlify/functions/lib/knowledge-learning.mjs",
       "netlify/functions/lib/openai-shadow.mjs",
       "netlify/functions/lib/openai-shadow.test.mjs",
+      "netlify/functions/lib/outbound-reply-gate.mjs",
       "netlify/functions/lib/patient-replies.mjs",
       "netlify/functions/lib/patient-turn-context.mjs",
       "netlify/functions/lib/price-holding-webhook.test.mjs",
       "netlify/functions/lib/semantic-reply-policy.mjs",
       "netlify/functions/lib/semantic-reply-policy.test.mjs",
       "netlify/functions/lib/surgical-price-policy.mjs",
+      "netlify/functions/lib/whatsapp-automation.mjs",
       "netlify/functions/lib/ycloud-appointment-reminder.mjs",
       "netlify/functions/lib/ycloud-patient-message.mjs",
       "netlify/functions/lib/ycloud-post-consult.mjs",
@@ -169,6 +175,7 @@
       "netlify/functions/lib/appointment-review-store.mjs",
       "netlify/functions/lib/appointment-suggestions.mjs",
       "netlify/functions/lib/attribution-journey-store.mjs",
+      "netlify/functions/lib/bruna-conversion-experience.mjs",
       "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
       "netlify/functions/lib/bruna-policy/rules.jsonl",
       "netlify/functions/lib/business-number-registry.mjs",
@@ -412,13 +419,11 @@
   },
   "release": {
     "status": "pending",
-    "appsScriptVersion": 162,
+    "appsScriptVersion": 163,
     "blockers": [
-      "Apps Script: salvar e publicar as fontes revisadas no deployment canônico.",
-      "Netlify: novo build Git de produção com 15 cenários reais e transcrição sintética, seguido de verificação e ativação.",
-      "Recibos finais e projeções existentes do Drive pendentes."
+      "Novo build real de produção após correção de negação; ativação e recibos pendentes."
     ],
     "evidence": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
-    "approvedSourceCommit": ""
+    "approvedSourceCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972"
   }
 }

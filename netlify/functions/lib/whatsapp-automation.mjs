@@ -1,6 +1,6 @@
 import { isReactionMessageType } from "./inbound-message-kind.mjs";
 import { isProfessionalExperienceDetailRequest } from "./professional-fact-review.mjs";
-import { isClearInformationAcceptance, isAutomatedBusinessReply, isPriceAmountInquiry, isConsultationCostInquiry, consultationQuestionTopics, resolveOfferedInformationChoice } from "./patient-turn-context.mjs";
+import { isClearInformationAcceptance, isAutomatedBusinessReply, isPriceAmountInquiry, isConsultationCostInquiry, consultationQuestionTopics, resolveOfferedInformationChoice, withoutNegatedSchedulingMentions } from "./patient-turn-context.mjs";
 import { isAutomaticSurgicalPriceProcedure, containsApprovedSurgicalRange, resolveSurgicalPricePlan, resolveBundledSurgicalPricePlan, earPriceScope } from "./surgical-price-policy.mjs";
 import {
   hasRecentCommercialSolicitationContext,
@@ -186,7 +186,7 @@ function matchesAny(text, patterns) {
 }
 
 export function isSchedulingRequest(text) {
-  const normalizedText = String(text || "");
+  const normalizedText = withoutNegatedSchedulingMentions(text);
   return (
     !isConsultationInformationRequest(normalizedText) &&
     SCHEDULING_PATTERN.test(normalizedText)
@@ -208,7 +208,7 @@ export function isConsultationPriceRequest(text) {
 }
 
 export function isAvailabilityRequest(text) {
-  const value = String(text || "");
+  const value = withoutNegatedSchedulingMentions(text);
   return (
     AVAILABILITY_REQUEST_PATTERN.test(value) ||
     CONSULTATION_ACCESS_PATTERN.test(value)
@@ -700,7 +700,7 @@ export function planAutomation({
   const asksPriceTerms = PRICE_TERMS_PATTERN.test(normalizedText);
   const requestsAmountAlongsideTerms = /\bquanto\s+(?:custa|fica|sai|[eé])\b|\bqual\s+(?:[eé]\s+)?(?:o\s+)?(?:valor|pre[cç]o|custo)\b|\b(?:saber|passar|informe|informa|manda|mande)\b.{0,30}\b(?:valor|pre[cç]o|faixa|m[eé]dia)\b/i.test(normalizedText);
   const asksPrice = asksPriceAmount || asksPriceTerms;
-  const asksScheduling = SCHEDULING_PATTERN.test(normalizedText);
+  const asksScheduling = SCHEDULING_PATTERN.test(withoutNegatedSchedulingMentions(normalizedText));
   const marketingPrefilledMessage =
     isLikelyMarketingPrefilledMessage({
       templateId,

@@ -98,6 +98,8 @@ test('all fifteen synthetic scenarios use the real adapters and pass the outboun
   assert.equal(result.maxOutputTokens, 4096);
   assert.equal(result.verbosity, 'low');
   assert.equal(result.patientMessagesSent, 0);
+  assert.match(result.results[0].requests[0].syntheticDraft, /consulta presencial/);
+  assert.equal(JSON.stringify(result).includes(env.OPENAI_API_KEY), false);
 });
 
 test('a partial known answer cannot make the live quality gate accept an unresolved clinic fact', async () => {

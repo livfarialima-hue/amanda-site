@@ -1,25 +1,23 @@
 {
-  "status": "tested_reviewed_awaiting_publication",
-  "recordedAt": "2026-10-14T01:10:36.746Z",
-  "candidateFunctionalCommit": null,
+  "status": "apps_script_published_correcting_netlify_gate",
+  "recordedAt": "2026-10-14T01:22:51.511Z",
+  "candidateFunctionalCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
   "pullRequest": "https://github.com/livfarialima-hue/amanda-site/pull/11",
   "localValidation": {
-    "uniqueTests": 2113,
+    "uniqueTests": 2117,
     "failures": 0,
     "changeCheck": "OK",
     "architectureCheck": "OK",
     "buildCheck": "passed",
     "releasePreflight": {
-      "status": "pending_for_new_exact_commit",
-      "previousPassedCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5"
+      "status": "passed",
+      "exactCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
+      "livePreflightReference": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json",
+      "approvalBasis": "User explicitly authorized implementation and publication and subsequently requested the full-history extension; reused continuing authorization.",
+      "approvalRecordedAt": "2026-10-14T01:11:00Z",
+      "checkedOnCleanWorktree": true
     },
     "independentReview": "completed_no_remaining_actionable_findings"
-  },
-  "productionUnchanged": {
-    "appsScriptVersion": 162,
-    "netlifyDeployId": "6acebbd4a25f1e95fc6d90d3",
-    "functionalCommit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
-    "newFeaturesActive": false
   },
   "driveProjections": [
     {
@@ -63,7 +61,7 @@
       }
     },
     "versionBefore": 162,
-    "publicationStatus": "google_authorized_new_source_pending",
+    "publicationStatus": "superseded_by_verified_v163",
     "operationalRoutinesRun": 0,
     "patientMessagesSent": 0,
     "readOnlyDiagnostic": {
@@ -90,5 +88,66 @@
     "providerDeliveryTimeoutsObserved": true,
     "historicalGapsRemain": true
   },
-  "previousCandidateFunctionalCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5"
+  "previousCandidateFunctionalCommit": "6f48d89de65cbf862e57df952df9867b8ef868e5",
+  "appsScript": {
+    "version": 163,
+    "displayedPublishedTime": "2026-10-13 22:12 America/Sao_Paulo",
+    "verifiedAt": "2026-10-14T01:13:10.820Z",
+    "commit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
+    "sameId": true,
+    "sameUrl": true,
+    "accessPreserved": true,
+    "files": {
+      "Code.gs": {
+        "matchesCommit": true,
+        "normalizedSha256": "df84ced7c65de056e709772cfd4fa4deddff4563e22463f7b4eee3a751a20a9e"
+      },
+      "LeadClassification.gs": {
+        "matchesCommit": true,
+        "normalizedSha256": "fe4dc8cfc04203e8bc3a01999976e1a54cfb3a468ffdb1c462d95e944d0557f4"
+      },
+      "KnowledgeBase.gs": {
+        "matchesCommit": true,
+        "normalizedSha256": "f8355af646eae85924da0e29969ff8d0b265cabd786338906398a844394117dc"
+      },
+      "ConversationArchive.gs": {
+        "matchesCommit": true,
+        "normalizedSha256": "ce237919eb4959455e949c992ebf69389fac8f293a83cec83dd00ca12d721d90"
+      }
+    },
+    "scriptId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+    "versionBefore": 162,
+    "triggerCount": 11,
+    "triggersCheckedAt": "2026-10-14T01:22:51.511Z",
+    "triggerChanges": 0
+  },
+  "productionBaseline": {
+    "appsScriptVersion": 162,
+    "netlifyDeployId": "6acebbd4a25f1e95fc6d90d3",
+    "functionalCommit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
+    "newFeaturesActive": false
+  },
+  "netlify": {
+    "defaultOffDeployId": "6aced7373b54b4e6948c444a",
+    "commit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
+    "status": "failed_no_production_change",
+    "gitProductionBranch": "reestruturacao-site",
+    "previewPromoted": false,
+    "attempts": [
+      {
+        "deployId": "6aced7373b54b4e6948c444a",
+        "commit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
+        "context": "production",
+        "status": "failed",
+        "checkedAt": "2026-10-14T01:14:27.253Z",
+        "passedScenarios": 3,
+        "failedScenario": "accepted_information_offer",
+        "reason": "cta_type_not_allowed_for_context",
+        "originalDraftAvailable": false,
+        "diagnosis": "Local reproduction found negated scheduling phrases treated as both CTAs and scheduling intent. The actual original model draft was not retained, so attribution is probable, not established."
+      }
+    ]
+  }
 }

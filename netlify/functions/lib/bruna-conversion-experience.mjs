@@ -1,3 +1,5 @@
+import { withoutNegatedSchedulingMentions } from "./patient-turn-context.mjs";
+
 export const BRUNA_CONVERSION_EXPERIENCE_VERSION =
   "bruna-conversion-v1";
 
@@ -114,7 +116,7 @@ export function patientFacingPolicyLanguageReason(value) {
 }
 
 export function classifyBrunaCta(value) {
-  const text = normalized(value);
+  const text = normalized(withoutNegatedSchedulingMentions(value));
   if (!text) return "";
 
   if (
