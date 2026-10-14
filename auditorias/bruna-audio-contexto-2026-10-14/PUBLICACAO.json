@@ -1404,9 +1404,15 @@
     "functionalCommit": "bbf297da98946badd4460989064e4f2636f1211c",
     "platformsVerified": true,
     "driveVerified": true,
-    "documentationCommit": "aa3eaab",
-    "opsCheck": "pending_final_canonical_sync",
-    "automation": "already_paused"
+    "documentationCommit": "68d719751d9500c99f5767e8c7316bdd6895bf7d",
+    "opsCheck": "OK",
+    "automation": "already_paused",
+    "changeCheck": "OK",
+    "canonicalBranch": "reestruturacao-site",
+    "canonicalOriginCommit": "68d719751d9500c99f5767e8c7316bdd6895bf7d",
+    "checkedAt": "2026-10-14T12:30:48.845Z",
+    "productionDeployAtCloseout": "6acf71e94079694bfc8221a4",
+    "note": "Canonical checkout clean and pushed; change:check (30 exact paths) and ops:check passed. Closeout commits only reconcile records and skip Netlify build; functional production remains bbf297da98946badd4460989064e4f2636f1211c."
   },
   "independentPublicationReview": {
     "reviewer": "audio_context_review",

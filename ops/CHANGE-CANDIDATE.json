@@ -360,7 +360,7 @@
       "architecture": "passed",
       "rollback": "passed",
       "independentReview": "completed",
-      "ops": "SYNC_PENDING"
+      "ops": "OK"
     }
   },
   "rollback": {
