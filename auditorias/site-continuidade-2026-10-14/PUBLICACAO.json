@@ -1,20 +1,1249 @@
 {
   "schemaVersion": 1,
   "changeId": "SITE-CONTINUIDADE-2026-10-14",
-  "status": "not_published",
-  "externalWritesPerformed": false,
+  "status": "published_verified",
+  "externalWritesPerformed": true,
   "baseline": {
     "productionFunctionalCommit": "4869b38a51d55b76176cf2b1cf8021c4f2ea46be",
     "netlifyDeployId": "6acfecf0d71ca630f8f9469a",
     "appsScriptVersion": 164
   },
-  "approvedCommit": null,
-  "netlifyDeployId": null,
-  "verifiedAt": null,
+  "approvedCommit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
+  "netlifyDeployId": "6acff7b9dc7d30f39ad66b31",
+  "verifiedAt": "2026-10-14T21:59:41.048Z",
   "appsScriptChanged": false,
   "functionsChanged": false,
   "brunaManifestChanged": false,
-  "driveProjectionEquality": "pending",
+  "driveProjectionEquality": "verified_same_file_exact_bytes",
   "verification": [],
-  "note": "Recibo preparado; campos vazios não são evidência de publicação. Nenhuma informação privada integra este arquivo."
+  "note": "Completed publication and same-file documentation readback. Technical evidence only; no private operational data or contact results.",
+  "publishedAt": "2026-10-14T21:47:42.198Z",
+  "appsScriptVersion": 164,
+  "drivePlanSha256": "9d5a502f5cdec68750246c20ca198dec400d1a9536b204ea213ce3cb5b58414a",
+  "drivePlanReadbackVerifiedAt": "2026-10-14T21:59:41.048Z",
+  "receipt": "auditorias/site-continuidade-2026-10-14/PUBLICACAO.json",
+  "authorization": {
+    "source": "Explicit user request in this chat to fix site and publish on completion",
+    "boundToExactCommitAt": "2026-10-14T21:44:11.130Z",
+    "preflightResult": "CHANGE_SAFETY_STATUS=OK; clean exact commit;80 declared files"
+  },
+  "productionState": "ready",
+  "branch": "reestruturacao-site",
+  "model": {
+    "status": "passed",
+    "passed": 19,
+    "total": 19,
+    "fullHistoryPassed": 2,
+    "checkedAt": "2026-10-14T21:47:29.943Z"
+  },
+  "audio": {
+    "status": "passed",
+    "passed": 3,
+    "total": 3,
+    "model": "whisper-1"
+  },
+  "functions": {
+    "count": 15,
+    "allContentHashesEqualToBaseline": true,
+    "schedules": 6,
+    "schedulesEqualToBaseline": true
+  },
+  "publicVerification": {
+    "checkedAt": "2026-10-14T21:52:04.662Z",
+    "deployId": "6acff7b9dc7d30f39ad66b31",
+    "files": 61,
+    "results": [
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "campanhas/article-conversion.js",
+        "status": 200,
+        "sha256": "842adf8158f78f0c70086ad63571fa4fd4dcf6f0662adbd4a0276b84a5a15d58",
+        "expectedSha256": "842adf8158f78f0c70086ad63571fa4fd4dcf6f0662adbd4a0276b84a5a15d58",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "abdominoplastia/index.html",
+        "status": 200,
+        "sha256": "9538a740d718d4a3a2bcb8123a6237a26599bbfd707e791eec70de29381ac150",
+        "expectedSha256": "3f3ce2b77d00f8ef05a8cae442dc28e310455651f36bfa9f69b7dab6a3f5f185",
+        "equal": true,
+        "byteExact": false,
+        "existingPrettyUrlRewrite": true,
+        "checkedAt": "2026-10-14T21:51:56.306Z"
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "avaliacao-facial/index.html",
+        "status": 200,
+        "sha256": "cd762243867ff01dcf8858b36b0c6e00cf8e99fa3fa46d165c06ced41e181eea",
+        "expectedSha256": "cd762243867ff01dcf8858b36b0c6e00cf8e99fa3fa46d165c06ced41e181eea",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "campanhas/conversion-tracking.js",
+        "status": 200,
+        "sha256": "c9c3307954257c46b9ede57fcf209dd15266381559868867e6e1657d15d249f4",
+        "expectedSha256": "c9c3307954257c46b9ede57fcf209dd15266381559868867e6e1657d15d249f4",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "braquioplastia/index.html",
+        "status": 200,
+        "sha256": "5d72cf9879641abbda5b3735350648b189db47706a54d0f19c6e4edceddf97d6",
+        "expectedSha256": "5d72cf9879641abbda5b3735350648b189db47706a54d0f19c6e4edceddf97d6",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "blefaroplastia/index.html",
+        "status": 200,
+        "sha256": "acc6a713c18f4d426d525c35bd5ed4c8dec2b3369bc94ec9b941fbf1e430d8e2",
+        "expectedSha256": "acc6a713c18f4d426d525c35bd5ed4c8dec2b3369bc94ec9b941fbf1e430d8e2",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "campanhas/procedure-terra-fixes.js",
+        "status": 200,
+        "sha256": "1f8e73164db9c1a92f244d79d46a75fe3ee0f96f0f628ee3c49e6df5e6bbcf22",
+        "expectedSha256": "1f8e73164db9c1a92f244d79d46a75fe3ee0f96f0f628ee3c49e6df5e6bbcf22",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "campanhas/landing-behavior.js",
+        "status": 200,
+        "sha256": "579c3429c5cde970f62ac79cdf2c851678720c6338560acceb008dc3c565166e",
+        "expectedSha256": "579c3429c5cde970f62ac79cdf2c851678720c6338560acceb008dc3c565166e",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "campanhas/secondary-conversion.js",
+        "status": 200,
+        "sha256": "7440bef173f77b823bbb741e75786cf167406581ea0025f921340eeb4dccddbb",
+        "expectedSha256": "7440bef173f77b823bbb741e75786cf167406581ea0025f921340eeb4dccddbb",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/botox-preenchimento-bioestimulador/index.html",
+        "status": 200,
+        "sha256": "357a1227572da12ddcc09d6ba549f9b78473150225204aee0128b84e25ca4a07",
+        "expectedSha256": "357a1227572da12ddcc09d6ba549f9b78473150225204aee0128b84e25ca4a07",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/blefaroplastia-quando-faz-sentido/index.html",
+        "status": 200,
+        "sha256": "3d811ac5093c3e631d63a3a4c51fa4754b62161719452fae854d5112bdeb2695",
+        "expectedSha256": "3d811ac5093c3e631d63a3a4c51fa4754b62161719452fae854d5112bdeb2695",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "campanhas/site-enhancements.js",
+        "status": 200,
+        "sha256": "99bac43b31934b3222e8cb6c3dfa4cf0212a07b414a51bb14f01b111a2218726",
+        "expectedSha256": "99bac43b31934b3222e8cb6c3dfa4cf0212a07b414a51bb14f01b111a2218726",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/como-escolher-cirurgiao-plastico/index.html",
+        "status": 200,
+        "sha256": "6a13f7ec955ce1b23988dbedc83b0dbf5ca7f4cd57d2fe5ec9471a8b3c0fb68f",
+        "expectedSha256": "6a13f7ec955ce1b23988dbedc83b0dbf5ca7f4cd57d2fe5ec9471a8b3c0fb68f",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+        "status": 200,
+        "sha256": "ec5b41b30d2da08305195a51dec2fe947b9a5c3008016b9416508aef15de6377",
+        "expectedSha256": "ec5b41b30d2da08305195a51dec2fe947b9a5c3008016b9416508aef15de6377",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/cirurgia-plastica-apos-emagrecimento/index.html",
+        "status": 200,
+        "sha256": "7049ca13047ff4972d43e3be9996b1d9fd981ffaf69b87e5e650c6e0f8251cfd",
+        "expectedSha256": "7049ca13047ff4972d43e3be9996b1d9fd981ffaf69b87e5e650c6e0f8251cfd",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/consulta-cirurgia-plastica/index.html",
+        "status": 200,
+        "sha256": "33e3f29a588cb2f293279ea57d2d0bb38b21148e8cd8ee99442f944e018bfd8f",
+        "expectedSha256": "33e3f29a588cb2f293279ea57d2d0bb38b21148e8cd8ee99442f944e018bfd8f",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/como-escolher-protese-de-mama/index.html",
+        "status": 200,
+        "sha256": "a20826ba2b713eaf46d0065e77dacdfe6e43fa832ce297e25382d28c018843d8",
+        "expectedSha256": "a20826ba2b713eaf46d0065e77dacdfe6e43fa832ce297e25382d28c018843d8",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/cicatrizes-cirurgia-de-mama/index.html",
+        "status": 200,
+        "sha256": "a3d9b55fa64033b73df3ce4d4ef4dfd453ad04f03cd9e56fe12c5bcb202cc2cd",
+        "expectedSha256": "a3d9b55fa64033b73df3ce4d4ef4dfd453ad04f03cd9e56fe12c5bcb202cc2cd",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
+        "status": 200,
+        "sha256": "00a73272a340deca9dbf84bd48eb7f331cf6bab1008204aa538a6f271030d60a",
+        "expectedSha256": "00a73272a340deca9dbf84bd48eb7f331cf6bab1008204aa538a6f271030d60a",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/lipoenxertia-facial/index.html",
+        "status": 200,
+        "sha256": "ad23923d2e8333ff56a85c5f503188e52ec8a15c04e6a65cd0162fdfa2311104",
+        "expectedSha256": "ad23923d2e8333ff56a85c5f503188e52ec8a15c04e6a65cd0162fdfa2311104",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
+        "status": 200,
+        "sha256": "5f54d72b51e72fdab98f39eb46a82497ad7534b7f2129183b17ec0d007cd8bbb",
+        "expectedSha256": "5f54d72b51e72fdab98f39eb46a82497ad7534b7f2129183b17ec0d007cd8bbb",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+        "status": 200,
+        "sha256": "19b4c73ea723bc3c93916c39d89c6b3e005d7f11de28248afdbf55fb27059a5b",
+        "expectedSha256": "19b4c73ea723bc3c93916c39d89c6b3e005d7f11de28248afdbf55fb27059a5b",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/lifting-facial-ou-injetaveis/index.html",
+        "status": 200,
+        "sha256": "14ab43082c7160845c6ea8cdd350c1353b5782a8e8a61add314b97a66a90afcd",
+        "expectedSha256": "14ab43082c7160845c6ea8cdd350c1353b5782a8e8a61add314b97a66a90afcd",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/index.html",
+        "status": 200,
+        "sha256": "5a192552563ddce9f779ef24402ef4bcd1dcb55e46852c696e0c10bf7d84bc02",
+        "expectedSha256": "c37e2b913e9c0d7bb95ffa9e5697755ace6e824b4cc24094ca3ba54ac510f24a",
+        "equal": true,
+        "byteExact": false,
+        "existingPrettyUrlRewrite": true,
+        "checkedAt": "2026-10-14T21:51:58.155Z"
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/papada-contorno-cervical/index.html",
+        "status": 200,
+        "sha256": "34998753a1e07403a1d8438559d8d8cb36c22944131d6b2e4d7d5434ced1d368",
+        "expectedSha256": "34998753a1e07403a1d8438559d8d8cb36c22944131d6b2e4d7d5434ced1d368",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/naturalidade-envelhecimento/index.html",
+        "status": 200,
+        "sha256": "ea049030a992b455ad527581166dbbe8f74f0eb6a55d5fd43668d3d3d5d0d9be",
+        "expectedSha256": "ea049030a992b455ad527581166dbbe8f74f0eb6a55d5fd43668d3d3d5d0d9be",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/minilifting-lifting-facial-deep-plane/index.html",
+        "status": 200,
+        "sha256": "4c6a5b88165a6f3ea6e55074385276bd0e11978aa3b8bfa9e6d53d53b94af432",
+        "expectedSha256": "4c6a5b88165a6f3ea6e55074385276bd0e11978aa3b8bfa9e6d53d53b94af432",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
+        "status": 200,
+        "sha256": "e96bd2c75636bd0be66d72b7b6a368819a85ded06054382884dd682201228cbf",
+        "expectedSha256": "e96bd2c75636bd0be66d72b7b6a368819a85ded06054382884dd682201228cbf",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/otomodelacao-ou-otoplastia/index.html",
+        "status": 200,
+        "sha256": "1e4a8840b96ec84c7268b168dbe3e27642cd2cf7d6ecb1e73407bc1197994348",
+        "expectedSha256": "1e4a8840b96ec84c7268b168dbe3e27642cd2cf7d6ecb1e73407bc1197994348",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/mastopexia-com-ou-sem-protese/index.html",
+        "status": 200,
+        "sha256": "22e6cc256a15456b262e7ec0e4989f9d39a99e5f2c2a7165cd91109a4665a054",
+        "expectedSha256": "22e6cc256a15456b262e7ec0e4989f9d39a99e5f2c2a7165cd91109a4665a054",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/recuperacao-blefaroplastia/index.html",
+        "status": 200,
+        "sha256": "b071770f475bf12040f836b23db9faaf495ba5b24d8f1140a8fec699ff833c0f",
+        "expectedSha256": "b071770f475bf12040f836b23db9faaf495ba5b24d8f1140a8fec699ff833c0f",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+        "status": 200,
+        "sha256": "7d402ca30f306370c94dfdc89f299090a66974fcd6411b85a2c893a45bfb6b34",
+        "expectedSha256": "7d402ca30f306370c94dfdc89f299090a66974fcd6411b85a2c893a45bfb6b34",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
+        "status": 200,
+        "sha256": "9bf3f0b8342b9937ccd652ee0f6d41345cb170ee253a06a16d5c0199c4ea2d6e",
+        "expectedSha256": "9bf3f0b8342b9937ccd652ee0f6d41345cb170ee253a06a16d5c0199c4ea2d6e",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+        "status": 200,
+        "sha256": "d8e048f109960d72f4d9330659ce371d4420230c1eead8e57a68b874ad00ffc0",
+        "expectedSha256": "d8e048f109960d72f4d9330659ce371d4420230c1eead8e57a68b874ad00ffc0",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
+        "status": 200,
+        "sha256": "81455243982f3fd760900885c57bb469fea77cbde3dd0e6f565ced81d4a16477",
+        "expectedSha256": "81455243982f3fd760900885c57bb469fea77cbde3dd0e6f565ced81d4a16477",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
+        "status": 200,
+        "sha256": "fc906104b029bf871138fc05816fec9ae72ab16946d5c0d2d7757771ab09ff37",
+        "expectedSha256": "fc906104b029bf871138fc05816fec9ae72ab16946d5c0d2d7757771ab09ff37",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/recuperacao-lifting-cervical/index.html",
+        "status": 200,
+        "sha256": "5f6ac6ac88c10fd9a36f079ce0b4f5b92cb26976d2f1ac6fa7378440f9b51953",
+        "expectedSha256": "5f6ac6ac88c10fd9a36f079ce0b4f5b92cb26976d2f1ac6fa7378440f9b51953",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "dra-amanda-schroeder/index.html",
+        "status": 200,
+        "sha256": "a1958e8c53a0126098edfaba872e9bf7f560e4bcc45fadd5f99291c6760a1b78",
+        "expectedSha256": "a1958e8c53a0126098edfaba872e9bf7f560e4bcc45fadd5f99291c6760a1b78",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/recuperacao-lifting-facial/index.html",
+        "status": 200,
+        "sha256": "7d420c6cf3e5ea1923e7c32c21c7d6f8b6b37504056b0d7003de3d9d813a458f",
+        "expectedSha256": "7d420c6cf3e5ea1923e7c32c21c7d6f8b6b37504056b0d7003de3d9d813a458f",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "conteudos/seguranca-cirurgia-plastica/index.html",
+        "status": 200,
+        "sha256": "d5c8a986299cb79924901096937d9fb462fb9c630628d47159f1074f80982f49",
+        "expectedSha256": "d5c8a986299cb79924901096937d9fb462fb9c630628d47159f1074f80982f49",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "index.html",
+        "status": 200,
+        "sha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e",
+        "expectedSha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "contorno-corporal/index.html",
+        "status": 200,
+        "sha256": "bf990923591754ff54ed1bec76fd6e305834842b25300c160a44989661031b15",
+        "expectedSha256": "bf990923591754ff54ed1bec76fd6e305834842b25300c160a44989661031b15",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "lip-lifting/index.html",
+        "status": 200,
+        "sha256": "acc8f6fa3f1a7d3e0b79f8c74c53a24560bd3eec831440cec3f7438541cc06a8",
+        "expectedSha256": "acc8f6fa3f1a7d3e0b79f8c74c53a24560bd3eec831440cec3f7438541cc06a8",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "injetaveis/index.html",
+        "status": 200,
+        "sha256": "a7bbaa9b91b211df613fc575b354e44182ecf5a8143a3ecd6850954e9e7fa167",
+        "expectedSha256": "a7bbaa9b91b211df613fc575b354e44182ecf5a8143a3ecd6850954e9e7fa167",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "lipoaspiracao/index.html",
+        "status": 200,
+        "sha256": "8c32fb351e9238393828602c55b99bad20ed63cbb95e390a04ad685e255956f6",
+        "expectedSha256": "18b50603aa43f9f7f37bf5543e5e6ba6cad44abad145ed0ba686c47e55aba422",
+        "equal": true,
+        "byteExact": false,
+        "existingPrettyUrlRewrite": true,
+        "checkedAt": "2026-10-14T21:51:59.273Z"
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "lifting-cervical/index.html",
+        "status": 200,
+        "sha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033",
+        "expectedSha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "lifting-facial/index.html",
+        "status": 200,
+        "sha256": "396e094ce801f87572bc17c73e5acd083eb56b3f953d2d6640f9b9072a116f85",
+        "expectedSha256": "396e094ce801f87572bc17c73e5acd083eb56b3f953d2d6640f9b9072a116f85",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "lipo-de-papada/index.html",
+        "status": 200,
+        "sha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92",
+        "expectedSha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "ninfoplastia/index.html",
+        "status": 200,
+        "sha256": "bb61466ca6c9df1c6473b0ee842140911d9fc761330d1c15bdda0e3d871ce6ed",
+        "expectedSha256": "1bb3e604d13fa620e57c26fd536db9c66807fbe67e0cf24534941e000bf3412c",
+        "equal": true,
+        "byteExact": false,
+        "existingPrettyUrlRewrite": true,
+        "checkedAt": "2026-10-14T21:52:00.106Z"
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "mamoplastia-redutora/index.html",
+        "status": 200,
+        "sha256": "ab0d4f56354e32ff7b5a8d732971d953671741e50503f75f168efb4346d8d339",
+        "expectedSha256": "ab0d4f56354e32ff7b5a8d732971d953671741e50503f75f168efb4346d8d339",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "mastopexia/index.html",
+        "status": 200,
+        "sha256": "8910fc6526948a63b9c0a072b1e02aa82233956edf0cc32943cf6163481fab56",
+        "expectedSha256": "8910fc6526948a63b9c0a072b1e02aa82233956edf0cc32943cf6163481fab56",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "mastopexia-com-protese/index.html",
+        "status": 200,
+        "sha256": "ee760334a622ece15358311ad30e98033bb595ef1169a157e4f709e8dfe4a803",
+        "expectedSha256": "ee760334a622ece15358311ad30e98033bb595ef1169a157e4f709e8dfe4a803",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "mama/mama.js",
+        "status": 200,
+        "sha256": "c58aef6869bf5ab0d1a83b168fd51eaf17144532df50e38854fee371b9105f44",
+        "expectedSha256": "c58aef6869bf5ab0d1a83b168fd51eaf17144532df50e38854fee371b9105f44",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "mama/index.html",
+        "status": 200,
+        "sha256": "b533254995bdc0eb101ee509aaf21fdc9ad2b91f5bf5ebf7c16ad2c07b964d7e",
+        "expectedSha256": "b533254995bdc0eb101ee509aaf21fdc9ad2b91f5bf5ebf7c16ad2c07b964d7e",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "pos-bariatrica/index.html",
+        "status": 200,
+        "sha256": "22474d9d3ae894b1c1ef3e005af1458fbc8fc7a7a11c791c94f9d675e5db31d3",
+        "expectedSha256": "960d03f4f176a3de8246e412b135fe783bf4ec88dba50fed4ea5e9a80dfc07e9",
+        "equal": true,
+        "byteExact": false,
+        "existingPrettyUrlRewrite": true,
+        "checkedAt": "2026-10-14T21:52:02.399Z"
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "procedimentos/index.html",
+        "status": 200,
+        "sha256": "0d3d2140fdd11d988eeebd13f5b6fd0f4c7178c720cfa7dbcf92920337a2d495",
+        "expectedSha256": "0d3d2140fdd11d988eeebd13f5b6fd0f4c7178c720cfa7dbcf92920337a2d495",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "otoplastia/index.html",
+        "status": 200,
+        "sha256": "9a5848b5abd3553b967cca1b7df3bf7a6a00deef1627a7b0cde94098976b6787",
+        "expectedSha256": "9a5848b5abd3553b967cca1b7df3bf7a6a00deef1627a7b0cde94098976b6787",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "privacidade/index.html",
+        "status": 200,
+        "sha256": "b02dae7a72825bec64489c285a5b1cc482981927aef12f2ce9bbcd1dde968e6a",
+        "expectedSha256": "b02dae7a72825bec64489c285a5b1cc482981927aef12f2ce9bbcd1dde968e6a",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "otoplastia-adulto/index.html",
+        "status": 200,
+        "sha256": "bdfe545e4fe36f174acc777ef4b3ec86b682598ac458b9318002407ad2a4fe6b",
+        "expectedSha256": "c4d93eda1617bad39557316be129c9336ad47fe02df429cbab176aa0d445d81a",
+        "equal": true,
+        "byteExact": false,
+        "existingPrettyUrlRewrite": true,
+        "checkedAt": "2026-10-14T21:52:03.605Z"
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "otoplastia-infantil/index.html",
+        "status": 200,
+        "sha256": "8544ecbac40d7b504b0a6af79f252ff0fadc107ea1280b90934a739228b43810",
+        "expectedSha256": "8544ecbac40d7b504b0a6af79f252ff0fadc107ea1280b90934a739228b43810",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "path": "protese-de-mama/index.html",
+        "status": 200,
+        "sha256": "90cba5c35961e8b9aecbe815316bb22364f4ac398c8d0e134567f86afcd3efbc",
+        "expectedSha256": "90cba5c35961e8b9aecbe815316bb22364f4ac398c8d0e134567f86afcd3efbc",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "avaliacao-facial/index.html",
+        "status": 200,
+        "sha256": "cd762243867ff01dcf8858b36b0c6e00cf8e99fa3fa46d165c06ced41e181eea",
+        "expectedSha256": "cd762243867ff01dcf8858b36b0c6e00cf8e99fa3fa46d165c06ced41e181eea",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "abdominoplastia/index.html",
+        "status": 200,
+        "sha256": "9538a740d718d4a3a2bcb8123a6237a26599bbfd707e791eec70de29381ac150",
+        "expectedSha256": "3f3ce2b77d00f8ef05a8cae442dc28e310455651f36bfa9f69b7dab6a3f5f185",
+        "equal": true,
+        "byteExact": false,
+        "existingPrettyUrlRewrite": true,
+        "checkedAt": "2026-10-14T21:51:57.106Z"
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "braquioplastia/index.html",
+        "status": 200,
+        "sha256": "5d72cf9879641abbda5b3735350648b189db47706a54d0f19c6e4edceddf97d6",
+        "expectedSha256": "5d72cf9879641abbda5b3735350648b189db47706a54d0f19c6e4edceddf97d6",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "blefaroplastia/index.html",
+        "status": 200,
+        "sha256": "acc6a713c18f4d426d525c35bd5ed4c8dec2b3369bc94ec9b941fbf1e430d8e2",
+        "expectedSha256": "acc6a713c18f4d426d525c35bd5ed4c8dec2b3369bc94ec9b941fbf1e430d8e2",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "campanhas/conversion-tracking.js",
+        "status": 200,
+        "sha256": "c9c3307954257c46b9ede57fcf209dd15266381559868867e6e1657d15d249f4",
+        "expectedSha256": "c9c3307954257c46b9ede57fcf209dd15266381559868867e6e1657d15d249f4",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "campanhas/article-conversion.js",
+        "status": 200,
+        "sha256": "842adf8158f78f0c70086ad63571fa4fd4dcf6f0662adbd4a0276b84a5a15d58",
+        "expectedSha256": "842adf8158f78f0c70086ad63571fa4fd4dcf6f0662adbd4a0276b84a5a15d58",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "campanhas/procedure-terra-fixes.js",
+        "status": 200,
+        "sha256": "1f8e73164db9c1a92f244d79d46a75fe3ee0f96f0f628ee3c49e6df5e6bbcf22",
+        "expectedSha256": "1f8e73164db9c1a92f244d79d46a75fe3ee0f96f0f628ee3c49e6df5e6bbcf22",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "campanhas/landing-behavior.js",
+        "status": 200,
+        "sha256": "579c3429c5cde970f62ac79cdf2c851678720c6338560acceb008dc3c565166e",
+        "expectedSha256": "579c3429c5cde970f62ac79cdf2c851678720c6338560acceb008dc3c565166e",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/botox-preenchimento-bioestimulador/index.html",
+        "status": 200,
+        "sha256": "357a1227572da12ddcc09d6ba549f9b78473150225204aee0128b84e25ca4a07",
+        "expectedSha256": "357a1227572da12ddcc09d6ba549f9b78473150225204aee0128b84e25ca4a07",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "campanhas/secondary-conversion.js",
+        "status": 200,
+        "sha256": "7440bef173f77b823bbb741e75786cf167406581ea0025f921340eeb4dccddbb",
+        "expectedSha256": "7440bef173f77b823bbb741e75786cf167406581ea0025f921340eeb4dccddbb",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "campanhas/site-enhancements.js",
+        "status": 200,
+        "sha256": "99bac43b31934b3222e8cb6c3dfa4cf0212a07b414a51bb14f01b111a2218726",
+        "expectedSha256": "99bac43b31934b3222e8cb6c3dfa4cf0212a07b414a51bb14f01b111a2218726",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/blefaroplastia-quando-faz-sentido/index.html",
+        "status": 200,
+        "sha256": "3d811ac5093c3e631d63a3a4c51fa4754b62161719452fae854d5112bdeb2695",
+        "expectedSha256": "3d811ac5093c3e631d63a3a4c51fa4754b62161719452fae854d5112bdeb2695",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/cirurgia-plastica-apos-emagrecimento/index.html",
+        "status": 200,
+        "sha256": "7049ca13047ff4972d43e3be9996b1d9fd981ffaf69b87e5e650c6e0f8251cfd",
+        "expectedSha256": "7049ca13047ff4972d43e3be9996b1d9fd981ffaf69b87e5e650c6e0f8251cfd",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/como-escolher-protese-de-mama/index.html",
+        "status": 200,
+        "sha256": "a20826ba2b713eaf46d0065e77dacdfe6e43fa832ce297e25382d28c018843d8",
+        "expectedSha256": "a20826ba2b713eaf46d0065e77dacdfe6e43fa832ce297e25382d28c018843d8",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/consulta-cirurgia-plastica/index.html",
+        "status": 200,
+        "sha256": "33e3f29a588cb2f293279ea57d2d0bb38b21148e8cd8ee99442f944e018bfd8f",
+        "expectedSha256": "33e3f29a588cb2f293279ea57d2d0bb38b21148e8cd8ee99442f944e018bfd8f",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/como-escolher-cirurgiao-plastico/index.html",
+        "status": 200,
+        "sha256": "6a13f7ec955ce1b23988dbedc83b0dbf5ca7f4cd57d2fe5ec9471a8b3c0fb68f",
+        "expectedSha256": "6a13f7ec955ce1b23988dbedc83b0dbf5ca7f4cd57d2fe5ec9471a8b3c0fb68f",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/cicatrizes-cirurgia-de-mama/index.html",
+        "status": 200,
+        "sha256": "a3d9b55fa64033b73df3ce4d4ef4dfd453ad04f03cd9e56fe12c5bcb202cc2cd",
+        "expectedSha256": "a3d9b55fa64033b73df3ce4d4ef4dfd453ad04f03cd9e56fe12c5bcb202cc2cd",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/como-se-preparar-cirurgia-plastica/index.html",
+        "status": 200,
+        "sha256": "ec5b41b30d2da08305195a51dec2fe947b9a5c3008016b9416508aef15de6377",
+        "expectedSha256": "ec5b41b30d2da08305195a51dec2fe947b9a5c3008016b9416508aef15de6377",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/index.html",
+        "status": 200,
+        "sha256": "5a192552563ddce9f779ef24402ef4bcd1dcb55e46852c696e0c10bf7d84bc02",
+        "expectedSha256": "c37e2b913e9c0d7bb95ffa9e5697755ace6e824b4cc24094ca3ba54ac510f24a",
+        "equal": true,
+        "byteExact": false,
+        "existingPrettyUrlRewrite": true,
+        "checkedAt": "2026-10-14T21:51:58.651Z"
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
+        "status": 200,
+        "sha256": "5f54d72b51e72fdab98f39eb46a82497ad7534b7f2129183b17ec0d007cd8bbb",
+        "expectedSha256": "5f54d72b51e72fdab98f39eb46a82497ad7534b7f2129183b17ec0d007cd8bbb",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/lifting-facial-ou-injetaveis/index.html",
+        "status": 200,
+        "sha256": "14ab43082c7160845c6ea8cdd350c1353b5782a8e8a61add314b97a66a90afcd",
+        "expectedSha256": "14ab43082c7160845c6ea8cdd350c1353b5782a8e8a61add314b97a66a90afcd",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
+        "status": 200,
+        "sha256": "19b4c73ea723bc3c93916c39d89c6b3e005d7f11de28248afdbf55fb27059a5b",
+        "expectedSha256": "19b4c73ea723bc3c93916c39d89c6b3e005d7f11de28248afdbf55fb27059a5b",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/lipoenxertia-facial/index.html",
+        "status": 200,
+        "sha256": "ad23923d2e8333ff56a85c5f503188e52ec8a15c04e6a65cd0162fdfa2311104",
+        "expectedSha256": "ad23923d2e8333ff56a85c5f503188e52ec8a15c04e6a65cd0162fdfa2311104",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
+        "status": 200,
+        "sha256": "00a73272a340deca9dbf84bd48eb7f331cf6bab1008204aa538a6f271030d60a",
+        "expectedSha256": "00a73272a340deca9dbf84bd48eb7f331cf6bab1008204aa538a6f271030d60a",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/minilifting-lifting-facial-deep-plane/index.html",
+        "status": 200,
+        "sha256": "4c6a5b88165a6f3ea6e55074385276bd0e11978aa3b8bfa9e6d53d53b94af432",
+        "expectedSha256": "4c6a5b88165a6f3ea6e55074385276bd0e11978aa3b8bfa9e6d53d53b94af432",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/otomodelacao-ou-otoplastia/index.html",
+        "status": 200,
+        "sha256": "1e4a8840b96ec84c7268b168dbe3e27642cd2cf7d6ecb1e73407bc1197994348",
+        "expectedSha256": "1e4a8840b96ec84c7268b168dbe3e27642cd2cf7d6ecb1e73407bc1197994348",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
+        "status": 200,
+        "sha256": "e96bd2c75636bd0be66d72b7b6a368819a85ded06054382884dd682201228cbf",
+        "expectedSha256": "e96bd2c75636bd0be66d72b7b6a368819a85ded06054382884dd682201228cbf",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/mastopexia-com-ou-sem-protese/index.html",
+        "status": 200,
+        "sha256": "22e6cc256a15456b262e7ec0e4989f9d39a99e5f2c2a7165cd91109a4665a054",
+        "expectedSha256": "22e6cc256a15456b262e7ec0e4989f9d39a99e5f2c2a7165cd91109a4665a054",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/papada-contorno-cervical/index.html",
+        "status": 200,
+        "sha256": "34998753a1e07403a1d8438559d8d8cb36c22944131d6b2e4d7d5434ced1d368",
+        "expectedSha256": "34998753a1e07403a1d8438559d8d8cb36c22944131d6b2e4d7d5434ced1d368",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/naturalidade-envelhecimento/index.html",
+        "status": 200,
+        "sha256": "ea049030a992b455ad527581166dbbe8f74f0eb6a55d5fd43668d3d3d5d0d9be",
+        "expectedSha256": "ea049030a992b455ad527581166dbbe8f74f0eb6a55d5fd43668d3d3d5d0d9be",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
+        "status": 200,
+        "sha256": "81455243982f3fd760900885c57bb469fea77cbde3dd0e6f565ced81d4a16477",
+        "expectedSha256": "81455243982f3fd760900885c57bb469fea77cbde3dd0e6f565ced81d4a16477",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
+        "status": 200,
+        "sha256": "7d402ca30f306370c94dfdc89f299090a66974fcd6411b85a2c893a45bfb6b34",
+        "expectedSha256": "7d402ca30f306370c94dfdc89f299090a66974fcd6411b85a2c893a45bfb6b34",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
+        "status": 200,
+        "sha256": "9bf3f0b8342b9937ccd652ee0f6d41345cb170ee253a06a16d5c0199c4ea2d6e",
+        "expectedSha256": "9bf3f0b8342b9937ccd652ee0f6d41345cb170ee253a06a16d5c0199c4ea2d6e",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
+        "status": 200,
+        "sha256": "d8e048f109960d72f4d9330659ce371d4420230c1eead8e57a68b874ad00ffc0",
+        "expectedSha256": "d8e048f109960d72f4d9330659ce371d4420230c1eead8e57a68b874ad00ffc0",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
+        "status": 200,
+        "sha256": "fc906104b029bf871138fc05816fec9ae72ab16946d5c0d2d7757771ab09ff37",
+        "expectedSha256": "fc906104b029bf871138fc05816fec9ae72ab16946d5c0d2d7757771ab09ff37",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/recuperacao-blefaroplastia/index.html",
+        "status": 200,
+        "sha256": "b071770f475bf12040f836b23db9faaf495ba5b24d8f1140a8fec699ff833c0f",
+        "expectedSha256": "b071770f475bf12040f836b23db9faaf495ba5b24d8f1140a8fec699ff833c0f",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/recuperacao-lifting-facial/index.html",
+        "status": 200,
+        "sha256": "7d420c6cf3e5ea1923e7c32c21c7d6f8b6b37504056b0d7003de3d9d813a458f",
+        "expectedSha256": "7d420c6cf3e5ea1923e7c32c21c7d6f8b6b37504056b0d7003de3d9d813a458f",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "dra-amanda-schroeder/index.html",
+        "status": 200,
+        "sha256": "a1958e8c53a0126098edfaba872e9bf7f560e4bcc45fadd5f99291c6760a1b78",
+        "expectedSha256": "a1958e8c53a0126098edfaba872e9bf7f560e4bcc45fadd5f99291c6760a1b78",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/recuperacao-lifting-cervical/index.html",
+        "status": 200,
+        "sha256": "5f6ac6ac88c10fd9a36f079ce0b4f5b92cb26976d2f1ac6fa7378440f9b51953",
+        "expectedSha256": "5f6ac6ac88c10fd9a36f079ce0b4f5b92cb26976d2f1ac6fa7378440f9b51953",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "index.html",
+        "status": 200,
+        "sha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e",
+        "expectedSha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "conteudos/seguranca-cirurgia-plastica/index.html",
+        "status": 200,
+        "sha256": "d5c8a986299cb79924901096937d9fb462fb9c630628d47159f1074f80982f49",
+        "expectedSha256": "d5c8a986299cb79924901096937d9fb462fb9c630628d47159f1074f80982f49",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "contorno-corporal/index.html",
+        "status": 200,
+        "sha256": "bf990923591754ff54ed1bec76fd6e305834842b25300c160a44989661031b15",
+        "expectedSha256": "bf990923591754ff54ed1bec76fd6e305834842b25300c160a44989661031b15",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "lifting-cervical/index.html",
+        "status": 200,
+        "sha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033",
+        "expectedSha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "injetaveis/index.html",
+        "status": 200,
+        "sha256": "a7bbaa9b91b211df613fc575b354e44182ecf5a8143a3ecd6850954e9e7fa167",
+        "expectedSha256": "a7bbaa9b91b211df613fc575b354e44182ecf5a8143a3ecd6850954e9e7fa167",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "lip-lifting/index.html",
+        "status": 200,
+        "sha256": "acc8f6fa3f1a7d3e0b79f8c74c53a24560bd3eec831440cec3f7438541cc06a8",
+        "expectedSha256": "acc8f6fa3f1a7d3e0b79f8c74c53a24560bd3eec831440cec3f7438541cc06a8",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "lipoaspiracao/index.html",
+        "status": 200,
+        "sha256": "8c32fb351e9238393828602c55b99bad20ed63cbb95e390a04ad685e255956f6",
+        "expectedSha256": "18b50603aa43f9f7f37bf5543e5e6ba6cad44abad145ed0ba686c47e55aba422",
+        "equal": true,
+        "byteExact": false,
+        "existingPrettyUrlRewrite": true,
+        "checkedAt": "2026-10-14T21:51:59.500Z"
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "lipo-de-papada/index.html",
+        "status": 200,
+        "sha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92",
+        "expectedSha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "lifting-facial/index.html",
+        "status": 200,
+        "sha256": "396e094ce801f87572bc17c73e5acd083eb56b3f953d2d6640f9b9072a116f85",
+        "expectedSha256": "396e094ce801f87572bc17c73e5acd083eb56b3f953d2d6640f9b9072a116f85",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "mama/mama.js",
+        "status": 200,
+        "sha256": "c58aef6869bf5ab0d1a83b168fd51eaf17144532df50e38854fee371b9105f44",
+        "expectedSha256": "c58aef6869bf5ab0d1a83b168fd51eaf17144532df50e38854fee371b9105f44",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "mastopexia/index.html",
+        "status": 200,
+        "sha256": "8910fc6526948a63b9c0a072b1e02aa82233956edf0cc32943cf6163481fab56",
+        "expectedSha256": "8910fc6526948a63b9c0a072b1e02aa82233956edf0cc32943cf6163481fab56",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "ninfoplastia/index.html",
+        "status": 200,
+        "sha256": "bb61466ca6c9df1c6473b0ee842140911d9fc761330d1c15bdda0e3d871ce6ed",
+        "expectedSha256": "1bb3e604d13fa620e57c26fd536db9c66807fbe67e0cf24534941e000bf3412c",
+        "equal": true,
+        "byteExact": false,
+        "existingPrettyUrlRewrite": true,
+        "checkedAt": "2026-10-14T21:52:00.311Z"
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "mastopexia-com-protese/index.html",
+        "status": 200,
+        "sha256": "ee760334a622ece15358311ad30e98033bb595ef1169a157e4f709e8dfe4a803",
+        "expectedSha256": "ee760334a622ece15358311ad30e98033bb595ef1169a157e4f709e8dfe4a803",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "mamoplastia-redutora/index.html",
+        "status": 200,
+        "sha256": "ab0d4f56354e32ff7b5a8d732971d953671741e50503f75f168efb4346d8d339",
+        "expectedSha256": "ab0d4f56354e32ff7b5a8d732971d953671741e50503f75f168efb4346d8d339",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "mama/index.html",
+        "status": 200,
+        "sha256": "b533254995bdc0eb101ee509aaf21fdc9ad2b91f5bf5ebf7c16ad2c07b964d7e",
+        "expectedSha256": "b533254995bdc0eb101ee509aaf21fdc9ad2b91f5bf5ebf7c16ad2c07b964d7e",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "otoplastia-infantil/index.html",
+        "status": 200,
+        "sha256": "8544ecbac40d7b504b0a6af79f252ff0fadc107ea1280b90934a739228b43810",
+        "expectedSha256": "8544ecbac40d7b504b0a6af79f252ff0fadc107ea1280b90934a739228b43810",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "pos-bariatrica/index.html",
+        "status": 200,
+        "sha256": "22474d9d3ae894b1c1ef3e005af1458fbc8fc7a7a11c791c94f9d675e5db31d3",
+        "expectedSha256": "960d03f4f176a3de8246e412b135fe783bf4ec88dba50fed4ea5e9a80dfc07e9",
+        "equal": true,
+        "byteExact": false,
+        "existingPrettyUrlRewrite": true,
+        "checkedAt": "2026-10-14T21:52:02.851Z"
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "privacidade/index.html",
+        "status": 200,
+        "sha256": "b02dae7a72825bec64489c285a5b1cc482981927aef12f2ce9bbcd1dde968e6a",
+        "expectedSha256": "b02dae7a72825bec64489c285a5b1cc482981927aef12f2ce9bbcd1dde968e6a",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "procedimentos/index.html",
+        "status": 200,
+        "sha256": "0d3d2140fdd11d988eeebd13f5b6fd0f4c7178c720cfa7dbcf92920337a2d495",
+        "expectedSha256": "0d3d2140fdd11d988eeebd13f5b6fd0f4c7178c720cfa7dbcf92920337a2d495",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "otoplastia/index.html",
+        "status": 200,
+        "sha256": "9a5848b5abd3553b967cca1b7df3bf7a6a00deef1627a7b0cde94098976b6787",
+        "expectedSha256": "9a5848b5abd3553b967cca1b7df3bf7a6a00deef1627a7b0cde94098976b6787",
+        "equal": true,
+        "byteExact": true
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "otoplastia-adulto/index.html",
+        "status": 200,
+        "sha256": "bdfe545e4fe36f174acc777ef4b3ec86b682598ac458b9318002407ad2a4fe6b",
+        "expectedSha256": "c4d93eda1617bad39557316be129c9336ad47fe02df429cbab176aa0d445d81a",
+        "equal": true,
+        "byteExact": false,
+        "existingPrettyUrlRewrite": true,
+        "checkedAt": "2026-10-14T21:52:04.661Z"
+      },
+      {
+        "origin": "https://6acff7b9dc7d30f39ad66b31--inspiring-sprite-b35ca4.netlify.app",
+        "path": "protese-de-mama/index.html",
+        "status": 200,
+        "sha256": "90cba5c35961e8b9aecbe815316bb22364f4ac398c8d0e134567f86afcd3efbc",
+        "expectedSha256": "90cba5c35961e8b9aecbe815316bb22364f4ac398c8d0e134567f86afcd3efbc",
+        "equal": true,
+        "byteExact": true
+      }
+    ],
+    "exclusions": [
+      {
+        "path": "/auditorias/site-continuidade-2026-10-14/REVISAO.json",
+        "status": 404
+      },
+      {
+        "path": "/ops/CHANGE-CANDIDATE.json",
+        "status": 404
+      }
+    ],
+    "health": {
+      "status": 200,
+      "ok": true,
+      "automationMode": "active",
+      "processingMode": "durable_background_intake",
+      "contactPreferencesGuard": "active"
+    },
+    "baselineRewrites": [
+      {
+        "path": "abdominoplastia/index.html",
+        "status": 200,
+        "sameExistingRewrite": true,
+        "baselinePublicSha256": "590083caffe71bb175160a6a0253adefb77301fbb2127d6ac40b5bafd973614a"
+      },
+      {
+        "path": "conteudos/index.html",
+        "status": 200,
+        "sameExistingRewrite": true,
+        "baselinePublicSha256": "b6418be15aea7e9e4d7def06956e7f56f2e52a7de20bd05201135f2029b3a57b"
+      },
+      {
+        "path": "lipoaspiracao/index.html",
+        "status": 200,
+        "sameExistingRewrite": true,
+        "baselinePublicSha256": "dfc8ddd66c692dfbdad7496801bcc50fcb7f26959d2da67940b8ab33423c7e13"
+      },
+      {
+        "path": "ninfoplastia/index.html",
+        "status": 200,
+        "sameExistingRewrite": true,
+        "baselinePublicSha256": "7ae017a31585db02741da30f200f3d7464d8b761ff7a40bed6a9c802c1d0ded8"
+      },
+      {
+        "path": "pos-bariatrica/index.html",
+        "status": 200,
+        "sameExistingRewrite": true,
+        "baselinePublicSha256": "5c50acabc2651f6964d986c58c4132b160ddae55bce72d6a8fa7632e13c7b1d2"
+      },
+      {
+        "path": "otoplastia-adulto/index.html",
+        "status": 200,
+        "sameExistingRewrite": true,
+        "baselinePublicSha256": "76094e5fa8b4f6815a87eb78ad1e4fa4af0406fd5f68e038e3a2315ca5a2f45a"
+      }
+    ],
+    "verificationMethod": "SHA-256 exact for55files;6HTML have the same single brand-link prettyURL rewrite proven against the prior immutable deployment; all other bytes exact."
+  },
+  "syntheticOnly": true,
+  "patientMessagesSent": 0,
+  "liveBrowserReview": {
+    "status": "passed",
+    "width": 390,
+    "height": 844,
+    "ctaTop": 521.14,
+    "ctaBottom": 571.14,
+    "singleBreadcrumb": true,
+    "horizontalOverflow": false,
+    "ctaText": "Pedir uma referência de valores",
+    "screenshot": "Captured from the public domain; kept in local temporary evidence."
+  }
 }

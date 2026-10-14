@@ -1,6 +1,6 @@
 # Continuidade do site — 14/10/2026
 
-Estado: **testado localmente; publicação pendente**. Este registro público contém apenas escopo técnico e verificações sintéticas. Não incorpora dados operacionais privados.
+Estado: **publicado e verificado; documentação reconciliada no arquivo existente**. Este registro público contém apenas escopo técnico e verificações sintéticas. Não incorpora dados operacionais privados.
 
 ## Problema e resultado proposto
 
@@ -44,4 +44,10 @@ Conferir primeiro ciclo público e 48 horas; observar continuidade em sete dias 
 
 ## Validação final local
 
-Suíte completa: 2.175/2.175; quatro testes novos de execução dos CTAs passaram separadamente. Escopo 80/80, arquitetura, sintaxe, diff e build passaram; artefato com 193 arquivos, 54 URLs e zero auditorias. Conferência por CUA de links, texto em execução e geometria mobile passou; captura de imagem indisponível por timeout, sem substituir essa limitação por afirmação de screenshot. Nenhuma mensagem foi enviada. Ops permanece SYNC_PENDING até publicação e recibos externos.
+Suíte completa: 2.175/2.175; quatro testes novos de execução dos CTAs passaram separadamente. Escopo 80/80, arquitetura, sintaxe, diff e build passaram; artefato com 193 arquivos, 54 URLs e zero auditorias. Conferência por CUA de links, texto em execução e geometria mobile passou; captura mobile obtida ao colocar a aba em primeiro plano. Nenhuma mensagem foi enviada. Antes da publicação, ops retornou SYNC_PENDING conforme o contrato.
+
+## Verificação externa
+
+Commit funcional cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d; Netlify 6acff7b9dc7d30f39ad66b31, publicado em 2026-10-14T21:47:42.198Z. Os 61 arquivos públicos alterados foram conferidos em ambas as origens: 55 coincidem exatamente por SHA-256; seis mantêm a reescrita de ../index.html para / e aspas no link da marca, comprovada no deploy anterior (122 verificações). Rotas de auditoria e ops retornam 404. Endpoint de saúde retorna 200; funções e seis agendamentos preservados. Modelo 19/19 e áudio 3/3 passaram no build hospedado. O manifesto de atendimento permanece idêntico ao baseline. A projeção do Plano foi substituída no mesmo arquivo com o hash 9d5a502f5cdec68750246c20ca198dec400d1a9536b204ea213ce3cb5b58414a; o recibo final registra a releitura efetiva.
+
+Plano relido integralmente após substituição: 7.678 bytes iguais, SHA-256 9d5a502f5cdec68750246c20ca198dec400d1a9536b204ea213ce3cb5b58414a. Captura mobile do domínio público confirma botão inteiramente na primeira tela (390 × 844), uma trilha de navegação e ausência de rolagem horizontal. Fechamento Git e ops:check são executados após o commit documental, sem alterar o pacote funcional publicado.

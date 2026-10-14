@@ -566,7 +566,7 @@
     ]
   },
   "browserReview": {
-    "status": "passed_dom_and_geometry",
+    "status": "passed_dom_geometry_and_screenshot",
     "tool": "CUA Chrome",
     "patientMessagesSent": 0,
     "pages": [
@@ -590,7 +590,8 @@
       "ctaTop": 521.14,
       "ctaBottom": 571.14
     },
-    "limitation": "Screenshot capture timed out; observed DOM and bounding rectangles recorded, not screenshot evidence."
+    "limitation": "The initial background-tab capture timed out; bringing the preview tab to the foreground produced the mobile screenshot without changing page content.",
+    "screenshotCaptured": true
   },
   "syntheticOnly": true,
   "checkedAt": "2026-10-14T21:43:45.776Z"

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "SITE-CONTINUIDADE-2026-10-14",
   "title": "Alinhar botões e mensagens do WhatsApp, corrigir navegação e esclarecer a abertura do guia de lifting",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "a2dc468942a74639bebb3f12489db79007ea4863",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "patientEffectsNote": "Mensagem inicial preenchida pelo navegador após iniciativa da pessoa; nenhuma alteração do envio automatizado, do classificador ou da agenda."
   },
   "scope": {
@@ -373,10 +373,18 @@
     ]
   },
   "release": {
-    "status": "not_published",
-    "externalWritesPerformed": false,
+    "status": "published_verified",
+    "externalWritesPerformed": true,
+    "approvedCommit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
+    "netlifyDeployId": "6acff7b9dc7d30f39ad66b31",
+    "publishedAt": "2026-10-14T21:47:42.198Z",
+    "verifiedAt": "2026-10-14T21:59:41.048Z",
     "appsScriptVersion": 164,
     "appsScriptChanged": false,
+    "functionsChanged": false,
+    "brunaManifestChanged": false,
+    "drivePlanSha256": "9d5a502f5cdec68750246c20ca198dec400d1a9536b204ea213ce3cb5b58414a",
+    "drivePlanReadbackVerifiedAt": "2026-10-14T21:59:41.048Z",
     "receipt": "auditorias/site-continuidade-2026-10-14/PUBLICACAO.json"
   }
 }
