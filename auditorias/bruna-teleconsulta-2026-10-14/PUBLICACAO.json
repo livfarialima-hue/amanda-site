@@ -41,6 +41,32 @@
       "productionChanged": false,
       "receiptSource": "Netlify production deploy WebSocket build log, full JSON parsed",
       "note": "Diagnostic does not approve release. Old conversion appendix still required human confirmation of remote modality; fixed before another build. Deadline and model unchanged."
+    },
+    {
+      "commit": "356020f19452f174536a05ffcb058c57335446a0",
+      "deployId": "6acf8d56ed868243953c2e75",
+      "status": "blocked_before_publication",
+      "checkedAt": "2026-10-14T14:11:04.141Z",
+      "failure": {
+        "scenario": "remote_assessment_after_price_audio_context",
+        "errorCode": "wrong_route_empty_reply",
+        "elapsedMs": 10767,
+        "timeoutMs": 20000,
+        "decisionRoute": "appointment_review",
+        "automaticAllowed": false,
+        "suggestedReply": "",
+        "reviewReason": "agendamento_consulta_online",
+        "gateReason": "empty_reply"
+      },
+      "audio": {
+        "passed": 3,
+        "model": "whisper-1",
+        "silenceAutoReplyEligible": false
+      },
+      "patientMessagesSent": 0,
+      "productionChanged": false,
+      "receiptSource": "Netlify production deploy WebSocket build log, full JSON parsed",
+      "note": "Broad scheduling instructions suppressed the current approved informational question despite the direct_answer contract. Replaced duplicated unconditional instructions with one priority rule. Pure appointment case added to the live gate; no deadline or acceptance relaxation."
     }
   ]
 }

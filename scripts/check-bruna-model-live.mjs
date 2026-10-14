@@ -71,6 +71,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         {role:'assistant',source:'bruna',text:'O lifting facial tem uma referência entre R$ 26 mil e R$ 42 mil. É uma referência para planejamento, não é um orçamento fechado.'},
         {role:'user',source:'patient',text:'Posso agendar online?'},
         {role:'assistant',source:'bruna',text:'Você quer agendar por WhatsApp ou saber se a consulta pode ser online?'}] },
+    { name: 'pure_appointment_request', appointment: true, text: 'Quero agendar a consulta com a Dra. Amanda. Há horário na quinta-feira à tarde?', procedure: 'unknown' },
     { name: 'consultation_contextual', text: 'Quanto custa a consulta com a Dra. Amanda? Ainda estou só pesquisando.', procedure: 'unknown', code: 'AMANDA-CONSULTA-INFO-01', reason: 'consultation_information_request' },
     { name: 'lifting_information', text: 'Onde ficam as cicatrizes do lifting facial?', procedure: 'lifting_facial', code: 'LIFTING-FACIAL-INFORMATION-01', reason: 'lifting_facial_information_request' },
     { name: 'personal_question_with_reference', text: 'Quanto custa a consulta? Ref. G26LIFT. Ainda estou pesquisando.', procedure: 'lifting_facial', code: 'AMANDA-CONSULTA-INFO-01', reason: 'consultation_information_request',
@@ -145,7 +146,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     } else {
       // Reuse the actual owner of the reply contract. A hand-written partial
       // contract normalizes to risk=red/allowedResponseKind=none in the adapter.
-      const plan = scenario.priceWithPhotos || scenario.remoteAssessment ? enrichAutomationPlanFromConversation(planAutomation({text:scenario.text,messageType:'text'}),scenarioHistory) :
+      const plan = scenario.priceWithPhotos || scenario.remoteAssessment || scenario.appointment ? enrichAutomationPlanFromConversation(planAutomation({text:scenario.text,messageType:'text'}),scenarioHistory) :
         { route: scenario.fullHistoryResolved ? 'ignore' : scenario.urgent || scenario.review ? 'human_review' : 'standard_reply', professional: 'amanda', procedure: scenario.procedure,
         automaticAllowed: !scenario.urgent && !scenario.review, replyCode: scenario.code, reason: scenario.reason };
       const conversationAction = decideConversationAction({ text: scenario.text, plan, recentConversation: scenarioHistory, conversionExperienceEnabled: true });
@@ -186,6 +187,8 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         (!scenario.consultationCost || /R\$\s*500(?:,00)?\b/.test(selectedReply)) &&
         (scenario.consultationCost || (/exterior/i.test(selectedReply) && /avaliação|consulta/.test(selectedReply))) &&
         !/confirmar (?:com a equipe )?(?:a possibilidade|a disponibilidade|o valor|se .*online)|R\$\s*(?:26|42)\s*mil|(?:consulta|teleconsulta) (?:já está )?(?:confirmada|agendada)|cirurgia (?:autorizada|garantida)/i.test(selectedReply) :
+      scenario.appointment ? result.decision?.route === 'appointment_review' && result.decision?.automaticAllowed === false && !result.decision?.suggestedReply &&
+        result.decision?.professional === 'amanda' && result.decision?.confidence === 'high' && result.decision?.urgent !== true :
       scenario.fullHistoryResolved ? result.decision?.route === 'ignore' && result.decision?.automaticAllowed === false && !result.decision?.suggestedReply :
       scenario.urgent ? result.decision?.automaticAllowed === false :
       scenario.review ? result.decision?.route === 'human_review' && result.decision?.automaticAllowed === false &&

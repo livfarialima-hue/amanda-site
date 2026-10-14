@@ -25,6 +25,20 @@ const remoteHistory = [patient('A Dra. Amanda atende por teleconsulta?'), clinic
 const danielHistory = [patient('Quero consulta com o Dr. Daniel.'), clinic('O Dr. Daniel atende cardiologia.')];
 const planFor = (text, history = []) => enrichAutomationPlanFromConversation(planAutomation({text,messageType:'text'}),history);
 
+test('mixed scheduling and remote question may answer first without authorizing real availability',()=>{
+  const text='Moro no exterior e quero agendar online. Consigo fazer um orçamento online para planejar minha viagem e operar?';
+  const history=[patient('Gostaria de informações de lifting facial.'),clinic('O lifting facial tem uma referência entre R$ 26 mil e R$ 42 mil.'),patient('Posso agendar online?'),clinic('Você quer agendar por WhatsApp ou saber se a consulta pode ser online?')];
+  const action=decideConversationAction({text,plan:planFor(text,history),recentConversation:history,conversionExperienceEnabled:true});
+  const body='A Dra. Amanda atende por consulta online, inclusive quem está no exterior. A avaliação ajuda a entender suas possibilidades; o orçamento individual depende dessa avaliação.';
+  assert.equal(validateOutboundReply({body,currentText:text,recentConversation:history,conversationAction:action}).allowed,true);
+  assert.equal(validateOutboundReply({body:body+' Sua consulta está confirmada para quinta-feira às 14h.',currentText:text,recentConversation:history,conversationAction:action}).allowed,false);
+  const prompt=buildConversationGuidelines({conversionExperienceEnabled:true});
+  assert.match(prompt,/sem outra dúvida informativa pendente, use appointment_review/);
+  assert.match(prompt,/replyContract permitir direct_answer, responda primeiro com standard_reply/);
+  assert.doesNotMatch(prompt,/trate somente a agenda/);
+  assert.doesNotMatch(prompt,/Se a pessoa aceitar ver horários[^\n]*Use appointment_review/);
+});
+
 for (const text of ['Quanto custa a teleconsulta?', 'Quanto custa a consulta online?', 'Qual o valor da consulta online? Moro no exterior.']) {
   test(`approved remote consultation cost: ${text}`, () => {
     const plan=planFor(text,remoteHistory), bundle=buildConsultationQuestionBundle({plan,text,recentConversation:remoteHistory});

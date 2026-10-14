@@ -1,11 +1,11 @@
 {
   "status": "passed_local",
-  "checkedAt": "2026-10-14T14:10:05.708Z",
+  "checkedAt": "2026-10-14T14:17:50.482Z",
   "syntheticOnly": true,
   "patientMessagesSent": 0,
   "operationalRoutinesExecuted": 0,
   "fullSuite": {
-    "passed": 2164,
+    "passed": 2165,
     "failed": 0,
     "log": "tmp/teleconsulta-full-tests.log"
   },
@@ -63,15 +63,28 @@
         "effectivePromptCharacters": 98917,
         "timeoutCause": "not established; no latency claim",
         "apiCallsByReviewer": 0
+      },
+      "schedulingPriorityReview": {
+        "status": "approved",
+        "controls": [
+          "Mixed informational question answers first",
+          "Human takeover preserves wait_team",
+          "Pure scheduling and rescheduling retain human ownership",
+          "No invented availability"
+        ],
+        "networkCalls": 0
       }
     }
   ],
   "liveModelGate": {
     "status": "pending_production_build",
-    "scenarios": 18,
+    "scenarios": 19,
     "audioScenarios": 3,
     "fullHistoryScenarios": 2,
-    "failedAttempt": "6acf8bb4b1fbba04a8414db2"
+    "failedAttempts": [
+      "6acf8bb4b1fbba04a8414db2",
+      "6acf8d56ed868243953c2e75"
+    ]
   },
   "limits": [
     "First natural post-release conversation not observed",

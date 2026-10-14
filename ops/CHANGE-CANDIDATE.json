@@ -392,9 +392,9 @@
     ],
     "baseline": "50af5ccfafb1d37e529e53f96f814511516d6da5",
     "evidence": "auditorias/bruna-teleconsulta-2026-10-14/REVISAO.json",
-    "checkedAt": "2026-10-14T14:10:05.708Z",
+    "checkedAt": "2026-10-14T14:17:50.482Z",
     "executed": [
-      "npm.cmd test: 2164/2164",
+      "npm.cmd test: 2165/2165",
       "contract complementary union: 54/54",
       "npm.cmd run site:build",
       "npm.cmd run site:check",

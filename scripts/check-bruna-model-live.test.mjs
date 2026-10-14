@@ -109,11 +109,12 @@ async function syntheticResponse(url, request) {
       const unknown = /equipamento específico/.test(input.currentMessage);
       const urgent = /falta de ar/.test(input.currentMessage);
       const resolved = /recebi o documento/.test(input.currentMessage);
+      const appointment = /Há horário na quinta-feira à tarde/.test(input.currentMessage);
       const remote = /Moro no exterior/.test(input.currentMessage) || ['E qual o valor da consulta?', 'Quanto custa?'].includes(input.currentMessage);
       if (hints?.deterministicReplyCode) assert.ok(hints.deterministicReplyPreview.length > 30);
       if (input.currentMessage.includes('comprovante fiscal')) assert.equal(input.approvedKnowledge[0].id, 'SYNTHETIC-INVOICE');
       if (input.currentMessage.includes('levar para a primeira consulta')) assert.ok(input.approvedClinicalFacts.topics.includes('consultation_preparation'));
-      if (!urgent && !unknown && !resolved) {
+      if (!urgent && !unknown && !resolved && !appointment) {
         assert.equal(input.replyContract.allowedResponseKind, 'direct_answer');
         assert.equal(input.replyContract.owner, 'bruna');
         if (hints?.deterministicReplyCode) assert.notEqual(input.replyContract.risk, 'red');
@@ -142,6 +143,7 @@ async function syntheticResponse(url, request) {
         assert.match(input.fullConversation.turns.at(-1).text, /Está resolvido/);
         Object.assign(decision, { route: 'ignore', automaticAllowed: false, suggestedReply: '' });
       }
+      if (appointment) Object.assign(decision, { route: 'appointment_review', automaticAllowed: false, suggestedReply: '', replyCode: '' });
       if (input.replyContract.unresolvedIntents.includes('photo_assessment_request')) {
         decision.suggestedReply = `Helena, entendi suas dúvidas sobre as bochechas e as linhas perto da boca. As fotos ajudam a contextualizar sua dúvida; a indicação e o orçamento individual são definidos na consulta.\n\n${hints.deterministicReplyPreview}`;
       }
@@ -152,15 +154,15 @@ async function syntheticResponse(url, request) {
     return new Response(JSON.stringify({ model: 'gpt-6.1-sol', status: 'completed', output_text: JSON.stringify(decision) }));
 }
 
-test('all eighteen synthetic scenarios use the real adapters and pass the outbound protections', async () => {
+test('all nineteen synthetic scenarios use the real adapters and pass the outbound protections', async () => {
   const fixtureErrors = [];
   const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (...args) => {
     try { return await syntheticResponse(...args); } catch (error) { fixtureErrors.push(error.message); throw error; }
   } });
   assert.deepEqual(fixtureErrors, []);
   assert.equal(result.status, 'passed', JSON.stringify(result));
-  assert.equal(result.results.length, 18);
-  assert.deepEqual(result.results.map(r => r.timeoutMs), [...Array(16).fill(20000), 15000, 12000]);
+  assert.equal(result.results.length, 19);
+  assert.deepEqual(result.results.map(r => r.timeoutMs), [...Array(17).fill(20000), 15000, 12000]);
   assert.equal(result.maxOutputTokens, 4096);
   assert.equal(result.verbosity, 'low');
   assert.equal(result.patientMessagesSent, 0);
@@ -215,7 +217,7 @@ test('administrative knowledge accepts an empty unspecified procedure from the r
     return Response.json(data);
   } });
   assert.equal(result.status, 'passed');
-  assert.equal(result.results.length, 18);
+  assert.equal(result.results.length, 19);
   assert.equal(result.results.find(r => r.name === 'semantic_approved_knowledge').passed, true);
   assert.equal(result.patientMessagesSent, 0);
 });
@@ -236,7 +238,7 @@ test('remote live gate accepts legitimate budget and availability boundaries bes
       return Response.json(data);
     }});
     assert.equal(result.status,'passed');
-    assert.equal(result.results.length,18);
+    assert.equal(result.results.length,19);
     assert.equal(result.patientMessagesSent,0);
   }
 });

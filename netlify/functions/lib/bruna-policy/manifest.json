@@ -55,7 +55,7 @@
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
-    "liveModelScenarioCount": 18,
+    "liveModelScenarioCount": 19,
     "baselineCommit": "50af5ccfafb1d37e529e53f96f814511516d6da5",
     "bundleVersion": "2026-10-14.3",
     "baselineDeployId": "6acf71e94079694bfc8221a4",
