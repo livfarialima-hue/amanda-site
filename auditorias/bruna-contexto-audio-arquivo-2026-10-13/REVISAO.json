@@ -241,5 +241,18 @@
       "Name assertion requires affirmative self-identification"
     ],
     "behavior": "One Whisper call with conservative segment confidence, original35s deadline and media validation. Uncertain text never retries for a better score. Legacy cache preserves original model and metrics. Three live synthetic fixtures and all15 conversations remain required."
+  },
+  "conciseStateReview": {
+    "status": "completed_no_remaining_actionable_findings",
+    "reviewer": "/root/revisao_independente",
+    "reviewedBase": "5801c206febb800c8485ae1e378cd4e4dac7e3d5",
+    "workingDiff": true,
+    "focusedTests": 138,
+    "checkedAt": "2026-10-14T02:47:32.438Z",
+    "normalization": "CRLF to LF",
+    "hashes": {
+      "netlify/functions/lib/conversation-guidelines.mjs": "053482ecfdbabc37c56e54a1cee728107a567d9373e66dae998656ce5c96294b"
+    },
+    "behavior": "Concise semantic state without duplicating the patient reply. All context, material facts, schema, limits, model, effort and guards remain. Latency improvement is a hypothesis, not a diagnosed root cause."
   }
 }

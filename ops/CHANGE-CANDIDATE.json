@@ -423,7 +423,7 @@
     "status": "pending",
     "appsScriptVersion": 163,
     "blockers": [
-      "Ativação aguarda novo build Git com 15 cenários de conversa e 3 casos de áudio real; transcritor Whisper único, sem repetição para obter confiança melhor."
+      "Ativação aguarda novo build Git com 15 conversas e 3 áudios. Timeout preço/fotos repetido; instrução de memória objetiva reduz saída redundante sem diminuir histórico, modelo, esforço, prazo ou verificações."
     ],
     "evidence": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
     "approvedSourceCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972"

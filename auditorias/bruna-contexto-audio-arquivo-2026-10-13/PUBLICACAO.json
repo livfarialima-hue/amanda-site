@@ -1,5 +1,5 @@
 {
-  "status": "activation_pending_whisper_primary_validation",
+  "status": "activation_pending_concise_state_validation",
   "recordedAt": "2026-10-14T01:22:51.511Z",
   "candidateFunctionalCommit": "4c74ed227ba5d8ac59b44ebed986bfc00f31a972",
   "pullRequest": "https://github.com/livfarialima-hue/amanda-site/pull/11",
@@ -393,6 +393,182 @@
         },
         "published": false,
         "diagnosis": "Price/photo exceeded the unchanged20s limit. GPT confidence remained invalid; Whisper segment confidence passed but the two texts disagreed. Strict agreement blocked audio; no claim of equivalence or which text was correct."
+      },
+      {
+        "deployId": "6acee99cf59d6c11c4920172",
+        "commit": "5801c206febb800c8485ae1e378cd4e4dac7e3d5",
+        "context": "production",
+        "purpose": "whisper_primary_validation",
+        "status": "failed",
+        "checkedAt": "2026-10-14T02:34:24.946Z",
+        "passedScenarios": 10,
+        "failedScenarios": [
+          {
+            "name": "approved_price_with_photo_request",
+            "errorCode": "timeout",
+            "elapsedMs": 20033
+          }
+        ],
+        "audioCheck": {
+          "status": "passed",
+          "syntheticOnly": true,
+          "patientMessagesSent": 0,
+          "model": "whisper-1",
+          "apiCalls": 3,
+          "elapsedMs": 5809,
+          "checks": [
+            {
+              "name": "address",
+              "passed": true,
+              "apiCalls": 1,
+              "model": "whisper-1",
+              "elapsedMs": 1572,
+              "transcription": "Qual é o endereço da Clínica Livre?",
+              "transcriptStatus": "transcribed",
+              "autoReplyEligible": true,
+              "quality": {
+                "kind": "segment_confidence",
+                "segmentCount": 1,
+                "fieldsValid": true,
+                "textAgrees": true,
+                "lowestSegmentMeanLogprob": -0.4135240614414215,
+                "highestNoSpeechProbability": 0.0008678215090185404,
+                "highestCompressionRatio": 0.8260869383811951
+              },
+              "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+            },
+            {
+              "name": "context",
+              "passed": true,
+              "apiCalls": 1,
+              "model": "whisper-1",
+              "elapsedMs": 3314,
+              "transcription": "Olá, quero deixar claro que não desejo agendar uma consulta agora. Estou apenas organizando as minhas dúvidas para uma conversa futura. Durante a semana, só consigo conversar depois das 15 horas, porque trabalho pela manhã. Meu nome é Elisa, e prefiro ser chamada assim. A equipe já confirmou que o documento foi enviado, então essa parte está resolvida. Ainda quero entender como funciona a avaliação presencial e o que devo levar no dia em que decidir marcar. Por enquanto, não procure horários para mim. Vou ler as informações com calma e depois entrar em contato novamente. Obrigada por guardar esse contexto e respeitar o meu tempo.",
+              "transcriptStatus": "transcribed",
+              "autoReplyEligible": true,
+              "quality": {
+                "kind": "segment_confidence",
+                "segmentCount": 9,
+                "fieldsValid": true,
+                "textAgrees": true,
+                "lowestSegmentMeanLogprob": -0.3264618515968323,
+                "highestNoSpeechProbability": 0.014948219060897827,
+                "highestCompressionRatio": 1.3806818723678589
+              },
+              "fixtureSha256": "8b3d5a7bfe2148eb579a0db08e1eebef28fba744dcf177f5969ba61b47e20cf4"
+            },
+            {
+              "name": "silence",
+              "passed": true,
+              "apiCalls": 1,
+              "model": "whisper-1",
+              "elapsedMs": 919,
+              "transcription": "you",
+              "transcriptStatus": "uncertain",
+              "autoReplyEligible": false,
+              "quality": {
+                "kind": "segment_confidence",
+                "segmentCount": 1,
+                "fieldsValid": true,
+                "textAgrees": true,
+                "lowestSegmentMeanLogprob": -0.5146503448486328,
+                "highestNoSpeechProbability": 0.9428148865699768,
+                "highestCompressionRatio": 0.27272728085517883
+              },
+              "fixtureSha256": "d303811b8c84619667cd0501342f84ec6cbe69f7aa3856dcf52fabda374c92b8"
+            }
+          ]
+        },
+        "published": false,
+        "diagnosis": "All three real synthetic audio fixtures passed. Price/photo conversation exceeded the unchanged20s deadline. This is an observed timeout, not evidence of a provider root cause. No patient messages sent."
+      },
+      {
+        "deployId": "6aceea9ab9eea03120abc4f9",
+        "commit": "5801c206febb800c8485ae1e378cd4e4dac7e3d5",
+        "context": "production",
+        "purpose": "whisper_same_commit_git_retry",
+        "status": "failed",
+        "checkedAt": "2026-10-14T02:38:43.299Z",
+        "passedScenarios": 10,
+        "failedScenarios": [
+          {
+            "name": "approved_price_with_photo_request",
+            "errorCode": "timeout",
+            "elapsedMs": 20033
+          }
+        ],
+        "audioCheck": {
+          "status": "passed",
+          "syntheticOnly": true,
+          "patientMessagesSent": 0,
+          "model": "whisper-1",
+          "apiCalls": 3,
+          "elapsedMs": 7928,
+          "checks": [
+            {
+              "name": "address",
+              "passed": true,
+              "apiCalls": 1,
+              "model": "whisper-1",
+              "elapsedMs": 1834,
+              "transcription": "Qual é o endereço da Clínica Livre?",
+              "transcriptStatus": "transcribed",
+              "autoReplyEligible": true,
+              "quality": {
+                "kind": "segment_confidence",
+                "segmentCount": 1,
+                "fieldsValid": true,
+                "textAgrees": true,
+                "lowestSegmentMeanLogprob": -0.4130357801914215,
+                "highestNoSpeechProbability": 0.0008814543252810836,
+                "highestCompressionRatio": 0.8260869383811951
+              },
+              "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+            },
+            {
+              "name": "context",
+              "passed": true,
+              "apiCalls": 1,
+              "model": "whisper-1",
+              "elapsedMs": 3600,
+              "transcription": "Olá, quero deixar claro que não desejo agendar uma consulta agora. Estou apenas organizando as minhas dúvidas para uma conversa futura. Durante a semana, só consigo conversar depois das 15 horas, porque trabalho pela manhã. Meu nome é Elisa, e prefiro ser chamada assim. A equipe já confirmou que o documento foi enviado, então essa parte está resolvida. Ainda quero entender como funciona a avaliação presencial e o que devo levar no dia em que decidir marcar. Por enquanto, não procure horários para mim. Vou ler as informações com calma e depois entrar em contato novamente. Obrigada por guardar esse contexto e respeitar o meu tempo.",
+              "transcriptStatus": "transcribed",
+              "autoReplyEligible": true,
+              "quality": {
+                "kind": "segment_confidence",
+                "segmentCount": 9,
+                "fieldsValid": true,
+                "textAgrees": true,
+                "lowestSegmentMeanLogprob": -0.3264618515968323,
+                "highestNoSpeechProbability": 0.014948219060897827,
+                "highestCompressionRatio": 1.3806818723678589
+              },
+              "fixtureSha256": "8b3d5a7bfe2148eb579a0db08e1eebef28fba744dcf177f5969ba61b47e20cf4"
+            },
+            {
+              "name": "silence",
+              "passed": true,
+              "apiCalls": 1,
+              "model": "whisper-1",
+              "elapsedMs": 2489,
+              "transcription": "you",
+              "transcriptStatus": "uncertain",
+              "autoReplyEligible": false,
+              "quality": {
+                "kind": "segment_confidence",
+                "segmentCount": 1,
+                "fieldsValid": true,
+                "textAgrees": true,
+                "lowestSegmentMeanLogprob": -0.5146503448486328,
+                "highestNoSpeechProbability": 0.9425907731056213,
+                "highestCompressionRatio": 0.27272728085517883
+              },
+              "fixtureSha256": "d303811b8c84619667cd0501342f84ec6cbe69f7aa3856dcf52fabda374c92b8"
+            }
+          ]
+        },
+        "published": false,
+        "diagnosis": "All three real synthetic audio fixtures passed. Price/photo conversation exceeded the unchanged20s deadline. This is an observed timeout, not evidence of a provider root cause. No patient messages sent."
       }
     ],
     "lastPublishedDeployId": "6aced9d34e4ec2c5c72ec53a",

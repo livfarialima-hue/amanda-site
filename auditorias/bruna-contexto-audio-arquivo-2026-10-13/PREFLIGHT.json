@@ -218,5 +218,16 @@
     "folderPrivate": true,
     "productionOpenAiKeyPresent": true,
     "canonicalIdsRevalidated": true
+  },
+  "conciseStateRefresh": {
+    "checkedAt": "2026-10-14T02:45:30.889Z",
+    "remoteProductionHead": "5801c206febb800c8485ae1e378cd4e4dac7e3d5",
+    "netlifyPublishedDeploy": "6aced9d34e4ec2c5c72ec53a",
+    "netlifyPublishedCommit": "684d504d5a3f0e13e4b62c8766480259097cafa5",
+    "appsScriptVersion": 163,
+    "featuresInPublishedDeploy": "off",
+    "lastFailedDeploy": "6aceea9ab9eea03120abc4f9",
+    "audioFixturesPassed": 3,
+    "canonicalIdsRevalidated": true
   }
 }
