@@ -363,8 +363,8 @@
     "netlifyDeployId": "6acf71e94079694bfc8221a4",
     "appsScriptVersion": 164,
     "drivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "drivePlanSha256": "3840ec3b11fea1999a01ae2c5a2f68e30374215c7ace4725542735204f4cab60",
-    "verifiedAt": "2026-10-14T12:24:16.913Z",
+    "drivePlanSha256": "b357c204bd87cc4ef042d88700ce44d5adf6d6adf059515df4f1cb12345e40f9",
+    "verifiedAt": "2026-10-14T12:26:46.286Z",
     "evidence": "auditorias/bruna-audio-contexto-2026-10-14/PUBLICACAO.json"
   }
 }

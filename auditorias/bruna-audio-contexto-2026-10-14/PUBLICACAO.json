@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "status": "platforms_verified_drive_refresh_pending",
+  "status": "published_verified",
   "candidateFunctionalCommit": "bbf297da98946badd4460989064e4f2636f1211c",
-  "verifiedAt": "2026-10-14T12:24:16.913Z",
+  "verifiedAt": "2026-10-14T12:26:46.286Z",
   "authorization": {
     "source": "Daniel nesta conversa",
     "instruction": "A resposta nao teve a ver com o áudio. Identifiquei o problema, ajuste e publique.",
@@ -1334,56 +1334,56 @@
     "sheetWrites": 0
   },
   "drive": {
-    "status": "refresh_pending_documentation_clarification",
+    "status": "verified",
     "auditFolderId": "11wsX9piyWIsFY7Va5uHv-v3e9u9nkrgo",
     "manual": {
       "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
       "localPath": "docs/estrategia-abordagem-bruna.md",
-      "localSha256": "893217f2e9c9c7fb80568079134a8dfeb8a4e6c95a208f0eafa62b8a15c917d4",
-      "remoteSha256": "893217f2e9c9c7fb80568079134a8dfeb8a4e6c95a208f0eafa62b8a15c917d4",
+      "localSha256": "e93e49353b8e664f4938939297481ec18a11b8b1d260f765f879e636b91499b1",
+      "remoteSha256": "e93e49353b8e664f4938939297481ec18a11b8b1d260f765f879e636b91499b1",
       "equal": true,
-      "verifiedAt": "2026-10-14T12:23:50.107Z"
+      "verifiedAt": "2026-10-14T12:26:46.061Z"
     },
     "executivePlan": {
       "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
       "localPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "localSha256": "3840ec3b11fea1999a01ae2c5a2f68e30374215c7ace4725542735204f4cab60",
-      "remoteSha256": "3840ec3b11fea1999a01ae2c5a2f68e30374215c7ace4725542735204f4cab60",
+      "localSha256": "b357c204bd87cc4ef042d88700ce44d5adf6d6adf059515df4f1cb12345e40f9",
+      "remoteSha256": "b357c204bd87cc4ef042d88700ce44d5adf6d6adf059515df4f1cb12345e40f9",
       "equal": true,
-      "verifiedAt": "2026-10-14T12:23:50.109Z"
+      "verifiedAt": "2026-10-14T12:26:46.195Z"
     },
     "closedAudit": {
       "fileId": "1mzCH4V6Tik7FCIAGUq3s-cKCrgDEqnAj",
       "localPath": "auditorias/bruna-audio-contexto-2026-10-14/RELATORIO.md",
-      "localSha256": "61703d00c2188432aec584dd5edfad22d89ca62c1d1ae9a484d2b31e3cc87cd6",
-      "remoteSha256": "61703d00c2188432aec584dd5edfad22d89ca62c1d1ae9a484d2b31e3cc87cd6",
+      "localSha256": "7c9f1bb9756cd8bdea35d04bd68815efa46ddf73151ad1e710386a5470ed0f41",
+      "remoteSha256": "7c9f1bb9756cd8bdea35d04bd68815efa46ddf73151ad1e710386a5470ed0f41",
       "equal": true,
-      "verifiedAt": "2026-10-14T12:23:50.076Z"
+      "verifiedAt": "2026-10-14T12:26:46.053Z"
     },
     "readbacks": [
       {
         "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
         "localPath": "docs/estrategia-abordagem-bruna.md",
-        "localSha256": "893217f2e9c9c7fb80568079134a8dfeb8a4e6c95a208f0eafa62b8a15c917d4",
-        "remoteSha256": "893217f2e9c9c7fb80568079134a8dfeb8a4e6c95a208f0eafa62b8a15c917d4",
+        "localSha256": "e93e49353b8e664f4938939297481ec18a11b8b1d260f765f879e636b91499b1",
+        "remoteSha256": "e93e49353b8e664f4938939297481ec18a11b8b1d260f765f879e636b91499b1",
         "equal": true,
-        "verifiedAt": "2026-10-14T12:23:50.107Z"
+        "verifiedAt": "2026-10-14T12:26:46.061Z"
       },
       {
         "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
         "localPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-        "localSha256": "3840ec3b11fea1999a01ae2c5a2f68e30374215c7ace4725542735204f4cab60",
-        "remoteSha256": "3840ec3b11fea1999a01ae2c5a2f68e30374215c7ace4725542735204f4cab60",
+        "localSha256": "b357c204bd87cc4ef042d88700ce44d5adf6d6adf059515df4f1cb12345e40f9",
+        "remoteSha256": "b357c204bd87cc4ef042d88700ce44d5adf6d6adf059515df4f1cb12345e40f9",
         "equal": true,
-        "verifiedAt": "2026-10-14T12:23:50.109Z"
+        "verifiedAt": "2026-10-14T12:26:46.195Z"
       },
       {
         "fileId": "1mzCH4V6Tik7FCIAGUq3s-cKCrgDEqnAj",
         "localPath": "auditorias/bruna-audio-contexto-2026-10-14/RELATORIO.md",
-        "localSha256": "61703d00c2188432aec584dd5edfad22d89ca62c1d1ae9a484d2b31e3cc87cd6",
-        "remoteSha256": "61703d00c2188432aec584dd5edfad22d89ca62c1d1ae9a484d2b31e3cc87cd6",
+        "localSha256": "7c9f1bb9756cd8bdea35d04bd68815efa46ddf73151ad1e710386a5470ed0f41",
+        "remoteSha256": "7c9f1bb9756cd8bdea35d04bd68815efa46ddf73151ad1e710386a5470ed0f41",
         "equal": true,
-        "verifiedAt": "2026-10-14T12:23:50.076Z"
+        "verifiedAt": "2026-10-14T12:26:46.053Z"
       }
     ]
   },

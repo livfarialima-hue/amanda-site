@@ -26,7 +26,7 @@
     "rollbackConstraint": "Git revert and a new verified Netlify deploy; preserve all data and receipts; no replay.",
     "publishedAt": "2026-10-14T12:16:27.301Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-14T12:24:16.913Z",
+    "lastVerifiedAt": "2026-10-14T12:26:46.286Z",
     "candidateChangeId": "BRUNA-AUDIO-CONTEXTO-2026-10-14",
     "candidateStatus": "published_verified",
     "bundleVersion": "2026-10-14.2",
@@ -41,9 +41,9 @@
     "driveClosedAuditFileId": "1mzCH4V6Tik7FCIAGUq3s-cKCrgDEqnAj",
     "driveConversationEvidenceFolderId": "1Y_Cn4vAkN0mV_k8RV1VvAtYMSVScF7qS",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "893217f2e9c9c7fb80568079134a8dfeb8a4e6c95a208f0eafa62b8a15c917d4",
+    "driveProjectionSha256": "e93e49353b8e664f4938939297481ec18a11b8b1d260f765f879e636b91499b1",
     "clinicContributionDocumentId": "1pIhpbnnbddkqBWQPJZKxc2f6SWAudv5MzasyzphzlxU",
-    "driveProjectionVerifiedAt": "2026-10-14T12:23:50.107Z"
+    "driveProjectionVerifiedAt": "2026-10-14T12:26:46.061Z"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
