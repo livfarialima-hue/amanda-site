@@ -24,6 +24,7 @@
       "apps-script/clinica-liv-leads/ConversationArchive.test.mjs",
       "apps-script/clinica-liv-leads/README.md",
       "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PREFLIGHT.json",
+      "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json",
       "auditorias/bruna-contexto-audio-arquivo-2026-10-13/RELATORIO.md",
       "auditorias/bruna-contexto-audio-arquivo-2026-10-13/REVISAO.json",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
@@ -386,6 +387,7 @@
       "Revisão independente exigida para o pacote crítico.",
       "Histórico completo do caso não acessível sem autenticação YCloud.",
       "Publicação coordenada, autorização Google e ativação com recibos pendentes."
-    ]
+    ],
+    "evidence": "auditorias/bruna-contexto-audio-arquivo-2026-10-13/PUBLICACAO.json"
   }
 }

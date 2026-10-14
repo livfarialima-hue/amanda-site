@@ -1,0 +1,55 @@
+{
+  "status": "pending_not_published",
+  "recordedAt": "2026-10-14T00:05:48Z",
+  "candidateFunctionalCommit": "8607d8ec6bafd24f8dd09e99ef826e3f4aa104e5",
+  "pullRequest": "https://github.com/livfarialima-hue/amanda-site/pull/11",
+  "localValidation": {
+    "uniqueTests": 2082,
+    "failures": 0,
+    "changeCheck": "OK",
+    "architectureCheck": "OK",
+    "buildCheck": "passed",
+    "releasePreflight": {
+      "status": "passed_formal_gate_only",
+      "authorizationRecordedAt": "2026-10-14T00:04:42Z",
+      "livePreflightAt": "2026-10-13T23:57:14.087Z",
+      "reference": "PREFLIGHT.json",
+      "remainingConditions": [
+        "Independent review",
+        "YCloud full conversation access",
+        "Apps Script Drive authorization",
+        "Apps Script publication",
+        "Production Git build with real model and audio gates",
+        "Activation and first archive receipt"
+      ]
+    }
+  },
+  "productionUnchanged": {
+    "appsScriptVersion": 162,
+    "netlifyDeployId": "6acebbd4a25f1e95fc6d90d3",
+    "functionalCommit": "13bbc6f59e80cd41d5f4651cf47e171f90d0335b",
+    "newFeaturesActive": false
+  },
+  "driveProjections": [
+    {
+      "kind": "manual",
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "b54a1c6fb6e52db82af34dcd91e2c43216a4fc4cd3bf90a610368e7cb120b939",
+      "readbackMatches": true
+    },
+    {
+      "kind": "executive_plan",
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "efa91c8f5c85a02537fda1b45fa7592a3ea5b961b66bd6f851cce82322c7a210",
+      "readbackMatches": true
+    }
+  ],
+  "archive": {
+    "folderId": "1NZFwgLSC2cUefzi73Nbn1nFaeJX8g85n",
+    "status": "empty_prepared_not_active",
+    "firstRealReceipt": null
+  },
+  "patientMessagesSent": 0,
+  "manualOperationalRoutinesRun": 0,
+  "opsCheck": "SYNC_PENDING"
+}
