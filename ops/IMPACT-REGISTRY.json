@@ -193,7 +193,8 @@
         "auditorias/bruna-autonomia-2026-10-11/RELATORIO.md",
         "auditorias/bruna-eficiencia-integridade-2026-10-14/PREFLIGHT.json",
         "auditorias/bruna-eficiencia-integridade-2026-10-14/RELATORIO.md",
-        "auditorias/bruna-eficiencia-integridade-2026-10-14/REVISAO.json"
+        "auditorias/bruna-eficiencia-integridade-2026-10-14/REVISAO.json",
+        "auditorias/bruna-eficiencia-integridade-2026-10-14/PUBLICACAO.json"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",

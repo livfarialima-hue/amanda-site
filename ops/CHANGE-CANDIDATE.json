@@ -2,24 +2,27 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-EFICIENCIA-INTEGRIDADE-2026-10-14",
   "title": "Respostas contextuais corretas, consumo de IA verificável e aprendizado vinculado à pergunta",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "63e764133411e1db81ce6d679d7c6974af43aa5e",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou implementar após fechamento da conversa 01a1376a-8422-7553-b220-30cfac3c3392; fechamento conferido. Publicação futura depende da autorização do commit concreto. Plugin IA excluído."
+    "note": "Publicação do commit dcb5df99f91a autorizada expressamente por Daniel nesta conversa; registro de autorização e preflight em PUBLICACAO.json. Plugin IA permanece fora do escopo."
   },
   "risk": {
     "level": "critical",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
       "apps-script/clinica-liv-leads/KnowledgeBase.gs",
       "apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/production-target.json",
       "auditorias/bruna-eficiencia-integridade-2026-10-14/PREFLIGHT.json",
+      "auditorias/bruna-eficiencia-integridade-2026-10-14/PUBLICACAO.json",
       "auditorias/bruna-eficiencia-integridade-2026-10-14/RELATORIO.md",
       "auditorias/bruna-eficiencia-integridade-2026-10-14/REVISAO.json",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
@@ -363,7 +366,12 @@
     ]
   },
   "release": {
-    "status": "not_published",
-    "externalWritesPerformed": false
+    "status": "platforms_verified_drive_pending",
+    "externalWritesPerformed": true,
+    "approvedCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+    "netlifyDeployId": "6acf51c3102d74aed99ab751",
+    "appsScriptVersion": 164,
+    "verifiedAt": "2026-10-14T10:03:00.141Z",
+    "evidence": "auditorias/bruna-eficiencia-integridade-2026-10-14/PUBLICACAO.json"
   }
 }

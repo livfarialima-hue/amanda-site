@@ -144,5 +144,16 @@
       "resolvedAt": "2026-10-14T09:28:11.420Z",
       "resolution": "Daniel reported disk space freed; observed 1894690816 free bytes, standard build then passed."
     }
-  ]
+  ],
+  "publicationVerification": {
+    "status": "platforms_verified",
+    "verifiedAt": "2026-10-14T10:03:00.141Z",
+    "approvedCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+    "netlifyDeployId": "6acf51c3102d74aed99ab751",
+    "appsScriptVersion": 164,
+    "realModelScenarios": 15,
+    "audioScenarios": 3,
+    "patientMessagesSent": 0,
+    "evidence": "auditorias/bruna-eficiencia-integridade-2026-10-14/PUBLICACAO.json"
+  }
 }

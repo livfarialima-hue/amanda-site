@@ -1,0 +1,4643 @@
+{
+  "schemaVersion": 1,
+  "status": "platforms_verified_drive_git_pending",
+  "candidateFunctionalCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+  "verifiedAt": "2026-10-14T10:03:00.141Z",
+  "authorization": {
+    "commit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+    "approvedBy": "Daniel",
+    "reference": "codex://threads/01a137fc-4e89-7420-9752-97f9ec3e2bce - Pode publicar o commit dcb5df99f91a no Apps Script e Netlify e atualizar o Drive. Faça os testes com IA real e confira especialmente a integração com a planilha LEADS."
+  },
+  "preflight": {
+    "checkedAt": "2026-10-14T09:53:54.026Z",
+    "approval": {
+      "commit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+      "approvedBy": "Daniel",
+      "reference": "codex://threads/01a137fc-4e89-7420-9752-97f9ec3e2bce - Pode publicar o commit dcb5df99f91a no Apps Script e Netlify e atualizar o Drive. Faça os testes com IA real e confira especialmente a integração com a planilha LEADS."
+    },
+    "netlify": {
+      "id": "6aceef108fbe857da62bcfac",
+      "commit_ref": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
+      "state": "ready",
+      "published_at": "2026-10-14T02:58:01.208Z",
+      "functions": [
+        "appointment-reminder",
+        "appointment-review",
+        "attribution-journey",
+        "attribution-journey-purge",
+        "classify-leads",
+        "classify-leads-background",
+        "conversation-archive",
+        "human-resume",
+        "human-resume-background",
+        "post-consult-followup",
+        "scheduled-followup",
+        "synthetic-integration-health",
+        "ycloud-recovery",
+        "ycloud-recovery-background",
+        "ycloud-webhook"
+      ],
+      "schedules": [
+        {
+          "cron": "17 6 * * *",
+          "name": "attribution-journey-purge"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "classify-leads"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "conversation-archive"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "human-resume"
+        },
+        {
+          "cron": "17 12 * * *",
+          "name": "synthetic-integration-health"
+        },
+        {
+          "cron": "*/5 * * * *",
+          "name": "ycloud-recovery"
+        }
+      ]
+    },
+    "appsScriptReference": "tmp/bruna-release-20261014-gas-before.json",
+    "leadsReference": "tmp/bruna-release-20261014-leads-before.json",
+    "localValidationReference": "auditorias/bruna-eficiencia-integridade-2026-10-14/REVISAO.json"
+  },
+  "localValidation": {
+    "fullTests": 2121,
+    "complementaryTests": 38,
+    "independentReview": "passed",
+    "build": {
+      "files": 193,
+      "sitemapUrls": 54,
+      "auditFilesInArtifact": 0
+    },
+    "evidence": "auditorias/bruna-eficiencia-integridade-2026-10-14/REVISAO.json"
+  },
+  "appsScript": {
+    "checkedAt": "2026-10-14T09:53:39.908Z",
+    "approvedCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+    "projectId": "1kTgjaDmKQMNquYLNI-fJatqqBu_YyaDolnSsx4R3mQZq-JDNa0Yeohly",
+    "deploymentId": "AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A",
+    "version": 164,
+    "all28SourcesMatchBaseline": true,
+    "sources": [
+      {
+        "file": "Code.gs",
+        "matchesBaseline": true,
+        "sha256": "df84ced7c65de056e709772cfd4fa4deddff4563e22463f7b4eee3a751a20a9e"
+      },
+      {
+        "file": "Retomadas.gs",
+        "matchesBaseline": true,
+        "sha256": "8e52768102d589223d20ab2649f1f240a3617f99943f275dc6ab9030fc147d89"
+      },
+      {
+        "file": "LembretesConsultas.gs",
+        "matchesBaseline": true,
+        "sha256": "37f8afe237acc3bbd6feaf62653052970318da06ee81f22567ed5ca1a6cd61d6"
+      },
+      {
+        "file": "ConsultasSync.gs",
+        "matchesBaseline": true,
+        "sha256": "456596a8daea5800c70e046eb9e673ef27b38c2ad91eb14786bc58df017b671c"
+      },
+      {
+        "file": "AgendaCuidados.gs",
+        "matchesBaseline": true,
+        "sha256": "051705a5fd0284903b65276f283612c0faecc6504577bfe262f76206c44d7f19"
+      },
+      {
+        "file": "CentralAtendimento.gs",
+        "matchesBaseline": true,
+        "sha256": "774ff98dc989036e30495629b860f782b3b12a655a72428ef211fce8220d18e6"
+      },
+      {
+        "file": "LeadClassification.gs",
+        "matchesBaseline": true,
+        "sha256": "fe4dc8cfc04203e8bc3a01999976e1a54cfb3a468ffdb1c462d95e944d0557f4"
+      },
+      {
+        "file": "ContactPreferences.gs",
+        "matchesBaseline": true,
+        "sha256": "6dc9390b94bd97eb9ea6c702875e1ca42cec1fcaed24c76f3fec3a8b430ccbf1"
+      },
+      {
+        "file": "RoomBooking.gs",
+        "matchesBaseline": true,
+        "sha256": "6f34f9c42e7d1e17c830704fd431f09eb09d359b1c66216aaa084db96393a35b"
+      },
+      {
+        "file": "RoomBookingForm.html",
+        "matchesBaseline": true,
+        "sha256": "9cea7d8a085e105556c9016e42f119e3b43ddaa998d4b56a850ddc60b1f9d39e"
+      },
+      {
+        "file": "KnowledgeBase.gs",
+        "matchesBaseline": true,
+        "sha256": "f8355af646eae85924da0e29969ff8d0b265cabd786338906398a844394117dc"
+      },
+      {
+        "file": "OpportunityStore.gs",
+        "matchesBaseline": true,
+        "sha256": "55aefbfeab282d9c6ff188a618ea2a671a00f50fdf5ae58e2b48bc71284e323e"
+      },
+      {
+        "file": "BusinessMilestones.gs",
+        "matchesBaseline": true,
+        "sha256": "f3d9a7fc771bd049daeaeee7ea86ecf1d1223f32e12b3979754e7a047f11ec9b"
+      },
+      {
+        "file": "DataQualityRepair.gs",
+        "matchesBaseline": true,
+        "sha256": "1b328375054d6903619d6e0fa3d815949b3c4bafaa79c535dfc3eda93d66c189"
+      },
+      {
+        "file": "OperationalEvents.gs",
+        "matchesBaseline": true,
+        "sha256": "2c8f57ef21d19979f6ef7e9337b68d82bf0d355fdd78d431bb906ef0c31ce60b"
+      },
+      {
+        "file": "SyntheticHealth.gs",
+        "matchesBaseline": true,
+        "sha256": "f37e652a967cc20d3b9dedf91a356b769f5c00e6dae1b5c8388bdce1cc7fa18b"
+      },
+      {
+        "file": "QualityDashboards.gs",
+        "matchesBaseline": true,
+        "sha256": "89d6109984550223315affd8da659b77cb6dccc42d3399aecbfed1914e18263d"
+      },
+      {
+        "file": "ScheduleMaintenance.gs",
+        "matchesBaseline": true,
+        "sha256": "4e145ad28277de0412a53b05bc86bc4e3902087b4eeccd2d87972826ef3fbf1d"
+      },
+      {
+        "file": "FunnelDashboards.gs",
+        "matchesBaseline": true,
+        "sha256": "0ef41f8ad6fc8f086d943db3a3cbccf99f33bb61dce9973a7be078cb9b23d7da"
+      },
+      {
+        "file": "GoogleAdsFunnelReview.gs",
+        "matchesBaseline": true,
+        "sha256": "9cd468cb7dc197621f1ea9a20fe4e6f33cee55d8b1ef12fb2c0157b2c163fd92"
+      },
+      {
+        "file": "MetaAdsFunnelReview.gs",
+        "matchesBaseline": true,
+        "sha256": "b3afc34022589ebdffc6349f645c023bf22193e161f7e690407c7e68c8a70389"
+      },
+      {
+        "file": "MetaAdsReview.gs",
+        "matchesBaseline": true,
+        "sha256": "2657e30e1b055dfe822dde3d674400adb0068a09089fc5fac2f4186490cbb09b"
+      },
+      {
+        "file": "FunnelReconciliation.gs",
+        "matchesBaseline": true,
+        "sha256": "3081887b6f7f49d6f733115e3fecafae75b0fda6d48e3acb7b9f413dc750200c"
+      },
+      {
+        "file": "PainelDecisoesDiarias.gs",
+        "matchesBaseline": true,
+        "sha256": "1bb1a43c94a8ffa3a0694e05484b610c25c9b8fbc53f2bd69bc1b628c34845aa"
+      },
+      {
+        "file": "WhatsAppCosts.gs",
+        "matchesBaseline": true,
+        "sha256": "8ae1b7955712a9a2aa218ca615137c6b519f5f33c1f5175e155a1a54960ce4a7"
+      },
+      {
+        "file": "ClassificationReconciliation.gs",
+        "matchesBaseline": true,
+        "sha256": "7829c2557ce8db33c4577fc8a791773363052ae3eb71ee4613cc1f5e45fbc10c"
+      },
+      {
+        "file": "CuidadosProgramados.gs",
+        "matchesBaseline": true,
+        "sha256": "5341d05ef05252410459d7ffee476352b8ca08634255e2602c597578839a3e10"
+      },
+      {
+        "file": "ConversationArchive.gs",
+        "matchesBaseline": true,
+        "sha256": "ce237919eb4959455e949c992ebf69389fac8f293a83cec83dd00ca12d721d90"
+      }
+    ],
+    "verifiedAt": "2026-10-14T09:56:10.337Z",
+    "previousVersion": 163,
+    "sourceCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+    "updatedFiles": [
+      "KnowledgeBase.gs"
+    ],
+    "savedReadbackMatchesApproved": true,
+    "knowledgeSha256Normalized": "e743aa76e4b5b501713751fb3e4e36bcd3010b80e078df2da9f6d6107744f853",
+    "deploymentPreserved": true,
+    "flagsChanged": false,
+    "triggersChanged": false,
+    "realMessagesSent": 0
+  },
+  "netlify": {
+    "id": "6acf51c3102d74aed99ab751",
+    "state": "ready",
+    "buildId": "6acf51c3102d74aed99ab74f",
+    "commit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+    "publishedAt": "2026-10-14T09:59:03.902Z",
+    "context": "production",
+    "manualDeploy": false,
+    "functions": [
+      "appointment-reminder",
+      "appointment-review",
+      "attribution-journey",
+      "attribution-journey-purge",
+      "classify-leads",
+      "classify-leads-background",
+      "conversation-archive",
+      "human-resume",
+      "human-resume-background",
+      "post-consult-followup",
+      "scheduled-followup",
+      "synthetic-integration-health",
+      "ycloud-recovery",
+      "ycloud-recovery-background",
+      "ycloud-webhook"
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "conversation-archive"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ],
+    "verifiedAt": "2026-10-14T10:00:44.892Z",
+    "activationLiveGate": {
+      "status": "passed",
+      "checkedAt": "2026-10-14T09:58:47.673Z",
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "maxOutputTokens": 4096,
+      "verbosity": "low",
+      "billingMode": "api_paid_authorized",
+      "syntheticOnly": true,
+      "patientMessagesSent": 0,
+      "results": [
+        {
+          "name": "consultation_contextual",
+          "passed": true,
+          "elapsedMs": 6695,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 6655,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 21424,
+                "input_tokens_details": {
+                  "cache_write_tokens": 21421,
+                  "cached_tokens": 0
+                },
+                "output_tokens": 283,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 21707
+              },
+              "syntheticDraft": "A consulta presencial com a Dra. Amanda custa R$ 500. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal.\n\nNa avaliação, ela entende o que você busca, examina com cuidado e conversa sobre as possibilidades para o seu caso. Você pode esclarecer suas dúvidas sem precisar decidir pela cirurgia naquele momento."
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "standard_reply",
+            "confidence": "high",
+            "automaticAllowed": true,
+            "urgent": false,
+            "professional": "amanda",
+            "procedure": "unknown",
+            "replyCode": "AMANDA-CONSULTA-INFO-01",
+            "replyWording": "contextual",
+            "suggestedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Na avaliação, ela entende o que você busca, examina com cuidado e conversa sobre as possibilidades para o seu caso. Você pode esclarecer suas dúvidas sem precisar decidir pela cirurgia naquele momento.",
+            "reviewReason": "",
+            "partialAnswer": {
+              "knowledgeIds": [],
+              "pendingQuestion": ""
+            },
+            "conversationState": {
+              "activeTopic": "Valor da consulta presencial com a Dra. Amanda",
+              "patientAct": "question",
+              "refersToEventId": "",
+              "lastClinicQuestion": "O que você gostaria de esclarecer?",
+              "lastClinicOffer": "",
+              "unresolvedQuestions": [],
+              "factsAlreadyProvided": [
+                "Bruna informou que a avaliação é individual.",
+                "Consulta presencial com a Dra. Amanda: R$ 500.",
+                "Pagamento por Pix, débito ou parcelamento; emissão de nota fiscal.",
+                "Avaliação inclui conversa sobre objetivos, exame e possibilidades, sem obrigação de decidir pela cirurgia.",
+                "Paciente ainda está pesquisando."
+              ],
+              "owner": "patient",
+              "nextExpectedAction": "",
+              "ambiguity": "",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "AMANDA-CONSULTA-INFO-01",
+          "replyWording": "contextual",
+          "selectedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Na avaliação, ela entende o que você busca, examina com cuidado e conversa sobre as possibilidades para o seu caso. Você pode esclarecer suas dúvidas sem precisar decidir pela cirurgia naquele momento.",
+          "gate": {
+            "allowed": true,
+            "reason": "allowed",
+            "body": "A consulta presencial com a Dra. Amanda custa R$ 500. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Na avaliação, ela entende o que você busca, examina com cuidado e conversa sobre as possibilidades para o seu caso. Você pode esclarecer suas dúvidas sem precisar decidir pela cirurgia naquele momento."
+          }
+        },
+        {
+          "name": "lifting_information",
+          "passed": true,
+          "elapsedMs": 6840,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 6829,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 21662,
+                "input_tokens_details": {
+                  "cache_write_tokens": 1007,
+                  "cached_tokens": 20652
+                },
+                "output_tokens": 264,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 21926
+              },
+              "syntheticDraft": "As incisões do lifting facial costumam acompanhar a linha do cabelo e os contornos das orelhas. Conforme o planejamento, podem se estender atrás das orelhas ou incluir uma incisão abaixo do queixo. A posição e a extensão são discutidas na avaliação."
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "standard_reply",
+            "confidence": "high",
+            "automaticAllowed": true,
+            "urgent": false,
+            "professional": "amanda",
+            "procedure": "lifting_facial",
+            "replyCode": "LIFTING-FACIAL-INFORMATION-01",
+            "replyWording": "contextual",
+            "suggestedReply": "As incisões do lifting facial costumam acompanhar a linha do cabelo e os contornos das orelhas. Conforme o planejamento, podem se estender atrás das orelhas ou incluir uma incisão abaixo do queixo. A posição e a extensão são discutidas na avaliação.",
+            "reviewReason": "",
+            "partialAnswer": {
+              "knowledgeIds": [],
+              "pendingQuestion": ""
+            },
+            "conversationState": {
+              "activeTopic": "Cicatrizes do lifting facial",
+              "patientAct": "question",
+              "refersToEventId": "",
+              "lastClinicQuestion": "O que você gostaria de esclarecer?",
+              "lastClinicOffer": "",
+              "unresolvedQuestions": [],
+              "factsAlreadyProvided": [
+                "Bruna informou que a avaliação é individual.",
+                "Incisões costumam acompanhar a linha do cabelo e os contornos das orelhas; podem se estender atrás das orelhas ou abaixo do queixo conforme o planejamento.",
+                "Posição e extensão das incisões são discutidas na avaliação."
+              ],
+              "owner": "patient",
+              "nextExpectedAction": "",
+              "ambiguity": "",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "LIFTING-FACIAL-INFORMATION-01",
+          "replyWording": "contextual",
+          "selectedReply": "As incisões do lifting facial costumam acompanhar a linha do cabelo e os contornos das orelhas. Conforme o planejamento, podem se estender atrás das orelhas ou incluir uma incisão abaixo do queixo. A posição e a extensão são discutidas na avaliação.",
+          "gate": {
+            "allowed": true,
+            "reason": "allowed",
+            "body": "As incisões do lifting facial costumam acompanhar a linha do cabelo e os contornos das orelhas. Conforme o planejamento, podem se estender atrás das orelhas ou incluir uma incisão abaixo do queixo. A posição e a extensão são discutidas na avaliação."
+          }
+        },
+        {
+          "name": "personal_question_with_reference",
+          "passed": true,
+          "elapsedMs": 12699,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 12691,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 21416,
+                "input_tokens_details": {
+                  "cache_write_tokens": 761,
+                  "cached_tokens": 20652
+                },
+                "output_tokens": 455,
+                "output_tokens_details": {
+                  "reasoning_tokens": 64
+                },
+                "total_tokens": 21871
+              },
+              "syntheticDraft": "A consulta presencial com a Dra. Amanda custa R$ 500. Na avaliação para lifting facial, ela entende seus objetivos, examina com cuidado e explica as possibilidades, sem obrigação de decidir pela cirurgia.\n\nO pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal.\n\nVocê pode seguir pesquisando no seu tempo. Se quiser, posso verificar opções de horário com a equipe."
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "standard_reply",
+            "confidence": "high",
+            "automaticAllowed": true,
+            "urgent": false,
+            "professional": "amanda",
+            "procedure": "lifting_facial",
+            "replyCode": "AMANDA-CONSULTA-INFO-01",
+            "replyWording": "contextual",
+            "suggestedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. Na avaliação para lifting facial, ela entende seus objetivos, examina com cuidado e explica as possibilidades, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Você pode seguir pesquisando no seu tempo. Se quiser, posso verificar opções de horário com a equipe.",
+            "reviewReason": "",
+            "partialAnswer": {
+              "knowledgeIds": [],
+              "pendingQuestion": ""
+            },
+            "conversationState": {
+              "activeTopic": "Valor da consulta para lifting facial",
+              "patientAct": "question",
+              "refersToEventId": "",
+              "lastClinicQuestion": "O que você gostaria de esclarecer?",
+              "lastClinicOffer": "Verificar opções de horário com a equipe, se desejar",
+              "unresolvedQuestions": [],
+              "factsAlreadyProvided": [
+                "Paciente ainda está pesquisando",
+                "Consulta presencial com a Dra. Amanda: R$ 500",
+                "Avaliação inclui objetivos, exame e possibilidades, sem obrigação de decidir pela cirurgia",
+                "Pagamento por Pix, débito ou parcelamento; emissão de nota fiscal"
+              ],
+              "owner": "patient",
+              "nextExpectedAction": "Paciente decidir se deseja continuar a conversa ou consultar horários",
+              "ambiguity": "",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "AMANDA-CONSULTA-INFO-01",
+          "replyWording": "contextual",
+          "selectedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. Na avaliação para lifting facial, ela entende seus objetivos, examina com cuidado e explica as possibilidades, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Você pode seguir pesquisando no seu tempo. Se quiser, posso verificar opções de horário com a equipe.",
+          "gate": {
+            "allowed": true,
+            "reason": "allowed",
+            "body": "A consulta presencial com a Dra. Amanda custa R$ 500. Na avaliação para lifting facial, ela entende seus objetivos, examina com cuidado e explica as possibilidades, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Você pode seguir pesquisando no seu tempo. Se quiser, posso verificar opções de horário com a equipe."
+          }
+        },
+        {
+          "name": "accepted_information_offer",
+          "passed": true,
+          "elapsedMs": 9913,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 9905,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 21390,
+                "input_tokens_details": {
+                  "cache_write_tokens": 735,
+                  "cached_tokens": 20652
+                },
+                "output_tokens": 406,
+                "output_tokens_details": {
+                  "reasoning_tokens": 100
+                },
+                "total_tokens": 21796
+              },
+              "syntheticDraft": "A consulta presencial com a Dra. Amanda custa R$ 500. Na avaliação do lifting facial, ela entende o que você gostaria de mudar ou preservar, examina com cuidado e conversa sobre as possibilidades, limites e recuperação, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Não vamos ver horários agora."
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "standard_reply",
+            "confidence": "high",
+            "automaticAllowed": true,
+            "urgent": false,
+            "professional": "amanda",
+            "procedure": "lifting_facial",
+            "replyCode": "AMANDA-CONSULTA-INFO-01",
+            "replyWording": "contextual",
+            "suggestedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. Na avaliação do lifting facial, ela entende o que você gostaria de mudar ou preservar, examina com cuidado e conversa sobre as possibilidades, limites e recuperação, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Não vamos ver horários agora.",
+            "reviewReason": "",
+            "partialAnswer": {
+              "knowledgeIds": [],
+              "pendingQuestion": ""
+            },
+            "conversationState": {
+              "activeTopic": "Avaliação e valor da consulta presencial para lifting facial",
+              "patientAct": "acceptance",
+              "refersToEventId": "synthetic-consultation-offer",
+              "lastClinicQuestion": "Posso te passar o valor da consulta presencial?",
+              "lastClinicOffer": "Informar o valor da consulta presencial",
+              "unresolvedQuestions": [],
+              "factsAlreadyProvided": [
+                "Consulta presencial com Dra. Amanda: R$ 500",
+                "Avaliação: objetivos, exame, possibilidades, limites e recuperação; sem obrigação de decidir pela cirurgia",
+                "Pagamento por Pix, débito ou parcelamento; emissão de nota fiscal",
+                "Paciente não quer ver horários agora"
+              ],
+              "owner": "none",
+              "nextExpectedAction": "",
+              "ambiguity": "",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "AMANDA-CONSULTA-INFO-01",
+          "replyWording": "contextual",
+          "selectedReply": "A consulta presencial com a Dra. Amanda custa R$ 500. Na avaliação do lifting facial, ela entende o que você gostaria de mudar ou preservar, examina com cuidado e conversa sobre as possibilidades, limites e recuperação, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Não vamos ver horários agora.",
+          "gate": {
+            "allowed": true,
+            "reason": "allowed",
+            "body": "A consulta presencial com a Dra. Amanda custa R$ 500. Na avaliação do lifting facial, ela entende o que você gostaria de mudar ou preservar, examina com cuidado e conversa sobre as possibilidades, limites e recuperação, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Não vamos ver horários agora."
+          }
+        },
+        {
+          "name": "corrected_procedure",
+          "passed": true,
+          "elapsedMs": 9871,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 9862,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 21517,
+                "input_tokens_details": {
+                  "cache_write_tokens": 862,
+                  "cached_tokens": 20652
+                },
+                "output_tokens": 480,
+                "output_tokens_details": {
+                  "reasoning_tokens": 63
+                },
+                "total_tokens": 21997
+              },
+              "syntheticDraft": "Para avaliar a otoplastia, a consulta presencial com a Dra. Amanda custa R$ 500. Ela entende o que você gostaria de mudar, examina com cuidado e explica as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia — você pode continuar pesquisando no seu tempo.\n\nO pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal.\n\nSe quiser, posso verificar opções de horário com a equipe."
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "standard_reply",
+            "confidence": "high",
+            "automaticAllowed": true,
+            "urgent": false,
+            "professional": "amanda",
+            "procedure": "otoplastia",
+            "replyCode": "AMANDA-CONSULTA-INFO-01",
+            "replyWording": "contextual",
+            "suggestedReply": "Para avaliar a otoplastia, a consulta presencial com a Dra. Amanda custa R$ 500. Ela entende o que você gostaria de mudar, examina com cuidado e explica as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia — você pode continuar pesquisando no seu tempo. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Se quiser, posso verificar opções de horário com a equipe.",
+            "reviewReason": "",
+            "partialAnswer": {
+              "knowledgeIds": [],
+              "pendingQuestion": ""
+            },
+            "conversationState": {
+              "activeTopic": "consulta para otoplastia",
+              "patientAct": "question",
+              "refersToEventId": "",
+              "lastClinicQuestion": "O que você gostaria de esclarecer?",
+              "lastClinicOffer": "Verificar opções de horário com a equipe, se quiser.",
+              "unresolvedQuestions": [],
+              "factsAlreadyProvided": [
+                "Paciente corrigiu o interesse: otoplastia, não lifting facial.",
+                "Paciente ainda está pesquisando.",
+                "Consulta presencial com Dra. Amanda: R$ 500.",
+                "Avaliação inclui conversa, exame e possibilidades, sem obrigação de decidir pela cirurgia.",
+                "Pagamento por Pix, débito ou parcelamento; emissão de nota fiscal."
+              ],
+              "owner": "patient",
+              "nextExpectedAction": "Paciente decide se deseja continuar a conversa ou aceitar a oferta de horários.",
+              "ambiguity": "",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "AMANDA-CONSULTA-INFO-01",
+          "replyWording": "contextual",
+          "selectedReply": "Para avaliar a otoplastia, a consulta presencial com a Dra. Amanda custa R$ 500. Ela entende o que você gostaria de mudar, examina com cuidado e explica as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia — você pode continuar pesquisando no seu tempo. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Se quiser, posso verificar opções de horário com a equipe.",
+          "gate": {
+            "allowed": true,
+            "reason": "allowed",
+            "body": "Para avaliar a otoplastia, a consulta presencial com a Dra. Amanda custa R$ 500. Ela entende o que você gostaria de mudar, examina com cuidado e explica as possibilidades para o seu caso, sem obrigação de decidir pela cirurgia — você pode continuar pesquisando no seu tempo. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Se quiser, posso verificar opções de horário com a equipe."
+          }
+        },
+        {
+          "name": "unknown_clinic_fact",
+          "passed": true,
+          "elapsedMs": 11011,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 11008,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 21394,
+                "input_tokens_details": {
+                  "cache_write_tokens": 739,
+                  "cached_tokens": 20652
+                },
+                "output_tokens": 382,
+                "output_tokens_details": {
+                  "reasoning_tokens": 142
+                },
+                "total_tokens": 21776
+              },
+              "syntheticDraft": "O equipamento específico que a médica utiliza nessa técnica precisa ser confirmado pela equipe."
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "human_review",
+            "confidence": "low",
+            "automaticAllowed": false,
+            "urgent": false,
+            "professional": "amanda",
+            "procedure": "lifting_facial",
+            "replyCode": "UNKNOWN-REVIEW-01",
+            "replyWording": "contextual",
+            "suggestedReply": "O equipamento específico que a médica utiliza nessa técnica precisa ser confirmado pela equipe.",
+            "reviewReason": "unknown_digest:equipamento",
+            "partialAnswer": {
+              "knowledgeIds": [
+                "SYNTHETIC-PARKING"
+              ],
+              "pendingQuestion": "Qual equipamento específico a Dra. Amanda utiliza na técnica mencionada pela pessoa?",
+              "semanticConfidence": "high"
+            },
+            "conversationState": {
+              "activeTopic": "Estacionamento e equipamento utilizado na técnica",
+              "patientAct": "question",
+              "refersToEventId": "",
+              "lastClinicQuestion": "O que você gostaria de esclarecer?",
+              "lastClinicOffer": "",
+              "unresolvedQuestions": [
+                "Qual equipamento específico a médica usa nessa técnica?"
+              ],
+              "factsAlreadyProvided": [
+                "Bruna informou que a avaliação é individual."
+              ],
+              "owner": "human_team",
+              "nextExpectedAction": "Enviar a informação aprovada sobre estacionamento após encaminhar a pendência e conferir o equipamento utilizado.",
+              "ambiguity": "A técnica não foi nomeada no histórico disponível.",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "UNKNOWN-REVIEW-01",
+          "replyWording": "contextual"
+        },
+        {
+          "name": "semantic_approved_knowledge",
+          "passed": true,
+          "elapsedMs": 6849,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 6845,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 21379,
+                "input_tokens_details": {
+                  "cache_write_tokens": 724,
+                  "cached_tokens": 20652
+                },
+                "output_tokens": 228,
+                "output_tokens_details": {
+                  "reasoning_tokens": 59
+                },
+                "total_tokens": 21607
+              },
+              "syntheticDraft": "Sim, emitimos nota fiscal da consulta."
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "standard_reply",
+            "confidence": "high",
+            "automaticAllowed": true,
+            "urgent": false,
+            "professional": "unknown",
+            "procedure": "",
+            "replyCode": "KB:SYNTHETIC-INVOICE",
+            "replyWording": "contextual",
+            "suggestedReply": "Sim, emitimos nota fiscal da consulta.",
+            "reviewReason": "knowledge:SYNTHETIC-INVOICE",
+            "partialAnswer": {
+              "knowledgeIds": [],
+              "pendingQuestion": ""
+            },
+            "conversationState": {
+              "activeTopic": "Nota fiscal da consulta",
+              "patientAct": "question",
+              "refersToEventId": "",
+              "lastClinicQuestion": "O que você gostaria de esclarecer?",
+              "lastClinicOffer": "",
+              "unresolvedQuestions": [],
+              "factsAlreadyProvided": [
+                "Bruna informou que a avaliação é individual.",
+                "Clínica emite nota fiscal da consulta."
+              ],
+              "owner": "none",
+              "nextExpectedAction": "",
+              "ambiguity": "",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "KB:SYNTHETIC-INVOICE",
+          "replyWording": "contextual",
+          "selectedReply": "Sim, emitimos nota fiscal da consulta.",
+          "gate": {
+            "allowed": true,
+            "reason": "allowed",
+            "body": "Sim, emitimos nota fiscal da consulta."
+          }
+        },
+        {
+          "name": "human_clinical_task_administrative_question",
+          "passed": true,
+          "elapsedMs": 7618,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 7613,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 21203,
+                "input_tokens_details": {
+                  "cache_write_tokens": 548,
+                  "cached_tokens": 20652
+                },
+                "output_tokens": 294,
+                "output_tokens_details": {
+                  "reasoning_tokens": 44
+                },
+                "total_tokens": 21497
+              },
+              "syntheticDraft": "A Clínica LIV fica na R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150."
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "standard_reply",
+            "confidence": "high",
+            "automaticAllowed": true,
+            "urgent": false,
+            "professional": "amanda",
+            "procedure": "unknown",
+            "replyCode": "ADMIN-SIDE-LOCATION-01",
+            "replyWording": "approved_exact",
+            "suggestedReply": "A Clínica LIV fica na R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150.",
+            "reviewReason": "",
+            "partialAnswer": {
+              "knowledgeIds": [],
+              "pendingQuestion": ""
+            },
+            "conversationState": {
+              "activeTopic": "Endereço da clínica; dúvida clínica pendente com a equipe",
+              "patientAct": "request",
+              "refersToEventId": "",
+              "lastClinicQuestion": "",
+              "lastClinicOffer": "",
+              "unresolvedQuestions": [
+                "Dúvida clínica aguardando conferência da médica; conteúdo não disponível"
+              ],
+              "factsAlreadyProvided": [
+                "Equipe informou que a médica conferirá a dúvida clínica e responderá por aqui",
+                "Endereço informado: R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150"
+              ],
+              "owner": "human_team",
+              "nextExpectedAction": "Médica conferir e responder à dúvida clínica pendente",
+              "ambiguity": "",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "ADMIN-SIDE-LOCATION-01",
+          "replyWording": "approved_exact",
+          "selectedReply": "A Clínica LIV fica na R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150.",
+          "gate": {
+            "allowed": true,
+            "reason": "allowed",
+            "body": "A Clínica LIV fica na R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150."
+          }
+        },
+        {
+          "name": "consultation_preparation",
+          "passed": true,
+          "elapsedMs": 6653,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 6649,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 21408,
+                "input_tokens_details": {
+                  "cache_write_tokens": 753,
+                  "cached_tokens": 20652
+                },
+                "output_tokens": 269,
+                "output_tokens_details": {
+                  "reasoning_tokens": 49
+                },
+                "total_tokens": 21677
+              },
+              "syntheticDraft": "Para a primeira consulta, leve suas informações de saúde, a relação dos medicamentos que usa, informações sobre cirurgias anteriores e os exames que já tiver. Vale também anotar as dúvidas que deseja esclarecer."
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "standard_reply",
+            "confidence": "high",
+            "automaticAllowed": true,
+            "urgent": false,
+            "professional": "unknown",
+            "procedure": "unknown",
+            "replyCode": "",
+            "replyWording": "contextual",
+            "suggestedReply": "Para a primeira consulta, leve suas informações de saúde, a relação dos medicamentos que usa, informações sobre cirurgias anteriores e os exames que já tiver. Vale também anotar as dúvidas que deseja esclarecer.",
+            "reviewReason": "",
+            "partialAnswer": {
+              "knowledgeIds": [],
+              "pendingQuestion": ""
+            },
+            "conversationState": {
+              "activeTopic": "O que levar à primeira consulta",
+              "patientAct": "question",
+              "refersToEventId": "",
+              "lastClinicQuestion": "O que você gostaria de esclarecer?",
+              "lastClinicOffer": "",
+              "unresolvedQuestions": [],
+              "factsAlreadyProvided": [
+                "Bruna informou que a avaliação é individual.",
+                "Orientado levar informações de saúde, relação de medicamentos, histórico de cirurgias, exames já disponíveis e dúvidas."
+              ],
+              "owner": "patient",
+              "nextExpectedAction": "Reunir as informações e materiais para a consulta.",
+              "ambiguity": "",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "",
+          "replyWording": "contextual",
+          "selectedReply": "Para a primeira consulta, leve suas informações de saúde, a relação dos medicamentos que usa, informações sobre cirurgias anteriores e os exames que já tiver. Vale também anotar as dúvidas que deseja esclarecer.",
+          "gate": {
+            "allowed": true,
+            "reason": "allowed",
+            "body": "Para a primeira consulta, leve suas informações de saúde, a relação dos medicamentos que usa, informações sobre cirurgias anteriores e os exames que já tiver. Vale também anotar as dúvidas que deseja esclarecer."
+          }
+        },
+        {
+          "name": "clinical_urgency",
+          "passed": true,
+          "elapsedMs": 5268,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 5263,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 21312,
+                "input_tokens_details": {
+                  "cache_write_tokens": 657,
+                  "cached_tokens": 20652
+                },
+                "output_tokens": 212,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 21524
+              },
+              "syntheticDraft": ""
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "human_review",
+            "confidence": "low",
+            "automaticAllowed": false,
+            "urgent": true,
+            "professional": "unknown",
+            "procedure": "unknown",
+            "replyCode": "ALERT-URG-01",
+            "replyWording": "contextual",
+            "suggestedReply": "",
+            "reviewReason": "unknown_digest:urgencia_pos_operatoria",
+            "partialAnswer": {
+              "knowledgeIds": [],
+              "pendingQuestion": "",
+              "semanticConfidence": "high"
+            },
+            "conversationState": {
+              "activeTopic": "Falta de ar atual no pós-operatório",
+              "patientAct": "statement",
+              "refersToEventId": "",
+              "lastClinicQuestion": "O que você gostaria de esclarecer?",
+              "lastClinicOffer": "",
+              "unresolvedQuestions": [
+                "Falta de ar atual no pós-operatório exige atendimento humano urgente."
+              ],
+              "factsAlreadyProvided": [
+                "Bruna informou que a avaliação é individual.",
+                "Pessoa relata estar no pós-operatório e com falta de ar agora."
+              ],
+              "owner": "human_team",
+              "nextExpectedAction": "Acionar imediatamente a equipe para possível urgência pós-operatória.",
+              "ambiguity": "Procedimento e profissional não identificados.",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "ALERT-URG-01",
+          "replyWording": "contextual"
+        },
+        {
+          "name": "approved_price_with_photo_request",
+          "passed": true,
+          "elapsedMs": 17771,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 17730,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 21596,
+                "input_tokens_details": {
+                  "cache_write_tokens": 941,
+                  "cached_tokens": 20652
+                },
+                "output_tokens": 779,
+                "output_tokens_details": {
+                  "reasoning_tokens": 311
+                },
+                "total_tokens": 22375
+              },
+              "syntheticDraft": "Helena, o lifting facial reposiciona tecidos que perderam sustentação e trata o excesso de pele conforme cada caso. A avaliação permite discutir as possibilidades para as bochechas e as linhas perto da boca. As fotos podem contextualizar seu pedido, mas a indicação e o orçamento individual dependem da consulta.\n\nPara ajudar no planejamento dos gastos, a referência para lifting facial é entre R$ 26 mil e R$ 42 mil. É uma referência para planejamento, não é um orçamento fechado. O valor individual é definido após avaliação, conforme o plano cirúrgico, a equipe, o hospital, a anestesia e os materiais."
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "standard_reply",
+            "confidence": "high",
+            "automaticAllowed": true,
+            "urgent": false,
+            "professional": "amanda",
+            "procedure": "lifting_facial",
+            "replyCode": "LIFTING-PRICE-RANGE-01",
+            "replyWording": "contextual",
+            "suggestedReply": "Helena, o lifting facial reposiciona tecidos que perderam sustentação e trata o excesso de pele conforme cada caso. A avaliação permite discutir as possibilidades para as bochechas e as linhas perto da boca. As fotos podem contextualizar seu pedido, mas a indicação e o orçamento individual dependem da consulta. Para ajudar no planejamento dos gastos, a referência para lifting facial é entre R$ 26 mil e R$ 42 mil. É uma referência para planejamento, não é um orçamento fechado. O valor individual é definido após avaliação, conforme o plano cirúrgico, a equipe, o hospital, a anestesia e os materiais.",
+            "reviewReason": "",
+            "partialAnswer": {
+              "knowledgeIds": [],
+              "pendingQuestion": ""
+            },
+            "conversationState": {
+              "activeTopic": "Lifting facial, fotos e planejamento de gastos",
+              "patientAct": "request",
+              "refersToEventId": "",
+              "lastClinicQuestion": "O que você gostaria de esclarecer?",
+              "lastClinicOffer": "",
+              "unresolvedQuestions": [],
+              "factsAlreadyProvided": [
+                "Paciente informou o nome Helena.",
+                "Relatou flacidez nas bochechas e linhas perto da boca.",
+                "Pretende enviar fotos; nenhuma foto recebida neste turno.",
+                "Fotos contextualizam; indicação e orçamento individual dependem da consulta.",
+                "Lifting facial: referência de R$ 26 mil a R$ 42 mil, não orçamento fechado.",
+                "Valor individual depende da avaliação, plano cirúrgico, equipe, hospital, anestesia e materiais."
+              ],
+              "owner": "patient",
+              "nextExpectedAction": "Enviar as fotos que mencionou, se desejar.",
+              "ambiguity": "",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "LIFTING-PRICE-RANGE-01",
+          "replyWording": "contextual",
+          "selectedReply": "Helena, o lifting facial reposiciona tecidos que perderam sustentação e trata o excesso de pele conforme cada caso. A avaliação permite discutir as possibilidades para as bochechas e as linhas perto da boca. As fotos podem contextualizar seu pedido, mas a indicação e o orçamento individual dependem da consulta. Para ajudar no planejamento dos gastos, a referência para lifting facial é entre R$ 26 mil e R$ 42 mil. É uma referência para planejamento, não é um orçamento fechado. O valor individual é definido após avaliação, conforme o plano cirúrgico, a equipe, o hospital, a anestesia e os materiais.",
+          "gate": {
+            "allowed": true,
+            "reason": "allowed",
+            "body": "Helena, o lifting facial reposiciona tecidos que perderam sustentação e trata o excesso de pele conforme cada caso. A avaliação permite discutir as possibilidades para as bochechas e as linhas perto da boca. As fotos podem contextualizar seu pedido, mas a indicação e o orçamento individual dependem da consulta. Para ajudar no planejamento dos gastos, a referência para lifting facial é entre R$ 26 mil e R$ 42 mil. É uma referência para planejamento, não é um orçamento fechado. O valor individual é definido após avaliação, conforme o plano cirúrgico, a equipe, o hospital, a anestesia e os materiais."
+          }
+        },
+        {
+          "name": "full_history_name_correction",
+          "passed": true,
+          "elapsedMs": 12381,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 12374,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 27007,
+                "input_tokens_details": {
+                  "cache_write_tokens": 6352,
+                  "cached_tokens": 20652
+                },
+                "output_tokens": 476,
+                "output_tokens_details": {
+                  "reasoning_tokens": 173
+                },
+                "total_tokens": 27483
+              },
+              "syntheticDraft": "Elisa, a consulta presencial com a Dra. Amanda custa R$ 500. Ela conversa sobre o que você busca, examina com cuidado e explica as possibilidades, sem obrigação de decidir pela cirurgia.\n\nO pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal.\n\nSe quiser, posso verificar opções de horário com a equipe."
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "standard_reply",
+            "confidence": "high",
+            "automaticAllowed": true,
+            "urgent": false,
+            "professional": "amanda",
+            "procedure": "unknown",
+            "replyCode": "AMANDA-CONSULTA-INFO-01",
+            "replyWording": "contextual",
+            "suggestedReply": "Elisa, a consulta presencial com a Dra. Amanda custa R$ 500. Ela conversa sobre o que você busca, examina com cuidado e explica as possibilidades, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Se quiser, posso verificar opções de horário com a equipe.",
+            "reviewReason": "",
+            "partialAnswer": {
+              "knowledgeIds": [],
+              "pendingQuestion": ""
+            },
+            "conversationState": {
+              "activeTopic": "valor da consulta presencial com a Dra. Amanda",
+              "patientAct": "question",
+              "refersToEventId": "synthetic-long-0",
+              "lastClinicQuestion": "",
+              "lastClinicOffer": "Verificar opções de horário com a equipe, se desejar.",
+              "unresolvedQuestions": [],
+              "factsAlreadyProvided": [
+                "Nome de tratamento solicitado: Elisa, não Helena.",
+                "Pessoa ainda está pesquisando; não pediu agendamento.",
+                "Consulta presencial: R$ 500.",
+                "Avaliação sem obrigação de decidir pela cirurgia.",
+                "Pagamento por Pix, débito ou parcelamento; emissão de nota fiscal."
+              ],
+              "owner": "patient",
+              "nextExpectedAction": "Continuar a pesquisa ou aceitar a oferta de verificar horários.",
+              "ambiguity": "",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "AMANDA-CONSULTA-INFO-01",
+          "replyWording": "contextual",
+          "selectedReply": "Elisa, a consulta presencial com a Dra. Amanda custa R$ 500. Ela conversa sobre o que você busca, examina com cuidado e explica as possibilidades, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Se quiser, posso verificar opções de horário com a equipe.",
+          "gate": {
+            "allowed": true,
+            "reason": "allowed",
+            "body": "Elisa, a consulta presencial com a Dra. Amanda custa R$ 500. Ela conversa sobre o que você busca, examina com cuidado e explica as possibilidades, sem obrigação de decidir pela cirurgia. O pagamento pode ser feito por Pix, débito ou parcelamento, com emissão de nota fiscal. Se quiser, posso verificar opções de horário com a equipe."
+          }
+        },
+        {
+          "name": "full_history_resolved_human_task",
+          "passed": true,
+          "elapsedMs": 5497,
+          "timeoutMs": 20000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 5492,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 26916,
+                "input_tokens_details": {
+                  "cache_write_tokens": 6261,
+                  "cached_tokens": 20652
+                },
+                "output_tokens": 175,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 27091
+              },
+              "syntheticDraft": ""
+            }
+          ],
+          "status": "completed",
+          "decision": {
+            "route": "ignore",
+            "confidence": "high",
+            "automaticAllowed": false,
+            "urgent": false,
+            "professional": "unknown",
+            "procedure": "",
+            "replyCode": "",
+            "replyWording": "contextual",
+            "suggestedReply": "",
+            "reviewReason": "",
+            "partialAnswer": {
+              "knowledgeIds": [],
+              "pendingQuestion": ""
+            },
+            "conversationState": {
+              "activeTopic": "Documento recebido; assunto encerrado",
+              "patientAct": "closing",
+              "refersToEventId": "synthetic-resolved",
+              "lastClinicQuestion": "",
+              "lastClinicOffer": "",
+              "unresolvedQuestions": [],
+              "factsAlreadyProvided": [
+                "Nome de tratamento solicitado: Elisa, não Helena.",
+                "Pessoa estava apenas pesquisando e organizando dúvidas.",
+                "Equipe humana informou envio do documento por e-mail e resolução da solicitação.",
+                "Pessoa confirmou recebimento do documento e encerrou o assunto."
+              ],
+              "owner": "none",
+              "nextExpectedAction": "",
+              "ambiguity": "",
+              "contextConfidence": "high"
+            }
+          },
+          "replyCode": "",
+          "replyWording": "contextual"
+        },
+        {
+          "name": "classification",
+          "passed": true,
+          "elapsedMs": 4389,
+          "timeoutMs": 15000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 4385,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 2342,
+                "input_tokens_details": {
+                  "cache_write_tokens": 2339,
+                  "cached_tokens": 0
+                },
+                "output_tokens": 132,
+                "output_tokens_details": {
+                  "reasoning_tokens": 34
+                },
+                "total_tokens": 2474
+              }
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "name": "followup_declined",
+          "passed": true,
+          "elapsedMs": 2330,
+          "timeoutMs": 12000,
+          "requests": [
+            {
+              "httpStatus": 200,
+              "elapsedMs": 2330,
+              "model": "gpt-6.1-sol",
+              "status": "completed",
+              "usage": {
+                "input_tokens": 535,
+                "input_tokens_details": {
+                  "cache_write_tokens": 0,
+                  "cached_tokens": 0
+                },
+                "output_tokens": 28,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 563
+              }
+            }
+          ],
+          "status": "completed",
+          "decision": "cancel_for_review"
+        }
+      ],
+      "audioCheck": {
+        "status": "passed",
+        "syntheticOnly": true,
+        "patientMessagesSent": 0,
+        "model": "whisper-1",
+        "apiCalls": 3,
+        "elapsedMs": 4402,
+        "checks": [
+          {
+            "name": "address",
+            "passed": true,
+            "apiCalls": 1,
+            "model": "whisper-1",
+            "elapsedMs": 744,
+            "transcription": "Qual é o endereço da Clínica Livre?",
+            "transcriptStatus": "transcribed",
+            "autoReplyEligible": true,
+            "quality": {
+              "kind": "segment_confidence",
+              "segmentCount": 1,
+              "fieldsValid": true,
+              "textAgrees": true,
+              "lowestSegmentMeanLogprob": -0.4135240614414215,
+              "highestNoSpeechProbability": 0.0008678215090185404,
+              "highestCompressionRatio": 0.8260869383811951
+            },
+            "fixtureSha256": "e7309c43441a0fa8edebbc7bdfb38651d5f7c17fa9911644f681284d21b4f9a0"
+          },
+          {
+            "name": "context",
+            "passed": true,
+            "apiCalls": 1,
+            "model": "whisper-1",
+            "elapsedMs": 2650,
+            "transcription": "Olá, quero deixar claro que não desejo agendar uma consulta agora. Estou apenas organizando as minhas dúvidas para uma conversa futura. Durante a semana, só consigo conversar depois das 15 horas, porque trabalho pela manhã. Meu nome é Elisa, e prefiro ser chamada assim. A equipe já confirmou que o documento foi enviado, então essa parte está resolvida. Ainda quero entender como funciona a avaliação presencial e o que devo levar no dia em que decidir marcar. Por enquanto, não procure horários para mim. Vou ler as informações com calma e depois entrar em contato novamente. Obrigada por guardar esse contexto e respeitar o meu tempo.",
+            "transcriptStatus": "transcribed",
+            "autoReplyEligible": true,
+            "quality": {
+              "kind": "segment_confidence",
+              "segmentCount": 9,
+              "fieldsValid": true,
+              "textAgrees": true,
+              "lowestSegmentMeanLogprob": -0.3264618515968323,
+              "highestNoSpeechProbability": 0.014948219060897827,
+              "highestCompressionRatio": 1.3806818723678589
+            },
+            "fixtureSha256": "8b3d5a7bfe2148eb579a0db08e1eebef28fba744dcf177f5969ba61b47e20cf4"
+          },
+          {
+            "name": "silence",
+            "passed": true,
+            "apiCalls": 1,
+            "model": "whisper-1",
+            "elapsedMs": 1003,
+            "transcription": "you",
+            "transcriptStatus": "uncertain",
+            "autoReplyEligible": false,
+            "quality": {
+              "kind": "segment_confidence",
+              "segmentCount": 1,
+              "fieldsValid": true,
+              "textAgrees": true,
+              "lowestSegmentMeanLogprob": -0.5146503448486328,
+              "highestNoSpeechProbability": 0.9425907731056213,
+              "highestCompressionRatio": 0.27272728085517883
+            },
+            "fixtureSha256": "d303811b8c84619667cd0501342f84ec6cbe69f7aa3856dcf52fabda374c92b8"
+          }
+        ]
+      }
+    },
+    "gateReceiptTransport": {
+      "source": "authenticated Netlify deployment UI websocket",
+      "parts": 2,
+      "reassembledWithoutSeparator": true,
+      "jsonParsed": true
+    },
+    "smoke": {
+      "checkedAt": "2026-10-14T10:00:48.4582265Z",
+      "siteStatus": 200,
+      "health": {
+        "ok": true,
+        "service": "ycloud-webhook",
+        "apiKeyConfigured": true,
+        "signatureProtection": "active",
+        "sheetsWebhookConfigured": true,
+        "sheetsSecretConfigured": true,
+        "openAIConfigured": true,
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled",
+        "reviewAlertConfigured": true,
+        "appointmentReviewEnabled": true,
+        "automationMode": "active",
+        "conversionExperience": "bruna-conversion-v1",
+        "processingMode": "durable_background_intake",
+        "contactPreferencesGuard": "active",
+        "internalPhoneExclusionConfigured": true,
+        "leadDeliveryRetry": "single_idempotent_transient",
+        "leadDeliveryFallback": "acquisition_only",
+        "leadFailureEmailAlert": "required_after_retries",
+        "messageCostObservability": "delivered_event_idempotent"
+      },
+      "unsignedStatus": 401,
+      "syntheticOnly": true,
+      "patientMessagesSent": 0
+    }
+  },
+  "invalidTokenCheck": {
+    "checkedAt": "2026-10-14T09:57:09.3619029Z",
+    "statusCode": 200,
+    "invalidLink": true,
+    "noMessageOrPreferenceChanged": true
+  },
+  "leads": {
+    "before": {
+      "schemaVersion": 1,
+      "kind": "read_only_live_leads_preflight",
+      "releaseCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+      "recordedAt": "2026-10-14T09:53:51Z",
+      "observation": {
+        "startedAt": "2026-10-14T09:47:13Z",
+        "completedAround": "2026-10-14T09:51:00Z",
+        "completionTimeApproximate": true,
+        "timeZone": "America/Sao_Paulo",
+        "localInterval": "14/10/2026 06:47–06:51 BRT",
+        "atomicSnapshot": false
+      },
+      "source": {
+        "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+        "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit",
+        "title": "LEADS",
+        "mimeType": "application/vnd.google-apps.spreadsheet",
+        "modifiedTimeAtMetadataRead": "2026-10-14T09:45:35.605Z",
+        "locale": "pt_BR",
+        "timeZone": "America/Sao_Paulo"
+      },
+      "comparisonBaseline": {
+        "path": "auditorias/bruna-eficiencia-integridade-2026-10-14/PREFLIGHT.json",
+        "checkedAt": "2026-10-14T03:16:56.000Z"
+      },
+      "structure": {
+        "sheetCount": 47,
+        "firstSheet": "IMPORT_GOOGLE_ADS",
+        "headers": [
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "sheetId": 249549543,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 56,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 55,
+            "headers": [
+              "Opportunity ID",
+              "Telefone (E.164)",
+              "Telefone hash",
+              "Profissional",
+              "Aba visível",
+              "Linha visível",
+              "Estado",
+              "Fase",
+              "Relacionamento",
+              "Responsável atual",
+              "Aguardando ação de",
+              "Objeção principal",
+              "Resumo automático",
+              "Próxima ação automática",
+              "Referência inicial",
+              "Plataforma inicial",
+              "GCLID",
+              "GBRAID",
+              "WBRAID",
+              "Atribuição fixada em",
+              "Primeiro Event ID",
+              "Último Event ID",
+              "Versão",
+              "Criado em",
+              "Atualizado em",
+              "Encerrado em",
+              "Encerrado em (legado duplicado)",
+              "Origem inicial canônica",
+              "Canal inicial",
+              "Caminho de conversão inicial",
+              "Campanha inicial",
+              "Grupo/conjunto inicial",
+              "Criativo inicial",
+              "Meta Campaign ID inicial",
+              "Meta Adset ID inicial",
+              "Meta Ad ID inicial",
+              "Landing page inicial",
+              "Página do CTA inicial",
+              "Local do CTA inicial",
+              "Confiança inicial",
+              "Motivo fallback inicial",
+              "Primeiro toque em",
+              "Origem da conversa atual",
+              "Canal da conversa atual",
+              "Caminho de conversão atual",
+              "Campanha atual",
+              "Grupo/conjunto atual",
+              "Criativo atual",
+              "Meta Campaign ID atual",
+              "Meta Adset ID atual",
+              "Meta Ad ID atual",
+              "Último toque em",
+              "Status da jornada",
+              "Origem informada pelo paciente",
+              "Confiança da origem informada"
+            ]
+          },
+          {
+            "sheet": "_WHATSAPP_DUVIDAS",
+            "sheetId": 2026080905,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 15,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 15,
+            "headers": [
+              "Event ID",
+              "Telefone",
+              "Paciente",
+              "Recebida em",
+              "Pergunta",
+              "Assunto",
+              "Contexto",
+              "Risco",
+              "Esclarecimentos feitos",
+              "Status",
+              "Resposta humana",
+              "ID da regra candidata",
+              "Atualizada em",
+              "Prioridade",
+              "Procedimento"
+            ]
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "sheetId": 2026080903,
+            "grid": {
+              "rowCount": 500,
+              "columnCount": 22,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 22,
+            "headers": [
+              "ID da regra",
+              "Status",
+              "Modo de uso",
+              "Risco",
+              "Assunto",
+              "Perguntas equivalentes",
+              "Resposta aprovada",
+              "Limites / quando não usar",
+              "Procedimento",
+              "Aprovado por",
+              "Aprovado em",
+              "Válida até",
+              "Usos",
+              "Último uso",
+              "Correções",
+              "Origem",
+              "Versão da regra",
+              "Estado de promoção",
+              "Versão do snapshot",
+              "Aprovador da promoção",
+              "Promovida em",
+              "Substitui"
+            ]
+          },
+          {
+            "sheet": "_WHATSAPP_CLASSIFICACAO",
+            "sheetId": 844451174,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 20,
+            "headers": [
+              "Telefone",
+              "Linha do lead",
+              "Última atividade",
+              "Classificar após",
+              "Estado",
+              "Lease até",
+              "Última classificação",
+              "Até Message ID",
+              "Último Message ID",
+              "Quantidade de mensagens",
+              "Último status automático",
+              "Último resumo automático",
+              "Última próxima ação automática",
+              "Último erro",
+              "Tentativas",
+              "Lease token",
+              "Opportunity ID",
+              "Profissional",
+              "Aba do lead",
+              "Versão reivindicada"
+            ]
+          },
+          {
+            "sheet": "_GOOGLE_ADS_EVENTOS",
+            "sheetId": 2026081112,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 15,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 15,
+            "headers": [
+              "Event ID",
+              "Opportunity ID",
+              "Marco",
+              "Tipo de identificador",
+              "Identificador do clique",
+              "Nome da conversão",
+              "Data e hora da conversão",
+              "Valor",
+              "Moeda",
+              "ID da transação",
+              "Estado",
+              "Último erro",
+              "Criado em",
+              "Atualizado em",
+              "Profissional"
+            ]
+          },
+          {
+            "sheet": "IMPORT_GOOGLE_ADS",
+            "sheetId": 2026081113,
+            "grid": {
+              "rowCount": 993,
+              "columnCount": 8,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 8,
+            "headers": [
+              "ID da transação",
+              "GCLID",
+              "GBRAID",
+              "WBRAID",
+              "Nome da conversão",
+              "Data e hora da conversão",
+              "Valor (R$)",
+              "Moeda"
+            ]
+          },
+          {
+            "sheet": "_WHATSAPP_RETOMADAS",
+            "sheetId": 1322578945,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 18,
+            "headers": [
+              "Chave diária",
+              "Data do e-mail",
+              "Telefone",
+              "Message ID",
+              "Etapa",
+              "Horário planejado",
+              "Status do lead",
+              "Resumo",
+              "Sugestão",
+              "Modo",
+              "Status do envio",
+              "Data/hora programada",
+              "Última tentativa",
+              "Enviado em",
+              "Erro do envio",
+              "Aprovada pela equipe em",
+              "Origem da aprovação",
+              "Template automático seguro"
+            ]
+          },
+          {
+            "sheet": "Consultas",
+            "sheetId": 2026072801,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 83,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 80,
+            "headers": [
+              "ID da consulta",
+              "Telefone (E.164)",
+              "Nome do paciente",
+              "Profissional",
+              "Tipo de consulta",
+              "Tema / procedimento",
+              "Local / modalidade",
+              "Data agendada",
+              "Horário agendado",
+              "Status",
+              "Data realizada",
+              "Origem do lead",
+              "Referência da campanha",
+              "Retomada pelo bot",
+              "Data da próxima retomada",
+              "Última retomada",
+              "Próxima ação",
+              "Resumo administrativo",
+              "Última atualização",
+              "Atualizado por",
+              "E-mail",
+              "Data de nascimento",
+              "Aniversário pelo bot",
+              "Último aniversário contatado",
+              "Canal preferido",
+              "Consentimento para contato",
+              "Checagem pós-consulta",
+              "Data prevista da checagem",
+              "Data da checagem realizada",
+              "Ficaram dúvidas?",
+              "Resultado da checagem",
+              "Periodicidade da retomada",
+              "Retomadas encerradas?",
+              "Motivo do encerramento",
+              "Lembrete 48h enviado",
+              "Lembrete no dia enviado",
+              "Última tentativa de lembrete",
+              "Erro do lembrete",
+              "Agendamento monitorado",
+              "Chave do lead de origem",
+              "Fonte da sincronização",
+              "Sincronizado em",
+              "Status da sincronização",
+              "Pós-consulta elegível em",
+              "Pós-consulta enviado",
+              "Última tentativa pós-consulta",
+              "Erro pós-consulta",
+              "Pós-consulta suprimido em",
+              "Confirmação da paciente",
+              "Última interação humana",
+              "Motivo de supressão",
+              "Sala",
+              "Duração (min)",
+              "ID da agenda Google",
+              "ID do evento Google",
+              "Sincronização Google Agenda",
+              "Erro Google Agenda",
+              "Não comparecimento registrado em",
+              "Retomada de ausência elegível em",
+              "Retomada de ausência enviada",
+              "Última tentativa de retomada de ausência",
+              "Erro na retomada de ausência",
+              "Retomada de ausência suprimida em",
+              "Retomada manual de ausência sugerida em",
+              "Opportunity ID",
+              "Revisão comercial prevista em",
+              "Resultado comercial",
+              "Procedimento fechado",
+              "Data do fechamento",
+              "Valor fechado (R$)",
+              "Próxima revisão comercial",
+              "Revisão comercial concluída em",
+              "Observação comercial",
+              "Erro da revisão comercial",
+              "",
+              "",
+              "",
+              "Lembrete cancelado em",
+              "Motivo do cancelamento do lembrete",
+              "Agendamento do lembrete cancelado",
+              "Data da cirurgia realizada",
+              "Data do orçamento enviado",
+              "Próxima checagem após cirurgia"
+            ]
+          },
+          {
+            "sheet": "_AGENDAMENTOS_PENDENTES",
+            "sheetId": 1885360730,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 9,
+            "headers": [
+              "",
+              "Event ID",
+              "Opportunity ID",
+              "Telefone",
+              "Profissional",
+              "Data escolhida",
+              "Horário escolhido",
+              "Estado",
+              "Criado em",
+              "Confirmado em"
+            ]
+          },
+          {
+            "sheet": "_WHATSAPP_COMPROMISSOS",
+            "sheetId": 1268271809,
+            "grid": {
+              "rowCount": 998,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 14,
+            "headers": [
+              "Event ID",
+              "Telefone",
+              "Tipo",
+              "Resumo operacional",
+              "Responsável",
+              "Criado em",
+              "Prazo",
+              "Status",
+              "Resolvido em",
+              "Origem",
+              "Motivo da resolução",
+              "Opportunity ID",
+              "Profissional",
+              "Request ID"
+            ]
+          },
+          {
+            "sheet": "_CUIDADOS_PROGRAMADOS",
+            "sheetId": 669273333,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 22,
+            "headers": [
+              "Chave do cuidado",
+              "Estado",
+              "Rever em",
+              "Telefone",
+              "Profissional",
+              "Opportunity ID",
+              "ID da consulta",
+              "Tipo",
+              "Data do marco",
+              "Mensagem aprovada",
+              "Programado para",
+              "Aprovado em",
+              "Contexto aprovado",
+              "Última mensagem",
+              "Registrado em",
+              "Tentado em",
+              "Enviado em",
+              "Erro",
+              "Texto efetivo",
+              "Origem da decisão",
+              "Categoria do marco",
+              "Dia da sugestão"
+            ]
+          },
+          {
+            "sheet": "Funil Comercial",
+            "sheetId": 249078399,
+            "grid": {
+              "rowCount": 526,
+              "columnCount": 20,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 20,
+            "headers": [
+              "Opportunity ID",
+              "Data do contato",
+              "Plataforma",
+              "Campanha",
+              "Criativo",
+              "CTA",
+              "Destino",
+              "Situação atual",
+              "Data situação atual",
+              "Data qualificação",
+              "Data agendamento",
+              "Data consulta realizada",
+              "Data fechamento",
+              "Valor contratado (R$)",
+              "Primeira resposta humana",
+              "Minutos até 1ª resposta",
+              "Follow-up realizado?",
+              "Data/hora follow-up",
+              "Motivo de não avanço",
+              "Observação comercial"
+            ]
+          },
+          {
+            "sheet": "_WHATSAPP_ATENDIMENTO",
+            "sheetId": 627850573,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 5,
+            "headers": [
+              "Telefone",
+              "Data local",
+              "Data e hora",
+              "Message ID",
+              "Event ID"
+            ]
+          },
+          {
+            "sheet": "Revisões do Bot",
+            "sheetId": 2026080904,
+            "grid": {
+              "rowCount": 500,
+              "columnCount": 13,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 13,
+            "headers": [
+              "Tipo",
+              "Prioridade",
+              "Data e hora",
+              "Paciente",
+              "Telefone",
+              "Contexto",
+              "Sugestão do bot",
+              "Confiança",
+              "Status",
+              "Decisão da equipe",
+              "Observação da equipe",
+              "Chave",
+              "Atualizado em"
+            ]
+          }
+        ],
+        "allSheets": [
+          {
+            "sheetId": 2026081113,
+            "title": "IMPORT_GOOGLE_ADS",
+            "index": 0,
+            "hidden": false,
+            "grid": {
+              "rowCount": 993,
+              "columnCount": 8,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2138415259,
+            "title": "_WHATSAPP_TEMPLATE_EVENTOS",
+            "index": 1,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 669273333,
+            "title": "_CUIDADOS_PROGRAMADOS",
+            "index": 2,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1837444666,
+            "title": "_WHATSAPP_CUSTOS",
+            "index": 3,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1042,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 494033567,
+            "title": "_GOOGLE_ADS_AJUSTE_RECIBOS",
+            "index": 4,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1885360730,
+            "title": "_AGENDAMENTOS_PENDENTES",
+            "index": 5,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 928526411,
+            "title": "AJUSTES_GOOGLE_ADS",
+            "index": 6,
+            "hidden": false,
+            "grid": {
+              "rowCount": 998,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1726719887,
+            "title": "_WHATSAPP_ROTAS_EXTERNAS",
+            "index": 7,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1108709019,
+            "title": "_OPORTUNIDADE_MARCOS",
+            "index": 8,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2121871547,
+            "title": "_FUNIL_MANUAL_ORFAOS",
+            "index": 9,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 490051591,
+            "title": "_FUNIL_CANONICO",
+            "index": 10,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 158077413,
+            "title": "_BOT_METRICAS",
+            "index": 11,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 28,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 526433544,
+            "title": "_INTEGRATION_HEALTH_SYNTHETIC",
+            "index": 12,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1487814714,
+            "title": "_WHATSAPP_OPERACAO_EVENTOS",
+            "index": 13,
+            "hidden": false,
+            "grid": {
+              "rowCount": 2977,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1920045328,
+            "title": "_WHATSAPP_CLASSIFICACAO_EXCECOES",
+            "index": 14,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 968183893,
+            "title": "_CONTATOS_NAO_LEADS",
+            "index": 15,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 211234567,
+            "title": "IMPORT_GCLID",
+            "index": 16,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 6,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 249549543,
+            "title": "_CRM_OPORTUNIDADES",
+            "index": 17,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 56,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 846013312,
+            "title": "Central de Atendimento",
+            "index": 18,
+            "hidden": false,
+            "grid": {
+              "rowCount": 999,
+              "columnCount": 26,
+              "frozenRowCount": 1,
+              "frozenColumnCount": 5
+            }
+          },
+          {
+            "sheetId": 1268271809,
+            "title": "_WHATSAPP_COMPROMISSOS",
+            "index": 19,
+            "hidden": true,
+            "grid": {
+              "rowCount": 998,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1704096200,
+            "title": "_WHATSAPP_ATENDIMENTO_HUMANO",
+            "index": 20,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1771,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 263618581,
+            "title": "_WHATSAPP_ALERTAS_EMAIL",
+            "index": 21,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1972891026,
+            "title": "Google Ads - Conversões",
+            "index": 22,
+            "hidden": false,
+            "grid": {
+              "rowCount": 967,
+              "columnCount": 85,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1322578945,
+            "title": "_WHATSAPP_RETOMADAS",
+            "index": 23,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 799794372,
+            "title": "_WHATSAPP_MENSAGENS",
+            "index": 24,
+            "hidden": true,
+            "grid": {
+              "rowCount": 4380,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 844451174,
+            "title": "_WHATSAPP_CLASSIFICACAO",
+            "index": 25,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 627850573,
+            "title": "_WHATSAPP_ATENDIMENTO",
+            "index": 26,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1445856331,
+            "title": "_WHATSAPP_EVENTOS",
+            "index": 27,
+            "hidden": true,
+            "grid": {
+              "rowCount": 2455,
+              "columnCount": 41,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1528355910,
+            "title": "Orientações",
+            "index": 28,
+            "hidden": false,
+            "grid": {
+              "rowCount": 1001,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1602860202,
+            "title": "Saúde das Integrações",
+            "index": 29,
+            "hidden": false,
+            "grid": {
+              "rowCount": 100,
+              "columnCount": 8,
+              "frozenRowCount": 4
+            }
+          },
+          {
+            "sheetId": 249078399,
+            "title": "Funil Comercial",
+            "index": 30,
+            "hidden": false,
+            "grid": {
+              "rowCount": 526,
+              "columnCount": 20,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 0,
+            "title": "Shit1",
+            "index": 31,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1146,
+              "columnCount": 24,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1852729041,
+            "title": "Copy of Shit1",
+            "index": 32,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1152,
+              "columnCount": 24,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1359733950,
+            "title": "Sheet2",
+            "index": 33,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26
+            }
+          },
+          {
+            "sheetId": 994820711,
+            "title": "Painel Econômico",
+            "index": 34,
+            "hidden": false,
+            "grid": {
+              "rowCount": 1208,
+              "columnCount": 12,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1801059936,
+            "title": "Datas Consulta",
+            "index": 35,
+            "hidden": false,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 6
+            }
+          },
+          {
+            "sheetId": 2026072801,
+            "title": "Consultas",
+            "index": 36,
+            "hidden": false,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 83,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1782665436,
+            "title": "Leads Dr. Daniel",
+            "index": 37,
+            "hidden": false,
+            "grid": {
+              "rowCount": 997,
+              "columnCount": 58,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026080303,
+            "title": "Painel do Bot",
+            "index": 38,
+            "hidden": false,
+            "grid": {
+              "rowCount": 100,
+              "columnCount": 12,
+              "frozenRowCount": 3,
+              "hideGridlines": true
+            }
+          },
+          {
+            "sheetId": 2026080901,
+            "title": "_LEADS_DUPLICADOS_ARQUIVO",
+            "index": 39,
+            "hidden": true,
+            "grid": {
+              "rowCount": 100,
+              "columnCount": 51,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026080902,
+            "title": "_LEADS_CONTINUIDADE_ARQUIVO",
+            "index": 40,
+            "hidden": true,
+            "grid": {
+              "rowCount": 100,
+              "columnCount": 41,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026080903,
+            "title": "Respostas Aprovadas",
+            "index": 41,
+            "hidden": false,
+            "grid": {
+              "rowCount": 500,
+              "columnCount": 22,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026080904,
+            "title": "Revisões do Bot",
+            "index": 42,
+            "hidden": false,
+            "grid": {
+              "rowCount": 500,
+              "columnCount": 13,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026080905,
+            "title": "_WHATSAPP_DUVIDAS",
+            "index": 43,
+            "hidden": false,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 15,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026080906,
+            "title": "_WHATSAPP_USO_RESPOSTAS",
+            "index": 44,
+            "hidden": false,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 7,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026081111,
+            "title": "_LEAD_FASE_EVENTOS",
+            "index": 45,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1206,
+              "columnCount": 13,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026081112,
+            "title": "_GOOGLE_ADS_EVENTOS",
+            "index": 46,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 15,
+              "frozenRowCount": 1
+            }
+          }
+        ]
+      },
+      "crm": {
+        "rows": 556,
+        "uniqueOpportunityIds": 556,
+        "professionals": {
+          "amanda": 526,
+          "nonpatient": 19,
+          "external": 4,
+          "daniel": 7
+        },
+        "states": {
+          "open": 532,
+          "voided": 24
+        },
+        "phases": {
+          "Novo": 390,
+          "Qualificado": 89,
+          "Não qualificado": 40,
+          "Paciente convertido": 8,
+          "Consulta agendada": 23,
+          "Consulta realizada": 6
+        },
+        "openIdentityInvariant": {
+          "open": 532,
+          "missingHashes": 0,
+          "duplicateKeys": 0
+        }
+      },
+      "questions": {
+        "rows": 38,
+        "states": {
+          "Aguardando resposta humana": 37,
+          "Aguardando esclarecimento": 1
+        }
+      },
+      "classification": {
+        "rows": 582,
+        "states": {
+          "done": 553,
+          "excluded": 24,
+          "waiting_messages": 1,
+          "orphaned": 4
+        },
+        "pending": 0,
+        "running": 0
+      },
+      "knowledge": {
+        "rows": 5,
+        "statuses": {
+          "Aprovada": 5
+        },
+        "modes": {
+          "Automática": 5
+        },
+        "risks": {
+          "Baixo": 5
+        },
+        "promotionStates": {
+          "active": 5
+        }
+      },
+      "ads": {
+        "ledger": 18,
+        "states": {
+          "quarantined_legacy": 5,
+          "invalidated_downgraded_to_new": 2,
+          "ready": 11
+        },
+        "exportRows": 11,
+        "uniqueExportTransactions": 11,
+        "uniqueLedgerEvents": 18,
+        "readyUniqueTransactions": 11,
+        "singleClickIdentifiers": 11,
+        "readyMatchedExport": 11,
+        "exportWithoutReady": 0,
+        "readyWithoutExport": 0,
+        "readyClickTypes": {
+          "GCLID": 11
+        },
+        "readyErrors": 0,
+        "readyOpportunitiesExist": 11,
+        "acceptanceVerified": false
+      },
+      "integrationHealth": {
+        "markedVsExportedDifference": 0,
+        "conflictingClickIds": 0,
+        "repeatedPhones": 0,
+        "activeOpportunityVsCanonicalFunnelDifference": 0,
+        "pastSlotsStillAvailable": 0,
+        "lastCapturedContact": "14/10/2026 05:42",
+        "lastPreparedConversion": "2026-10-05 14:50:57-03:00",
+        "googleAdsAcceptanceVerified": false
+      },
+      "queues": {
+        "retomadas": {
+          "rows": 469,
+          "modes": {
+            "Automático": 202,
+            "Manual": 263,
+            "Automático aprovado": 4
+          },
+          "states": {
+            "Enviada": 84,
+            "Ação manual": 200,
+            "Cancelada — human_review_required": 23,
+            "Cancelada — no_inbound_message": 2,
+            "Cancelada — suspended_in_leads": 1,
+            "Cancelada — whatsapp_window_closed": 45,
+            "Cancelada — auditoria de contexto": 59,
+            "Cancelada — conversation_changed": 8,
+            "Cancelada — solicitação da equipe": 4,
+            "Cancelada — primeira retomada manual já realizada": 4,
+            "Cancelada — nunca retomar": 2,
+            "Falha — revisar": 8,
+            "Cancelada — duplicate_active_followup": 1,
+            "Cancelada — patient_closed": 2,
+            "Cancelada — already_followed_up": 2,
+            "Cancelada — sensitive_or_clinical_context": 5,
+            "Cancelada — human_takeover_active": 19
+          },
+          "cancelledTotal": 177,
+          "nonemptyRows": 469,
+          "sourceRowSpan": 503
+        },
+        "commitments": {
+          "rows": 250,
+          "states": {
+            "Resolvido": 138,
+            "Pendente": 112
+          }
+        },
+        "care": {
+          "rows": 0
+        },
+        "reviews": {
+          "rows": 82,
+          "states": {
+            "Aberta": 77,
+            "Concluída": 5
+          }
+        }
+      },
+      "appointments": {
+        "consultations": {
+          "rows": 65,
+          "uniqueIds": 65,
+          "professionals": {
+            "Dra. Amanda": 51,
+            "Dr. Henrique": 9,
+            "Dra. Marina": 4,
+            "Dr. Laerte": 1
+          },
+          "statuses": {
+            "Realizada": 32,
+            "Aguardando confirmação": 1,
+            "Confirmada": 9,
+            "Agendada": 19,
+            "Remarcada": 1
+          },
+          "withoutStatus": 3,
+          "syncStates": {
+            "Sincronizado": 2,
+            "Manual": 4
+          },
+          "calendarStates": {
+            "Sincronizado em 14/08/2026 13:09": 9,
+            "Erro de sincronização": 3,
+            "Pendente — completar profissional, data e horário": 1,
+            "Sincronizado": 8,
+            "Sincronizado manualmente em 30/08/2026 15:38": 2
+          },
+          "opportunityLinks": 15
+        },
+        "pendingSelections": {
+          "rows": 19,
+          "columnANonempty": 19,
+          "columnBNonempty": 19,
+          "columnG": {
+            "selected_pending_human": 16
+          },
+          "columnHNonempty": 19,
+          "columnHDateLike": 19,
+          "columnINonempty": 0,
+          "columnJNonempty": 0,
+          "actualStateColumnGBlank": 3
+        }
+      },
+      "deltasFromBaseline": {
+        "crmRows": 1,
+        "amanda": 1,
+        "open": 1,
+        "Novo": 1,
+        "classificationRows": 1,
+        "classificationDone": 1,
+        "questions": 0,
+        "approvedFacts": 0,
+        "adsLedger": 0,
+        "adsReady": 0,
+        "adsExport": 0,
+        "allOtherPreviouslyMeasuredCrmPhasesUnchanged": true
+      },
+      "preexistingFindings": [
+        {
+          "id": "pending_appointment_header_shift",
+          "sheet": "_AGENDAMENTOS_PENDENTES",
+          "observation": "A1 empty; headers are in B:J, but records and the unchanged code contract use A:I. Nineteen nonempty records in A/B; sixteen selected_pending_human states in G; nineteen date-like timestamps in H; I/J empty.",
+          "codeReference": "apps-script/clinica-liv-leads/OpportunityStore.gs:2320",
+          "introducedByRelease": false,
+          "actionTaken": "none"
+        },
+        {
+          "id": "consultation_status_missing",
+          "sheet": "Consultas",
+          "count": 3,
+          "actionTaken": "none"
+        },
+        {
+          "id": "calendar_sync_error",
+          "sheet": "Consultas",
+          "count": 3,
+          "actionTaken": "none",
+          "note": "Only the Sheet's synchronization status was read; no Calendar execution or repair."
+        },
+        {
+          "id": "consultation_opportunity_coverage",
+          "sheet": "Consultas",
+          "rows": 65,
+          "linked": 15,
+          "unlinked": 50,
+          "actionTaken": "none",
+          "note": "Historical coverage observed, not a release regression or proof of current Calendar state."
+        },
+        {
+          "id": "followup_failures_for_review",
+          "sheet": "_WHATSAPP_RETOMADAS",
+          "count": 8,
+          "actionTaken": "none"
+        },
+        {
+          "id": "classification_recoverable_states",
+          "sheet": "_WHATSAPP_CLASSIFICACAO",
+          "waitingMessages": 1,
+          "orphaned": 4,
+          "pendingOrRunning": 0,
+          "actionTaken": "none"
+        }
+      ],
+      "reads": {
+        "headers": [
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "'_CRM_OPORTUNIDADES'!A1:BD1"
+          },
+          {
+            "sheet": "_WHATSAPP_DUVIDAS",
+            "range": "'_WHATSAPP_DUVIDAS'!A1:O1"
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "range": "'Respostas Aprovadas'!A1:V1"
+          },
+          {
+            "sheet": "_WHATSAPP_CLASSIFICACAO",
+            "range": "'_WHATSAPP_CLASSIFICACAO'!A1:T1"
+          },
+          {
+            "sheet": "_GOOGLE_ADS_EVENTOS",
+            "range": "'_GOOGLE_ADS_EVENTOS'!A1:O1"
+          },
+          {
+            "sheet": "IMPORT_GOOGLE_ADS",
+            "range": "IMPORT_GOOGLE_ADS!A1:H1"
+          },
+          {
+            "sheet": "_WHATSAPP_RETOMADAS",
+            "range": "'_WHATSAPP_RETOMADAS'!A1:Z1"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "Consultas!A1:CE1"
+          },
+          {
+            "sheet": "_AGENDAMENTOS_PENDENTES",
+            "range": "'_AGENDAMENTOS_PENDENTES'!A1:Z1"
+          },
+          {
+            "sheet": "_WHATSAPP_COMPROMISSOS",
+            "range": "'_WHATSAPP_COMPROMISSOS'!A1:Z1"
+          },
+          {
+            "sheet": "_CUIDADOS_PROGRAMADOS",
+            "range": "'_CUIDADOS_PROGRAMADOS'!A1:Z1"
+          },
+          {
+            "sheet": "Funil Comercial",
+            "range": "'Funil Comercial'!A1:T1"
+          },
+          {
+            "sheet": "_WHATSAPP_ATENDIMENTO",
+            "range": "'_WHATSAPP_ATENDIMENTO'!A1:Z1"
+          },
+          {
+            "sheet": "Revisões do Bot",
+            "range": "'Revisões do Bot'!A1:M1"
+          }
+        ],
+        "aggregates": [
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "A2:A700"
+          },
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "C2:C700"
+          },
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "D2:D700"
+          },
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "G2:H700"
+          },
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "A701:A1000"
+          },
+          {
+            "sheet": "_WHATSAPP_DUVIDAS",
+            "range": "J2:J100"
+          },
+          {
+            "sheet": "_WHATSAPP_DUVIDAS",
+            "range": "J101:J1000"
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "range": "A2:D100"
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "range": "Q2:S100"
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "range": "A101:A500"
+          },
+          {
+            "sheet": "_WHATSAPP_CLASSIFICACAO",
+            "range": "E2:E700"
+          },
+          {
+            "sheet": "_WHATSAPP_CLASSIFICACAO",
+            "range": "E701:E1000"
+          },
+          {
+            "sheet": "_GOOGLE_ADS_EVENTOS",
+            "range": "A2:O100"
+          },
+          {
+            "sheet": "_GOOGLE_ADS_EVENTOS",
+            "range": "A101:A1000"
+          },
+          {
+            "sheet": "IMPORT_GOOGLE_ADS",
+            "range": "A2:H100"
+          },
+          {
+            "sheet": "IMPORT_GOOGLE_ADS",
+            "range": "A101:A993"
+          },
+          {
+            "sheet": "Saúde das Integrações",
+            "range": "A5:C35"
+          },
+          {
+            "sheet": "_WHATSAPP_RETOMADAS",
+            "range": "J2:K1000"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "A2:A1000"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "D2:D1000"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "H2:J1000"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "AQ2:AQ1000"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "BD2:BD1000"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "BM2:BM1000"
+          },
+          {
+            "sheet": "_AGENDAMENTOS_PENDENTES",
+            "range": "A2:B1000"
+          },
+          {
+            "sheet": "_AGENDAMENTOS_PENDENTES",
+            "range": "G2:J1000"
+          },
+          {
+            "sheet": "_WHATSAPP_COMPROMISSOS",
+            "range": "G2:H998"
+          },
+          {
+            "sheet": "_CUIDADOS_PROGRAMADOS",
+            "range": "B2:C1000"
+          },
+          {
+            "sheet": "Revisões do Bot",
+            "range": "I2:I500"
+          }
+        ],
+        "emptyTailsConfirmed": [
+          "CRM A701:A1000",
+          "classification E701:E1000",
+          "questions J101:J1000",
+          "knowledge A101:A500",
+          "Ads ledger A101:A1000",
+          "Ads export A101:A993"
+        ]
+      },
+      "boundaries": {
+        "externalWrites": 0,
+        "operationalRoutinesRun": 0,
+        "patientMessagesRead": 0,
+        "patientMessagesSent": 0,
+        "patientTextExported": false,
+        "identifyingRecordValuesSaved": false,
+        "googleAdsImportAcceptanceVerified": false,
+        "calendarLiveStateVerified": false,
+        "versionedFilesEdited": false
+      },
+      "conclusion": "Core before-release structural and attribution invariants confirmed. One new opportunity and one completed classification reflect live activity since the earlier baseline. Preexisting queue/agenda observations are recorded for comparison; no operational corrections performed."
+    },
+    "after": {
+      "schemaVersion": 1,
+      "kind": "read_only_live_leads_postflight",
+      "releaseCommit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+      "recordedAt": "2026-10-14T10:01:38Z",
+      "observation": {
+        "startedAt": "2026-10-14T10:00:38Z",
+        "completedAt": "2026-10-14T10:01:04Z",
+        "timeZone": "America/Sao_Paulo",
+        "localInterval": "14/10/2026 07:00:38–07:01:04 BRT",
+        "atomicSnapshot": false
+      },
+      "source": {
+        "spreadsheetId": "1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU",
+        "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit",
+        "title": "LEADS",
+        "mimeType": "application/vnd.google-apps.spreadsheet",
+        "modifiedTimeAtMetadataRead": "2026-10-14T09:58:18.316Z",
+        "locale": "pt_BR",
+        "timeZone": "America/Sao_Paulo"
+      },
+      "comparisonBaseline": {
+        "path": "tmp/bruna-release-20261014-leads-before.json",
+        "sha256": "29bf9467853d279a66e8cc8ae485081a0ed772f6db196604ce84d0586e980bf5",
+        "observation": {
+          "startedAt": "2026-10-14T09:47:13Z",
+          "completedAround": "2026-10-14T09:51:00Z",
+          "completionTimeApproximate": true,
+          "timeZone": "America/Sao_Paulo",
+          "localInterval": "14/10/2026 06:47–06:51 BRT",
+          "atomicSnapshot": false
+        }
+      },
+      "structure": {
+        "sheetCount": 47,
+        "firstSheet": "IMPORT_GOOGLE_ADS",
+        "headers": [
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "sheetId": 249549543,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 56,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 55,
+            "headers": [
+              "Opportunity ID",
+              "Telefone (E.164)",
+              "Telefone hash",
+              "Profissional",
+              "Aba visível",
+              "Linha visível",
+              "Estado",
+              "Fase",
+              "Relacionamento",
+              "Responsável atual",
+              "Aguardando ação de",
+              "Objeção principal",
+              "Resumo automático",
+              "Próxima ação automática",
+              "Referência inicial",
+              "Plataforma inicial",
+              "GCLID",
+              "GBRAID",
+              "WBRAID",
+              "Atribuição fixada em",
+              "Primeiro Event ID",
+              "Último Event ID",
+              "Versão",
+              "Criado em",
+              "Atualizado em",
+              "Encerrado em",
+              "Encerrado em (legado duplicado)",
+              "Origem inicial canônica",
+              "Canal inicial",
+              "Caminho de conversão inicial",
+              "Campanha inicial",
+              "Grupo/conjunto inicial",
+              "Criativo inicial",
+              "Meta Campaign ID inicial",
+              "Meta Adset ID inicial",
+              "Meta Ad ID inicial",
+              "Landing page inicial",
+              "Página do CTA inicial",
+              "Local do CTA inicial",
+              "Confiança inicial",
+              "Motivo fallback inicial",
+              "Primeiro toque em",
+              "Origem da conversa atual",
+              "Canal da conversa atual",
+              "Caminho de conversão atual",
+              "Campanha atual",
+              "Grupo/conjunto atual",
+              "Criativo atual",
+              "Meta Campaign ID atual",
+              "Meta Adset ID atual",
+              "Meta Ad ID atual",
+              "Último toque em",
+              "Status da jornada",
+              "Origem informada pelo paciente",
+              "Confiança da origem informada"
+            ]
+          },
+          {
+            "sheet": "_WHATSAPP_DUVIDAS",
+            "sheetId": 2026080905,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 15,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 15,
+            "headers": [
+              "Event ID",
+              "Telefone",
+              "Paciente",
+              "Recebida em",
+              "Pergunta",
+              "Assunto",
+              "Contexto",
+              "Risco",
+              "Esclarecimentos feitos",
+              "Status",
+              "Resposta humana",
+              "ID da regra candidata",
+              "Atualizada em",
+              "Prioridade",
+              "Procedimento"
+            ]
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "sheetId": 2026080903,
+            "grid": {
+              "rowCount": 500,
+              "columnCount": 22,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 22,
+            "headers": [
+              "ID da regra",
+              "Status",
+              "Modo de uso",
+              "Risco",
+              "Assunto",
+              "Perguntas equivalentes",
+              "Resposta aprovada",
+              "Limites / quando não usar",
+              "Procedimento",
+              "Aprovado por",
+              "Aprovado em",
+              "Válida até",
+              "Usos",
+              "Último uso",
+              "Correções",
+              "Origem",
+              "Versão da regra",
+              "Estado de promoção",
+              "Versão do snapshot",
+              "Aprovador da promoção",
+              "Promovida em",
+              "Substitui"
+            ]
+          },
+          {
+            "sheet": "_WHATSAPP_CLASSIFICACAO",
+            "sheetId": 844451174,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 20,
+            "headers": [
+              "Telefone",
+              "Linha do lead",
+              "Última atividade",
+              "Classificar após",
+              "Estado",
+              "Lease até",
+              "Última classificação",
+              "Até Message ID",
+              "Último Message ID",
+              "Quantidade de mensagens",
+              "Último status automático",
+              "Último resumo automático",
+              "Última próxima ação automática",
+              "Último erro",
+              "Tentativas",
+              "Lease token",
+              "Opportunity ID",
+              "Profissional",
+              "Aba do lead",
+              "Versão reivindicada"
+            ]
+          },
+          {
+            "sheet": "_GOOGLE_ADS_EVENTOS",
+            "sheetId": 2026081112,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 15,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 15,
+            "headers": [
+              "Event ID",
+              "Opportunity ID",
+              "Marco",
+              "Tipo de identificador",
+              "Identificador do clique",
+              "Nome da conversão",
+              "Data e hora da conversão",
+              "Valor",
+              "Moeda",
+              "ID da transação",
+              "Estado",
+              "Último erro",
+              "Criado em",
+              "Atualizado em",
+              "Profissional"
+            ]
+          },
+          {
+            "sheet": "IMPORT_GOOGLE_ADS",
+            "sheetId": 2026081113,
+            "grid": {
+              "rowCount": 993,
+              "columnCount": 8,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 8,
+            "headers": [
+              "ID da transação",
+              "GCLID",
+              "GBRAID",
+              "WBRAID",
+              "Nome da conversão",
+              "Data e hora da conversão",
+              "Valor (R$)",
+              "Moeda"
+            ]
+          },
+          {
+            "sheet": "_WHATSAPP_RETOMADAS",
+            "sheetId": 1322578945,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 18,
+            "headers": [
+              "Chave diária",
+              "Data do e-mail",
+              "Telefone",
+              "Message ID",
+              "Etapa",
+              "Horário planejado",
+              "Status do lead",
+              "Resumo",
+              "Sugestão",
+              "Modo",
+              "Status do envio",
+              "Data/hora programada",
+              "Última tentativa",
+              "Enviado em",
+              "Erro do envio",
+              "Aprovada pela equipe em",
+              "Origem da aprovação",
+              "Template automático seguro"
+            ]
+          },
+          {
+            "sheet": "Consultas",
+            "sheetId": 2026072801,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 83,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 80,
+            "headers": [
+              "ID da consulta",
+              "Telefone (E.164)",
+              "Nome do paciente",
+              "Profissional",
+              "Tipo de consulta",
+              "Tema / procedimento",
+              "Local / modalidade",
+              "Data agendada",
+              "Horário agendado",
+              "Status",
+              "Data realizada",
+              "Origem do lead",
+              "Referência da campanha",
+              "Retomada pelo bot",
+              "Data da próxima retomada",
+              "Última retomada",
+              "Próxima ação",
+              "Resumo administrativo",
+              "Última atualização",
+              "Atualizado por",
+              "E-mail",
+              "Data de nascimento",
+              "Aniversário pelo bot",
+              "Último aniversário contatado",
+              "Canal preferido",
+              "Consentimento para contato",
+              "Checagem pós-consulta",
+              "Data prevista da checagem",
+              "Data da checagem realizada",
+              "Ficaram dúvidas?",
+              "Resultado da checagem",
+              "Periodicidade da retomada",
+              "Retomadas encerradas?",
+              "Motivo do encerramento",
+              "Lembrete 48h enviado",
+              "Lembrete no dia enviado",
+              "Última tentativa de lembrete",
+              "Erro do lembrete",
+              "Agendamento monitorado",
+              "Chave do lead de origem",
+              "Fonte da sincronização",
+              "Sincronizado em",
+              "Status da sincronização",
+              "Pós-consulta elegível em",
+              "Pós-consulta enviado",
+              "Última tentativa pós-consulta",
+              "Erro pós-consulta",
+              "Pós-consulta suprimido em",
+              "Confirmação da paciente",
+              "Última interação humana",
+              "Motivo de supressão",
+              "Sala",
+              "Duração (min)",
+              "ID da agenda Google",
+              "ID do evento Google",
+              "Sincronização Google Agenda",
+              "Erro Google Agenda",
+              "Não comparecimento registrado em",
+              "Retomada de ausência elegível em",
+              "Retomada de ausência enviada",
+              "Última tentativa de retomada de ausência",
+              "Erro na retomada de ausência",
+              "Retomada de ausência suprimida em",
+              "Retomada manual de ausência sugerida em",
+              "Opportunity ID",
+              "Revisão comercial prevista em",
+              "Resultado comercial",
+              "Procedimento fechado",
+              "Data do fechamento",
+              "Valor fechado (R$)",
+              "Próxima revisão comercial",
+              "Revisão comercial concluída em",
+              "Observação comercial",
+              "Erro da revisão comercial",
+              "",
+              "",
+              "",
+              "Lembrete cancelado em",
+              "Motivo do cancelamento do lembrete",
+              "Agendamento do lembrete cancelado",
+              "Data da cirurgia realizada",
+              "Data do orçamento enviado",
+              "Próxima checagem após cirurgia"
+            ]
+          },
+          {
+            "sheet": "_AGENDAMENTOS_PENDENTES",
+            "sheetId": 1885360730,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 9,
+            "headers": [
+              "",
+              "Event ID",
+              "Opportunity ID",
+              "Telefone",
+              "Profissional",
+              "Data escolhida",
+              "Horário escolhido",
+              "Estado",
+              "Criado em",
+              "Confirmado em"
+            ]
+          },
+          {
+            "sheet": "_WHATSAPP_COMPROMISSOS",
+            "sheetId": 1268271809,
+            "grid": {
+              "rowCount": 998,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 14,
+            "headers": [
+              "Event ID",
+              "Telefone",
+              "Tipo",
+              "Resumo operacional",
+              "Responsável",
+              "Criado em",
+              "Prazo",
+              "Status",
+              "Resolvido em",
+              "Origem",
+              "Motivo da resolução",
+              "Opportunity ID",
+              "Profissional",
+              "Request ID"
+            ]
+          },
+          {
+            "sheet": "_CUIDADOS_PROGRAMADOS",
+            "sheetId": 669273333,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 22,
+            "headers": [
+              "Chave do cuidado",
+              "Estado",
+              "Rever em",
+              "Telefone",
+              "Profissional",
+              "Opportunity ID",
+              "ID da consulta",
+              "Tipo",
+              "Data do marco",
+              "Mensagem aprovada",
+              "Programado para",
+              "Aprovado em",
+              "Contexto aprovado",
+              "Última mensagem",
+              "Registrado em",
+              "Tentado em",
+              "Enviado em",
+              "Erro",
+              "Texto efetivo",
+              "Origem da decisão",
+              "Categoria do marco",
+              "Dia da sugestão"
+            ]
+          },
+          {
+            "sheet": "Funil Comercial",
+            "sheetId": 249078399,
+            "grid": {
+              "rowCount": 526,
+              "columnCount": 20,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 20,
+            "headers": [
+              "Opportunity ID",
+              "Data do contato",
+              "Plataforma",
+              "Campanha",
+              "Criativo",
+              "CTA",
+              "Destino",
+              "Situação atual",
+              "Data situação atual",
+              "Data qualificação",
+              "Data agendamento",
+              "Data consulta realizada",
+              "Data fechamento",
+              "Valor contratado (R$)",
+              "Primeira resposta humana",
+              "Minutos até 1ª resposta",
+              "Follow-up realizado?",
+              "Data/hora follow-up",
+              "Motivo de não avanço",
+              "Observação comercial"
+            ]
+          },
+          {
+            "sheet": "_WHATSAPP_ATENDIMENTO",
+            "sheetId": 627850573,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 5,
+            "headers": [
+              "Telefone",
+              "Data local",
+              "Data e hora",
+              "Message ID",
+              "Event ID"
+            ]
+          },
+          {
+            "sheet": "Revisões do Bot",
+            "sheetId": 2026080904,
+            "grid": {
+              "rowCount": 500,
+              "columnCount": 13,
+              "frozenRowCount": 1
+            },
+            "headerNonempty": 13,
+            "headers": [
+              "Tipo",
+              "Prioridade",
+              "Data e hora",
+              "Paciente",
+              "Telefone",
+              "Contexto",
+              "Sugestão do bot",
+              "Confiança",
+              "Status",
+              "Decisão da equipe",
+              "Observação da equipe",
+              "Chave",
+              "Atualizado em"
+            ]
+          }
+        ],
+        "allSheets": [
+          {
+            "sheetId": 2026081113,
+            "title": "IMPORT_GOOGLE_ADS",
+            "index": 0,
+            "hidden": false,
+            "grid": {
+              "rowCount": 993,
+              "columnCount": 8,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2138415259,
+            "title": "_WHATSAPP_TEMPLATE_EVENTOS",
+            "index": 1,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 669273333,
+            "title": "_CUIDADOS_PROGRAMADOS",
+            "index": 2,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1837444666,
+            "title": "_WHATSAPP_CUSTOS",
+            "index": 3,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1042,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 494033567,
+            "title": "_GOOGLE_ADS_AJUSTE_RECIBOS",
+            "index": 4,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1885360730,
+            "title": "_AGENDAMENTOS_PENDENTES",
+            "index": 5,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 928526411,
+            "title": "AJUSTES_GOOGLE_ADS",
+            "index": 6,
+            "hidden": false,
+            "grid": {
+              "rowCount": 998,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1726719887,
+            "title": "_WHATSAPP_ROTAS_EXTERNAS",
+            "index": 7,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1108709019,
+            "title": "_OPORTUNIDADE_MARCOS",
+            "index": 8,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2121871547,
+            "title": "_FUNIL_MANUAL_ORFAOS",
+            "index": 9,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 490051591,
+            "title": "_FUNIL_CANONICO",
+            "index": 10,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 158077413,
+            "title": "_BOT_METRICAS",
+            "index": 11,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 28,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 526433544,
+            "title": "_INTEGRATION_HEALTH_SYNTHETIC",
+            "index": 12,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1487814714,
+            "title": "_WHATSAPP_OPERACAO_EVENTOS",
+            "index": 13,
+            "hidden": false,
+            "grid": {
+              "rowCount": 2977,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1920045328,
+            "title": "_WHATSAPP_CLASSIFICACAO_EXCECOES",
+            "index": 14,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 968183893,
+            "title": "_CONTATOS_NAO_LEADS",
+            "index": 15,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 211234567,
+            "title": "IMPORT_GCLID",
+            "index": 16,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 6,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 249549543,
+            "title": "_CRM_OPORTUNIDADES",
+            "index": 17,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 56,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 846013312,
+            "title": "Central de Atendimento",
+            "index": 18,
+            "hidden": false,
+            "grid": {
+              "rowCount": 999,
+              "columnCount": 26,
+              "frozenRowCount": 1,
+              "frozenColumnCount": 5
+            }
+          },
+          {
+            "sheetId": 1268271809,
+            "title": "_WHATSAPP_COMPROMISSOS",
+            "index": 19,
+            "hidden": true,
+            "grid": {
+              "rowCount": 998,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1704096200,
+            "title": "_WHATSAPP_ATENDIMENTO_HUMANO",
+            "index": 20,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1771,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 263618581,
+            "title": "_WHATSAPP_ALERTAS_EMAIL",
+            "index": 21,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1972891026,
+            "title": "Google Ads - Conversões",
+            "index": 22,
+            "hidden": false,
+            "grid": {
+              "rowCount": 967,
+              "columnCount": 85,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1322578945,
+            "title": "_WHATSAPP_RETOMADAS",
+            "index": 23,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 799794372,
+            "title": "_WHATSAPP_MENSAGENS",
+            "index": 24,
+            "hidden": true,
+            "grid": {
+              "rowCount": 4380,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 844451174,
+            "title": "_WHATSAPP_CLASSIFICACAO",
+            "index": 25,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 627850573,
+            "title": "_WHATSAPP_ATENDIMENTO",
+            "index": 26,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1445856331,
+            "title": "_WHATSAPP_EVENTOS",
+            "index": 27,
+            "hidden": true,
+            "grid": {
+              "rowCount": 2455,
+              "columnCount": 41,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1528355910,
+            "title": "Orientações",
+            "index": 28,
+            "hidden": false,
+            "grid": {
+              "rowCount": 1001,
+              "columnCount": 26,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1602860202,
+            "title": "Saúde das Integrações",
+            "index": 29,
+            "hidden": false,
+            "grid": {
+              "rowCount": 100,
+              "columnCount": 8,
+              "frozenRowCount": 4
+            }
+          },
+          {
+            "sheetId": 249078399,
+            "title": "Funil Comercial",
+            "index": 30,
+            "hidden": false,
+            "grid": {
+              "rowCount": 526,
+              "columnCount": 20,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 0,
+            "title": "Shit1",
+            "index": 31,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1146,
+              "columnCount": 24,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1852729041,
+            "title": "Copy of Shit1",
+            "index": 32,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1152,
+              "columnCount": 24,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1359733950,
+            "title": "Sheet2",
+            "index": 33,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26
+            }
+          },
+          {
+            "sheetId": 994820711,
+            "title": "Painel Econômico",
+            "index": 34,
+            "hidden": false,
+            "grid": {
+              "rowCount": 1208,
+              "columnCount": 12,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1801059936,
+            "title": "Datas Consulta",
+            "index": 35,
+            "hidden": false,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 26,
+              "frozenRowCount": 6
+            }
+          },
+          {
+            "sheetId": 2026072801,
+            "title": "Consultas",
+            "index": 36,
+            "hidden": false,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 83,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 1782665436,
+            "title": "Leads Dr. Daniel",
+            "index": 37,
+            "hidden": false,
+            "grid": {
+              "rowCount": 997,
+              "columnCount": 58,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026080303,
+            "title": "Painel do Bot",
+            "index": 38,
+            "hidden": false,
+            "grid": {
+              "rowCount": 100,
+              "columnCount": 12,
+              "frozenRowCount": 3,
+              "hideGridlines": true
+            }
+          },
+          {
+            "sheetId": 2026080901,
+            "title": "_LEADS_DUPLICADOS_ARQUIVO",
+            "index": 39,
+            "hidden": true,
+            "grid": {
+              "rowCount": 100,
+              "columnCount": 51,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026080902,
+            "title": "_LEADS_CONTINUIDADE_ARQUIVO",
+            "index": 40,
+            "hidden": true,
+            "grid": {
+              "rowCount": 100,
+              "columnCount": 41,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026080903,
+            "title": "Respostas Aprovadas",
+            "index": 41,
+            "hidden": false,
+            "grid": {
+              "rowCount": 500,
+              "columnCount": 22,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026080904,
+            "title": "Revisões do Bot",
+            "index": 42,
+            "hidden": false,
+            "grid": {
+              "rowCount": 500,
+              "columnCount": 13,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026080905,
+            "title": "_WHATSAPP_DUVIDAS",
+            "index": 43,
+            "hidden": false,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 15,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026080906,
+            "title": "_WHATSAPP_USO_RESPOSTAS",
+            "index": 44,
+            "hidden": false,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 7,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026081111,
+            "title": "_LEAD_FASE_EVENTOS",
+            "index": 45,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1206,
+              "columnCount": 13,
+              "frozenRowCount": 1
+            }
+          },
+          {
+            "sheetId": 2026081112,
+            "title": "_GOOGLE_ADS_EVENTOS",
+            "index": 46,
+            "hidden": true,
+            "grid": {
+              "rowCount": 1000,
+              "columnCount": 15,
+              "frozenRowCount": 1
+            }
+          }
+        ]
+      },
+      "crm": {
+        "rows": 556,
+        "uniqueOpportunityIds": 556,
+        "professionals": {
+          "amanda": 526,
+          "nonpatient": 19,
+          "external": 4,
+          "daniel": 7
+        },
+        "states": {
+          "open": 532,
+          "voided": 24
+        },
+        "phases": {
+          "Novo": 390,
+          "Qualificado": 89,
+          "Não qualificado": 40,
+          "Paciente convertido": 8,
+          "Consulta agendada": 23,
+          "Consulta realizada": 6
+        },
+        "openIdentityInvariant": {
+          "open": 532,
+          "missingHashes": 0,
+          "duplicateKeys": 0
+        }
+      },
+      "questions": {
+        "rows": 38,
+        "states": {
+          "Aguardando resposta humana": 37,
+          "Aguardando esclarecimento": 1
+        }
+      },
+      "classification": {
+        "rows": 582,
+        "states": {
+          "done": 553,
+          "excluded": 24,
+          "waiting_messages": 1,
+          "orphaned": 4
+        },
+        "pending": 0,
+        "running": 0
+      },
+      "knowledge": {
+        "rows": 5,
+        "statuses": {
+          "Aprovada": 5
+        },
+        "modes": {
+          "Automática": 5
+        },
+        "risks": {
+          "Baixo": 5
+        },
+        "promotionStates": {
+          "active": 5
+        }
+      },
+      "ads": {
+        "ledger": 18,
+        "states": {
+          "quarantined_legacy": 5,
+          "invalidated_downgraded_to_new": 2,
+          "ready": 11
+        },
+        "exportRows": 11,
+        "uniqueExportTransactions": 11,
+        "uniqueLedgerEvents": 18,
+        "readyUniqueTransactions": 11,
+        "singleClickIdentifiers": 11,
+        "readyMatchedExport": 11,
+        "exportWithoutReady": 0,
+        "readyWithoutExport": 0,
+        "readyClickTypes": {
+          "GCLID": 11
+        },
+        "readyErrors": 0,
+        "readyOpportunitiesExist": 11,
+        "acceptanceVerified": false
+      },
+      "integrationHealth": {
+        "markedVsExportedDifference": 0,
+        "conflictingClickIds": 0,
+        "repeatedPhones": 0,
+        "activeOpportunityVsCanonicalFunnelDifference": 0,
+        "pastSlotsStillAvailable": 0,
+        "lastCapturedContact": "14/10/2026 05:42",
+        "lastPreparedConversion": "2026-10-05 14:50:57-03:00",
+        "googleAdsAcceptanceVerified": false
+      },
+      "queues": {
+        "retomadas": {
+          "rows": 469,
+          "modes": {
+            "Automático": 202,
+            "Manual": 263,
+            "Automático aprovado": 4
+          },
+          "states": {
+            "Enviada": 84,
+            "Ação manual": 200,
+            "Cancelada — human_review_required": 23,
+            "Cancelada — no_inbound_message": 2,
+            "Cancelada — suspended_in_leads": 1,
+            "Cancelada — whatsapp_window_closed": 45,
+            "Cancelada — auditoria de contexto": 59,
+            "Cancelada — conversation_changed": 8,
+            "Cancelada — solicitação da equipe": 4,
+            "Cancelada — primeira retomada manual já realizada": 4,
+            "Cancelada — nunca retomar": 2,
+            "Falha — revisar": 8,
+            "Cancelada — duplicate_active_followup": 1,
+            "Cancelada — patient_closed": 2,
+            "Cancelada — already_followed_up": 2,
+            "Cancelada — sensitive_or_clinical_context": 5,
+            "Cancelada — human_takeover_active": 19
+          },
+          "cancelledTotal": 177,
+          "nonemptyRows": 469,
+          "sourceRowSpan": 503
+        },
+        "commitments": {
+          "rows": 250,
+          "states": {
+            "Resolvido": 138,
+            "Pendente": 112
+          }
+        },
+        "care": {
+          "rows": 0
+        },
+        "reviews": {
+          "rows": 82,
+          "states": {
+            "Aberta": 77,
+            "Concluída": 5
+          }
+        }
+      },
+      "appointments": {
+        "consultations": {
+          "rows": 65,
+          "uniqueIds": 65,
+          "professionals": {
+            "Dra. Amanda": 51,
+            "Dr. Henrique": 9,
+            "Dra. Marina": 4,
+            "Dr. Laerte": 1
+          },
+          "statuses": {
+            "Realizada": 32,
+            "Aguardando confirmação": 1,
+            "Confirmada": 9,
+            "Agendada": 19,
+            "Remarcada": 1
+          },
+          "withoutStatus": 3,
+          "syncStates": {
+            "Sincronizado": 2,
+            "Manual": 4
+          },
+          "calendarStates": {
+            "Sincronizado em 14/08/2026 13:09": 9,
+            "Erro de sincronização": 3,
+            "Pendente — completar profissional, data e horário": 1,
+            "Sincronizado": 8,
+            "Sincronizado manualmente em 30/08/2026 15:38": 2
+          },
+          "opportunityLinks": 15
+        },
+        "pendingSelections": {
+          "rows": 19,
+          "columnANonempty": 19,
+          "columnBNonempty": 19,
+          "columnG": {
+            "selected_pending_human": 16
+          },
+          "columnHNonempty": 19,
+          "columnHDateLike": 19,
+          "columnINonempty": 0,
+          "columnJNonempty": 0,
+          "actualStateColumnGBlank": 3
+        }
+      },
+      "deltasFromBaseline": {
+        "crmRows": 0,
+        "classificationRows": 0,
+        "questions": 0,
+        "approvedFacts": 0,
+        "adsLedger": 0,
+        "adsReady": 0,
+        "adsExport": 0,
+        "followups": 0,
+        "commitments": 0,
+        "consultations": 0,
+        "pendingSelections": 0,
+        "reviews": 0,
+        "allObservedStatesUnchanged": true
+      },
+      "preexistingFindings": [
+        {
+          "id": "pending_appointment_header_shift",
+          "sheet": "_AGENDAMENTOS_PENDENTES",
+          "observation": "A1 empty; headers are in B:J, but records and the unchanged code contract use A:I. Nineteen nonempty records in A/B; sixteen selected_pending_human states in G; nineteen date-like timestamps in H; I/J empty.",
+          "codeReference": "apps-script/clinica-liv-leads/OpportunityStore.gs:2320",
+          "introducedByRelease": false,
+          "actionTaken": "none",
+          "recheckedAfterRelease": true,
+          "unchanged": true
+        },
+        {
+          "id": "consultation_status_missing",
+          "sheet": "Consultas",
+          "count": 3,
+          "actionTaken": "none",
+          "recheckedAfterRelease": true,
+          "unchanged": true
+        },
+        {
+          "id": "calendar_sync_error",
+          "sheet": "Consultas",
+          "count": 3,
+          "actionTaken": "none",
+          "note": "Only the Sheet's synchronization status was read; no Calendar execution or repair.",
+          "recheckedAfterRelease": true,
+          "unchanged": true
+        },
+        {
+          "id": "consultation_opportunity_coverage",
+          "sheet": "Consultas",
+          "rows": 65,
+          "linked": 15,
+          "unlinked": 50,
+          "actionTaken": "none",
+          "note": "Historical coverage observed, not a release regression or proof of current Calendar state.",
+          "recheckedAfterRelease": true,
+          "unchanged": true
+        },
+        {
+          "id": "followup_failures_for_review",
+          "sheet": "_WHATSAPP_RETOMADAS",
+          "count": 8,
+          "actionTaken": "none",
+          "recheckedAfterRelease": true,
+          "unchanged": true
+        },
+        {
+          "id": "classification_recoverable_states",
+          "sheet": "_WHATSAPP_CLASSIFICACAO",
+          "waitingMessages": 1,
+          "orphaned": 4,
+          "pendingOrRunning": 0,
+          "actionTaken": "none",
+          "recheckedAfterRelease": true,
+          "unchanged": true
+        }
+      ],
+      "reads": {
+        "headers": [
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "'_CRM_OPORTUNIDADES'!A1:BD1"
+          },
+          {
+            "sheet": "_WHATSAPP_DUVIDAS",
+            "range": "'_WHATSAPP_DUVIDAS'!A1:O1"
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "range": "'Respostas Aprovadas'!A1:V1"
+          },
+          {
+            "sheet": "_WHATSAPP_CLASSIFICACAO",
+            "range": "'_WHATSAPP_CLASSIFICACAO'!A1:T1"
+          },
+          {
+            "sheet": "_GOOGLE_ADS_EVENTOS",
+            "range": "'_GOOGLE_ADS_EVENTOS'!A1:O1"
+          },
+          {
+            "sheet": "IMPORT_GOOGLE_ADS",
+            "range": "IMPORT_GOOGLE_ADS!A1:H1"
+          },
+          {
+            "sheet": "_WHATSAPP_RETOMADAS",
+            "range": "'_WHATSAPP_RETOMADAS'!A1:Z1"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "Consultas!A1:CE1"
+          },
+          {
+            "sheet": "_AGENDAMENTOS_PENDENTES",
+            "range": "'_AGENDAMENTOS_PENDENTES'!A1:Z1"
+          },
+          {
+            "sheet": "_WHATSAPP_COMPROMISSOS",
+            "range": "'_WHATSAPP_COMPROMISSOS'!A1:Z1"
+          },
+          {
+            "sheet": "_CUIDADOS_PROGRAMADOS",
+            "range": "'_CUIDADOS_PROGRAMADOS'!A1:Z1"
+          },
+          {
+            "sheet": "Funil Comercial",
+            "range": "'Funil Comercial'!A1:T1"
+          },
+          {
+            "sheet": "_WHATSAPP_ATENDIMENTO",
+            "range": "'_WHATSAPP_ATENDIMENTO'!A1:Z1"
+          },
+          {
+            "sheet": "Revisões do Bot",
+            "range": "'Revisões do Bot'!A1:M1"
+          }
+        ],
+        "aggregates": [
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "A2:A700"
+          },
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "C2:C700"
+          },
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "D2:D700"
+          },
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "G2:H700"
+          },
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "A701:A1000"
+          },
+          {
+            "sheet": "_WHATSAPP_DUVIDAS",
+            "range": "J2:J100"
+          },
+          {
+            "sheet": "_WHATSAPP_DUVIDAS",
+            "range": "J101:J1000"
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "range": "A2:D100"
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "range": "Q2:S100"
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "range": "A101:A500"
+          },
+          {
+            "sheet": "_WHATSAPP_CLASSIFICACAO",
+            "range": "E2:E700"
+          },
+          {
+            "sheet": "_WHATSAPP_CLASSIFICACAO",
+            "range": "E701:E1000"
+          },
+          {
+            "sheet": "_GOOGLE_ADS_EVENTOS",
+            "range": "A2:O100"
+          },
+          {
+            "sheet": "_GOOGLE_ADS_EVENTOS",
+            "range": "A101:A1000"
+          },
+          {
+            "sheet": "IMPORT_GOOGLE_ADS",
+            "range": "A2:H100"
+          },
+          {
+            "sheet": "IMPORT_GOOGLE_ADS",
+            "range": "A101:A993"
+          },
+          {
+            "sheet": "Saúde das Integrações",
+            "range": "A5:C35"
+          },
+          {
+            "sheet": "_WHATSAPP_RETOMADAS",
+            "range": "J2:K1000"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "A2:A1000"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "D2:D1000"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "H2:J1000"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "AQ2:AQ1000"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "BD2:BD1000"
+          },
+          {
+            "sheet": "Consultas",
+            "range": "BM2:BM1000"
+          },
+          {
+            "sheet": "_AGENDAMENTOS_PENDENTES",
+            "range": "A2:B1000"
+          },
+          {
+            "sheet": "_AGENDAMENTOS_PENDENTES",
+            "range": "G2:J1000"
+          },
+          {
+            "sheet": "_WHATSAPP_COMPROMISSOS",
+            "range": "G2:H998"
+          },
+          {
+            "sheet": "_CUIDADOS_PROGRAMADOS",
+            "range": "B2:C1000"
+          },
+          {
+            "sheet": "Revisões do Bot",
+            "range": "I2:I500"
+          }
+        ],
+        "emptyTailsConfirmed": [
+          "CRM A701:A1000",
+          "classification E701:E1000",
+          "questions J101:J1000",
+          "knowledge A101:A500",
+          "Ads ledger A101:A1000",
+          "Ads export A101:A993"
+        ]
+      },
+      "boundaries": {
+        "externalWrites": 0,
+        "operationalRoutinesRun": 0,
+        "patientMessagesRead": 0,
+        "patientMessagesSent": 0,
+        "patientTextExported": false,
+        "identifyingRecordValuesSaved": false,
+        "googleAdsImportAcceptanceVerified": false,
+        "calendarLiveStateVerified": false,
+        "versionedFilesEdited": false
+      },
+      "conclusion": "No regression observed in the same 14 header sets and 29 bounded data ranges after publication. All compared values, opaque opportunity/transaction identifiers, statuses, counts and queue/agenda exceptions match the preflight. This does not prove Google Ads acceptance, Calendar state, behavior on a real patient event or unchanged cells outside the inspected ranges.",
+      "releaseReportedByPublisher": {
+        "commit": "dcb5df99f91afd39bcd76b1147f7ad5f7377bccb",
+        "appsScriptVersion": 164,
+        "netlifyDeployId": "6acf51c3102d74aed99ab751",
+        "source": "Root publisher message; this subtask independently verifies only LEADS."
+      },
+      "comparison": {
+        "headerSetsCompared": 14,
+        "allHeaderSetsUnchanged": true,
+        "sheetMetadataUnchanged": true,
+        "boundedRangesCompared": 29,
+        "allRangeValuesUnchanged": true,
+        "checks": [
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "A2:A700",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 556
+          },
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "C2:C700",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 556
+          },
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "D2:D700",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 556
+          },
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "G2:H700",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 556
+          },
+          {
+            "sheet": "_CRM_OPORTUNIDADES",
+            "range": "A701:A1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 0
+          },
+          {
+            "sheet": "_WHATSAPP_DUVIDAS",
+            "range": "J2:J100",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 38
+          },
+          {
+            "sheet": "_WHATSAPP_DUVIDAS",
+            "range": "J101:J1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 0
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "range": "A2:D100",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 5
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "range": "Q2:S100",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 5
+          },
+          {
+            "sheet": "Respostas Aprovadas",
+            "range": "A101:A500",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 0
+          },
+          {
+            "sheet": "_WHATSAPP_CLASSIFICACAO",
+            "range": "E2:E700",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 582
+          },
+          {
+            "sheet": "_WHATSAPP_CLASSIFICACAO",
+            "range": "E701:E1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 0
+          },
+          {
+            "sheet": "_GOOGLE_ADS_EVENTOS",
+            "range": "A2:O100",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 18
+          },
+          {
+            "sheet": "_GOOGLE_ADS_EVENTOS",
+            "range": "A101:A1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 0
+          },
+          {
+            "sheet": "IMPORT_GOOGLE_ADS",
+            "range": "A2:H100",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 11
+          },
+          {
+            "sheet": "IMPORT_GOOGLE_ADS",
+            "range": "A101:A993",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 0
+          },
+          {
+            "sheet": "Saúde das Integrações",
+            "range": "A5:C35",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 10
+          },
+          {
+            "sheet": "_WHATSAPP_RETOMADAS",
+            "range": "J2:K1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 469
+          },
+          {
+            "sheet": "Consultas",
+            "range": "A2:A1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 65
+          },
+          {
+            "sheet": "Consultas",
+            "range": "D2:D1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 65
+          },
+          {
+            "sheet": "Consultas",
+            "range": "H2:J1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 62
+          },
+          {
+            "sheet": "Consultas",
+            "range": "AQ2:AQ1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 6
+          },
+          {
+            "sheet": "Consultas",
+            "range": "BD2:BD1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 23
+          },
+          {
+            "sheet": "Consultas",
+            "range": "BM2:BM1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 15
+          },
+          {
+            "sheet": "_AGENDAMENTOS_PENDENTES",
+            "range": "A2:B1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 19
+          },
+          {
+            "sheet": "_AGENDAMENTOS_PENDENTES",
+            "range": "G2:J1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 19
+          },
+          {
+            "sheet": "_WHATSAPP_COMPROMISSOS",
+            "range": "G2:H998",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 250
+          },
+          {
+            "sheet": "_CUIDADOS_PROGRAMADOS",
+            "range": "B2:C1000",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 0
+          },
+          {
+            "sheet": "Revisões do Bot",
+            "range": "I2:I500",
+            "readSucceeded": true,
+            "valuesUnchanged": true,
+            "nonemptyRows": 82
+          }
+        ],
+        "rawValuesComparedOnlyInMemory": true
+      }
+    }
+  },
+  "externalEffects": {
+    "publishedCode": true,
+    "changedPatientData": false,
+    "patientMessagesSent": 0,
+    "operationalFunctionsExecuted": 0,
+    "flagsChanged": false,
+    "triggersChanged": false,
+    "googleAdsCampaignsChanged": false,
+    "pluginChanged": false
+  },
+  "drive": {
+    "status": "pending",
+    "manual": {
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "localPath": "docs/estrategia-abordagem-bruna.md",
+      "localSha256": "9cbb487add833352e5ee913ff1278473cf078fa423d2bb03258b11937e5b5f00"
+    },
+    "executivePlan": {
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "localPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "localSha256": "961e3b9bf47861ef15e65580f48bf84d36d7bef4b7afba2ee8ead172cf43b1c1"
+    }
+  },
+  "rollback": {
+    "netlifyCommit": "769cee33281516883b89ed150ba61ce8f6ccaaa4",
+    "netlifyDeployId": "6aceef108fbe857da62bcfac",
+    "appsScriptVersion": 163,
+    "preserveFullHistoryAudioArchiveFlags": true,
+    "preserveDataAndReceipts": true,
+    "replay": false
+  },
+  "limitations": [
+    "Direct Anibal to learning bridge not implemented; canonical human WhatsApp answer required.",
+    "Google Ads acceptance not verified.",
+    "LEADS readback covers recorded bounded ranges, not future delivery or all historical message text.",
+    "Three consultation sync errors and shifted pending-appointment headers predate this release.",
+    "Synthetic gate does not prove conversion gain, cost reduction or stable future latency."
+  ],
+  "closeout": {
+    "status": "SYNC_PENDING"
+  },
+  "independentPublicationReview": {
+    "reviewer": "plugin_fallback_feasibility",
+    "status": "passed",
+    "realScenarios": 15,
+    "audioScenarios": 3,
+    "responseApiCalls": 15,
+    "audioApiCalls": 3,
+    "paidCalls": 18,
+    "retries": 0,
+    "timeoutDiagnostics": 0,
+    "reportedResponseUsage": {
+      "input_tokens": 292501,
+      "output_tokens": 4863,
+      "total_tokens": 297364,
+      "cached_tokens": 247824,
+      "reasoning_tokens": 1039
+    },
+    "usageNote": "Cached and reasoning values are subsets, not extra tokens. Monetary cost and audio billing not reported.",
+    "liveGateSha256": "ac049d0fee3b0b7fe2ae35fd4c8ea175a0529c9fc44b62b42aaf620b242b1fca"
+  }
+}
