@@ -23,7 +23,7 @@
       "status": "published_verified",
       "firstReadbackAt": "2026-10-15T10:03:37.842Z",
       "lastFieldReadbackAt": "2026-10-15T10:13:24.745Z",
-      "finalStatusReadbackAt": "2026-10-15T10:15:34.114Z",
+      "finalStatusReadbackAt": "2026-10-15T10:31:45Z",
       "independentQaAt": "2026-10-15T10:16:27.532067+00:00",
       "counts": {
         "sitelinkResources": 3,
@@ -73,7 +73,8 @@
           "operationalStatus": "Ativado",
           "eligibility": "Qualificada",
           "adStrengthIndicator": "Pendente",
-          "statusCheckedAt": "2026-10-15T10:15:34.114Z"
+          "statusCheckedAt": "2026-10-15T10:15:34.114Z",
+          "finalStatusRecheckedAt": "2026-10-15T10:31:45Z"
         },
         {
           "type": "rsa",
@@ -110,7 +111,8 @@
           "operationalStatus": "Ativado",
           "eligibility": "Qualificada",
           "adStrengthIndicator": "Pendente",
-          "statusCheckedAt": "2026-10-15T10:15:34.114Z"
+          "statusCheckedAt": "2026-10-15T10:15:34.114Z",
+          "finalStatusRecheckedAt": "2026-10-15T10:31:45Z"
         },
         {
           "type": "rsa",
@@ -147,7 +149,8 @@
           "operationalStatus": "Ativado",
           "eligibility": "Qualificada",
           "adStrengthIndicator": "Pendente",
-          "statusCheckedAt": "2026-10-15T10:15:34.114Z"
+          "statusCheckedAt": "2026-10-15T10:15:34.114Z",
+          "finalStatusRecheckedAt": "2026-10-15T10:31:45Z"
         },
         {
           "type": "sitelink",
@@ -203,7 +206,6 @@
           "beforeFinalUrl": "",
           "afterFinalUrl": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
           "operationalStatus": "Ativado",
-          "policyStatus": "Pendente / Em análise",
           "priorDiagnostic": "Raramente mostrado por baixo índice de qualidade, já presente antes.",
           "preservedFields": "Texto, correspondência, grupo/campanha, identidade, CPC máximo, modelo, sufixo, parâmetros e estratégia efetiva.",
           "afterEvidenceSha256": "4a9e32ed3ac821fa90871e9730100c57d8baf6ff0070538869b4cd91218f334d",
@@ -213,7 +215,11 @@
             "checkedAt": "2026-10-15T10:25:00.631Z",
             "evidenceSha256": "e14f64e1cf47011a5b4b078d453f2078213c55b91b58d455f3cfe0f2153db7be",
             "additionalWrites": false
-          }
+          },
+          "immediatePostEditStatus": "Pendente / Em análise",
+          "primaryStatus": "Qualificada (limitada) / Raramente mostrado (baixo Índice de qualidade)",
+          "finalStatusCheckedAt": "2026-10-15T10:31:03.610Z",
+          "finalStatusEvidenceSha256": "4618f4eef3a3853997bbe591b007ab2e27e49b0ca99e9ccb508117f8e665830d"
         },
         {
           "type": "keyword",
@@ -224,17 +230,20 @@
           "beforeFinalUrl": "",
           "afterFinalUrl": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
           "operationalStatus": "Ativado",
-          "policyStatus": "Pendente / Em análise",
           "priorDiagnostic": "Raramente mostrado por baixo índice de qualidade, já presente antes.",
           "preservedFields": "Texto, correspondência, grupo/campanha, identidade, CPC máximo, modelo, sufixo, parâmetros e estratégia efetiva.",
           "afterEvidenceSha256": "4a9e32ed3ac821fa90871e9730100c57d8baf6ff0070538869b4cd91218f334d",
           "limitation": "Editor reaberto; URL aprovada e override móvel desativado preservados.",
           "mobileOverrideReadback": {
             "status": "verified_disabled",
-            "checkedAt": "2026-10-15T10:25:00.631Z",
+            "checkedAt": "2026-10-15T10:24:38.364Z",
             "evidenceSha256": "e14f64e1cf47011a5b4b078d453f2078213c55b91b58d455f3cfe0f2153db7be",
             "additionalWrites": false
-          }
+          },
+          "immediatePostEditStatus": "Pendente / Em análise",
+          "primaryStatus": "Qualificada (limitada) / Raramente mostrado (baixo Índice de qualidade)",
+          "finalStatusCheckedAt": "2026-10-15T10:31:03.610Z",
+          "finalStatusEvidenceSha256": "4618f4eef3a3853997bbe591b007ab2e27e49b0ca99e9ccb508117f8e665830d"
         }
       ],
       "budgetsAndBids": {
@@ -261,7 +270,7 @@
     "limitations": [
       "Campos salvos não comprovam exibição em leilão, aprovação futura nem efeito comercial.",
       "Nos três RSAs, status operacional Ativado e elegibilidade Qualificada; indicador de qualidade Pendente é campo distinto de política.",
-      "As duas palavras seguem ativadas e ficaram Pendente/Em análise após a edição da URL. O baixo índice de qualidade era anterior.",
+      "As duas palavras seguem ativadas. Ficaram Pendente/Em análise imediatamente após a edição e foram relidas às 10:31 UTC como Qualificada (limitada), raramente mostrado por baixo Índice de qualidade, diagnóstico já preexistente. O estado não comprova impressões.",
       "Sem nova auditoria dos dados privados ou da mensuração herdada; nenhum contato, conversão artificial ou mensagem de teste."
     ],
     "note": "Este mesmo arquivo concentra os recibos; substituir a projeção existente do Plano no Drive e comparar bytes/hash antes do fechamento completo."
@@ -398,38 +407,41 @@
   },
   "livePreflightStatus": "verified_baseline_with_limits",
   "parallelIntegration": {
-    "remoteCommit": "30b01f4267719effebd094edc2949a163ac1ed98",
+    "localCommittedBaseline": "94f066e663fcd85f28f3e52ff15d8a2d5c75cedc",
     "activeCandidate": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
     "activeCandidateStatus": "committed",
-    "brunaPublication": "pending_authorization",
-    "scopeFilesFromCommonBaseline": 36,
+    "brunaPublication": "blocked_before_publication",
+    "brunaCorrectedCandidate": "pending_authorization",
+    "brunaAttemptReceipt": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
+    "scopeFilesFromCommonBaseline": 38,
     "brunaCodeTestsManifestPreserved": true,
-    "executivePlan": "Integra a pendência Bruna e o componente Ads, aguardando substituição da mesma projeção e novo readback.",
+    "executivePlan": "Integra a tentativa Bruna bloqueada, correção pendente e componente Ads; aguarda substituir a mesma projeção e novo readback.",
     "globalOpsExpected": "SYNC_PENDING",
-    "note": "A autorização e publicação Ads não abrangem o candidato Bruna; o recibo deste componente não encerra a pendência global.",
+    "note": "Autorização e publicação Ads não abrangem o candidato Bruna corrigido; o recibo Ads não encerra essa pendência global.",
     "validation": {
       "status": "passed_local",
-      "checkedAt": "2026-10-15T10:28:15Z",
-      "remoteBaseline": "30b01f4267719effebd094edc2949a163ac1ed98",
-      "adsReadbackCommit": "9846d4840ab3bc1c1668d491c98215bc7200b7ab",
-      "exactScopeFiles": 36,
-      "adsFilesAgainstRemote": 9,
-      "brunaCodeTestsManifestEqualRemote": true,
+      "localCommittedBaseline": "94f066e663fcd85f28f3e52ff15d8a2d5c75cedc",
+      "exactScopeFiles": 38,
+      "note": "Validações anteriores de 2.175 Ads, 2.204 Bruna e 2.205 Bruna corrigida pertencem às revisões indicadas; esta integração documental não publica o candidato bloqueado.",
+      "checkedAt": "2026-10-15T10:32:59Z",
+      "adsFilesAgainstLocalCommittedBaseline": 9,
+      "brunaCodeTestsManifestEqualBaseline": true,
       "unmergedFiles": 0,
       "commands": [
         {
           "command": "npm.cmd run change:check",
           "result": "CHANGE_SAFETY_STATUS=OK",
-          "exactFiles": 36
+          "exactFiles": 38
         },
         {
           "command": "npm.cmd run architecture:check",
           "result": "JOURNEY_MODULE_BOUNDARIES=OK"
         },
         {
-          "command": "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
-          "passed": 15,
-          "failed": 0
+          "command": "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs scripts/check-bruna-model-live.test.mjs",
+          "passed": 53,
+          "failed": 0,
+          "liveGateHarnessMocked": true
         },
         {
           "command": "git diff --check",
@@ -447,10 +459,75 @@
             "WRONG_BRANCH",
             "DIRTY_WORKTREE"
           ],
-          "note": "Candidato Bruna committed, aguardando sua própria autorização/publicação; branch de integração e merge ainda sem commit."
+          "note": "Bruna continua committed, tentativa anterior bloqueada e correção aguardando autorização; merge ainda sem commit na branch de integração."
         }
-      ],
-      "note": "Resultados anteriores de 2.204 testes Bruna e 2.175 testes Ads são históricos das respectivas revisões. A integração documental não publica Bruna; sua pendência global permanece visível."
+      ]
     }
-  }
+  },
+  "parallelIntegrationHistory": [
+    {
+      "remoteCommit": "30b01f4267719effebd094edc2949a163ac1ed98",
+      "activeCandidate": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
+      "activeCandidateStatus": "committed",
+      "brunaPublication": "pending_authorization",
+      "scopeFilesFromCommonBaseline": 36,
+      "brunaCodeTestsManifestPreserved": true,
+      "executivePlan": "Integra a pendência Bruna e o componente Ads, aguardando substituição da mesma projeção e novo readback.",
+      "globalOpsExpected": "SYNC_PENDING",
+      "note": "A autorização e publicação Ads não abrangem o candidato Bruna; o recibo deste componente não encerra a pendência global.",
+      "validation": {
+        "status": "passed_local",
+        "checkedAt": "2026-10-15T10:28:15Z",
+        "remoteBaseline": "30b01f4267719effebd094edc2949a163ac1ed98",
+        "adsReadbackCommit": "9846d4840ab3bc1c1668d491c98215bc7200b7ab",
+        "exactScopeFiles": 36,
+        "adsFilesAgainstRemote": 9,
+        "brunaCodeTestsManifestEqualRemote": true,
+        "unmergedFiles": 0,
+        "commands": [
+          {
+            "command": "npm.cmd run change:check",
+            "result": "CHANGE_SAFETY_STATUS=OK",
+            "exactFiles": 36
+          },
+          {
+            "command": "npm.cmd run architecture:check",
+            "result": "JOURNEY_MODULE_BOUNDARIES=OK"
+          },
+          {
+            "command": "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
+            "passed": 15,
+            "failed": 0
+          },
+          {
+            "command": "git diff --check",
+            "result": "passed"
+          },
+          {
+            "command": "git diff --cached --check",
+            "result": "passed"
+          },
+          {
+            "command": "npm.cmd run ops:check",
+            "result": "SYNC_PENDING",
+            "reasons": [
+              "CHANGE_PUBLICATION_PENDING",
+              "WRONG_BRANCH",
+              "DIRTY_WORKTREE"
+            ],
+            "note": "Candidato Bruna committed, aguardando sua própria autorização/publicação; branch de integração e merge ainda sem commit."
+          }
+        ],
+        "note": "Resultados anteriores de 2.204 testes Bruna e 2.175 testes Ads são históricos das respectivas revisões. A integração documental não publica Bruna; sua pendência global permanece visível.",
+        "independentReview": {
+          "status": "passed",
+          "scopeFiles": 36,
+          "adsFilesAgainstRemote": 9,
+          "brunaCodeTestsManifestPreserved": true,
+          "noPrivateIdsAdded": true,
+          "executivePlanHashVerified": true
+        }
+      }
+    }
+  ]
 }

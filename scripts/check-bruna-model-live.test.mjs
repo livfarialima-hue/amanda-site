@@ -1,9 +1,37 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { checkBrunaModelLive } from './check-bruna-model-live.mjs';
+import { checkBrunaModelLive, writeBrunaModelPreflightLog } from './check-bruna-model-live.mjs';
 
 const manifest = { pendingRelease: { liveModelCheckRequired: true } };
 const env = { NETLIFY: 'true', CONTEXT: 'production', OPENAI_API_KEY: 'synthetic-secret-not-for-logs' };
+
+test('hosted diagnostics preserve a large failed scenario without oversized lines or secrets', () => {
+  const failed = { name: 'synthetic_failure', passed: false, status: 'completed', requests: [],
+    selectedReply: 'ação 😀 '.repeat(12000) + env.OPENAI_API_KEY,
+    replyCode: env.OPENAI_API_KEY + 'x'.repeat(10000), errorCode: 'e'.repeat(10000),
+    gate: { allowed: false, reason: 'synthetic_rejection'.repeat(1000) } };
+  const result = { status: 'failed', syntheticOnly: true, patientMessagesSent: 0,
+    results: [{ name: 'full_history_name_correction', passed: true }, failed],
+    audioCheck: { status: 'passed', model: 'whisper-1', checks: Array.from({ length: 3 }, () => ({ passed: true })) } };
+  const lines = [];
+  writeBrunaModelPreflightLog(result, { log: line => lines.push(line), secret: env.OPENAI_API_KEY });
+  assert.ok(lines.every(line => Buffer.byteLength(line, 'utf8') < 8000));
+  assert.equal(lines.join('').includes(env.OPENAI_API_KEY), false);
+  const chunks = lines.filter(line => line.startsWith('BRUNA_MODEL_FAILURE_CHUNK='))
+    .map(line => JSON.parse(line.slice(line.indexOf('=') + 1)));
+  assert.deepEqual(chunks.map(chunk => chunk.index), chunks.map((_, index) => index));
+  assert.ok(chunks.every(chunk => chunk.total === chunks.length));
+  const restored = JSON.parse(chunks.map(chunk => chunk.data).join(''));
+  assert.equal(restored.selectedReply, failed.selectedReply.replaceAll(env.OPENAI_API_KEY, '[redacted]'));
+  assert.deepEqual(restored.gate, failed.gate);
+  const summary = JSON.parse(lines.at(-1).slice('BRUNA_MODEL_PREFLIGHT='.length));
+  assert.equal(summary.status, 'failed');
+  assert.equal(summary.passed, 1);
+  assert.equal(summary.total, 2);
+  assert.equal(summary.fullHistoryPassed, 1);
+  assert.deepEqual(summary.audioCheck, { status: 'passed', model: 'whisper-1', passed: 3, total: 3 });
+  assert.equal(result.results[1].selectedReply, failed.selectedReply);
+});
 test('unmarked and non-production builds never consume the API', async () => {
   for (const options of [{ env: {}, manifest }, { env: { ...env, CONTEXT: 'deploy-preview' }, manifest }, { env, manifest: {} }]) {
     const result = await checkBrunaModelLive({ ...options, fetchImpl: () => { throw new Error('Unexpected API request'); } });

@@ -1,0 +1,98 @@
+{
+  "status": "blocked_before_publication",
+  "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
+  "bundleVersion": "2026-10-14.5",
+  "approvedCommit": "30b01f4267719effebd094edc2949a163ac1ed98",
+  "netlifyDeployId": "6ad0a6f33904b3954a95aec5",
+  "buildId": "6ad0a6f33904b3954a95aec3",
+  "branch": "reestruturacao-site",
+  "productionState": "error",
+  "publishedAt": null,
+  "failureObservedAt": "2026-10-15T10:20:26.643Z",
+  "buildFinishedAt": "2026-10-15T10:15:32Z",
+  "approval": {
+    "by": "Daniel",
+    "source": "Publicar nesta conversa",
+    "recordedAt": "2026-10-15T10:11:39.772Z"
+  },
+  "releasePreflight": {
+    "status": "CHANGE_SAFETY_STATUS=OK",
+    "approvedCommit": "30b01f4267719effebd094edc2949a163ac1ed98",
+    "scopeFiles": 32,
+    "clean": true,
+    "checkedAt": "2026-10-15T10:11:39.772Z"
+  },
+  "liveGate": {
+    "status": "failed",
+    "command": "node scripts/check-bruna-model-live.mjs && node scripts/build-static-site.mjs",
+    "exitCode": 1,
+    "requiredModelScenarios": 21,
+    "requiredAudioScenarios": 3,
+    "completedModelTelemetryCalls": 17,
+    "failedScenario": "not_observable_in_hosted_log",
+    "summaryLineVisible": false,
+    "note": "The build failed before deployment. The visible log contains 17 completed model telemetry calls but no final BRUNA_MODEL_PREFLIGHT record; counts do not prove individual scenario outcomes or identify the failing assertion."
+  },
+  "productionPreserved": {
+    "commit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
+    "netlifyDeployId": "6acff7b9dc7d30f39ad66b31",
+    "state": "ready",
+    "checkedAt": "2026-10-15T10:20:26.643Z",
+    "health": {
+      "status": 200,
+      "automationMode": "active",
+      "checkedAt": "2026-10-15T10:23:13.431Z"
+    }
+  },
+  "localCorrections": {
+    "prompt": "Remove contradictory denial of the authorized isolated submental liposuction range from price rules and keep combined procedures under human review.",
+    "diagnostics": "Emit bounded per-scenario log lines and redacted failure chunks without changing any pass criterion, timeout or retry.",
+    "causality": "Prompt contradiction is independently reproduced. It cannot be attributed as the exact hosted failure without the missing scenario receipt.",
+    "verification": {
+      "checkedAt": "2026-10-15T10:23:13.431Z",
+      "fullSuite": {
+        "passed": 2205,
+        "total": 2205
+      },
+      "requiredContractTests": {
+        "files": 74,
+        "passed": 1531,
+        "total": 1531
+      },
+      "mockedGateHarness": {
+        "passed": 18,
+        "total": 18
+      },
+      "architecture": "passed",
+      "build": "passed",
+      "site": "passed",
+      "independentReview": "passed"
+    },
+    "commit": "65d757d4962a52a236cff27951452715cc29c1d0"
+  },
+  "patientMessagesSent": 0,
+  "syntheticOnly": true,
+  "appsScript": {
+    "version": 164,
+    "changed": false,
+    "runtimeInspected": false
+  },
+  "nextStep": "Authorize the corrected exact commit, refresh live preflight and require all 21 model scenarios plus three audio checks before publishing.",
+  "documentation": {
+    "status": "written_verified",
+    "sourceCommit": "65d757d4962a52a236cff27951452715cc29c1d0",
+    "verifiedAt": "2026-10-15T10:25:00.245Z",
+    "method": "Authenticated readback with exact UTF-8 byte equality and SHA-256",
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "6254952ee6d416a624629ed6d43f9e458985e4d09cb69d6e76ce5b6b71422ce4",
+      "bytes": 73063
+    },
+    "executivePlan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "31e18df70cb359e7d10b137837f3f19ac63110c43d08cb89f1b16d707a799119",
+      "bytes": 10579
+    },
+    "existingFilesPreserved": true
+  }
+}

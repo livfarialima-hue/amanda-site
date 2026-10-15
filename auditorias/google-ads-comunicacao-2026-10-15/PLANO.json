@@ -285,7 +285,10 @@
       "readbackAt": "2026-10-15T10:13:24.745Z",
       "afterLive": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
       "operationalStatusAfter": "Ativado",
-      "policyAfter": "Pendente / Em análise; diagnóstico anterior de baixo índice de qualidade preservado."
+      "immediatePostEditStatus": "Pendente / Em análise; diagnóstico anterior de baixo índice de qualidade preservado.",
+      "primaryStatusAfter": "Qualificada (limitada) / Raramente mostrado (baixo Índice de qualidade)",
+      "finalStatusCheckedAt": "2026-10-15T10:31:03.610Z",
+      "statusNote": "Estado posterior à análise, com diagnóstico de qualidade já preexistente. Não comprova impressões ou efeito comercial."
     },
     {
       "action": "C02",
@@ -320,7 +323,10 @@
       "readbackAt": "2026-10-15T10:13:24.745Z",
       "afterLive": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
       "operationalStatusAfter": "Ativado",
-      "policyAfter": "Pendente / Em análise; diagnóstico anterior de baixo índice de qualidade preservado."
+      "immediatePostEditStatus": "Pendente / Em análise; diagnóstico anterior de baixo índice de qualidade preservado.",
+      "primaryStatusAfter": "Qualificada (limitada) / Raramente mostrado (baixo Índice de qualidade)",
+      "finalStatusCheckedAt": "2026-10-15T10:31:03.610Z",
+      "statusNote": "Estado posterior à análise, com diagnóstico de qualidade já preexistente. Não comprova impressões ou efeito comercial."
     }
   ],
   "exclusions": [

@@ -1,6 +1,8 @@
 # Plano executivo — auditorias, pendências e prazos
 
-## Candidato testado localmente — respostas e retomadas de 15/10
+## Publicação bloqueada — respostas e retomadas de 15/10
+
+A tentativa autorizada do commit 30b01f4 foi bloqueada pelo gate hospedado em 15/10/2026 às 07:15:32 (America/Sao_Paulo), deploy 6ad0a6f33904b3954a95aec5, antes de publicar. Produção permanece no deploy 6acff7b9dc7d30f39ad66b31 / commit cbda0cf. A revisão encontrou instruções antigas incompatíveis com a faixa já autorizada de papada isolada; foram alinhadas sem ampliar o escopo de preço. O registro final do gate não apareceu no log, portanto não se atribui a falha a um cenário específico. O diagnóstico passa a usar linhas limitadas por cenário, preservando todos os critérios. Recibo: auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json. A correção local passou em 2.205 testes integrais, 1.531 testes de contratos (74 arquivos, com sobreposição), 18 testes simulados do gate e verificações de arquitetura/build/site. Aguarda autorização do novo commit exato antes de repetir a publicação.
 
 Pacote 2026-10-14.5, ainda sem publicação. Corrigir perguntas conjuntas de procedimento/recuperação/preço e incorporar exclusivamente a faixa de lipo de papada isolada autorizada pelo responsável. Preservar oferta de informações úteis, revisão clínica, confirmação semântica e envio único. Baseline local b77b1d6 e deploy vigente 6acff7b9dc7d30f39ad66b31; Apps Script v164 preservado.
 
@@ -19,7 +21,7 @@ Versão pública revisada em 14/10/2026 com autorização do responsável. O con
 
 **Publicado e conferido no Google Ads em 15/10/2026.** Três destinos de sitelinks corrigidos em quatro associações existentes, 13 campos de três anúncios e duas URLs de palavras existentes de preço de blefaroplastia. Todos os campos foram salvos, reabertos e comparados ao lote aprovado; QA independente aprovada. Commit autorizado `2f5adbecb3712e99786cbf91acfa32510103b975`, com gate do HEAD exato antes das escritas. Recibos: `auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json`.
 
-Orçamentos, lances e estados das campanhas preservados; nenhuma palavra nova/negativa, associação adicional ou reativação. Identificação médica, fixações, demais textos, URLs de RSA e atribuição preservados. Sem alteração de site, atendimento ou dados. Três anúncios relidos Ativado/Qualificada, com indicador de qualidade Pendente, distinto do status de política. Duas palavras ativadas e Pendente/Em análise após editar o destino; o baixo índice de qualidade era anterior. Não há alegação de exibição ou ganho comercial.
+Orçamentos, lances e estados das campanhas preservados; nenhuma palavra nova/negativa, associação adicional ou reativação. Identificação médica, fixações, demais textos, URLs de RSA e atribuição preservados. Sem alteração de site, atendimento ou dados. Três anúncios relidos Ativado/Qualificada, com indicador de qualidade Pendente, distinto do status de política. Duas palavras ativadas: ficaram Pendente/Em análise após editar o destino e, na releitura das 10:31 UTC, voltaram a Qualificada (limitada), raramente mostrado por baixo Índice de qualidade já preexistente. Não há alegação de exibição ou ganho comercial.
 
 Daniel/equipe: conferir integridade e política em **17/10/2026**; avaliar contatos válidos, qualificados e consultas em **29/10/2026** e **12/11/2026**, com maturação e cobertura comparáveis. Baixa amostra continua inconclusiva. Restaurar somente o campo responsável ao before vivo diante de erro, reprovação atribuível ao delta ou regressão consistente, preservando histórico. Nenhuma automação nova.
 

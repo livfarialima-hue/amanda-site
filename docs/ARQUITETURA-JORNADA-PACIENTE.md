@@ -314,7 +314,7 @@ O `conversation-action-controller.mjs` continua proprietário da permissão: `re
 
 Consumo do plano ChatGPT não foi implementado: hospedagem remota requer elegibilidade/autorização específica e transporte SSE/OAuth compatível. Daniel autorizou publicar usando a API paga enquanto a integração da assinatura aguarda aprovação. Não há alternância automática de cobrança. Nenhuma credencial do Codex pode ser reaproveitada por suposição.
 
-O gate `scripts/check-bruna-model-live.mjs` roda somente no build Netlify de produção quando o manifesto marca uma publicação que exige validação real. Usa os três adaptadores, cinco cenários sintéticos e o segredo já injetado no build; não lê nem envia mensagens reais. A falha interrompe o build antes de publicar. Nenhuma chave ou erro bruto do provedor é registrado. O marcador é removido no fechamento para evitar consumo em builds futuros sem relação com o release.
+O gate `scripts/check-bruna-model-live.mjs` roda somente no build Netlify de produção quando o manifesto marca uma publicação que exige validação real. Usa os três adaptadores, 21 cenários sintéticos (incluindo dois de histórico completo e dois de papada) e três áudios sintéticos, com o segredo já injetado no build; não lê nem envia mensagens reais. A falha interrompe o build antes de publicar. Os diagnósticos usam linhas limitadas por cenário e blocos de falha com segredo redigido, para preservar o recibo no log hospedado. Nenhuma chave ou erro bruto do provedor é registrado. Os marcadores permanecem ativos após o fechamento para manter a validação nos builds futuros de produção.
 
 
 ## Contrato de áudio e arquivo de conversas (candidato 2026-10-13)

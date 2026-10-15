@@ -4,6 +4,31 @@ import {
   buildConversationGuidelines,
   CONVERSATION_GUIDELINES,
 } from "./conversation-guidelines.mjs";
+import { containsApprovedSurgicalRange, hasIsolatedLipoPapadaScope } from "./surgical-price-policy.mjs";
+
+test("all price sections agree with the isolated papada policy without authorizing associations", () => {
+  for (const conversionExperienceEnabled of [false, true]) {
+    const guidelines = buildConversationGuidelines({ conversionExperienceEnabled });
+    const lines = guidelines.split("\n");
+    for (const section of ["- Na pergunta explícita de preço", "- Faixas privadas aprovadas", "- Se, durante uma conversa noturna"]) {
+      const rule = lines.find(line => line.startsWith(section));
+      assert.ok(rule, section);
+      assert.match(rule, /lipo de papada isolada/, section);
+    }
+    const ranges = lines.find(line => line.startsWith("- Faixas privadas aprovadas"));
+    assert.equal(containsApprovedSurgicalRange(ranges, "lipo_papada"), true);
+    assert.doesNotMatch(guidelines, /não libera preço de lipo isolada/);
+    assert.match(guidelines, /não cobre platisma, retirada de pele, associação ou lipo corporal/);
+    assert.match(guidelines, /escopo sem faixa autorizada.*human_review/);
+    assert.match(guidelines, /uma única vez por contexto/);
+    assert.match(guidelines, /Entre 0h e 5h59, aplique contenção/);
+  }
+  assert.equal(hasIsolatedLipoPapadaScope("Qual o valor da lipo de papada isolada?"), true);
+  for (const scope of ["com platismoplastia", "com retirada de pele", "com tratamento muscular", "junto com preenchimento"]) {
+    assert.equal(hasIsolatedLipoPapadaScope(`Qual o valor da lipo de papada ${scope}?`), false, scope);
+  }
+  assert.equal(hasIsolatedLipoPapadaScope("Qual o valor da lipo corporal?"), false);
+});
 
 test("name collection never overrides a useful question or demands a name before answering", () => {
   assert.doesNotMatch(CONVERSATION_GUIDELINES, /responda brevemente à intenção e termine com a única pergunta/);
@@ -140,7 +165,7 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   assert.match(CONVERSATION_GUIDELINES, /desconto à vista/);
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Para qualquer outro procedimento já identificado, toda pergunta de preço, inclusive a primeira, usa human_review/,
+    /Para qualquer outro procedimento já identificado ou escopo sem faixa autorizada pelo plano determinístico, toda pergunta de preço, inclusive a primeira, usa human_review/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,
@@ -197,7 +222,7 @@ test("playbook protects price, scheduling, continuity and human handoff", () => 
   );
   assert.match(
     CONVERSATION_GUIDELINES,
-    /Para qualquer outro procedimento já identificado, toda pergunta de preço, inclusive a primeira, usa human_review/,
+    /Para qualquer outro procedimento já identificado ou escopo sem faixa autorizada pelo plano determinístico, toda pergunta de preço, inclusive a primeira, usa human_review/,
   );
   assert.match(
     CONVERSATION_GUIDELINES,

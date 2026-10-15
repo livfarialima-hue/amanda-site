@@ -8,7 +8,7 @@
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Pedido de implementação de 14/10/2026 e faixa lipo de papada isolada R$12–18mil confirmada pelo responsável nesta conversa. Publicação e envio real ainda não autorizados para este candidato."
+    "note": "Publicação do commit30b01f4 autorizada por Daniel nesta conversa e tentada; gate vivo bloqueou antes da publicação. A correção subsequente exige autorização do novo commit exato conforme o contrato."
   },
   "risk": {
     "level": "high",
@@ -20,6 +20,7 @@
       "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
       "auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md",
       "auditorias/bruna-respostas-retomadas-2026-10-14/REVISAO.json",
+      "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
       "auditorias/google-ads-comunicacao-2026-10-15/PLANO.json",
       "auditorias/google-ads-comunicacao-2026-10-15/PREFLIGHT.json",
       "auditorias/google-ads-comunicacao-2026-10-15/RELATORIO.md",
@@ -38,6 +39,7 @@
       "netlify/functions/lib/bruna-procedimento-preco-recuperacao.integration.test.mjs",
       "netlify/functions/lib/conversation-action-controller.mjs",
       "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/conversation-guidelines.test.mjs",
       "netlify/functions/lib/human-resume-policy.mjs",
       "netlify/functions/lib/human-resume-processor.test.mjs",
       "netlify/functions/lib/lifting-information.mjs",
@@ -63,7 +65,7 @@
       "patient-journey-funnel-followups",
       "followup-message-copy"
     ],
-    "planningNote": "O escopo funcional inicial foi integralmente implementado. As novas regressões de proprietário/gate foram concentradas na integração bruna-procedimento-preco-recuperacao e nos dois consumidores webhook/human-resume, mantendo a execução das suítes anteriores sem modificar expectativas. initialPlannedFiles preserva o planejamento; files descreve integralmente o diff real, sem omitir mudanças. Integração documental em 15/10/2026: o lote Google Ads aprovado no commit 2f5adbecb3712e99786cbf91acfa32510103b975 foi aplicado e relido separadamente. A união real tem 36 arquivos desde b77b1d6, incluindo quatro arquivos de auditoria Ads; não altera nem publica o candidato Bruna, cuja autorização e pendingRelease permanecem intactos.",
+    "planningNote": "O escopo funcional inicial foi integralmente implementado. As novas regressões de proprietário/gate foram concentradas na integração bruna-procedimento-preco-recuperacao e nos dois consumidores webhook/human-resume, mantendo a execução das suítes anteriores sem modificar expectativas. initialPlannedFiles preserva o planejamento; files descreve integralmente o diff real, sem omitir mudanças. Integração documental em 15/10/2026: o lote Google Ads aprovado no commit 2f5adbecb3712e99786cbf91acfa32510103b975 foi aplicado e relido separadamente. A união real tem 38 arquivos desde b77b1d6, incluindo quatro auditorias Ads; preserva a tentativa Bruna bloqueada, a correção subsequente e sua exigência de nova autorização, sem publicar esse candidato.",
     "initialPlannedFiles": [
       "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
       "auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md",
@@ -182,7 +184,7 @@
       "Apps Script v164, dados clínicos, agenda, flags, triggers, campanhas e orçamento preservados; somente observações manuais de planejamento na Central foram alteradas e relidas.",
       "Estado published_verified e recibos anteriores preservados como baseline; este pacote continua candidato.",
       "Dados pessoais e evidência de conversas ficam nas fontes privadas, nunca neste repositório público.",
-      "Código, testes e manifesto Bruna preservados integralmente da revisão remota 30b01f4267719effebd094edc2949a163ac1ed98; release.pending_authorization e manifesto pendingRelease permanecem vigentes.",
+      "Código, testes, manual e manifesto Bruna preservados integralmente da revisão local commitada 94f066e663fcd85f28f3e52ff15d8a2d5c75cedc. Tentativa anterior bloqueada antes de produção e correção aguardando autorização própria permanecem registradas.",
       "Componente Ads aplicado e relido: somente 13 textos de três RSAs, três destinos de sitelinks em quatro associações e duas URLs finais; orçamento, lances, estados, rastreamento e demais campos preservados.",
       "A reconciliação documental do componente Ads não encerra a pendência global Bruna; ops:check continua SYNC_PENDING enquanto esse candidato não tiver publicação própria autorizada e verificada."
     ],
@@ -322,21 +324,22 @@
     ],
     "baseline": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
     "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/REVISAO.json",
-    "checkedAt": "2026-10-15T10:01:05.041Z",
+    "checkedAt": "2026-10-15T10:23:13.431Z",
     "localResults": {
       "fullSuite": {
-        "passed": 2204,
-        "total": 2204
+        "passed": 2205,
+        "total": 2205
       },
       "contractUnion": {
-        "files": 83,
-        "passed": 1635,
-        "total": 1635,
-        "overlapsFullSuite": true
+        "files": 74,
+        "passed": 1531,
+        "total": 1531,
+        "overlapsFullSuite": true,
+        "selection": "requiredTestFiles of all declared contracts"
       },
       "liveGateHarness": {
-        "passed": 17,
-        "total": 17,
+        "passed": 18,
+        "total": 18,
         "mocked": true
       },
       "siteBuild": {
@@ -349,30 +352,94 @@
       "diff": "passed",
       "independentReview": "passed"
     },
-    "functionalCommit": "8385b919a36e20749ea98c7ed975500658006f7d",
+    "functionalCommit": "65d757d4962a52a236cff27951452715cc29c1d0",
+    "previousApprovedCommit": "30b01f4267719effebd094edc2949a163ac1ed98",
+    "correctionAfterBlockedBuild": {
+      "promptContradictionReproduced": true,
+      "diagnosticLinesBounded": true,
+      "criteriaUnchanged": true,
+      "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json"
+    },
+    "initialFunctionalCommit": "8385b919a36e20749ea98c7ed975500658006f7d",
+    "integrationHistory": [
+      {
+        "status": "passed_local",
+        "checkedAt": "2026-10-15T10:28:15Z",
+        "remoteBaseline": "30b01f4267719effebd094edc2949a163ac1ed98",
+        "adsReadbackCommit": "9846d4840ab3bc1c1668d491c98215bc7200b7ab",
+        "exactScopeFiles": 36,
+        "adsFilesAgainstRemote": 9,
+        "brunaCodeTestsManifestEqualRemote": true,
+        "unmergedFiles": 0,
+        "commands": [
+          {
+            "command": "npm.cmd run change:check",
+            "result": "CHANGE_SAFETY_STATUS=OK",
+            "exactFiles": 36
+          },
+          {
+            "command": "npm.cmd run architecture:check",
+            "result": "JOURNEY_MODULE_BOUNDARIES=OK"
+          },
+          {
+            "command": "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
+            "passed": 15,
+            "failed": 0
+          },
+          {
+            "command": "git diff --check",
+            "result": "passed"
+          },
+          {
+            "command": "git diff --cached --check",
+            "result": "passed"
+          },
+          {
+            "command": "npm.cmd run ops:check",
+            "result": "SYNC_PENDING",
+            "reasons": [
+              "CHANGE_PUBLICATION_PENDING",
+              "WRONG_BRANCH",
+              "DIRTY_WORKTREE"
+            ],
+            "note": "Candidato Bruna committed, aguardando sua própria autorização/publicação; branch de integração e merge ainda sem commit."
+          }
+        ],
+        "note": "Resultados anteriores de 2.204 testes Bruna e 2.175 testes Ads são históricos das respectivas revisões. A integração documental não publica Bruna; sua pendência global permanece visível.",
+        "independentReview": {
+          "status": "passed",
+          "scopeFiles": 36,
+          "adsFilesAgainstRemote": 9,
+          "brunaCodeTestsManifestPreserved": true,
+          "noPrivateIdsAdded": true,
+          "executivePlanHashVerified": true
+        }
+      }
+    ],
     "integrationValidation": {
       "status": "passed_local",
-      "checkedAt": "2026-10-15T10:28:15Z",
-      "remoteBaseline": "30b01f4267719effebd094edc2949a163ac1ed98",
-      "adsReadbackCommit": "9846d4840ab3bc1c1668d491c98215bc7200b7ab",
-      "exactScopeFiles": 36,
-      "adsFilesAgainstRemote": 9,
-      "brunaCodeTestsManifestEqualRemote": true,
+      "localCommittedBaseline": "94f066e663fcd85f28f3e52ff15d8a2d5c75cedc",
+      "exactScopeFiles": 38,
+      "note": "Validações anteriores de 2.175 Ads, 2.204 Bruna e 2.205 Bruna corrigida pertencem às revisões indicadas; esta integração documental não publica o candidato bloqueado.",
+      "checkedAt": "2026-10-15T10:32:59Z",
+      "adsFilesAgainstLocalCommittedBaseline": 9,
+      "brunaCodeTestsManifestEqualBaseline": true,
       "unmergedFiles": 0,
       "commands": [
         {
           "command": "npm.cmd run change:check",
           "result": "CHANGE_SAFETY_STATUS=OK",
-          "exactFiles": 36
+          "exactFiles": 38
         },
         {
           "command": "npm.cmd run architecture:check",
           "result": "JOURNEY_MODULE_BOUNDARIES=OK"
         },
         {
-          "command": "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
-          "passed": 15,
-          "failed": 0
+          "command": "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs scripts/check-bruna-model-live.test.mjs",
+          "passed": 53,
+          "failed": 0,
+          "liveGateHarnessMocked": true
         },
         {
           "command": "git diff --check",
@@ -390,10 +457,9 @@
             "WRONG_BRANCH",
             "DIRTY_WORKTREE"
           ],
-          "note": "Candidato Bruna committed, aguardando sua própria autorização/publicação; branch de integração e merge ainda sem commit."
+          "note": "Bruna continua committed, tentativa anterior bloqueada e correção aguardando autorização; merge ainda sem commit na branch de integração."
         }
-      ],
-      "note": "Resultados anteriores de 2.204 testes Bruna e 2.175 testes Ads são históricos das respectivas revisões. A integração documental não publica Bruna; sua pendência global permanece visível."
+      ]
     }
   },
   "rollback": {
@@ -410,10 +476,14 @@
     ]
   },
   "release": {
-    "status": "pending_authorization",
-    "externalWritesPerformed": false,
+    "status": "blocked_live_gate",
+    "externalWritesPerformed": true,
+    "approvedCommit": "30b01f4267719effebd094edc2949a163ac1ed98",
+    "failedDeployId": "6ad0a6f33904b3954a95aec5",
     "baselineDeployId": "6acff7b9dc7d30f39ad66b31",
-    "baselineAppsScriptVersion": 164
+    "baselineAppsScriptVersion": 164,
+    "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
+    "correctedCandidateStatus": "pending_authorization"
   },
   "operationalPlanning": {
     "status": "written_verified",
@@ -436,23 +506,23 @@
   },
   "documentation": {
     "status": "written_verified",
-    "sourceCommit": "71b22d7",
-    "verifiedAt": "2026-10-15T10:05:20.072Z",
+    "sourceCommit": "65d757d4962a52a236cff27951452715cc29c1d0",
+    "verifiedAt": "2026-10-15T10:25:00.245Z",
     "method": "Authenticated readback with exact UTF-8 byte equality and SHA-256",
     "manual": {
       "path": "docs/estrategia-abordagem-bruna.md",
-      "sha256": "27f960ce10f22f7fcf11ecec8c7fbbe57a30c29a3493e1223b9b6a048e2742bd",
-      "bytes": 72137
+      "sha256": "6254952ee6d416a624629ed6d43f9e458985e4d09cb69d6e76ce5b6b71422ce4",
+      "bytes": 73063
     },
     "executivePlan": {
       "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "sha256": "911227c42b003eeffa3bbb4158896f90b7f3800aeb17030ccfcb03f3463dfcba",
-      "bytes": 9638
+      "sha256": "31e18df70cb359e7d10b137837f3f19ac63110c43d08cb89f1b16d707a799119",
+      "bytes": 10579
     },
     "existingFilesPreserved": true,
     "integration": {
       "status": "pending_existing_drive_projection",
-      "note": "Recibos da revisão 71b22d7 acima permanecem históricos. O Plano integrado reúne a pendência Bruna e o componente Ads; exige substituir a mesma projeção e novo readback. Manual e manifesto Bruna permanecem íntegros, inclusive o recibo já reconciliado.",
+      "note": "Recibos da correção 65d757d4 acima permanecem históricos. O Plano integrado mantém a tentativa Bruna bloqueada, a correção aguardando autorização e o componente Ads. Exige substituir a mesma projeção e novo readback; manual e manifesto mantêm o recibo mais recente íntegro.",
       "executivePlanSha256": null,
       "verifiedAt": null
     }
@@ -463,7 +533,7 @@
       "status": "google_ads_published_verified_pending_drive",
       "approvedCommit": "2f5adbecb3712e99786cbf91acfa32510103b975",
       "receipt": "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json",
-      "googleAdsVerifiedAt": "2026-10-15T10:15:34.114Z",
+      "googleAdsVerifiedAt": "2026-10-15T10:31:45Z",
       "historicalVerification": {
         "status": "passed_local",
         "commands": [
