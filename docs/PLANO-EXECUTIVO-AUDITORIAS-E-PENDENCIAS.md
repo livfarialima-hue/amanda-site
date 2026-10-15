@@ -2,13 +2,17 @@
 
 Versão pública revisada em 14/10/2026 com autorização do responsável. O conteúdo integral anterior foi preservado como histórico fechado em área restrita. Esta edição remove contatos, gastos, identificadores de contas/campanhas e registros operacionais detalhados; não cancela decisões ou pendências anteriores. Não altera permissões de arquivos nem apaga o histórico Git já existente.
 
-## Execução autorizada pendente
+## Google Ads — configuração publicada e acompanhamento
 
-### Google Ads — comunicação e destinos, 15/10/2026
+### Comunicação e destinos, 15/10/2026
 
-**Testado localmente; publicação autorizada pelo usuário, preflight vivo concluído e aplicação pendente.** Lote limitado a três destinos de sitelinks, 13 campos de três anúncios e duas URLs de palavras existentes de preço de blefaroplastia. Sem mudança de orçamento, lance, meta, segmentação, palavras novas/negativas, site ou atendimento. Recibos e escopo exato: `auditorias/google-ads-comunicacao-2026-10-15/`. Identidade, campos anteriores, consumidores dos recursos e estado das campanhas foram relidos; destinos públicos conferidos e 13 campos de RSA comparados independentemente. Os limites constam no recibo de preflight. Não há escrita externa nem equivalência de produção declarada.
+**Publicado e conferido no Google Ads em 15/10/2026.** Três destinos de sitelinks corrigidos em quatro associações existentes, 13 campos de três anúncios e duas URLs de palavras existentes de preço de blefaroplastia. Todos os campos foram salvos, reabertos e comparados ao lote aprovado; QA independente aprovada. Commit autorizado `2f5adbecb3712e99786cbf91acfa32510103b975`, com gate do HEAD exato antes das escritas. Recibos: `auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json`.
 
-Próxima ação: concluir commit/gate para o escopo validado, aplicar somente o delta e reler, preservando o baseline vivo; interromper o objeto se surgir alteração concorrente. Depois substituir a mesma projeção deste Plano no Drive, com igualdade comprovada. Essa sincronização continua pendente. Daniel/equipe: integridade imediatamente/D+2 e contatos válidos, qualificados e consultas em D+14/D+28 da aplicação real, com maturação comparável. Reversão restrita ao before vivo do campo afetado; nenhuma automação nova. Publicações anteriores abaixo ficam preservadas.
+Orçamentos, lances e estados das campanhas preservados; nenhuma palavra nova/negativa, associação adicional ou reativação. Identificação médica, fixações, demais textos, URLs de RSA e atribuição preservados. Sem alteração de site, atendimento ou dados. Três anúncios relidos Ativado/Qualificada, com indicador de qualidade Pendente, distinto do status de política. Duas palavras ativadas e Pendente/Em análise após editar o destino; o baixo índice de qualidade era anterior. Não há alegação de exibição ou ganho comercial.
+
+Daniel/equipe: conferir integridade e política em **17/10/2026**; avaliar contatos válidos, qualificados e consultas em **29/10/2026** e **12/11/2026**, com maturação e cobertura comparáveis. Baixa amostra continua inconclusiva. Restaurar somente o campo responsável ao before vivo diante de erro, reprovação atribuível ao delta ou regressão consistente, preservando histórico. Nenhuma automação nova.
+
+O fechamento documental exige substituir esta mesma projeção no Drive, baixar novamente e comprovar igualdade; o resultado efetivo fica no recibo, sem criar planejamento concorrente. Publicações anteriores abaixo permanecem preservadas.
 
 ## Publicação verificada
 
@@ -48,7 +52,7 @@ Os identificadores abaixo são referências de releases públicos de software, j
 | Modalidade de consulta | Publicado e verificado | Observar primeira confirmação natural e revisar as 48 horas após a publicação |
 | Integridade da agenda | Contrato preservado | Exigir identidade, consentimento e modalidade inequívocos antes de qualquer efeito |
 | Outras pendências operacionais | Fora deste registro público | Consultar as fontes restritas antes de definir qualquer ação |
-| Comunicação e destinos no Google Ads | Lote específico testado e autorizado; preflight concluído | Commit/gate, aplicação dos campos declarados e readback; preservar orçamentos e lances |
+| Comunicação e destinos no Google Ads | Publicado e relido; análise e qualidade em estados distintos | Integridade/política em 17/10; etapas comerciais em 29/10 e 12/11; recibo de igualdade documental obrigatório |
 | Conteúdos e imagens | Revisão conforme fonte | Preservar consentimento e revisão clínica, sem supor aprovação |
 | Histórico anterior | Arquivo restrito fechado | Revalidar pendências nas fontes atuais antes de retomar a execução |
 

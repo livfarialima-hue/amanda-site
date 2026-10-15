@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-COMUNICACAO-2026-10-15",
-  "status": "tested_local",
+  "status": "google_ads_published_verified",
   "authorizedScope": "Lote prioritário aprovado na conversa: 3 destinos de sitelinks, 13 campos de 3 RSAs e 2 URLs finais de palavras existentes. Autorização de publicar ao fim permanece sujeita aos gates e ao preflight vivo.",
   "source": "Proposta apresentada ao usuário em 14/10/2026; exports fornecidos de 14/07 a 13/10/2026. O export não é baseline vivo.",
   "privacy": "Plano público sanitizado: sem identificadores de conta, campanha, anúncio, grupo ou pessoa; sem gastos. Identidades operacionais devem ser conferidas somente na fonte viva e em evidência privada.",
@@ -14,10 +14,12 @@
       "beforeExport": "https://draamandaschroeder.com.br/avaliacao-facial/#consulta",
       "after": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
       "scope": "Recurso universal de conta; confirmar identidade e todas as associações vivas.",
-      "status": "before_live_observed_no_write",
+      "status": "applied_verified",
       "preserve": "Texto, descrições, status, parâmetros, sufixo e associações elegíveis; alterar somente o destino aprovado.",
       "beforeLive": "https://draamandaschroeder.com.br/avaliacao-facial/#consulta",
-      "associationsObserved": 1
+      "associationsObserved": 1,
+      "readbackAt": "2026-10-15T10:03:37.842Z",
+      "afterLive": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/"
     },
     {
       "action": "A02",
@@ -27,11 +29,13 @@
       "beforeExport": "https://draamandaschroeder.com.br/lifting-cervical/",
       "after": "https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/",
       "scope": "Recurso existente compartilhado nas duas campanhas de lifting cervical e otoplastia, ambas com URL cervical no before vivo. Corrigir o destino no mesmo recurso para as duas associações existentes. O recurso separado de segurança em lifting facial já aponta ao guia correto e não muda. Não criar ou reativar associações.",
-      "status": "before_live_observed_no_write",
+      "status": "applied_verified",
       "preserve": "Texto, descrições, status, parâmetros, sufixo e associações elegíveis; alterar somente o destino aprovado.",
       "beforeLive": "https://draamandaschroeder.com.br/lifting-cervical/",
       "associationsObserved": 2,
-      "trackingAndSchedule": "Modelo, sufixo, parâmetros personalizados e URL móvel vazios; sem restrição adicional de agenda. Preservar o before vivo."
+      "trackingAndSchedule": "Modelo, sufixo, parâmetros personalizados e URL móvel vazios; sem restrição adicional de agenda. Preservar o before vivo.",
+      "readbackAt": "2026-10-15T10:04:36.853Z",
+      "afterLive": "https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/"
     },
     {
       "action": "A03",
@@ -41,11 +45,13 @@
       "beforeExport": "https://draamandaschroeder.com.br/lifting-cervical/",
       "after": "https://draamandaschroeder.com.br/lifting-cervical/#consulta",
       "scope": "Recurso existente aplicado a uma única campanha cervical. Não tocar status, criar associação ou reativar otoplastia.",
-      "status": "before_live_observed_no_write",
+      "status": "applied_verified",
       "preserve": "Texto, descrições, status, parâmetros, sufixo e associações elegíveis; alterar somente o destino aprovado.",
       "beforeLive": "https://draamandaschroeder.com.br/lifting-cervical/",
       "associationsObserved": 1,
-      "trackingAndSchedule": "Modelo, sufixo, parâmetros personalizados e URL móvel vazios; sem datas e programação de todos os dias preservadas."
+      "trackingAndSchedule": "Modelo, sufixo, parâmetros personalizados e URL móvel vazios; sem datas e programação de todos os dias preservadas.",
+      "readbackAt": "2026-10-15T10:05:36.918Z",
+      "afterLive": "https://draamandaschroeder.com.br/lifting-cervical/#consulta"
     }
   ],
   "rsaFields": [
@@ -58,9 +64,11 @@
       "characters": 24,
       "limit": 30,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Cirurgia de Pálpebras Caídas",
-      "beforeObservedAt": "2026-10-15T09:43:37.599Z"
+      "beforeObservedAt": "2026-10-15T09:43:37.599Z",
+      "readbackAt": "2026-10-15T10:10:09.846Z",
+      "afterLive": "Pálpebras, Bolsas e Pele"
     },
     {
       "action": "B02",
@@ -71,9 +79,11 @@
       "characters": 28,
       "limit": 30,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Preparo e Pós-Operatório",
-      "beforeObservedAt": "2026-10-15T09:43:37.599Z"
+      "beforeObservedAt": "2026-10-15T09:43:37.599Z",
+      "readbackAt": "2026-10-15T10:10:09.846Z",
+      "afterLive": "O Que a Cirurgia Pode Tratar"
     },
     {
       "action": "B03",
@@ -84,9 +94,11 @@
       "characters": 18,
       "limit": 30,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Cardiologia na Própria Clínica",
-      "beforeObservedAt": "2026-10-15T09:43:37.599Z"
+      "beforeObservedAt": "2026-10-15T09:43:37.599Z",
+      "readbackAt": "2026-10-15T10:10:09.846Z",
+      "afterLive": "Avaliação do Olhar"
     },
     {
       "action": "B04",
@@ -97,9 +109,11 @@
       "characters": 83,
       "limit": 90,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Blefaroplastia superior e inferior: avalie pálpebras, formato dos olhos e cicatrizes.",
-      "beforeObservedAt": "2026-10-15T09:43:37.599Z"
+      "beforeObservedAt": "2026-10-15T09:43:37.599Z",
+      "readbackAt": "2026-10-15T10:10:09.846Z",
+      "afterLive": "Blefaroplastia superior e inferior: entenda pele, bolsas, cicatrizes e recuperação."
     },
     {
       "action": "B05",
@@ -110,9 +124,11 @@
       "characters": 87,
       "limit": 90,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Cirurgia de pálpebras com equipe anestésica selecionada e acompanhamento próximo.",
-      "beforeObservedAt": "2026-10-15T09:43:37.599Z"
+      "beforeObservedAt": "2026-10-15T09:43:37.599Z",
+      "readbackAt": "2026-10-15T10:10:09.846Z",
+      "afterLive": "Converse com a Dra. Amanda sobre cicatrizes, anestesia e recuperação da blefaroplastia."
     },
     {
       "action": "B06",
@@ -123,9 +139,11 @@
       "characters": 24,
       "limit": 30,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Conheça o Plano Cirúrgico",
-      "beforeObservedAt": "2026-10-15T09:44:33.839Z"
+      "beforeObservedAt": "2026-10-15T09:44:33.839Z",
+      "readbackAt": "2026-10-15T10:10:59.081Z",
+      "afterLive": "Pele, Gordura e Músculos"
     },
     {
       "action": "B07",
@@ -136,9 +154,11 @@
       "characters": 24,
       "limit": 30,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Cardiologia na Própria Clínica",
-      "beforeObservedAt": "2026-10-15T09:44:33.839Z"
+      "beforeObservedAt": "2026-10-15T09:44:33.839Z",
+      "readbackAt": "2026-10-15T10:10:59.081Z",
+      "afterLive": "Lipo ou Lifting Cervical"
     },
     {
       "action": "B08",
@@ -149,9 +169,11 @@
       "characters": 78,
       "limit": 90,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Cervicoplastia e lifting de pescoço: contorno, pele e músculos orientam o plano cirúrgico.",
-      "beforeObservedAt": "2026-10-15T09:44:33.839Z"
+      "beforeObservedAt": "2026-10-15T09:44:33.839Z",
+      "readbackAt": "2026-10-15T10:10:59.081Z",
+      "afterLive": "Cervicoplastia: o pescoço é avaliado junto ao contorno da mandíbula e da face."
     },
     {
       "action": "B09",
@@ -162,9 +184,11 @@
       "characters": 87,
       "limit": 90,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Platismoplastia e flacidez no pescoço: avalie indicação, preparo e recuperação.",
-      "beforeObservedAt": "2026-10-15T09:44:33.839Z"
+      "beforeObservedAt": "2026-10-15T09:44:33.839Z",
+      "readbackAt": "2026-10-15T10:10:59.081Z",
+      "afterLive": "Converse com a Dra. Amanda sobre cicatrizes, preparo e recuperação do lifting cervical."
     },
     {
       "action": "B10",
@@ -175,9 +199,11 @@
       "characters": 20,
       "limit": 30,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Planejamento do Pescoço",
-      "beforeObservedAt": "2026-10-15T09:45:35.495Z"
+      "beforeObservedAt": "2026-10-15T09:45:35.495Z",
+      "readbackAt": "2026-10-15T10:12:01.962Z",
+      "afterLive": "Gordura ou Flacidez?"
     },
     {
       "action": "B11",
@@ -188,9 +214,11 @@
       "characters": 25,
       "limit": 30,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Cardiologia na Própria Clínica",
-      "beforeObservedAt": "2026-10-15T09:45:35.495Z"
+      "beforeObservedAt": "2026-10-15T09:45:35.495Z",
+      "readbackAt": "2026-10-15T10:12:01.962Z",
+      "afterLive": "Lipo de Papada: Indicação"
     },
     {
       "action": "B12",
@@ -201,9 +229,11 @@
       "characters": 78,
       "limit": 90,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Plano para a gordura abaixo do queixo, considerando o contorno e a firmeza da pele.",
-      "beforeObservedAt": "2026-10-15T09:45:35.495Z"
+      "beforeObservedAt": "2026-10-15T09:45:35.495Z",
+      "readbackAt": "2026-10-15T10:12:01.962Z",
+      "afterLive": "Na lipo de papada, a firmeza da pele ajuda a definir a indicação e os limites."
     },
     {
       "action": "B13",
@@ -214,9 +244,11 @@
       "characters": 81,
       "limit": 90,
       "pin": "Sem fixação no before vivo; preservar. Descrição 1 fixada na posição 1 permanece fora do delta.",
-      "status": "before_live_compared_no_write",
+      "status": "applied_verified",
       "beforeLive": "Equipe anestésica selecionada com critério e comunicação próxima com a cirurgiã.",
-      "beforeObservedAt": "2026-10-15T09:45:35.495Z"
+      "beforeObservedAt": "2026-10-15T09:45:35.495Z",
+      "readbackAt": "2026-10-15T10:12:01.962Z",
+      "afterLive": "Converse sobre cicatrizes, anestesia e recuperação na consulta com a Dra. Amanda."
     }
   ],
   "keywordUrls": [
@@ -227,7 +259,7 @@
       "match": "exact",
       "beforeExport": "URL final vazia; herda o anúncio geral /blefaroplastia/",
       "after": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
-      "status": "before_live_observed_no_write",
+      "status": "applied_verified",
       "preserve": "Texto, correspondência, status, lance, URL móvel, sufixo e parâmetros. Não criar palavra ou grupo.",
       "beforeLiveTable": {
         "finalUrl": "",
@@ -249,7 +281,11 @@
         "status": "enabled",
         "eligibility": "limited_low_quality_score"
       },
-      "rollback": "Restaurar somente a URL final ao campo vazio observado; não apagar a palavra nem adicionar rastreamento ou lance."
+      "rollback": "Restaurar somente a URL final ao campo vazio observado; não apagar a palavra nem adicionar rastreamento ou lance.",
+      "readbackAt": "2026-10-15T10:13:24.745Z",
+      "afterLive": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+      "operationalStatusAfter": "Ativado",
+      "policyAfter": "Pendente / Em análise; diagnóstico anterior de baixo índice de qualidade preservado."
     },
     {
       "action": "C02",
@@ -258,7 +294,7 @@
       "match": "exact",
       "beforeExport": "URL final vazia; herda o anúncio geral /blefaroplastia/",
       "after": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
-      "status": "before_live_observed_no_write",
+      "status": "applied_verified",
       "preserve": "Texto, correspondência, status, lance, URL móvel, sufixo e parâmetros. Não criar palavra ou grupo.",
       "beforeLiveTable": {
         "finalUrl": "",
@@ -280,7 +316,11 @@
         "status": "enabled",
         "eligibility": "limited_low_quality_score"
       },
-      "rollback": "Restaurar somente a URL final ao campo vazio observado; não apagar a palavra nem adicionar rastreamento ou lance."
+      "rollback": "Restaurar somente a URL final ao campo vazio observado; não apagar a palavra nem adicionar rastreamento ou lance.",
+      "readbackAt": "2026-10-15T10:13:24.745Z",
+      "afterLive": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+      "operationalStatusAfter": "Ativado",
+      "policyAfter": "Pendente / Em análise; diagnóstico anterior de baixo índice de qualidade preservado."
     }
   ],
   "exclusions": [
@@ -291,5 +331,8 @@
   ],
   "idempotency": "Objeto já igual ao destino/texto proposto: registrar sem alteração. Before divergente: interromper somente o objeto e revisar a divergência antes de qualquer escrita. Após timeout ou resposta ambígua, reler antes de tentar novamente.",
   "rollback": "Restaurar somente o campo alterado ao before vivo salvo, inclusive URL final vazia. Preservar objetos, histórico e mudanças paralelas.",
-  "beforeSource": "Before exportado reconciliado ao preflight vivo de 15/10/2026, sem alteração externa; snapshots operacionais privados."
+  "beforeSource": "Before exportado reconciliado ao preflight vivo de 15/10/2026 antes da primeira escrita; snapshots operacionais privados preservam o baseline. Os campos afterLive e readbackAt documentam a aplicação posterior.",
+  "approvedCommit": "2f5adbecb3712e99786cbf91acfa32510103b975",
+  "verifiedAt": "2026-10-15T10:15:34.114Z",
+  "publicationNote": "Somente os campos aprovados foram salvos e relidos. A igualdade documental do Plano no Drive está registrada separadamente em REVISAO.json; aprovação de política, exibição e resultado comercial não são inferidos."
 }

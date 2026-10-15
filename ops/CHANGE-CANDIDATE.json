@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-COMUNICACAO-2026-10-15",
   "title": "Corrigir destinos e comunicação do lote prioritário aprovado no Google Ads",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "note": "Comunicação pública de aquisição e roteamento; sem efeito em dados, mensagens, preço, agenda ou classificação."
   },
   "scope": {
@@ -38,7 +38,7 @@
       "rsaObjects": 3,
       "keywordFinalUrls": 2
     },
-    "planningNote": "Todos os nove arquivos alterados estão declarados e os preflights vivos concluídos com limites explícitos. Nenhuma escrita externa; avançar somente após commit intencional limpo e release:preflight para o HEAD exato autorizado."
+    "planningNote": "Escopo autorizado de nove arquivos e campos externos aplicado no Google Ads e relido. Estado global committed mantém SYNC_PENDING porque a mesma projeção do Plano no Drive ainda precisa de igualdade; nenhum destino ou consumidor omitido."
   },
   "impact": {
     "consumers": [
@@ -174,11 +174,11 @@
   },
   "rollback": {
     "local": "Reverter somente os nove arquivos deste candidato ao baseline, preservando publicações anteriores.",
-    "production": "Restaurar somente cada campo alterado ao before vivo guardado, incluindo URL final vazia. Não excluir objetos/histórico nem reverter mudanças paralelas. Sem escrita externa, não há rollback operacional a executar."
+    "production": "Restaurar somente cada campo alterado ao before vivo guardado, incluindo URL final vazia. Não excluir objetos/histórico nem reverter mudanças paralelas. Preservar orçamento, lances, estado de campanha, site e atendimento."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
-    "window": "Após aplicação real: integridade imediata e D+2; leitura de coortes D+14 e D+28, sem nova automação.",
+    "window": "Integridade e política em 17/10/2026; coortes em 29/10/2026 e 12/11/2026, com maturação comparável, sem nova automação.",
     "signals": [
       "Campos salvos/readback iguais ao payload aprovado; URLs, âncoras, parâmetros e associações coerentes.",
       "Política, elegibilidade e veiculação verificadas como estados distintos.",
@@ -187,9 +187,9 @@
     ]
   },
   "release": {
-    "status": "pending_publication",
-    "externalWritesPerformed": false,
-    "approvedCommit": null,
+    "status": "pending_drive",
+    "externalWritesPerformed": true,
+    "approvedCommit": "2f5adbecb3712e99786cbf91acfa32510103b975",
     "receipt": "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json",
     "externalSystemsToWrite": [
       "Google Ads",
@@ -199,6 +199,12 @@
     "appsScriptChanged": false,
     "functionsChanged": false,
     "brunaManifestChanged": false,
-    "note": "Nenhum novo deploy faz parte deste pacote; código e destinos de Netlify/Apps Script preservados no diff; recibos históricos mantidos, sem alegar nova auditoria. O escopo de escrita externa é Google Ads e a mesma projeção do Plano no Drive, com recibos reais em REVISAO.json."
+    "note": "Google Ads aplicado e relido no escopo aprovado; projeção documental do Plano no Drive ainda pendente. Nenhum novo deploy faz parte deste pacote; código e destinos de Netlify/Apps Script preservados no diff e recibos históricos mantidos, sem alegar nova auditoria. Fechamento completo somente após igualdade real do Drive e commit documental.",
+    "googleAdsStatus": "published_verified",
+    "googleAdsVerifiedAt": "2026-10-15T10:15:34.114Z",
+    "netlifyDeployId": "6acff7b9dc7d30f39ad66b31",
+    "appsScriptVersion": 164,
+    "drivePlanSha256": null,
+    "drivePlanReadbackVerifiedAt": null
   }
 }
