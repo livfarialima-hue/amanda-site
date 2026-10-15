@@ -1,5 +1,11 @@
 # Arquitetura da jornada da paciente
 
+## Candidato local — recibos de consumo por categoria, 15/10/2026
+
+knowledge-candidate.mjs e scheduled-followup-context-review.mjs emitem um recibo por chamada realmente tentada. ai-usage.mjs continua proprietário do schema v1; operational-log.mjs continua proprietário de sanitização/correlação. source distingue knowledge_inference de followup_review_inference; sourceId é UUID aleatório, não dado da paciente. Emissão no finally, sem aguardar logger, com proteção contra lançamento síncrono/rejeição assíncrona. Não muda protocolo, payload, retorno, decisão, retry ou timeout.
+
+Uso é capturado antes de validar conteúdo. completed descreve inferência terminada, não aprovação, aprendizado aplicado ou envio. Recibos parciais/desconhecidos preservam lacunas. Pré-condições sem chamada não geram recibo; não há medição completa dos casos dispensados. Classificador e áudio ficam fora desta fatia; áudio precisa de unidade/contrato próprios. Não há novo persistidor, endpoint, fila, automação ou ponte. Publicação ainda depende de autorização do SHA. Referência: auditorias/bruna-consumo-categorias-2026-10-15/RELATORIO.md.
+
 ## Publicado 15/10/2026 — continuidade sem vetos de estilo redundantes
 
 Publicado: BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15, SHA 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228, deploy 6ad120701654730b8c969605; recibo auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json. Reconhecimento de repetição solicitada pertence a reply-continuity e é consumido pelo gate, sem retirar a proteção de uso único de faixa cirúrgica. Clarificação específica não equivale a recomeçar a conversa. Classificação de convite e negação permanecem integralmente no baseline: a tentativa de relaxar o veto lexical de CTA foi descartada após revisão adversarial. Evoluir para atos conversacionais exige desenho próprio, não multiplicar exceções por frases.

@@ -1,4 +1,6 @@
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
+import { normalizeAIUsage, summarizeAIExecution } from "./ai-usage.mjs";
+import { writeOperationalLog } from "./operational-log.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 import {
@@ -149,7 +151,7 @@ export async function reviewScheduledFollowupContext(
     leadContext,
     humanApproved = false,
   },
-  { env = process.env, fetchImpl = fetch } = {},
+  { env = process.env, fetchImpl = fetch, logImpl = writeOperationalLog } = {},
 ) {
   const conversation = normalizeRecentConversation(recentConversation);
   const proposedMessage = safeText(body, 1_500);
@@ -175,9 +177,21 @@ export async function reviewScheduledFollowupContext(
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), BRUNA_FOLLOWUP_REVIEW_TIMEOUT_MS);
+  let attempt = null;
+  let attemptStartedAt;
+  const emitExecution = () => {
+    if (!attempt) return;
+    try {
+      attempt.durationMs = Math.max(0, Date.now() - attemptStartedAt);
+      const logging = logImpl({ source: "followup_review_inference", category: "ai_usage", reason: "execution_recorded",
+        sourceId: randomUUID(),
+        fields: { model: BRUNA_MODEL, aiExecution: summarizeAIExecution([attempt], attempt.durationMs) } });
+      if (logging && typeof logging.catch === "function") logging.catch(() => {});
+    } catch { /* Telemetry must never change a decision or retry an inference. */ }
+  };
 
   try {
-    const response = await fetchImpl(OPENAI_RESPONSES_URL, {
+    const request = {
       method: "POST",
       headers: {
         authorization: `Bearer ${apiKey}`,
@@ -208,9 +222,15 @@ export async function reviewScheduledFollowupContext(
         },
       }),
       signal: controller.signal,
-    });
+    };
+    // Count only actual requests, never preparation or deterministic vetoes.
+    attemptStartedAt = Date.now();
+    attempt = { stage: "initial", outcome: "request_failed", usage: null };
+    const response = await fetchImpl(OPENAI_RESPONSES_URL, request);
+    attempt.httpStatus = response.status;
 
     if (!response.ok) {
+      attempt.outcome = "http_error";
       return {
         status: "failed",
         allowed: false,
@@ -219,8 +239,18 @@ export async function reviewScheduledFollowupContext(
       };
     }
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (error) {
+      attempt.outcome = ["AbortError", "TimeoutError"].includes(error?.name) ? "timeout"
+        : error?.name === "SyntaxError" ? "invalid_response" : "request_failed";
+      throw error;
+    }
+    attempt.usage = normalizeAIUsage(data?.usage);
+    attempt.outcome = "invalid_response";
     if (data?.status && data.status !== "completed") {
+      attempt.outcome = "incomplete_response";
       return { status: "failed", allowed: false, errorCode: "incomplete_response" };
     }
     const rawDecision = extractOutputText(data);
@@ -236,12 +266,16 @@ export async function reviewScheduledFollowupContext(
       };
     }
 
-    return normalizeDecision(parsed) || {
+    const decision = normalizeDecision(parsed);
+    // A completed veto is not an authorization or evidence of patient delivery.
+    attempt.outcome = decision ? "completed" : "invalid_response";
+    return decision || {
       status: "failed",
       allowed: false,
       errorCode: "invalid_decision",
     };
   } catch (error) {
+    if (attempt && ["AbortError", "TimeoutError"].includes(error?.name)) attempt.outcome = "timeout";
     return {
       status: "failed",
       allowed: false,
@@ -250,5 +284,6 @@ export async function reviewScheduledFollowupContext(
     };
   } finally {
     clearTimeout(timeout);
+    emitExecution();
   }
 }

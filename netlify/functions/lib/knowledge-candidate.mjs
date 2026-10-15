@@ -1,4 +1,7 @@
+import { randomUUID } from "node:crypto";
 import { BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS, BRUNA_TEXT_VERBOSITY } from "./bruna-model-config.mjs";
+import { normalizeAIUsage, summarizeAIExecution } from "./ai-usage.mjs";
+import { writeOperationalLog } from "./operational-log.mjs";
 
 const fields = { reusable: { type: "boolean" }, answersQuestion: { type: "boolean" }, subject: { type: "string" },
   question: { type: "string" }, answer: { type: "string" }, boundaries: { type: "string" }, existingRuleId: { type: "string" } };
@@ -31,12 +34,24 @@ export function validateLearningCandidate(value, pending, existingCandidates = [
 
 // A draft is never an approval. This inference is downstream of human takeover
 // and cannot authorize a reply, promote knowledge, or change patient ownership.
-export async function proposeKnowledgeCandidate({ answer, pendingQuestion, existingCandidates = [] }, { env = process.env, fetchImpl = fetch } = {}) {
+export async function proposeKnowledgeCandidate({ answer, pendingQuestion, existingCandidates = [] }, { env = process.env, fetchImpl = fetch, logImpl = writeOperationalLog } = {}) {
   if (!env.OPENAI_API_KEY || !hasBoundQuestion(pendingQuestion) || pendingQuestion.risk !== "Baixo" ||
       !String(answer || "").trim() || Array.from(String(answer).trim()).length > 2000 || pendingAnswer.test(answer) ||
       sensitive.test(answer) || sensitive.test(pendingQuestion.question)) return null;
+  let attempt = null;
+  let attemptStartedAt;
+  const emitExecution = () => {
+    if (!attempt) return;
+    try {
+      attempt.durationMs = Math.max(0, Date.now() - attemptStartedAt);
+      const logging = logImpl({ source: "knowledge_inference", category: "ai_usage", reason: "execution_recorded",
+        sourceId: randomUUID(),
+        fields: { model: BRUNA_MODEL, aiExecution: summarizeAIExecution([attempt], attempt.durationMs) } });
+      if (logging && typeof logging.catch === "function") logging.catch(() => {});
+    } catch { /* Telemetry must never change a decision or retry an inference. */ }
+  };
   try {
-    const response = await fetchImpl("https://api.openai.com/v1/responses", {
+    const request = {
       method: "POST", headers: { authorization: `Bearer ${env.OPENAI_API_KEY}`, "content-type": "application/json" },
       signal: AbortSignal.timeout(12_000),
       body: JSON.stringify({ model: BRUNA_MODEL, reasoning: { effort: BRUNA_REASONING_EFFORT },
@@ -48,11 +63,33 @@ export async function proposeKnowledgeCandidate({ answer, pendingQuestion, exist
         text: { verbosity: BRUNA_TEXT_VERBOSITY, format: { type: "json_schema", name: "knowledge_proposal", strict: true,
           schema: { type: "object", additionalProperties: false, required: Object.keys(fields), properties: fields } } },
       }),
-    });
-    if (!response.ok) return null;
-    const result = await response.json();
-    if (result.status !== "completed") return null;
+    };
+    // Count only actual requests, never a failed preparation or a reused result.
+    attemptStartedAt = Date.now();
+    attempt = { stage: "initial", outcome: "request_failed", usage: null };
+    const response = await fetchImpl("https://api.openai.com/v1/responses", request);
+    attempt.httpStatus = response.status;
+    if (!response.ok) { attempt.outcome = "http_error"; return null; }
+    let result;
+    try {
+      result = await response.json();
+    } catch (error) {
+      attempt.outcome = ["AbortError", "TimeoutError"].includes(error?.name) ? "timeout"
+        : error?.name === "SyntaxError" ? "invalid_response" : "request_failed";
+      throw error;
+    }
+    attempt.usage = normalizeAIUsage(result?.usage);
+    attempt.outcome = "invalid_response";
+    if (result.status !== "completed") { attempt.outcome = "incomplete_response"; return null; }
     const output = (result.output || []).flatMap(item => item.content || []).filter(c => c.type === "output_text").map(c => c.text).join("");
-    return validateLearningCandidate(JSON.parse(output), pendingQuestion, existingCandidates);
-  } catch { return null; }
+    const candidate = validateLearningCandidate(JSON.parse(output), pendingQuestion, existingCandidates);
+    // Completion is inference evidence, not approval or acceptance of a fact.
+    attempt.outcome = "completed";
+    return candidate;
+  } catch (error) {
+    if (attempt && ["AbortError", "TimeoutError"].includes(error?.name)) attempt.outcome = "timeout";
+    return null;
+  } finally {
+    emitExecution();
+  }
 }

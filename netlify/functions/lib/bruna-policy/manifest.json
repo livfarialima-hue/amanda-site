@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-10-15.2",
-  "promptVersion": "bruna-concierge-2026-10-15.2",
+  "bundleVersion": "2026-10-15.3",
+  "promptVersion": "bruna-concierge-2026-10-15.3",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-10-15.2",
+  "knowledgeSnapshot": "kb-2026-10-15.3",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -47,17 +47,17 @@
   "replyContinuityContract": "reply-continuity",
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
-    "changeId": "BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15",
-    "status": "published_verified",
+    "changeId": "BRUNA-CONSUMO-CATEGORIAS-2026-10-15",
+    "status": "tested_local",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
     "liveModelScenarioCount": 21,
-    "baselineCommit": "45d73450f5da28cdbdd222d2574e03f9f0e9fa48",
-    "bundleVersion": "2026-10-15.2",
-    "baselineDeployId": "6ad0f6c1fd759be7d5f15b0f",
+    "baselineCommit": "426ea79829045dc85b2eee0563097e4e0be95e3d",
+    "bundleVersion": "2026-10-15.3",
+    "baselineDeployId": "6ad120701654730b8c969605",
     "baselineAppsScriptVersion": 164,
-    "sourceCommit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
-    "note": "Publicado com gate 21/21, dois históricos completos e 3/3 áudios; marcadores preservados para builds futuros. Próximo pacote e ponte pela conta não publicados."
+    "sourceCommit": "",
+    "note": "Somente telemetria numérica nos adaptadores de conhecimento/revisão. Versões identificam o pacote; prompt e fatos efetivos não mudam. Sem publicação, novas inferências, modelo novo ou ponte pela conta."
   }
 }

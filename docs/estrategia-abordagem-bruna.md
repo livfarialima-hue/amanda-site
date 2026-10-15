@@ -1,5 +1,11 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+## Candidato local — consumo por categoria, 15/10/2026
+
+BRUNA-CONSUMO-CATEGORIAS-2026-10-15, pacote 2026-10-15.3, testado (2287/2287) e revisado, ainda não publicado. A versão publicada continua 2026-10-15.2, commit 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228. O candidato acrescenta recibos numéricos no log existente para extração de conhecimento e revisão de retomada; não altera prompts, fatos, modelos, respostas, decisões, prazos, aprovação humana ou quantidade de inferências. Falha do log não bloqueia nem provoca retry.
+
+O plugin poderá analisar os recibos disponíveis pela conta, mas coleta automática, retenção e migração do processamento não estão comprovadas. Sem nomes, mensagens, procedimento, telefone, oportunidade ou ID do provedor. Uso ausente é desconhecido; inferência concluída não significa conhecimento aprovado ou WhatsApp enviado. Não somar knownUsage com attempts nem misturar testes de build com atendimento real. Resultado e próximos gates: [relatório](../auditorias/bruna-consumo-categorias-2026-10-15/RELATORIO.md).
+
 ## Publicado e verificado — coerência e processamento pela conta, 15/10/2026
 
 Pacote 2026-10-15.2 publicado após autorização específica nesta conversa.
@@ -87,7 +93,7 @@ O histórico documental integral anterior foi arquivado em área restrita. Esta 
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste conteúdo. Estratégia de aquisição e estado vivo seguem suas fontes próprias.
 
-**Versão:** 2026-10-15.2
+**Versão:** 2026-10-15.3
 
 Projeção ativa: 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF. O identificador não concede acesso; as permissões existentes são preservadas.
 

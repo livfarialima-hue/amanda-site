@@ -195,6 +195,7 @@
         "auditorias/bruna-autonomia-contextual-2026-10-15/RELATORIO.md",
         "auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md",
         "auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json",
+        "auditorias/bruna-consumo-categorias-2026-10-15/RELATORIO.md",
         "auditorias/bruna-contexto-indisponivel-2026-09-25/PREFLIGHT.json",
         "auditorias/bruna-contexto-indisponivel-2026-09-25/PUBLICACAO.json",
         "auditorias/bruna-contexto-indisponivel-2026-09-25/RELATORIO.md",
@@ -1205,36 +1206,44 @@
         "netlify/functions/lib/operational-log.mjs"
       ],
       "consumerFiles": [
-        "netlify/functions/ycloud-webhook.mjs",
-        "netlify/functions/lib/ycloud-review-alert.mjs",
         "apps-script/clinica-liv-leads/Code.gs",
         "netlify/functions/human-resume.mjs",
-        "netlify/functions/lib/openai-shadow.mjs"
+        "netlify/functions/lib/knowledge-candidate.mjs",
+        "netlify/functions/lib/openai-shadow.mjs",
+        "netlify/functions/lib/scheduled-followup-context-review.mjs",
+        "netlify/functions/lib/ycloud-review-alert.mjs",
+        "netlify/functions/ycloud-webhook.mjs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/OperationalEvents.gs",
         "apps-script/clinica-liv-leads/OperationalEvents.test.mjs",
+        "auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md",
         "docs/ARQUITETURA-JORNADA-PACIENTE.md",
         "docs/whatsapp-clinica-liv-operacao.md",
-        "netlify/functions/lib/human-review-envelope.mjs",
-        "netlify/functions/lib/human-review-envelope.test.mjs",
-        "netlify/functions/ycloud-webhook.mjs",
-        "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
-        "auditorias/bruna-conversao-leads-2026-09-12/RELATORIO.md",
-        "netlify/functions/lib/ycloud-review-alert.mjs",
-        "netlify/functions/lib/ycloud-review-alert.test.mjs",
         "netlify/functions/lib/ai-usage.mjs",
         "netlify/functions/lib/ai-usage.test.mjs",
+        "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "netlify/functions/lib/human-review-envelope.mjs",
+        "netlify/functions/lib/human-review-envelope.test.mjs",
+        "netlify/functions/lib/knowledge-candidate.mjs",
+        "netlify/functions/lib/knowledge-candidate.test.mjs",
+        "netlify/functions/lib/operational-log-safety.test.mjs",
         "netlify/functions/lib/operational-log.mjs",
-        "netlify/functions/lib/operational-log-safety.test.mjs"
+        "netlify/functions/lib/scheduled-followup-context-review.mjs",
+        "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
+        "netlify/functions/lib/ycloud-review-alert.mjs",
+        "netlify/functions/lib/ycloud-review-alert.test.mjs",
+        "netlify/functions/ycloud-webhook.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/OperationalEvents.test.mjs",
-        "netlify/functions/lib/human-review-envelope.test.mjs",
-        "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
-        "netlify/functions/lib/ycloud-review-alert.test.mjs",
         "netlify/functions/lib/ai-usage.test.mjs",
-        "netlify/functions/lib/operational-log-safety.test.mjs"
+        "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "netlify/functions/lib/human-review-envelope.test.mjs",
+        "netlify/functions/lib/knowledge-candidate.test.mjs",
+        "netlify/functions/lib/operational-log-safety.test.mjs",
+        "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
+        "netlify/functions/lib/ycloud-review-alert.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
