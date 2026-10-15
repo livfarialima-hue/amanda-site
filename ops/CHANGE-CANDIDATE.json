@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
   "title": "Responder perguntas conjuntas, reconhecer faixa autorizada de lipo de papada e priorizar retornos devidos",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou 3be4621fd2f82fd032301f74aba565e648567413; o gate hospedado bloqueou a publicação por paráfrase do trecho financeiro. A correção subsequente deve preservar critérios e obter autorização do novo commit exato."
+    "note": "Daniel autorizou publicar o commit exato 7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788; autorização e preflight no recibo auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json. Envios reais de teste não autorizados nem executados."
   },
   "risk": {
     "level": "high",
@@ -18,6 +18,7 @@
   "scope": {
     "files": [
       "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
+      "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json",
       "auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md",
       "auditorias/bruna-respostas-retomadas-2026-10-14/REVISAO.json",
       "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
@@ -497,16 +498,18 @@
       "canonicalPolicyUnchanged": true,
       "hostedAssertionsUnchanged": true,
       "contextualCompletenessPreserved": true,
-      "liveValidation": "pending_new_authorized_build"
+      "liveValidation": "passed",
+      "liveValidationDeployId": "6ad0b88d46ff84caa6a749e7",
+      "liveValidationEvidence": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json"
     }
   },
   "rollback": {
     "local": "Reverter somente o diff declarado desta branch isolada.",
-    "production": "Após eventual publicação autorizada, reverter somente este pacote por novo commit/build, preservando dados, filas, recibos, flags e Apps Script; sem replay."
+    "production": "Rollback: novo commit/build que reverta somente este pacote para o comportamento de cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d / 6acff7b9dc7d30f39ad66b31, preservando dados, filas, flags, recibos e Apps Script; sem replay."
   },
   "monitoring": {
     "owner": "Daniel e equipe LIV",
-    "window": "Retornos em 15/10/2026; primeiro ciclo e 48 horas após eventual publicação; revisão em 22/10/2026",
+    "window": "Primeiro ciclo e 48 horas após a publicação; revisão de completude e retornos em 22/10/2026",
     "signals": [
       "Perguntas integralmente atendidas com fatos aprovados; preço do procedimento correto e envio único.",
       "Promessas cumpridas antes de novos convites; zero contato após recusa/pausa e zero duplicidade.",
@@ -514,14 +517,243 @@
     ]
   },
   "release": {
-    "status": "blocked_live_gate",
+    "status": "published_verified",
+    "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
     "externalWritesPerformed": true,
-    "approvedCommit": "3be4621fd2f82fd032301f74aba565e648567413",
-    "failedDeployId": "6ad0b3b112e2fc6ad811f8e1",
-    "baselineDeployId": "6acff7b9dc7d30f39ad66b31",
-    "baselineAppsScriptVersion": 164,
-    "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
-    "correctedCandidateStatus": "committed_awaiting_exact_authorization"
+    "bundleVersion": "2026-10-14.5",
+    "approvedCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+    "netlifyDeployId": "6ad0b88d46ff84caa6a749e7",
+    "publishedAt": "2026-10-15T11:30:20.211Z",
+    "verifiedAt": "2026-10-15T11:30:58.679Z",
+    "context": "production",
+    "deployCreatedAt": "2026-10-15T11:27:09.456Z",
+    "branch": "reestruturacao-site",
+    "productionState": "ready",
+    "approval": {
+      "by": "Daniel",
+      "at": "2026-10-15T11:26:36.6683525Z",
+      "reference": "Sim nesta conversa para publicar 7242d54"
+    },
+    "releasePreflight": {
+      "status": "CHANGE_SAFETY_STATUS=OK",
+      "approvedCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+      "clean": true,
+      "checkedAt": "2026-10-15T11:26:36.6683525Z",
+      "reference": "tmp/release-preflight-7242d54.json"
+    },
+    "liveModel": {
+      "status": "passed",
+      "passed": 21,
+      "total": 21,
+      "fullHistoryPassed": 2,
+      "model": "gpt-6.1-sol",
+      "checkedAt": "2026-10-15T11:30:04.173Z",
+      "evidence": "https://app.netlify.com/projects/inspiring-sprite-b35ca4/deploys/6ad0b88d46ff84caa6a749e7; BRUNA_MODEL_PREFLIGHT and 21 bounded scenario records"
+    },
+    "liveAudio": {
+      "status": "passed",
+      "passed": 3,
+      "total": 3,
+      "model": "whisper-1"
+    },
+    "syntheticOnly": true,
+    "patientMessagesSent": 0,
+    "health": {
+      "checkedAt": "2026-10-15T11:30:32.555Z",
+      "deployId": "6ad0b88d46ff84caa6a749e7",
+      "passed": true,
+      "checks": [
+        {
+          "name": "production",
+          "passed": true,
+          "homepageHttpStatus": 200,
+          "webhookHealthHttpStatus": 200,
+          "unsignedWebhookHttpStatus": 401,
+          "signatureProtection": "active",
+          "automationMode": "active",
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled"
+        },
+        {
+          "name": "branch_alias",
+          "passed": true,
+          "homepageHttpStatus": 200,
+          "webhookHealthHttpStatus": 200,
+          "unsignedWebhookHttpStatus": 401,
+          "signatureProtection": "active",
+          "automationMode": "active",
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled"
+        },
+        {
+          "name": "immutable_deploy",
+          "passed": true,
+          "homepageHttpStatus": 200,
+          "webhookHealthHttpStatus": 200,
+          "unsignedWebhookHttpStatus": 401,
+          "signatureProtection": "active",
+          "automationMode": "active",
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled"
+        }
+      ],
+      "staticChecks": [
+        {
+          "path": "/",
+          "passed": true,
+          "statuses": [
+            200,
+            200
+          ],
+          "newSha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e",
+          "oldSha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e"
+        },
+        {
+          "path": "/lipo-de-papada/",
+          "passed": true,
+          "statuses": [
+            200,
+            200
+          ],
+          "newSha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92",
+          "oldSha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92"
+        },
+        {
+          "path": "/lifting-cervical/",
+          "passed": true,
+          "statuses": [
+            200,
+            200
+          ],
+          "newSha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033",
+          "oldSha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033"
+        },
+        {
+          "path": "/campanhas/site-enhancements.css",
+          "passed": true,
+          "statuses": [
+            200,
+            200
+          ],
+          "newSha256": "1a02819eb3508e747beffc4b14184578b3f3dc70c6281b1ab81438d074769d13",
+          "oldSha256": "1a02819eb3508e747beffc4b14184578b3f3dc70c6281b1ab81438d074769d13"
+        }
+      ],
+      "patientMessagesSent": 0,
+      "syntheticOnly": true
+    },
+    "functions": 15,
+    "schedules": 6,
+    "appsScript": {
+      "version": 164,
+      "changed": false,
+      "runtimeInspected": false
+    },
+    "appsScriptVersion": 164,
+    "documentation": {
+      "status": "awaiting_drive_readback",
+      "preparedAt": "2026-10-15T11:32:17.769Z",
+      "approvedSourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+      "localCandidates": {
+        "manual": {
+          "path": "docs/estrategia-abordagem-bruna.md",
+          "sha256": "4f234b291aab79540d9b82cf25bdcac3da6602059a552e0fa48f413ad1666c73",
+          "bytes": 74146
+        },
+        "executivePlan": {
+          "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+          "sha256": "d15cce6e2932fa8e2ba414baace4526ab1e76f440b614a070e86388b0432a55a",
+          "bytes": 13684
+        }
+      },
+      "existingFilesMustBePreserved": true,
+      "equalityVerified": false,
+      "previousVerifiedProjection": {
+        "status": "written_verified",
+        "sourceCommit": "e5ac48e7b3636a61419f52e2822616073fe76c68",
+        "verifiedAt": "2026-10-15T11:14:56.252Z",
+        "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
+        "manual": {
+          "path": "docs/estrategia-abordagem-bruna.md",
+          "sha256": "2b0b4e1159e9ac788b1755c6bef4af28ab4f5ed75caaff2d77481d5626098ebc",
+          "bytes": 73293
+        },
+        "executivePlan": {
+          "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+          "sha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
+          "bytes": 13075
+        },
+        "existingFilesPreserved": true,
+        "previousParallelProjection": {
+          "status": "written_verified",
+          "note": "Os recibos anteriores acima permanecem históricos. A mesma projeção do Plano integrado foi atualizada e relida com igualdade; mantém a tentativa Bruna bloqueada, a correção pendente e Ads publicado. Manual e manifesto preservados.",
+          "executivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
+          "verifiedAt": "2026-10-15T10:34:43.126Z",
+          "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
+          "bytes": 12768
+        }
+      }
+    },
+    "drivePlanSha256": null,
+    "drivePlanReadbackVerifiedAt": null,
+    "rollback": {
+      "functionalCommit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
+      "netlifyDeployId": "6acff7b9dc7d30f39ad66b31",
+      "method": "New Git revert commit and verified build; preserve data, queues, flags and receipts; no replay"
+    },
+    "previousBlockedAttempt": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
+    "priorAttempts": [
+      {
+        "approvedCommit": "30b01f4267719effebd094edc2949a163ac1ed98",
+        "deployId": "6ad0a6f33904b3954a95aec5",
+        "status": "blocked_before_publication",
+        "cause": "Not confirmed from the missing hosted scenario receipt; corrected prompt contradiction is independently verified."
+      },
+      {
+        "approvedCommit": "94f066e663fcd85f28f3e52ff15d8a2d5c75cedc",
+        "deployId": "6ad0abedf8ca5991c929014d",
+        "status": "blocked_before_publication",
+        "cause": "Observed procedure=consulta_online instead of unknown in remote_consultation_price_continuation_1; 15/16 executed scenarios passed, 2 full histories and 3/3 audio passed."
+      },
+      {
+        "approvedCommit": "3be4621fd2f82fd032301f74aba565e648567413",
+        "deployId": "6ad0b3b112e2fc6ad811f8e1",
+        "status": "blocked_before_publication",
+        "cause": "Observed connector a instead of the required literal e in approved_price_with_photo_request; 12/13 executed scenarios passed, no full histories reached and 3/3 audio passed."
+      }
+    ],
+    "priorPreflightBlocks": [
+      {
+        "status": "blocked_before_push",
+        "checkedAt": "2026-10-15T10:52:33.170Z",
+        "approvedCommit": "51e57c695d106263a42255cc9b0fa6139755b41b",
+        "remoteHead": "20d4b5be99c15b24a26cded8b6c9a0a33dafbf93",
+        "reason": "Remote branch contains parallel published Google Ads records; the authorized commit cannot be pushed as a fast-forward, and forcing it would remove the parallel commits.",
+        "newDeployCreated": false,
+        "productionPreserved": {
+          "commit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
+          "deployId": "6acff7b9dc7d30f39ad66b31",
+          "state": "ready"
+        },
+        "resolution": "Merge the existing Ads records and verify code equality; request approval for the new exact integrated candidate.",
+        "patientMessagesSent": 0,
+        "publicHealth": {
+          "checkedAt": "2026-10-15T10:53:23.930Z",
+          "httpStatus": 200,
+          "ok": true,
+          "automationMode": "active",
+          "signatureProtection": "active"
+        },
+        "resolutionStatus": "integrated_tested_and_documented_awaiting_exact_commit_authorization",
+        "integrationSourceCommit": "e9f584b93e9cbbcbcb2bd2f48ae2599244e060d3"
+      }
+    ],
+    "naturalPostReleaseConversationsReviewed": 0,
+    "limits": [
+      "Synthetic checks and endpoint health do not prove a natural patient interaction or conversion improvement.",
+      "Documentation projections require actual authenticated readback before final operational closure."
+    ],
+    "receipt": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json"
   },
   "operationalPlanning": {
     "status": "written_verified",
@@ -543,28 +775,47 @@
     "rebuildNotTriggered": true
   },
   "documentation": {
-    "status": "written_verified",
-    "sourceCommit": "e5ac48e7b3636a61419f52e2822616073fe76c68",
-    "verifiedAt": "2026-10-15T11:14:56.252Z",
-    "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
-    "manual": {
-      "path": "docs/estrategia-abordagem-bruna.md",
-      "sha256": "2b0b4e1159e9ac788b1755c6bef4af28ab4f5ed75caaff2d77481d5626098ebc",
-      "bytes": 73293
+    "status": "awaiting_drive_readback",
+    "preparedAt": "2026-10-15T11:32:17.769Z",
+    "approvedSourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+    "localCandidates": {
+      "manual": {
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "sha256": "4f234b291aab79540d9b82cf25bdcac3da6602059a552e0fa48f413ad1666c73",
+        "bytes": 74146
+      },
+      "executivePlan": {
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "sha256": "d15cce6e2932fa8e2ba414baace4526ab1e76f440b614a070e86388b0432a55a",
+        "bytes": 13684
+      }
     },
-    "executivePlan": {
-      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "sha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
-      "bytes": 13075
-    },
-    "existingFilesPreserved": true,
-    "previousParallelProjection": {
+    "existingFilesMustBePreserved": true,
+    "equalityVerified": false,
+    "previousVerifiedProjection": {
       "status": "written_verified",
-      "note": "Os recibos anteriores acima permanecem históricos. A mesma projeção do Plano integrado foi atualizada e relida com igualdade; mantém a tentativa Bruna bloqueada, a correção pendente e Ads publicado. Manual e manifesto preservados.",
-      "executivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
-      "verifiedAt": "2026-10-15T10:34:43.126Z",
-      "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
-      "bytes": 12768
+      "sourceCommit": "e5ac48e7b3636a61419f52e2822616073fe76c68",
+      "verifiedAt": "2026-10-15T11:14:56.252Z",
+      "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
+      "manual": {
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "sha256": "2b0b4e1159e9ac788b1755c6bef4af28ab4f5ed75caaff2d77481d5626098ebc",
+        "bytes": 73293
+      },
+      "executivePlan": {
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "sha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
+        "bytes": 13075
+      },
+      "existingFilesPreserved": true,
+      "previousParallelProjection": {
+        "status": "written_verified",
+        "note": "Os recibos anteriores acima permanecem históricos. A mesma projeção do Plano integrado foi atualizada e relida com igualdade; mantém a tentativa Bruna bloqueada, a correção pendente e Ads publicado. Manual e manifesto preservados.",
+        "executivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
+        "verifiedAt": "2026-10-15T10:34:43.126Z",
+        "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
+        "bytes": 12768
+      }
     }
   },
   "integratedExternalComponents": [

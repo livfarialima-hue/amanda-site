@@ -17,19 +17,19 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "4869b38a51d55b76176cf2b1cf8021c4f2ea46be",
-    "lastObservedProductionCommit": "4869b38a51d55b76176cf2b1cf8021c4f2ea46be",
-    "functionalDeployId": "6acfecf0d71ca630f8f9469a",
-    "lastObservedProductionDeployId": "6acfecf0d71ca630f8f9469a",
-    "rollbackCommit": "bed7810a3dda4bbef39913edc48999b5a31aa06d",
-    "rollbackDeployId": "6acf8f3d0c1fdf2d868cceb3",
-    "rollbackConstraint": "Git revert and a new verified Netlify deploy; preserve all data and receipts; no replay.",
-    "publishedAt": "2026-10-14T21:01:55.019Z",
+    "functionalCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+    "lastObservedProductionCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+    "functionalDeployId": "6ad0b88d46ff84caa6a749e7",
+    "lastObservedProductionDeployId": "6ad0b88d46ff84caa6a749e7",
+    "rollbackCommit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
+    "rollbackDeployId": "6acff7b9dc7d30f39ad66b31",
+    "rollbackConstraint": "New Git revert commit and verified build; preserve data, queues, flags and receipts; no replay",
+    "publishedAt": "2026-10-15T11:30:20.211Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-14T21:04:06Z",
-    "candidateChangeId": "BRUNA-CONFIRMACAO-MODALIDADE-2026-10-14",
+    "lastVerifiedAt": "2026-10-15T11:30:58.679Z",
+    "candidateChangeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-14.4",
+    "bundleVersion": "2026-10-14.5",
     "appsScriptVersion": 164
   },
   "documentation": {
@@ -38,7 +38,9 @@
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
     "driveProjectionSha256": "2b0b4e1159e9ac788b1755c6bef4af28ab4f5ed75caaff2d77481d5626098ebc",
     "driveProjectionVerifiedAt": "2026-10-15T11:14:56.252Z",
-    "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata."
+    "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
+    "status": "awaiting_drive_readback",
+    "localCandidateSha256": "4f234b291aab79540d9b82cf25bdcac3da6602059a552e0fa48f413ad1666c73"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -46,7 +48,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
-    "status": "committed",
+    "status": "published_verified",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
@@ -54,6 +56,7 @@
     "baselineCommit": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
     "bundleVersion": "2026-10-14.5",
     "baselineDeployId": "6acff7b9dc7d30f39ad66b31",
-    "baselineAppsScriptVersion": 164
+    "baselineAppsScriptVersion": 164,
+    "sourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788"
   }
 }

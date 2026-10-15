@@ -1,5 +1,5 @@
 {
-  "status": "passed_local",
+  "status": "published_verified",
   "checkedAt": "2026-10-15T11:13:41.327Z",
   "baseline": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
   "incidentReproducedBeforeFix": {
@@ -38,27 +38,23 @@
     "focusedTests": 45
   },
   "productionModelAudioHistory": {
-    "status": "failed",
-    "checkedAt": "2026-10-15T11:08:50.246Z",
-    "model": "gpt-6.1-sol",
-    "passed": 12,
-    "executed": 13,
-    "required": 21,
-    "fullHistoryPassed": 0,
-    "fullHistoryStatus": "not_reached",
-    "failedScenario": "approved_price_with_photo_request",
-    "gateReason": "unapproved_monetary_amount",
-    "approvedAmountsPreserved": true,
-    "observedRange": "R$ 26 mil a R$ 42 mil",
-    "requiredRange": "R$ 26 mil e R$ 42 mil",
-    "diagnosis": "Both the canonical monetary policy and the hosted scenario require the approved lexical form with e. The draft preserved amounts but paraphrased the connector. Local reproduction passes after changing only that connector.",
+    "status": "passed",
+    "liveModel": {
+      "status": "passed",
+      "passed": 21,
+      "total": 21,
+      "fullHistoryPassed": 2,
+      "model": "gpt-6.1-sol",
+      "checkedAt": "2026-10-15T11:30:04.173Z",
+      "evidence": "https://app.netlify.com/projects/inspiring-sprite-b35ca4/deploys/6ad0b88d46ff84caa6a749e7; BRUNA_MODEL_PREFLIGHT and 21 bounded scenario records"
+    },
     "liveAudio": {
       "status": "passed",
       "passed": 3,
       "total": 3,
       "model": "whisper-1"
     },
-    "evidence": "Netlify production build log, bounded scenario and failure records; deterministic local reproduction",
+    "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json",
     "syntheticOnly": true
   },
   "operationalPlanning": {
@@ -82,47 +78,66 @@
   },
   "externalWritesPerformed": true,
   "publication": {
-    "status": "blocked_live_gate",
-    "externalWritesPerformed": true,
-    "approvedCommit": "3be4621fd2f82fd032301f74aba565e648567413",
-    "failedDeployId": "6ad0b3b112e2fc6ad811f8e1",
-    "baselineDeployId": "6acff7b9dc7d30f39ad66b31",
-    "baselineAppsScriptVersion": 164,
-    "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
-    "correctedCandidateStatus": "committed_awaiting_exact_authorization"
+    "status": "published_verified",
+    "approvedCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+    "netlifyDeployId": "6ad0b88d46ff84caa6a749e7",
+    "publishedAt": "2026-10-15T11:30:20.211Z",
+    "verifiedAt": "2026-10-15T11:30:58.679Z",
+    "appsScriptVersion": 164,
+    "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json"
   },
   "operationalConsistency": {
     "status": "SYNC_PENDING",
-    "checkedOn": "2026-10-15",
+    "checkedAt": "2026-10-15T11:32:17.769Z",
     "pending": [
-      "Autorização do novo commit exato",
-      "21 cenários vivos, histórico, áudio e verificação da publicação"
+      "Releitura autenticada das projeções existentes no Drive",
+      "Commit dos recibos e reconciliação do checkout principal",
+      "Gates finais de change, arquitetura e ops"
     ],
-    "documentationReconciled": true
+    "documentationReconciled": false
   },
   "documentation": {
-    "status": "written_verified",
-    "sourceCommit": "e5ac48e7b3636a61419f52e2822616073fe76c68",
-    "verifiedAt": "2026-10-15T11:14:56.252Z",
-    "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
-    "manual": {
-      "path": "docs/estrategia-abordagem-bruna.md",
-      "sha256": "2b0b4e1159e9ac788b1755c6bef4af28ab4f5ed75caaff2d77481d5626098ebc",
-      "bytes": 73293
+    "status": "awaiting_drive_readback",
+    "preparedAt": "2026-10-15T11:32:17.769Z",
+    "approvedSourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+    "localCandidates": {
+      "manual": {
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "sha256": "4f234b291aab79540d9b82cf25bdcac3da6602059a552e0fa48f413ad1666c73",
+        "bytes": 74146
+      },
+      "executivePlan": {
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "sha256": "d15cce6e2932fa8e2ba414baace4526ab1e76f440b614a070e86388b0432a55a",
+        "bytes": 13684
+      }
     },
-    "executivePlan": {
-      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "sha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
-      "bytes": 13075
-    },
-    "existingFilesPreserved": true,
-    "previousParallelProjection": {
+    "existingFilesMustBePreserved": true,
+    "equalityVerified": false,
+    "previousVerifiedProjection": {
       "status": "written_verified",
-      "note": "Os recibos anteriores acima permanecem históricos. A mesma projeção do Plano integrado foi atualizada e relida com igualdade; mantém a tentativa Bruna bloqueada, a correção pendente e Ads publicado. Manual e manifesto preservados.",
-      "executivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
-      "verifiedAt": "2026-10-15T10:34:43.126Z",
-      "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
-      "bytes": 12768
+      "sourceCommit": "e5ac48e7b3636a61419f52e2822616073fe76c68",
+      "verifiedAt": "2026-10-15T11:14:56.252Z",
+      "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
+      "manual": {
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "sha256": "2b0b4e1159e9ac788b1755c6bef4af28ab4f5ed75caaff2d77481d5626098ebc",
+        "bytes": 73293
+      },
+      "executivePlan": {
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "sha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
+        "bytes": 13075
+      },
+      "existingFilesPreserved": true,
+      "previousParallelProjection": {
+        "status": "written_verified",
+        "note": "Os recibos anteriores acima permanecem históricos. A mesma projeção do Plano integrado foi atualizada e relida com igualdade; mantém a tentativa Bruna bloqueada, a correção pendente e Ads publicado. Manual e manifesto preservados.",
+        "executivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
+        "verifiedAt": "2026-10-15T10:34:43.126Z",
+        "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
+        "bytes": 12768
+      }
     }
   },
   "correctionAfterBlockedBuild": {
@@ -169,5 +184,39 @@
     "hostedAssertionsUnchanged": true,
     "contextualCompletenessPreserved": true,
     "liveValidation": "pending_new_authorized_build"
+  },
+  "previousPublication": {
+    "status": "blocked_live_gate",
+    "externalWritesPerformed": true,
+    "approvedCommit": "3be4621fd2f82fd032301f74aba565e648567413",
+    "failedDeployId": "6ad0b3b112e2fc6ad811f8e1",
+    "baselineDeployId": "6acff7b9dc7d30f39ad66b31",
+    "baselineAppsScriptVersion": 164,
+    "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
+    "correctedCandidateStatus": "committed_awaiting_exact_authorization"
+  },
+  "previousProductionModelAudioHistory": {
+    "status": "failed",
+    "checkedAt": "2026-10-15T11:08:50.246Z",
+    "model": "gpt-6.1-sol",
+    "passed": 12,
+    "executed": 13,
+    "required": 21,
+    "fullHistoryPassed": 0,
+    "fullHistoryStatus": "not_reached",
+    "failedScenario": "approved_price_with_photo_request",
+    "gateReason": "unapproved_monetary_amount",
+    "approvedAmountsPreserved": true,
+    "observedRange": "R$ 26 mil a R$ 42 mil",
+    "requiredRange": "R$ 26 mil e R$ 42 mil",
+    "diagnosis": "Both the canonical monetary policy and the hosted scenario require the approved lexical form with e. The draft preserved amounts but paraphrased the connector. Local reproduction passes after changing only that connector.",
+    "liveAudio": {
+      "status": "passed",
+      "passed": 3,
+      "total": 3,
+      "model": "whisper-1"
+    },
+    "evidence": "Netlify production build log, bounded scenario and failure records; deterministic local reproduction",
+    "syntheticOnly": true
   }
 }
