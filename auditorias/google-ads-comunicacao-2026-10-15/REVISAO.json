@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-COMUNICACAO-2026-10-15",
-  "status": "google_ads_published_verified_pending_drive",
+  "status": "published_verified",
   "counts": {
     "sitelinkDestinations": 3,
     "rsaFields": 13,
@@ -11,13 +11,13 @@
   "textLimits": "13 textos novos recontados por caracteres Unicode; todos dentro do limite aplicável.",
   "externalWritesPerformed": true,
   "publication": {
-    "status": "google_ads_published_verified_pending_drive",
+    "status": "published_verified",
     "approvedCommit": "2f5adbecb3712e99786cbf91acfa32510103b975",
     "authorization": "O usuário autorizou publicar ao fim o lote apresentado; autorização vinculada ao commit exato no release:preflight em 15/10/2026 às 10:02 UTC.",
     "releasePreflight": "CHANGE_SAFETY_STATUS=OK; HEAD exato, worktree limpo e nove arquivos declarados.",
     "externalSystems": [
       "Google Ads",
-      "Google Drive: mesma projeção do Plano, ainda pendente"
+      "Google Drive: mesma projeção do Plano"
     ],
     "googleAds": {
       "status": "published_verified",
@@ -255,9 +255,9 @@
       }
     },
     "readback": "passed_exact_approved_fields",
-    "driveProjectionEquality": "pending",
-    "drivePlanSha256": null,
-    "drivePlanReadbackVerifiedAt": null,
+    "driveProjectionEquality": "verified_exact_bytes",
+    "drivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
+    "drivePlanReadbackVerifiedAt": "2026-10-15T10:34:43.126Z",
     "preservedDestinations": {
       "netlifyDeployId": "6acff7b9dc7d30f39ad66b31",
       "appsScriptVersion": 164,
@@ -273,7 +273,20 @@
       "As duas palavras seguem ativadas. Ficaram Pendente/Em análise imediatamente após a edição e foram relidas às 10:31 UTC como Qualificada (limitada), raramente mostrado por baixo Índice de qualidade, diagnóstico já preexistente. O estado não comprova impressões.",
       "Sem nova auditoria dos dados privados ou da mensuração herdada; nenhum contato, conversão artificial ou mensagem de teste."
     ],
-    "note": "Este mesmo arquivo concentra os recibos; substituir a projeção existente do Plano no Drive e comparar bytes/hash antes do fechamento completo."
+    "note": "Componente Ads publicado e relido; projeção única do Plano substituída e baixada com igualdade local/commit/Drive. O estado global continua SYNC_PENDING exclusivamente pela publicação pendente do candidato Bruna preservado na integração.",
+    "drive": {
+      "status": "written_verified",
+      "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
+      "modifiedAt": "2026-10-15T10:34:20.732Z",
+      "verifiedAt": "2026-10-15T10:34:43.126Z",
+      "bytes": 12768,
+      "sha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
+      "sameExistingFile": true,
+      "localEqualsDownload": true,
+      "commitEqualsDownload": true,
+      "method": "Authenticated update of the existing projection, followed by raw download, exact byte comparison and SHA-256."
+    },
+    "verifiedAt": "2026-10-15T10:34:43.126Z"
   },
   "executed": [
     {
@@ -326,8 +339,6 @@
     }
   ],
   "pending": [
-    "Projeção existente do Plano no Drive e igualdade",
-    "Commit documental e reconciliação do checkout principal",
     "Monitoramento de integridade/política em 17/10/2026",
     "Leituras comerciais em 29/10/2026 e 12/11/2026"
   ],
@@ -529,5 +540,12 @@
         }
       }
     }
-  ]
+  ],
+  "documentaryCloseout": {
+    "status": "verified_component",
+    "planSourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
+    "approvedAdsCommit": "2f5adbecb3712e99786cbf91acfa32510103b975",
+    "globalOperationalStatus": "SYNC_PENDING",
+    "globalPendingReason": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14 permanece committed/pending_authorization. Nenhuma publicação desse código foi executada nesta tarefa."
+  }
 }

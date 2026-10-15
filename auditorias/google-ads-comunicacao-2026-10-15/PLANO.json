@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-COMUNICACAO-2026-10-15",
-  "status": "google_ads_published_verified",
+  "status": "published_verified",
   "authorizedScope": "Lote prioritário aprovado na conversa: 3 destinos de sitelinks, 13 campos de 3 RSAs e 2 URLs finais de palavras existentes. Autorização de publicar ao fim permanece sujeita aos gates e ao preflight vivo.",
   "source": "Proposta apresentada ao usuário em 14/10/2026; exports fornecidos de 14/07 a 13/10/2026. O export não é baseline vivo.",
   "privacy": "Plano público sanitizado: sem identificadores de conta, campanha, anúncio, grupo ou pessoa; sem gastos. Identidades operacionais devem ser conferidas somente na fonte viva e em evidência privada.",
@@ -340,5 +340,5 @@
   "beforeSource": "Before exportado reconciliado ao preflight vivo de 15/10/2026 antes da primeira escrita; snapshots operacionais privados preservam o baseline. Os campos afterLive e readbackAt documentam a aplicação posterior.",
   "approvedCommit": "2f5adbecb3712e99786cbf91acfa32510103b975",
   "verifiedAt": "2026-10-15T10:15:34.114Z",
-  "publicationNote": "Somente os campos aprovados foram salvos e relidos. A igualdade documental do Plano no Drive está registrada separadamente em REVISAO.json; aprovação de política, exibição e resultado comercial não são inferidos."
+  "publicationNote": "Lote Ads salvo, relido e registrado. Projeção existente do Plano com igualdade exata comprovada em REVISAO.json. Candidato Bruna paralelo continua pendente, fora da autorização Ads."
 }

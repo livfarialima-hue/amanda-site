@@ -521,16 +521,18 @@
     },
     "existingFilesPreserved": true,
     "integration": {
-      "status": "pending_existing_drive_projection",
-      "note": "Recibos da correção 65d757d4 acima permanecem históricos. O Plano integrado mantém a tentativa Bruna bloqueada, a correção aguardando autorização e o componente Ads. Exige substituir a mesma projeção e novo readback; manual e manifesto mantêm o recibo mais recente íntegro.",
-      "executivePlanSha256": null,
-      "verifiedAt": null
+      "status": "written_verified",
+      "note": "Os recibos anteriores acima permanecem históricos. A mesma projeção do Plano integrado foi atualizada e relida com igualdade; mantém a tentativa Bruna bloqueada, a correção pendente e Ads publicado. Manual e manifesto preservados.",
+      "executivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
+      "verifiedAt": "2026-10-15T10:34:43.126Z",
+      "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
+      "bytes": 12768
     }
   },
   "integratedExternalComponents": [
     {
       "changeId": "GOOGLE-ADS-COMUNICACAO-2026-10-15",
-      "status": "google_ads_published_verified_pending_drive",
+      "status": "published_verified",
       "approvedCommit": "2f5adbecb3712e99786cbf91acfa32510103b975",
       "receipt": "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json",
       "googleAdsVerifiedAt": "2026-10-15T10:31:45Z",
@@ -620,7 +622,21 @@
           "Conter diante de destino ou procedimento incorreto, perda de atribuição, promessa indevida ou regressão consistente."
         ]
       },
-      "doesNotAuthorizeBrunaPublication": true
+      "doesNotAuthorizeBrunaPublication": true,
+      "drive": {
+        "status": "written_verified",
+        "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
+        "modifiedAt": "2026-10-15T10:34:20.732Z",
+        "verifiedAt": "2026-10-15T10:34:43.126Z",
+        "bytes": 12768,
+        "sha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
+        "sameExistingFile": true,
+        "localEqualsDownload": true,
+        "commitEqualsDownload": true,
+        "method": "Authenticated update of the existing projection, followed by raw download, exact byte comparison and SHA-256."
+      },
+      "verifiedAt": "2026-10-15T10:34:43.126Z",
+      "note": "Somente o componente Ads foi publicado e reconciliado; preservar o estado pendente e a autorização própria do candidato Bruna."
     }
   ]
 }

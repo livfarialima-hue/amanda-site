@@ -1,6 +1,6 @@
 # Google Ads — comunicação e destinos, 15/10/2026
 
-**Publicado e conferido no Google Ads em 15/10/2026. Sincronização documental no Drive e commit de fechamento ainda pendentes.**
+**Publicado e conferido no Google Ads em 15/10/2026, com igualdade da projeção documental no Drive verificada. A pendência de publicação da Bruna permanece separada.**
 
 Foram corrigidos três destinos de sitelinks em quatro associações existentes, alterados 13 campos de três anúncios de blefaroplastia/cervicoplastia/lipo de papada e definidos os destinos de duas palavras exatas existentes de preço de blefaroplastia. Todos os campos foram reabertos e relidos. O before vivo e o after permanecem em `PLANO.json`; recibos sanitizados em `REVISAO.json` e snapshots operacionais em evidência privada.
 
@@ -24,7 +24,7 @@ Exports fornecidos de 14/07–13/10/2026 fundamentaram a proposta; o baseline de
 
 ## Testes, documentação e acompanhamento
 
-Passaram 2.175 testes integrais e 192 focados incluídos nesse total; contrato com nove arquivos exatos, arquitetura, diff, build de 193 arquivos/54 URLs e verificação do artefato. O pacote de auditoria não integra o artefato público do site. Esses resultados pertencem à revisão Ads anterior à integração. O fechamento do componente exige igualdade da projeção existente do Plano no Drive, commit documental e reconciliação do checkout principal; o recibo será preenchido somente após download e comparação reais. A integração com a revisão remota preservou integralmente código, testes e manifesto Bruna, mantendo seu candidato ativo, a tentativa bloqueada antes de produção e a correção subsequente aguardando autorização própria. O Plano contém ambos os registros; `ops:check` global permanece `SYNC_PENDING` por essa pendência Bruna, mesmo após o fechamento documental Ads. A autorização Ads não autoriza Bruna, e as validações novas da integração ficam separadas dos resultados históricos.
+Passaram 2.175 testes integrais e 192 focados incluídos nesse total; contrato com nove arquivos exatos, arquitetura, diff, build de 193 arquivos/54 URLs e verificação do artefato. O pacote de auditoria não integra o artefato público do site. Esses resultados pertencem à revisão Ads anterior à integração. A projeção existente do Plano foi substituída em 15/10 às 10:34 UTC e baixada novamente: 12.768 bytes idênticos ao arquivo local e ao blob commitado em 7cc0e18. Hash e recibo efetivo constam em REVISAO.json. A integração com a revisão remota preservou integralmente código, testes e manifesto Bruna, mantendo seu candidato ativo, a tentativa bloqueada antes de produção e a correção subsequente aguardando autorização própria. O Plano contém ambos os registros; `ops:check` global permanece `SYNC_PENDING` por essa pendência Bruna, mesmo após o fechamento documental Ads. A autorização Ads não autoriza Bruna, e as validações novas da integração ficam separadas dos resultados históricos.
 
 Daniel/equipe: rever integridade e política em **17/10/2026**, e contatos válidos, qualificados, consultas agendadas/realizadas em **29/10/2026** e **12/11/2026**, por coortes com maturação e cobertura de classificação equivalentes. Baixa amostra permanece inconclusiva. Cliques, CTR, CPC e força do anúncio são diagnósticos; nenhuma automação nova foi criada.
 
