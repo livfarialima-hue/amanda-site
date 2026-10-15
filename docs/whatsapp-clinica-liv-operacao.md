@@ -1,5 +1,13 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+## Publicado e verificado — coerência contextual, 15/10/2026
+
+Commit autorizado 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228; deploy 6ad120701654730b8c969605; publicado em 2026-10-15T18:54:29.938Z e verificado em 2026-10-15T18:55:23.3719046Z.
+
+Os dois ajustes preservam clarificação específica e repetição expressamente pedida, sem liberar reinício genérico ou repetição automática de faixa cirúrgica. Protótipo de relaxamento CTA permanece excluído. Testes locais: 2254/2254; build de produção autorizado: 21/21 cenários, dois históricos completos e 3/3 áudios. Saúde HTTP 200 e rejeição sem assinatura 401 em domínio público e deploy imutável; 15 funções e seis programações idênticas ao baseline. Nenhuma mensagem real enviada como teste.
+
+Modelo, esforço, fatos, preços e Apps Script v164 permanecem inalterados; a versão Apps Script é herdada do recibo anterior, sem nova publicação ou inspeção do editor nesta tarefa. Ponte do plugin não foi ativada. Rollback: novo commit/build restrito ao delta para 74c53a17555e95cb81915c33eea8a6053a23a8b4 / 6ad0f6c1fd759be7d5f15b0f, preservando dados, filas, flags e Apps Script, sem replay. Recibo permanente: auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json. Monitorar em 16/10 (24h) e 22/10 (7 dias), sem criar automação nova. Conversas naturais posteriores, ganho de conversão e economia financeira ainda não comprovados.
+
 <!-- BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15 -->
 ## Publicado e verificado — autonomia contextual, 15/10/2026
 

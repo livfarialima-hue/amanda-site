@@ -1,19 +1,25 @@
 # Plano executivo — auditorias, pendências e prazos
 
-## Pendência atual — Bruna coerente e integração pela conta, 15/10/2026
+## Estado atual — Bruna coerente publicada; próxima etapa de medição, 15/10/2026
 
-Fonte de detalhe: [relatório técnico](../auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md). Este painel continua sendo o único planejamento executivo. Sem nova publicação, edição de plugin, rotina, Drive ou dado operacional nesta etapa.
+Fonte de detalhe: [relatório técnico](../auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md). Este painel continua sendo o único planejamento executivo. Publicação técnica concluída; próximas etapas continuam separadas. Não houve edição de plugin, rotina ou dado operacional.
+
+Commit autorizado 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228; deploy 6ad120701654730b8c969605; publicado em 2026-10-15T18:54:29.938Z e verificado em 2026-10-15T18:55:23.3719046Z.
+
+Os dois ajustes preservam clarificação específica e repetição expressamente pedida, sem liberar reinício genérico ou repetição automática de faixa cirúrgica. Protótipo de relaxamento CTA permanece excluído. Testes locais: 2254/2254; build de produção autorizado: 21/21 cenários, dois históricos completos e 3/3 áudios. Saúde HTTP 200 e rejeição sem assinatura 401 em domínio público e deploy imutável; 15 funções e seis programações idênticas ao baseline. Nenhuma mensagem real enviada como teste.
+
+Modelo, esforço, fatos, preços e Apps Script v164 permanecem inalterados; a versão Apps Script é herdada do recibo anterior, sem nova publicação ou inspeção do editor nesta tarefa. Ponte do plugin não foi ativada. Rollback: novo commit/build restrito ao delta para 74c53a17555e95cb81915c33eea8a6053a23a8b4 / 6ad0f6c1fd759be7d5f15b0f, preservando dados, filas, flags e Apps Script, sem replay. Recibo permanente: auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json. Monitorar em 16/10 (24h) e 22/10 (7 dias), sem criar automação nova. Conversas naturais posteriores, ganho de conversão e economia financeira ainda não comprovados.
 
 | Ordem | Entrega | Estado / gate | Momento de avaliação |
 | --- | --- | --- | --- |
-| 1 | Dois falsos bloqueios de continuidade corrigidos no candidato 2026-10-15.2 | Testado localmente: 2254/2254; revisão independente sem bloqueadores. Falta autorização do commit e gates de publicação Netlify. Apps Script não muda. | Próxima decisão do usuário; depois 24h e 7 dias da publicação autorizada. |
+| 1 | Dois falsos bloqueios de continuidade corrigidos no candidato 2026-10-15.2 | Publicado e verificado: 2254/2254 locais, 21/21 hospedados e 3/3 áudios; recibo acima. Apps Script não muda. | Revisar 16/10 e 22/10; amostras naturais ainda não comprovadas. |
 | 2 | Usar plugin 1.0.1 para revisões, resumos e propostas pela conta | Política já existente confirmada; não equivale a ponte do bot. Agendamento cloud 9h/17h não confirmado pelas ferramentas disponíveis. Não duplicar rotinas. | Próxima rodada solicitada; validar estado vivo da rotina antes de agendar. |
-| 3 | Medição por categoria e piloto assíncrono pela conta | Proposto, default-off. Completar cobertura de recibos sem novas inferências; separar captura durável de resposta humana da extração por IA; comprovar elegibilidade, autenticação e retorno estruturado. Revisão histórica de classificação em leitura primeiro, sem substituir worker de cinco minutos por rodada 9h/17h. | Após autorização de pacote específico; amostra sintética antes de dados reais. |
+| 3 | Medição por categoria e piloto assíncrono pela conta | Próxima fatia local autorizada por “siga com as melhorias”: recibos numéricos de knowledge-candidate e revisão de retomada, sem novas inferências. Publicação dessa fatia depende de novo SHA testado e aprovação. Piloto pela conta continua proposto/default-off; separar captura durável de resposta humana da extração por IA; comprovar elegibilidade, autenticação e retorno estruturado. Revisão histórica de classificação em leitura primeiro, sem substituir worker de cinco minutos por rodada 9h/17h. | Após autorização de pacote específico; amostra sintética antes de dados reais. |
 | 4 | Ativar substituição limitada, sem processamento duplo | Exige zero efeito com resultado obsoleto/duplicado, trilha e comparação de qualidade/custo. Sem fallback pago silencioso; falta de quota vira pendência visível. | Pelo menos 7 dias de piloto e amostra suficiente por tipo; estender se insuficiente. |
 | 5 | Considerar atendimento imediato pela conta | Observar, não executar agora. Só após provar latência, disponibilidade, quota, privacidade e entrega ponta a ponta. | Depois do piloto, sem data artificial. |
 | 6 | Reavaliar vetos lexicais de CTA por contrato de atos conversacionais | Adiado. Protótipo de “se quiser” revertido antes do commit por escapes de convite e falso bloqueio de negação. Não ampliar lista de regex como solução geral. | Desenho e testes próprios antes de nova autorização de publicação. |
 
-Não afirmar economia financeira atual: custo por tarefa e volume faturado são N/D nesta revisão. Preservar modelo, esforço, história completa, proteção clínica, preço, agenda, takeover e idempotência. A projeção deste painel no mesmo arquivo do Drive será atualizada no fechamento autorizado; por ora está pendente, explicitamente.
+Não afirmar economia financeira atual: custo por tarefa e volume faturado são N/D nesta revisão. Preservar modelo, esforço, história completa, proteção clínica, preço, agenda, takeover e idempotência. A igualdade da projeção deste painel no mesmo arquivo do Drive é registrada no recibo permanente acima; nenhum planejamento concorrente foi criado.
 
 <!-- BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15 -->
 ## Publicado e verificado — autonomia contextual, 15/10/2026

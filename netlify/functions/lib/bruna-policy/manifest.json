@@ -17,30 +17,30 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
-    "lastObservedProductionCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
-    "functionalDeployId": "6ad0f6c1fd759be7d5f15b0f",
-    "lastObservedProductionDeployId": "6ad0f6c1fd759be7d5f15b0f",
-    "rollbackCommit": "b7bad3c4e93f313993f8c9cb6b08b1a6ba7506f1",
-    "rollbackDeployId": "6ad0ca6cd91f0138092c5d88",
+    "functionalCommit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
+    "lastObservedProductionCommit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
+    "functionalDeployId": "6ad120701654730b8c969605",
+    "lastObservedProductionDeployId": "6ad120701654730b8c969605",
+    "rollbackCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
+    "rollbackDeployId": "6ad0f6c1fd759be7d5f15b0f",
     "rollbackConstraint": "New Git revert commit/build; preserve data, queues, flags, receipts and Apps Script; no replay",
-    "publishedAt": "2026-10-15T15:55:58.973Z",
+    "publishedAt": "2026-10-15T18:54:29.938Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-15T15:56:44Z",
-    "candidateChangeId": "BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15",
+    "lastVerifiedAt": "2026-10-15T18:55:23.3719046Z",
+    "candidateChangeId": "BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-15.1",
+    "bundleVersion": "2026-10-15.2",
     "appsScriptVersion": 164
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
     "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "a925333c90c41834bf60c85458b112439b402672306f81d4014caea0096207f5",
-    "driveProjectionVerifiedAt": "2026-10-15T15:58:55.893Z",
+    "driveProjectionSha256": "518cbfa98dd788eb92b00ff5dd8466447864044eda1be3c3e90ca1a4a1ea99f5",
+    "driveProjectionVerifiedAt": "2026-10-15T18:57:47.0493268Z",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
-    "status": "written_verified",
-    "sourceCommit": "1d54edbbfef92dd49c87278d5721b5f3d11154cb"
+    "status": "written_verified_local",
+    "sourceCommit": null
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -48,7 +48,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15",
-    "status": "tested_local",
+    "status": "published_verified",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
@@ -57,7 +57,7 @@
     "bundleVersion": "2026-10-15.2",
     "baselineDeployId": "6ad0f6c1fd759be7d5f15b0f",
     "baselineAppsScriptVersion": 164,
-    "sourceCommit": "",
-    "note": "Candidato local não publicado. Snapshot e prompt avançam por identificação do pacote, sem novo fato, preço ou instrução. Release e projeção anteriores preservados como recibos históricos, não como equivalência do candidato."
+    "sourceCommit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
+    "note": "Publicado com gate 21/21, dois históricos completos e 3/3 áudios; marcadores preservados para builds futuros. Próximo pacote e ponte pela conta não publicados."
   }
 }

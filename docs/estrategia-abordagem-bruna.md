@@ -1,10 +1,16 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
-## Candidato local — coerência e processamento pela conta, 15/10/2026
+## Publicado e verificado — coerência e processamento pela conta, 15/10/2026
 
-Ainda não publicado: BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15, pacote 2026-10-15.2. O registro publicado abaixo continua sendo o estado operacional. A projeção existente no Drive permanece na versão publicada até autorização, testes de release e atualização com readback.
+Pacote 2026-10-15.2 publicado após autorização específica nesta conversa.
 
-O candidato retira dois falsos bloqueios: perguntas específicas iniciadas por “Poderia me dizer” e pedidos coloquiais explícitos de repetição, como “Qual era mesmo o valor da consulta?”. Não libera convite de agenda proibido, reinício genérico, faixa cirúrgica repetida, fatos não aprovados ou conversa sob responsabilidade humana. O protótipo de relaxamento de “se quiser” foi descartado antes do commit: a revisão encontrou escapes de convite e mostrou que o classificador parcial não sustenta essa liberação com segurança.
+Commit autorizado 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228; deploy 6ad120701654730b8c969605; publicado em 2026-10-15T18:54:29.938Z e verificado em 2026-10-15T18:55:23.3719046Z.
+
+Os dois ajustes preservam clarificação específica e repetição expressamente pedida, sem liberar reinício genérico ou repetição automática de faixa cirúrgica. Protótipo de relaxamento CTA permanece excluído. Testes locais: 2254/2254; build de produção autorizado: 21/21 cenários, dois históricos completos e 3/3 áudios. Saúde HTTP 200 e rejeição sem assinatura 401 em domínio público e deploy imutável; 15 funções e seis programações idênticas ao baseline. Nenhuma mensagem real enviada como teste.
+
+Modelo, esforço, fatos, preços e Apps Script v164 permanecem inalterados; a versão Apps Script é herdada do recibo anterior, sem nova publicação ou inspeção do editor nesta tarefa. Ponte do plugin não foi ativada. Rollback: novo commit/build restrito ao delta para 74c53a17555e95cb81915c33eea8a6053a23a8b4 / 6ad0f6c1fd759be7d5f15b0f, preservando dados, filas, flags e Apps Script, sem replay. Recibo permanente: auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json. Monitorar em 16/10 (24h) e 22/10 (7 dias), sem criar automação nova. Conversas naturais posteriores, ganho de conversão e economia financeira ainda não comprovados.
+
+Esta versão retira dois falsos bloqueios: perguntas específicas iniciadas por “Poderia me dizer” e pedidos coloquiais explícitos de repetição, como “Qual era mesmo o valor da consulta?”. Não libera convite de agenda proibido, reinício genérico, faixa cirúrgica repetida, fatos não aprovados ou conversa sob responsabilidade humana. O protótipo de relaxamento de “se quiser” foi descartado antes do commit: a revisão encontrou escapes de convite e mostrou que o classificador parcial não sustenta essa liberação com segurança.
 
 A política do plugin 1.0.1 já prioriza a conta para revisões e propostas. Isso não transfere automaticamente a execução do webhook. Cálculos simples continuam determinísticos, sem IA; migrar classificação ou aprendizado exige uma ponte autenticada, fila durável, contexto versionado e validação no servidor. Desenho, evidências e testes: [relatório deste pacote](../auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md). Próximas autorizações e ordem permanecem exclusivamente no Plano Executivo.
 

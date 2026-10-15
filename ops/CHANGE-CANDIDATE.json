@@ -2,26 +2,28 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15",
   "title": "Eliminar falsos bloqueios de continuidade e delimitar migração segura para processamento pela conta",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "45d73450f5da28cdbdd222d2574e03f9f0e9fa48",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Pedido atual autoriza ajustes locais e revisão da integração; nova publicação depende de autorização específica do SHA. Recibos do pacote anterior preservados em auditorias/bruna-autonomia-contextual-2026-10-15/PUBLICACAO.json."
+    "note": "Publicação autorizada pelo pedido 'Publique e siga com as melhorias', vinculada ao SHA 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228 no release:preflight externo. Próximo pacote não está incluído."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "note": "Reduz apenas falsos positivos de clarificação e repetição solicitada. Relaxamento CTA não integra a entrega; preservados os guardrails atuais."
   },
   "scope": {
     "files": [
       "auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md",
+      "auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/outbound-reply-gate.mjs",
       "netlify/functions/lib/outbound-reply-gate.test.mjs",
@@ -37,7 +39,7 @@
       "bruna-regression-governance",
       "bruna-conversion-experience"
     ],
-    "note": "Somente clarificação específica e repetição explicitamente solicitada. Protótipo de relaxamento CTA descartado após revisão adversarial, com restauração integral de classificação/negação e registro no relatório. Sem alteração de preço, agenda, dados, estratégia, modelo ou integrações externas."
+    "note": "Somente clarificação específica e repetição explicitamente solicitada. Protótipo de relaxamento CTA descartado após revisão adversarial, com restauração integral de classificação/negação e registro no relatório. Sem alteração de preço, agenda, dados, estratégia, modelo ou integrações externas. Fechamento documental autorizado acrescenta recibo permanente e manual operacional, sem novo código funcional."
   },
   "impact": {
     "consumers": [
@@ -171,8 +173,19 @@
       "architectureCheck": "OK",
       "diffCheck": "OK",
       "overlapNote": "Suítes focadas/revisão se sobrepõem à integral; não somar contagens.",
-      "liveModel": "not_run_pending_publication_authorization",
-      "liveAudio": "not_run_pending_publication_authorization"
+      "liveModel": {
+        "status": "passed",
+        "passed": 21,
+        "total": 21,
+        "fullHistoryPassed": 2,
+        "checkedAt": "2026-10-15T18:54:14.405Z"
+      },
+      "liveAudio": {
+        "status": "passed",
+        "passed": 3,
+        "total": 3,
+        "checkedAt": "2026-10-15T18:54:14.405Z"
+      }
     }
   },
   "rollback": {
@@ -203,5 +216,42 @@
       "netlify/functions/lib/patient-turn-context.mjs",
       "netlify/functions/lib/patient-turn-context.test.mjs"
     ]
+  },
+  "release": {
+    "approvedCommit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
+    "netlifyDeployId": "6ad120701654730b8c969605",
+    "appsScriptVersion": 164,
+    "publishedAt": "2026-10-15T18:54:29.938Z",
+    "verifiedAt": "2026-10-15T18:55:23.3719046Z",
+    "drivePlanSha256": "fd320e3a43b194a65ac94e704534a6e4e71b652c02a5407e0d60add609f1ae0f",
+    "liveModel": {
+      "status": "passed",
+      "checkedAt": "2026-10-15T18:54:14.405Z",
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "maxOutputTokens": 4096,
+      "verbosity": "low",
+      "billingMode": "api_paid_authorized",
+      "syntheticOnly": true,
+      "patientMessagesSent": 0,
+      "passed": 21,
+      "total": 21,
+      "fullHistoryPassed": 2,
+      "evidence": "Log oficial Netlify lido via UI autenticada: BRUNA_MODEL_PREFLIGHT e 21 BRUNA_MODEL_SCENARIO, sem nova inferência de diagnóstico.",
+      "allScenariosSingleRequest": true
+    },
+    "liveAudio": {
+      "status": "passed",
+      "model": "whisper-1",
+      "passed": 3,
+      "total": 3,
+      "checkedAt": "2026-10-15T18:54:14.405Z"
+    },
+    "evidence": "auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json"
+  },
+  "documentationReconciliation": {
+    "status": "written_verified_local",
+    "sourceCommit": null,
+    "evidence": "auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json"
   }
 }
