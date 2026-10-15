@@ -253,7 +253,11 @@ export function detectProcedure(text, reference, referralContext) {
   return null;
 }
 
-export function detectRecentPatientProcedure(recentConversation) {
+export function resolvePatientProcedureContext({text, recentConversation = [], reference, referralContext} = {}) {
+  const current = namedProcedureContext(text);
+  if (current.mentioned) return {
+    procedure: current.procedure, source: "current_patient", unresolved: !current.procedure,
+  };
   const turns = Array.isArray(recentConversation)
     ? recentConversation.slice(-16)
     : [];
@@ -263,16 +267,31 @@ export function detectRecentPatientProcedure(recentConversation) {
       !["bruna", "human", "human_team", "equipe_humana", "clinica_autoria_desconhecida"].includes(turn?.source),
   );
 
-  for (const turn of patientTurns.reverse()) {
-    if (namedProcedureContext(turn?.text).mentioned) return detectNamedProcedure(turn?.text);
+  // Resolve every explicit patient turn before consulting acquisition metadata.
+  // A newer generic turn may carry an older reference; it cannot erase the
+  // patient's last clarification, rejection or unresolved comparison.
+  const newestFirst = patientTurns.reverse();
+  for (const turn of newestFirst) {
+    const named = namedProcedureContext(turn?.text);
+    if (named.mentioned) return {
+      procedure: named.procedure, source: "recent_patient", unresolved: !named.procedure,
+    };
+  }
+  const currentFallback = detectProcedure(text, reference, referralContext);
+  if (currentFallback) return {procedure: currentFallback, source: "acquisition", unresolved: false};
+  for (const turn of newestFirst) {
     const procedure = detectProcedure(
       turn?.text,
       turn?.reference,
       turn?.referralContext,
     );
-    if (procedure) return procedure;
+    if (procedure) return {procedure, source: "acquisition", unresolved: false};
   }
-  return null;
+  return {procedure: null, source: "none", unresolved: false};
+}
+
+export function detectRecentPatientProcedure(recentConversation) {
+  return resolvePatientProcedureContext({recentConversation}).procedure;
 }
 
 export function detectRecentClinicProcedure(recentConversation) {

@@ -1,5 +1,12 @@
 # Arquitetura da jornada da paciente
 
+<!-- BRUNA-PROCEDIMENTO-CONTEXTUAL-2026-10-15 -->
+## Candidato local — proprietário do procedimento contextual, 15/10/2026
+
+procedure-context.mjs mantém a resolução pura compartilhada: turno atual explícito, último turno explícito da pessoa e, por último, origem de aquisição. Também transporta o estado de ambiguidade sem inventar procedimento. whatsapp-automation.mjs preserva o texto atual em todas as rotas e recalcula o plano/faixa após a resolução. human-resume.mjs aplica o mesmo proprietário antes do enriquecimento e sincroniza o procedimento do job para fatos, sugestões, recibos e gate final. Webhook e retomada compartilham essa decisão.
+
+A consulta à origem não muda sua gravação, os códigos de campanha ou o funil. Confirmação semântica, seleção da faixa pelo proprietário existente, prioridade humana, idempotência e rejeição de revisão desatualizada permanecem. Sem nova inferência, prompt, fato, fonte de preço, schema, fila, Apps Script ou agenda. Um dos 21 cenários hospedados já existentes passa a cobrir origem antiga e pedido explícito posterior; a quantidade de chamadas do gate não aumenta. Pacote 2026-10-14.5 preservado. Evidência: auditorias/bruna-procedimento-contextual-2026-10-15/RELATORIO.md.
+
 **Pacote 2026-10-14.5 publicado e verificado — resposta completa e preço específico:** patient-turn-context.mjs reconhece formulações equivalentes de pedido de explicação; lifting-information.mjs mantém fatos gerais aprovados; surgical-price-policy.mjs decide permissão e escopo da faixa de lipo de papada isolada autorizada em 14/10; surgical-price-review.mjs compõe explicação, recuperação e preço ou somente a pendência remanescente. Webhook e human-resume compartilham esses proprietários, com confirmação semântica, recibo de handoff e gate final. Nenhuma mudança de Apps Script, schema, cadência, preferência ou agenda. A seleção humana de 15/10 prioriza obrigação da clínica nas fontes canônicas; não constitui nova fila.
 
 

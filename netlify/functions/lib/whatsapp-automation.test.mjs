@@ -77,6 +77,7 @@ test("possible urgency never authorizes a patient response", () => {
   assert.deepEqual(plan, {
     route: "human_review",
     reason: "possible_urgent_symptoms",
+    currentText: "Estou com falta de ar e muita dor no peito",
     replyCode: "ALERT-URG-01",
     professional: null,
     procedure: null,

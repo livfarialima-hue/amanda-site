@@ -142,6 +142,12 @@ async function syntheticResponse(url, request) {
       decision = { decision: 'cancel_for_review', reasonCode: 'patient_paused', confidence: 'high' };
     } else if (body.text.format.name === 'liv_whatsapp_shadow_decision') {
       const hints = input.policyHints;
+      if (input.currentMessage.includes('É para minha esposa.')) {
+        assert.equal(input.procedureContext,'lipo_papada');
+        assert.equal(hints.deterministicReplyProcedure,'lipo_papada');
+        assert.match(input.recentConversation[0].text,/cervicoplastia/);
+        assert.ok(input.recentConversation.some(t => /Lipoaspiração de papada/.test(t.text)));
+      }
       const unknown = /equipamento específico/.test(input.currentMessage);
       const urgent = /falta de ar/.test(input.currentMessage);
       const association = /lipo de papada com platismoplastia/.test(input.currentMessage);

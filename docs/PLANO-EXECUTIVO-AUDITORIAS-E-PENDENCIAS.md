@@ -1,5 +1,14 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-PROCEDIMENTO-CONTEXTUAL-2026-10-15 -->
+## Candidato local — procedimento contextual, 15/10/2026
+
+Corrigir a precedência de contexto na entrada e retomada: pedido atual da pessoa, último pedido explícito e origem do contato, nessa ordem. Ambiguidade impede recuperar a faixa de outro procedimento. A retomada deve conservar as dúvidas ainda respondíveis de procedimento, recuperação e preço e o contexto de quem pesquisa para outra pessoa. Nenhuma pendência individual ou envio integra este pacote.
+
+Baseline local 396511d1a0e6286a68427569b1164eb346d5434b; produção funcional preservada 3b66195b8b13a896ccdd63740e3f67398f7d7d4c / 6ad0c377e0be1096575458ca; Apps Script v164 sem mudança. Pacote, prompt e conhecimento permanecem 2026-10-14.5. Os três componentes Ads e seus recibos abaixo continuam íntegros e não autorizam esta publicação.
+
+Situação: implementação local e regressões focadas em validação; 19/19 testes simulados do gate hospedado passaram. A suíte integral, a união dos contratos, os gates locais, o commit exato, o preflight vivo atualizado, a publicação e a igualdade das mesmas projeções no Drive ainda precisam do recibo final. Manter SYNC_PENDING até esse fechamento. Monitorar a primeira conversa/retomada natural elegível e 48 horas após eventual publicação, sem automação nova. Reverter somente este delta se houver troca indevida de procedimento, preço incompatível ou interferência na posse humana. Relatório: auditorias/bruna-procedimento-contextual-2026-10-15/RELATORIO.md.
+
 ## Publicado e verificado em produção — API essencial, 15/10/2026
 
 Commit autorizado 3b66195b8b13a896ccdd63740e3f67398f7d7d4c; deploy 6ad0c377e0be1096575458ca; publicado em 2026-10-15T12:17:05.865Z e verificado em 2026-10-15T12:18:04.837Z. O gate hospedado registra o timeout observado sem repetir uma requisição paga apenas para diagnóstico. A retomada confere remetente, chave de transporte e template aplicável antes da revisão semântica; configuração ausente continua bloqueando, e configuração válida mantém o veto e os caminhos determinísticos estritos.

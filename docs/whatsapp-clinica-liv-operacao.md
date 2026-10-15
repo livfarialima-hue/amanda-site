@@ -1,5 +1,14 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+<!-- BRUNA-PROCEDIMENTO-CONTEXTUAL-2026-10-15 -->
+## Candidato local — continuidade do procedimento, 15/10/2026
+
+O pedido explícito atual da pessoa prevalece sobre o último procedimento explicitado por ela, e ambos prevalecem sobre a origem do site ou anúncio. A referência de aquisição continua preservada para atribuição. Texto da equipe, referência antiga e classificação salva na fila não substituem a escolha da pessoa. Uma comparação ou recusa que deixe o procedimento indefinido bloqueia a faixa do assunto anterior.
+
+Na retomada, reler a conversa e recalcular o procedimento antes de selecionar fatos, sugestões, recibos ou faixa. A classificação antiga do job é somente fallback quando não há pedido explícito nem ambiguidade. Preservar confirmação semântica, posse humana, revisão da conversa imediatamente antes do envio e idempotência. Não executar filas, reaplicar mensagens ou promover uma resposta humana para conhecimento como parte desta correção.
+
+O caso motivador foi conferido na fonte privada: a espera noturna foi automática, enquanto os esclarecimentos da manhã foram humanos e anteriores à publicação de referência. A correção também possui reprodução sintética própria; o print isolado não comprova falha posterior ao deploy. Nenhum contato, registro individual ou export bruto integra este documento. Gates finais e publicação pendentes; recibo em auditorias/bruna-procedimento-contextual-2026-10-15/PREFLIGHT.json.
+
 ## Publicado e verificado em produção — API essencial, 15/10/2026
 
 Commit autorizado 3b66195b8b13a896ccdd63740e3f67398f7d7d4c; deploy 6ad0c377e0be1096575458ca; publicado em 2026-10-15T12:17:05.865Z e verificado em 2026-10-15T12:18:04.837Z. O gate hospedado registra o timeout observado sem repetir uma requisição paga apenas para diagnóstico. A retomada confere remetente, chave de transporte e template aplicável antes da revisão semântica; configuração ausente continua bloqueando, e configuração válida mantém o veto e os caminhos determinísticos estritos.

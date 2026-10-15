@@ -1,5 +1,14 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+<!-- BRUNA-PROCEDIMENTO-CONTEXTUAL-2026-10-15 -->
+## Candidato local — procedimento definido pela conversa, 15/10/2026
+
+O pedido explícito atual da pessoa prevalece sobre o último procedimento explicitado por ela, e ambos prevalecem sobre a origem do site ou anúncio. A referência de aquisição continua preservada para atribuição. Texto da equipe, referência antiga e classificação salva na fila não substituem a escolha da pessoa. Uma comparação ou recusa que deixe o procedimento indefinido bloqueia a faixa do assunto anterior.
+
+A entrada e a retomada devem aproveitar o contexto de quem pesquisa para outra pessoa e responder às dúvidas de procedimento, recuperação e preço já permitidas, sem reiniciar a descoberta. Informação ausente ou ambígua permanece com a equipe. Este candidato não altera fatos, fontes, valores, prompt, modelo ou conhecimento aprovado; mantém o pacote 2026-10-14.5. Autoria humana não equivale a regra aprovada para envio automático.
+
+Preparação local em andamento, com testes finais e publicação ainda pendentes. Evidência e limites: auditorias/bruna-procedimento-contextual-2026-10-15/RELATORIO.md. A nova versão documental será projetada nos mesmos arquivos do Drive somente no fechamento autorizado.
+
 ## Publicado e verificado em produção — API essencial, 15/10/2026
 
 Commit autorizado 3b66195b8b13a896ccdd63740e3f67398f7d7d4c; deploy 6ad0c377e0be1096575458ca; publicado em 2026-10-15T12:17:05.865Z e verificado em 2026-10-15T12:18:04.837Z. O gate hospedado registra o timeout observado sem repetir uma requisição paga apenas para diagnóstico. A retomada confere remetente, chave de transporte e template aplicável antes da revisão semântica; configuração ausente continua bloqueando, e configuração válida mantém o veto e os caminhos determinísticos estritos.

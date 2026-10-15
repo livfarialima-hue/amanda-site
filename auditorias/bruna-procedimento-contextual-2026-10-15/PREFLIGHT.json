@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 1,
+  "changeId": "BRUNA-PROCEDIMENTO-CONTEXTUAL-2026-10-15",
+  "status": "read_only_preflight_passed",
+  "checkedAt": "2026-10-15T12:30:09Z",
+  "timezone": "America/Sao_Paulo",
+  "baseline": {
+    "localCommit": "396511d1a0e6286a68427569b1164eb346d5434b",
+    "productionFunctionalCommit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
+    "netlifyDeployId": "6ad0c377e0be1096575458ca",
+    "publishedAt": "2026-10-15T12:17:05.865Z",
+    "appsScriptVersion": 164,
+    "bundleVersion": "2026-10-14.5",
+    "source": "Projeto e deploy relidos pelo conector Netlify nesta execução; Apps Script preservado conforme recibo anterior."
+  },
+  "sources": [
+    {
+      "system": "Google Sheets LEADS canônica",
+      "access": "conector autenticado, somente leitura",
+      "scope": "Metadados e cabeçalhos; conversa delimitada por identidade e oportunidade; autoria cruzada com registro de atendimento humano; CRM e compromisso pertinentes.",
+      "result": "Pedido explícito posterior tratava de procedimento diferente do prefill; a pergunta curta citava esse pedido explícito. A espera noturna foi da Bruna. Os esclarecimentos da manhã foram humanos e anteriores ao deploy de referência.",
+      "privacy": "Sem contatos, linhas, IDs de pessoas, transcrições ou exportações brutas no repositório."
+    }
+  ],
+  "observations": [
+    "Origem de aquisição não determina o procedimento após esclarecimento explícito da pessoa.",
+    "O caso motivador não é prova de falha da Bruna após o deploy de referência; a regressão de contexto foi reproduzida separadamente com entradas sintéticas.",
+    "Respostas humanas não promovem conhecimento nem modificam faixas aprovadas."
+  ],
+  "unchangedSystems": [
+    "Apps Script v164",
+    "LEADS e CRM",
+    "Google Calendar",
+    "Google Ads e Meta Ads",
+    "YCloud: nenhum envio ou alteração de configuração",
+    "Fontes e faixas de preço aprovadas",
+    "Modelo, esforço, prompts e conhecimento",
+    "Os três componentes Ads e seus recibos"
+  ],
+  "externalWritesPerformed": false,
+  "patientMessagesSent": 0,
+  "paidInferenceCalls": 0,
+  "limitations": [
+    "Fonte operacional consultada no recorte necessário; não é uma auditoria de toda a base.",
+    "21 cenários hospedados e três áudios devem ser comprovados pelo build autorizado; resultados anteriores não substituem o gate do candidato.",
+    "Nenhuma resolução de pendência individual foi executada."
+  ],
+  "runtimeReadback": {
+    "checkedAt": "2026-10-15T12:42:21.363Z",
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "siteName": "inspiring-sprite-b35ca4",
+    "baseline": {
+      "commit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
+      "deploy": "6ad0c377e0be1096575458ca",
+      "state": "ready",
+      "context": "production",
+      "publishedAt": "2026-10-15T12:17:05.865Z"
+    },
+    "health": {
+      "checkedAt": "2026-10-15T12:42:21.363Z",
+      "http": 200,
+      "signatureProtection": "active",
+      "automationMode": "active",
+      "processingMode": "durable_background_intake",
+      "apiKeyConfigured": true,
+      "openAIConfigured": true,
+      "sheetsConfigured": true
+    },
+    "configurationPresence": [
+      {
+        "key": "OPENAI_API_KEY",
+        "entryExists": true,
+        "secret": true,
+        "scopes": [
+          "builds",
+          "functions",
+          "runtime"
+        ],
+        "contexts": [
+          {
+            "context": "dev",
+            "present": false
+          },
+          {
+            "context": "branch-deploy",
+            "present": false
+          },
+          {
+            "context": "deploy-preview",
+            "present": false
+          },
+          {
+            "context": "production",
+            "present": true
+          },
+          {
+            "context": "dev-server",
+            "present": false
+          }
+        ]
+      },
+      {
+        "key": "YCLOUD_API_KEY",
+        "entryExists": true,
+        "secret": true,
+        "scopes": [
+          "builds",
+          "functions",
+          "runtime"
+        ],
+        "contexts": [
+          {
+            "context": "dev",
+            "present": false
+          },
+          {
+            "context": "branch-deploy",
+            "present": false
+          },
+          {
+            "context": "deploy-preview",
+            "present": false
+          },
+          {
+            "context": "production",
+            "present": true
+          },
+          {
+            "context": "dev-server",
+            "present": false
+          }
+        ]
+      },
+      {
+        "key": "GOOGLE_SHEETS_WEBHOOK_SECRET",
+        "entryExists": true,
+        "secret": true,
+        "scopes": [
+          "builds",
+          "functions",
+          "runtime"
+        ],
+        "contexts": [
+          {
+            "context": "dev",
+            "present": false
+          },
+          {
+            "context": "branch-deploy",
+            "present": false
+          },
+          {
+            "context": "deploy-preview",
+            "present": false
+          },
+          {
+            "context": "production",
+            "present": true
+          },
+          {
+            "context": "dev-server",
+            "present": false
+          }
+        ]
+      },
+      {
+        "key": "WHATSAPP_AUTOMATION_MODE",
+        "entryExists": true,
+        "secret": false,
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ],
+        "contexts": [
+          {
+            "context": "dev",
+            "present": true
+          },
+          {
+            "context": "branch-deploy",
+            "present": true
+          },
+          {
+            "context": "deploy-preview",
+            "present": true
+          },
+          {
+            "context": "production",
+            "present": true
+          }
+        ]
+      },
+      {
+        "key": "WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED",
+        "entryExists": true,
+        "secret": false,
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ],
+        "contexts": [
+          {
+            "context": "all",
+            "present": true
+          }
+        ]
+      },
+      {
+        "key": "YCLOUD_FOLLOWUP_TEMPLATE_NAME",
+        "entryExists": true,
+        "secret": false,
+        "scopes": [
+          "builds",
+          "functions",
+          "post_processing",
+          "runtime"
+        ],
+        "contexts": [
+          {
+            "context": "dev",
+            "present": false
+          },
+          {
+            "context": "branch-deploy",
+            "present": false
+          },
+          {
+            "context": "deploy-preview",
+            "present": false
+          },
+          {
+            "context": "production",
+            "present": true
+          },
+          {
+            "context": "dev-server",
+            "present": false
+          }
+        ]
+      }
+    ],
+    "functions": 15,
+    "schedules": 6,
+    "limitation": [
+      "Sender object was verified in the baseline release at 12:13Z; this release changes no sender/template settings. Existing fail-closed checks remain.",
+      "Apps Script v164 is unchanged; its version is taken from the previously verified receipt."
+    ]
+  }
+}

@@ -221,6 +221,8 @@
         "auditorias/bruna-preco-direto-2026-09-26/PREFLIGHT.json",
         "auditorias/bruna-preco-direto-2026-09-26/PUBLICACAO.json",
         "auditorias/bruna-preco-direto-2026-09-26/RELATORIO.md",
+        "auditorias/bruna-procedimento-contextual-2026-10-15/PREFLIGHT.json",
+        "auditorias/bruna-procedimento-contextual-2026-10-15/RELATORIO.md",
         "auditorias/bruna-recuperacao-conteudo-2026-09-25/PREFLIGHT.json",
         "auditorias/bruna-recuperacao-conteudo-2026-09-25/PUBLICACAO.json",
         "auditorias/bruna-recuperacao-conteudo-2026-09-25/RELATORIO.md",
@@ -535,6 +537,8 @@
         "auditorias/bruna-ponte-consulta-2026-09-29/PREFLIGHT.json",
         "auditorias/bruna-ponte-consulta-2026-09-29/PUBLICACAO.json",
         "auditorias/bruna-ponte-consulta-2026-09-29/RELATORIO.md",
+        "auditorias/bruna-procedimento-contextual-2026-10-15/PREFLIGHT.json",
+        "auditorias/bruna-procedimento-contextual-2026-10-15/RELATORIO.md",
         "auditorias/bruna-reacoes-2026-10-04/PREFLIGHT.json",
         "auditorias/bruna-reacoes-2026-10-04/PUBLICACAO.json",
         "auditorias/bruna-reacoes-2026-10-04/RELATORIO.md",
@@ -551,6 +555,7 @@
         "netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
         "netlify/functions/lib/bruna-preco-direto.integration.test.mjs",
         "netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
+        "netlify/functions/lib/bruna-procedimento-contextual.integration.test.mjs",
         "netlify/functions/lib/bruna-procedimento-preco-recuperacao.integration.test.mjs",
         "netlify/functions/lib/bruna-reacoes.integration.test.mjs",
         "netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
@@ -617,6 +622,8 @@
         "netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
         "netlify/functions/lib/bruna-preco-direto.integration.test.mjs",
         "netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
+        "netlify/functions/lib/bruna-procedimento-contextual.integration.test.mjs",
+        "netlify/functions/lib/bruna-procedimento-preco-recuperacao.integration.test.mjs",
         "netlify/functions/lib/bruna-reacoes.integration.test.mjs",
         "netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
         "netlify/functions/lib/conversation-action-controller.test.mjs",
@@ -635,8 +642,7 @@
         "netlify/functions/lib/price-journey.integration.test.mjs",
         "netlify/functions/lib/profile-name.test.mjs",
         "netlify/functions/lib/protected-facts.test.mjs",
-        "netlify/functions/lib/surgical-price-review.test.mjs",
-        "netlify/functions/lib/bruna-procedimento-preco-recuperacao.integration.test.mjs"
+        "netlify/functions/lib/surgical-price-review.test.mjs"
       ],
       "requiredCommands": [
         "git diff --check",
@@ -652,6 +658,8 @@
         "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
         "node --test netlify/functions/lib/bruna-preco-direto.integration.test.mjs netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/price-journey.integration.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
         "node --test netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
+        "node --test netlify/functions/lib/bruna-procedimento-contextual.integration.test.mjs",
+        "node --test netlify/functions/lib/bruna-procedimento-preco-recuperacao.integration.test.mjs",
         "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
         "node --test netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
         "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
@@ -660,8 +668,7 @@
         "node --test netlify/functions/lib/overnight-webhook.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs",
         "node --test netlify/functions/lib/protected-facts.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs",
         "npm.cmd run architecture:check",
-        "npm.cmd test",
-        "node --test netlify/functions/lib/bruna-procedimento-preco-recuperacao.integration.test.mjs"
+        "npm.cmd test"
       ],
       "liveSystems": [
         "Apps Script",
@@ -731,6 +738,7 @@
         "netlify/functions/lib/commercial-contact.mjs",
         "netlify/functions/lib/lead-classifier.mjs",
         "netlify/functions/lib/patient-relationship.mjs",
+        "netlify/functions/lib/procedure-context.mjs",
         "netlify/functions/lib/scheduled-followup-context-review.mjs",
         "netlify/functions/lib/whatsapp-automation.mjs"
       ],
@@ -743,6 +751,7 @@
         "netlify/functions/classify-leads-background.mjs",
         "netlify/functions/classify-leads.mjs",
         "netlify/functions/human-resume-background.mjs",
+        "netlify/functions/human-resume.mjs",
         "netlify/functions/lib/human-resume-dispatch.mjs",
         "netlify/functions/scheduled-followup.mjs",
         "netlify/functions/ycloud-webhook.mjs"
@@ -781,6 +790,7 @@
         "netlify/functions/human-resume-background.mjs",
         "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
         "netlify/functions/lib/bruna-policy/rules.jsonl",
+        "netlify/functions/lib/bruna-procedimento-contextual.integration.test.mjs",
         "netlify/functions/lib/classify-leads.test.mjs",
         "netlify/functions/lib/commercial-contact.mjs",
         "netlify/functions/lib/commercial-contact.test.mjs",
@@ -814,6 +824,7 @@
         "apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs",
         "apps-script/clinica-liv-leads/Retomadas.test.mjs",
         "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "netlify/functions/lib/bruna-procedimento-contextual.integration.test.mjs",
         "netlify/functions/lib/classify-leads.test.mjs",
         "netlify/functions/lib/commercial-contact.test.mjs",
         "netlify/functions/lib/conversation-guidelines.test.mjs",
@@ -832,6 +843,7 @@
         "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
         "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",
         "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+        "node --test netlify/functions/lib/bruna-procedimento-contextual.integration.test.mjs",
         "node --test netlify/functions/lib/human-resume-runtime.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-ledger.test.mjs",
         "node --test netlify/functions/lib/patient-relationship.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
         "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",

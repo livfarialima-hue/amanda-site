@@ -6,6 +6,7 @@ import {
   detectProcedure,
   detectRecentClinicProcedure,
   detectRecentPatientProcedure,
+  resolvePatientProcedureContext,
 } from "./procedure-context.mjs";
 import { detectProcedure as legacyDetectProcedure } from "./whatsapp-automation.mjs";
 
@@ -55,6 +56,56 @@ test("the procedure stated by the patient overrides a stale campaign reference",
     detectProcedure("Quero saber sobre otoplastia", "G26CERV", null),
     { key: "otoplastia", code: "G-OTO-01" },
   );
+});
+
+test("a recent explicit papada request outranks acquisition metadata on a later generic question", () => {
+  for (const reference of ["SITE-lifting-cervical", "G26CERV"]) {
+    const conversation = [
+      {role:"user",source:"patient",text:"Olá, gostaria de informações sobre cervicoplastia.",reference:"SITE-lifting-cervical"},
+      {role:"user",source:"patient",text:"Lipoaspiração de papada"},
+      {role:"assistant",source:"human_team",text:"Sobre a cervicoplastia, posso explicar."},
+      {role:"user",source:"patient",text:"Gostaria de saber sobre o procedimento, o valor e a recuperação para minha esposa.",reference},
+    ];
+    assert.equal(detectRecentPatientProcedure(conversation)?.key,"lipo_papada",reference);
+  }
+});
+
+test("recent rejection or comparison blocks acquisition fallback on a later generic turn", () => {
+  for (const text of ["Não quero cervicoplastia", "Qual a diferença entre lipo de papada e cervicoplastia?"]) {
+    assert.equal(detectRecentPatientProcedure([
+      {role:"user",source:"patient",text:"Quero cervicoplastia"},
+      {role:"user",source:"patient",text},
+      {role:"user",source:"patient",text:"E qual o valor?",reference:"G26CERV"},
+    ]),null,text);
+  }
+});
+
+test("shared procedure resolution distinguishes current, recent, unresolved and acquisition evidence", () => {
+  const recentConversation = [
+    {role:"user",source:"patient",text:"Tenho interesse em cervicoplastia"},
+    {role:"user",source:"patient",text:"Lipoaspiração de papada"},
+    {role:"assistant",source:"bruna",text:"Sobre lifting cervical"},
+  ];
+  assert.deepEqual(resolvePatientProcedureContext({text:"Procedimento, valor e recuperação?",reference:"G26CERV",recentConversation}), {
+    procedure:{key:"lipo_papada",code:"X-LIPOPAP-01"},source:"recent_patient",unresolved:false,
+  });
+  assert.deepEqual(resolvePatientProcedureContext({text:"Na verdade quero otoplastia",reference:"G26CERV",recentConversation}), {
+    procedure:{key:"otoplastia",code:"G-OTO-01"},source:"current_patient",unresolved:false,
+  });
+  for (const text of ["Não quero lipo de papada", "Qual a diferença entre lipo de papada e cervicoplastia?"]) {
+    assert.deepEqual(resolvePatientProcedureContext({text,reference:"G26CERV",recentConversation}), {
+      procedure:null,source:"current_patient",unresolved:true,
+    });
+    assert.deepEqual(resolvePatientProcedureContext({text:"E o valor?",reference:"G26CERV",recentConversation:[...recentConversation,{role:"user",source:"patient",text}]}), {
+      procedure:null,source:"recent_patient",unresolved:true,
+    });
+  }
+  assert.deepEqual(resolvePatientProcedureContext({text:"Olá",reference:"G26CERV",recentConversation:[{role:"user",source:"human_team",text:"Lipo de papada"}]}), {
+    procedure:{key:"lifting_cervical",code:"G-LIFT-CERV-01"},source:"acquisition",unresolved:false,
+  });
+  assert.deepEqual(resolvePatientProcedureContext({text:"Olá",recentConversation:[{role:"assistant",text:"Sobre lipo de papada"}]}), {
+    procedure:null,source:"none",unresolved:false,
+  });
 });
 
 test("Google and Meta campaign references preserve their procedure mapping", () => {

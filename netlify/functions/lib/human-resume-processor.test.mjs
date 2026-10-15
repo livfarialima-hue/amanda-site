@@ -263,6 +263,86 @@ for (const scenario of ['complete','price_only','semantic_veto','new_human','wro
   });
 }
 
+for (const scenario of ['stored_cervical','site_cervical','latest_cervical']) {
+  test(`resumption uses the latest patient procedure throughout: ${scenario}`,async()=>{
+    const deps=dependencies();
+    const cervical=scenario==='latest_cervical';
+    const expected=cervical?'lifting_cervical':'lipo_papada';
+    const text=cervical?'Qual o valor da cirurgia?':'Gostaria de saber sobre o procedimento, valor e recuperação. É para minha esposa.';
+    const turns=[
+      {role:'user',source:'patient',text:cervical?'Quero informações de lipo de papada.':'Gostaria de informações de cervicoplastia. Ref: SITE-lifting-cervical'},
+      {role:'assistant',source:'bruna',text:'Qual procedimento vocês procuram?'},
+      {role:'user',source:'patient',text:cervical?'Cervicoplastia':'Lipoaspiração de papada'},
+      {role:'assistant',source:'equipe_humana',text:'Qual é a dúvida de vocês?'},
+      {role:'user',source:'patient',text},
+    ];
+    let knowledgeCalls=0,modelCalls=0;
+    deps.callClassificationSheetsImpl=async(action,payload)=>{
+      if(action==='get_bot_knowledge_context') {
+        knowledgeCalls++;
+        assert.equal(payload.knowledge.procedure,expected);
+        return {status:'completed',data:{candidates:[]}};
+      }
+      return {status:'completed',data:{relationship:{state:'unknown'}}};
+    };
+    deps.runOpenAIShadowImpl=async payload=>{
+      modelCalls++;
+      assert.equal(payload.procedure,expected);
+      assert.equal(payload.policyHints.procedure,expected);
+      assert.equal(payload.policyHints.reason,cervical?'lifting_price_range_direct':'lipo_papada_price_range_direct');
+      assert.equal(payload.policyHints.deterministicReplyProcedure,expected);
+      assert.equal(payload.policyHints.deterministicReplyCode,cervical?'LIFTING-PRICE-RANGE-01':'LIPO-PAPADA-PRICE-RANGE-01');
+      assert.match(payload.policyHints.deterministicReplyPreview,cervical?/18 mil e R\$ 26 mil/:/12 mil e R\$ 18 mil/);
+      if(!cervical)assert.match(payload.policyHints.deterministicReplyPreview,/gordura.*inchaço/s);
+      return {status:'completed',decision:{route:'standard_reply',confidence:'high',automaticAllowed:true,urgent:false,
+        professional:'amanda',procedure:expected,replyCode:payload.policyHints.deterministicReplyCode,
+        suggestedReply:payload.policyHints.deterministicReplyPreview,reviewReason:''}};
+    };
+    const result=await processHumanResumeJob(job({text,procedure:cervical?'lipo_papada':'lifting_cervical',
+      reference:scenario==='site_cervical'?'SITE-lifting-cervical':'WHATSAPP-DIRETO-SEM-CODIGO',recentConversation:turns}),{env:ACTIVE_ENV,now:NOW,...deps});
+    assert.equal(knowledgeCalls,1);assert.equal(modelCalls,1);
+    assert.equal(deps.completions[0].input.procedure,expected);
+    assert.equal(deps.patientMessages.length,1,JSON.stringify(result));
+    if(!cervical) {
+      assert.match(deps.patientMessages[0].body,/lipo de papada isolada.*R\$ 12 mil e R\$ 18 mil/);
+      assert.doesNotMatch(deps.patientMessages[0].body,/cervicoplastia|lifting cervical|26 mil|42 mil/);
+    } else assert.match(deps.patientMessages[0].body,/cervicoplastia.*18 mil e R\$ 26 mil/);
+  });
+}
+
+test('a stale cervical source cannot disclose the lipo range again during resumption',async()=>{
+  const deps=dependencies();
+  deps.runOpenAIShadowImpl=async()=>{assert.fail('A previously disclosed range must remain under human review');};
+  const result=await processHumanResumeJob(job({text:'Qual é o valor?',procedure:'lifting_cervical',reference:'SITE-lifting-cervical',recentConversation:[
+    {role:'user',source:'patient',text:'Gostaria de informações de cervicoplastia. Ref: SITE-lifting-cervical'},
+    {role:'user',source:'patient',text:'Lipoaspiração de papada'},
+    {role:'assistant',source:'equipe_humana',text:'Fica de 12 a 18 mil.'},
+  ]}),{env:ACTIVE_ENV,now:NOW,...deps});
+  assert.equal(result.status,'waiting_human',JSON.stringify(result));
+  assert.equal(deps.completions[0].input.procedure,'lipo_papada');
+  assert.equal(deps.alerts.length,1);
+  for(const message of deps.patientMessages)assert.doesNotMatch(message.body,/R\$|\b\d+\s*mil\b/);
+});
+
+for (const placement of ['current','history','without_history']) {
+  test(`resumption never revives a stored procedure after ${placement} ambiguity`,async()=>{
+    const deps=dependencies();
+    const ambiguous='Ainda não sei se é lipo de papada ou cervicoplastia.';
+    const text=placement!=='history'?`${ambiguous} Gostaria de saber o valor.`:'Gostaria de saber o valor.';
+    const input=job({text,procedure:'lifting_cervical',reference:'SITE-lifting-cervical',recentConversation:placement==='without_history'?[]:[
+      {role:'user',source:'patient',text:'Gostaria de informações de cervicoplastia.'},
+      {role:'assistant',source:'equipe_humana',text:'Como posso ajudar?'},
+      {role:'user',source:'patient',text:placement==='history'?ambiguous:text},
+    ]});
+    deps.runOpenAIShadowImpl=async()=>{assert.fail('Ambiguous surgical price must require human review before semantic drafting');};
+    const result=await processHumanResumeJob(input,{env:ACTIVE_ENV,now:NOW,...deps});
+    assert.equal(result.status,'waiting_human',JSON.stringify(result));
+    assert.equal(deps.completions[0].input.procedure,null);
+    assert.equal(deps.alerts.length,1);
+    for(const message of deps.patientMessages)assert.doesNotMatch(message.body,/R\$|\b\d+\s*mil\b/);
+  });
+}
+
 for (const alertFailure of [false,true]) {
   test(`unapproved lipo association keeps facts and requires a delivered human alert: ${alertFailure}`,async()=>{
     const deps=dependencies(),order=[];

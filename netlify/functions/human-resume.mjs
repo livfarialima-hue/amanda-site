@@ -2,6 +2,7 @@ import { isReactionMessageType } from "./lib/inbound-message-kind.mjs";
 import { buildConsultationQuestionBundle } from './lib/consultation-question-bundle.mjs';
 import { consultationQuestionTopics } from './lib/patient-turn-context.mjs';
 import { coalesceUnansweredPatientBlock } from './lib/inbound-burst-context.mjs';
+import { resolvePatientProcedureContext } from './lib/procedure-context.mjs';
 import { dispatchHumanResume, isHumanResumeBackgroundEnabled } from "./lib/human-resume-dispatch.mjs";
 export { dispatchHumanResume } from "./lib/human-resume-dispatch.mjs";
 import {
@@ -571,18 +572,23 @@ export async function processHumanResumeJob(
     referralContext: job.referralContext,
     templateId: job.templateId,
   });
-  const preliminaryPlan =
-    !currentMessagePlan.procedure && job.procedure
-      ? {
-          ...currentMessagePlan,
-          procedure: job.procedure,
-        }
-      : currentMessagePlan;
+  const patientProcedureContext = resolvePatientProcedureContext({
+    text: job.text, recentConversation: job.recentConversation,
+    reference: job.reference, referralContext: job.referralContext,
+  });
+  const preliminaryPlan = !currentMessagePlan.procedure && job.procedure &&
+      patientProcedureContext.source === 'none' && !patientProcedureContext.unresolved
+    ? {...currentMessagePlan, procedure: job.procedure}
+    : currentMessagePlan;
   let enrichedPlan = applyPatientRelationshipPolicy(enrichAutomationPlanFromConversation(
     preliminaryPlan,
     job.recentConversation,
     now,
   ), job.patientRelationship);
+  // The saved queue classification is only a fallback before resolution. Keep
+  // knowledge, suggestions, receipts and the final send gate on the same topic,
+  // including an explicitly unresolved patient choice.
+  job.procedure = enrichedPlan.procedure || null;
   const knownProfessional = job.patientRelationship.professional || job.professional || "";
   job.professional = job.professional || enrichedPlan.professional || "";
   if (enrichedPlan.patientRelationship?.hasPendingHumanTask || /^known_patient_active/.test(enrichedPlan.reason || "")) job.preserveHumanOwnership = true;

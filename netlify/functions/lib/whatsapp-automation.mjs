@@ -19,6 +19,7 @@ import {
   detectRecentClinicProcedure,
   detectRecentPatientProcedure,
   hasUnresolvedNamedProcedure,
+  resolvePatientProcedureContext,
 } from "./procedure-context.mjs";
 
 export { normalizeAutomationMode } from "./automation-mode.mjs";
@@ -330,10 +331,30 @@ export function enrichAutomationPlanFromConversation(
         turn?.role === "user" ||
         ["patient", "paciente"].includes(String(turn?.source || "")),
     );
-  if (hasUnresolvedNamedProcedure(plan.currentText || latestPatientTurn?.text)) {
-    return { ...plan, procedure: null, replyCode: null };
-  }
   const currentText = plan.currentText || latestPatientTurn?.text;
+  const patientProcedure = resolvePatientProcedureContext({text: currentText, recentConversation});
+  if (['current_patient', 'recent_patient'].includes(patientProcedure.source)) {
+    // Acquisition metadata and a previously prepared route are only fallback
+    // context. Re-evaluate price permission after the patient's clarification.
+    const pricePlan = ['price_initial_information', 'surgical_price_review',
+      'price_without_confirmed_procedure', 'lifting_price_range_direct',
+      'otoplasty_price_range_direct', 'lipo_papada_price_range_direct'].includes(plan.reason);
+    if (patientProcedure.unresolved) {
+      const hospitalPlan = ['hospital_setting_request','hospital_setting_context_required'].includes(plan.reason);
+      // Surgical ambiguity may block its own reply, but cannot erase a clinical
+      // alert, professional routing or other independently protected decision.
+      if (plan.route !== 'standard_reply' && !pricePlan && !hospitalPlan) return plan;
+      return {...plan, procedure:null, replyCode:null,
+        ...(pricePlan ? {route:'human_review', reason:'price_without_confirmed_procedure', automaticAllowed:false}
+          : hospitalPlan
+            ? {route:'human_review',reason:'hospital_setting_context_required',automaticAllowed:false} : {})};
+    }
+    if (plan.procedure !== patientProcedure.procedure.key) {
+      plan = {...plan, procedure:patientProcedure.procedure.key,
+        ...(pricePlan ? {route:'human_review', reason:'surgical_price_review', replyCode:null, automaticAllowed:false}
+          : plan.reason === 'known_procedure' ? {replyCode:patientProcedure.procedure.code} : {})};
+    }
+  }
   const acceptedTopics = resolveOfferedInformationChoice({text:currentText,recentConversation});
   if (acceptedTopics && ['ai_safety_triage','outside_conservative_rules','known_conversation_continuation'].includes(plan.reason)) {
     // Resolve the informational request before the existing price/procedure
@@ -451,9 +472,10 @@ export function enrichAutomationPlanFromConversation(
     };
   }
 
-  if (plan.reason === "hospital_setting_context_required") {
+  if (["hospital_setting_request", "hospital_setting_context_required"].includes(plan.reason)) {
+    const procedure = plan.procedure || recentPatientProcedure?.key || null;
     if (
-      APPROVED_HOSPITAL_LIFTING_PROCEDURES.has(recentPatientProcedure?.key)
+      APPROVED_HOSPITAL_LIFTING_PROCEDURES.has(procedure)
     ) {
       return {
         ...plan,
@@ -461,17 +483,13 @@ export function enrichAutomationPlanFromConversation(
         reason: "hospital_setting_request",
         replyCode: "AMANDA-HOSPITAL-01",
         professional: "amanda",
-        procedure: recentPatientProcedure.key,
+        procedure,
         automaticAllowed: true,
       };
     }
 
-    if (recentPatientProcedure) {
-      return {
-        ...plan,
-        procedure: recentPatientProcedure.key,
-      };
-    }
+    return {...plan,route:'human_review',reason:'hospital_setting_context_required',
+      replyCode:null,procedure,automaticAllowed:false};
   }
 
   if (plan.reason === 'price_initial_information') {
@@ -610,7 +628,13 @@ export function enrichAutomationPlanFromConversation(
   };
 }
 
-export function planAutomation({
+export function planAutomation(input) {
+  // Every route must carry the actual current turn. The caller may not have
+  // appended it to history yet; a previous patient turn cannot stand in for it.
+  return {...buildAutomationPlan(input), currentText:String(input.text || '').trim()};
+}
+
+function buildAutomationPlan({
   text,
   messageType,
   reference,

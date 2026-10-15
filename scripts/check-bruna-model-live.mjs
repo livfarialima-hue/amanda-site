@@ -80,9 +80,11 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         {role:'assistant',source:'bruna',text:'Sim, a Dra. Amanda atende por consulta online, inclusive quem está no exterior.'}]
     })),
     { name:'lipo_papada_complete_requested_answer', lipoCompound:true, procedure:'lipo_papada', code:'LIPO-PAPADA-PRICE-RANGE-01',
-      text:'Gostaria de saber sobre o procedimento, valor e recuperação',
-      recentConversation:[{role:'user',source:'patient',text:'Estou pesquisando lipo de papada para minha esposa.'},
-        {role:'assistant',source:'bruna',text:'Qual é a sua dúvida?'}] },
+      text:'Gostaria de saber sobre o procedimento, valor e recuperação. É para minha esposa.', reference:'SITE-lifting-cervical',
+      recentConversation:[{role:'user',source:'patient',text:'Tenho interesse em cervicoplastia (lifting cervical). Ref. SITE-lifting-cervical'},
+        {role:'assistant',source:'bruna',text:'Posso orientar sobre cervicoplastia. O que gostaria de saber?'},
+        {role:'user',source:'patient',text:'Lipoaspiração de papada'},
+        {role:'user',source:'patient',text:'Estou pesquisando para minha esposa.',reference:'SITE-lifting-cervical'}] },
     { name:'lipo_papada_association_not_isolated_range', lipoAssociation:true, procedure:'lipo_papada',
       text:'Qual o valor da lipo de papada com platismoplastia?',recentConversation:[] },
     { name: 'classification', classification: true },
@@ -130,7 +132,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     } else {
       // Reuse the actual owner of the reply contract. A hand-written partial
       // contract normalizes to risk=red/allowedResponseKind=none in the adapter.
-      const plan = scenario.priceWithPhotos || scenario.remoteAssessment || scenario.appointment || scenario.lipoCompound || scenario.lipoAssociation ? enrichAutomationPlanFromConversation(planAutomation({text:scenario.text,messageType:'text'}),scenarioHistory) :
+      const plan = scenario.priceWithPhotos || scenario.remoteAssessment || scenario.appointment || scenario.lipoCompound || scenario.lipoAssociation ? enrichAutomationPlanFromConversation(planAutomation({text:scenario.text,messageType:'text',reference:scenario.reference}),scenarioHistory) :
         { route: scenario.fullHistoryResolved ? 'ignore' : scenario.urgent || scenario.review ? 'human_review' : 'standard_reply', professional: 'amanda', procedure: scenario.procedure,
         automaticAllowed: !scenario.urgent && !scenario.review, replyCode: scenario.code, reason: scenario.reason };
       const conversationAction = decideConversationAction({ text: scenario.text, plan, recentConversation: scenarioHistory, conversionExperienceEnabled: true });
@@ -141,9 +143,10 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         : scenario.code === 'AMANDA-CONSULTA-INFO-01'
         ? buildConsultationInformationReply({ consultationPriceRequested: true, conversionExperienceEnabled: true, consultationNextStep: replyContract.consultationNextStep })
         : buildLiftingFacialInformationReply({ text: scenario.text, procedure: scenario.procedure });
-      const policyHints = scenario.code && !scenario.knowledge ? { route: 'standard_reply', reason: scenario.reason, professional: 'amanda', procedure: scenario.procedure, automaticAllowed: true,
-        deterministicReplyCode: scenario.code, deterministicReplyProfessional: 'amanda', deterministicReplyProcedure: scenario.procedure, deterministicReplyPreview: preview } : undefined;
-      result = await runOpenAIShadow({ phone: '+5511900000000', opportunityId: 'synthetic-only-opportunity', professional: 'amanda', text: scenario.text, procedure: scenario.procedure, recentConversation: scenarioHistory,
+      const resolvedProcedure = scenario.lipoCompound ? plan.procedure : scenario.procedure;
+      const policyHints = scenario.code && !scenario.knowledge ? { route: 'standard_reply', reason: scenario.reason, professional: 'amanda', procedure: resolvedProcedure, automaticAllowed: true,
+        deterministicReplyCode: scenario.code, deterministicReplyProfessional: 'amanda', deterministicReplyProcedure: resolvedProcedure, deterministicReplyPreview: preview } : undefined;
+      result = await runOpenAIShadow({ phone: '+5511900000000', opportunityId: 'synthetic-only-opportunity', professional: 'amanda', text: scenario.text, procedure: resolvedProcedure, recentConversation: scenarioHistory,
         previousConversationState: scenario.previousConversationState, learningContext: scenario.learningContext,
         patientRelationship: scenario.patientRelationship,
         priorInteractionKnown: true, policyHints, replyContract, deterministicUrgent: !!scenario.urgent }, options);
