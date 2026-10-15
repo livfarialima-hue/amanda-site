@@ -1,8 +1,14 @@
 # Arquitetura da jornada da paciente
 
-## Candidato 15/10/2026 — continuidade sem vetos de estilo redundantes
+## Candidato 2026-10-15.4 — referência global e composição transparente
 
-Não publicado: BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15. Reconhecimento de repetição solicitada pertence a reply-continuity e é consumido pelo gate, sem retirar a proteção de uso único de faixa cirúrgica. Clarificação específica não equivale a recomeçar a conversa. Classificação de convite e negação permanecem integralmente no baseline: a tentativa de relaxar o veto lexical de CTA foi descartada após revisão adversarial. Evoluir para atos conversacionais exige desenho próprio, não multiplicar exceções por frases.
+Ainda não publicado. `surgical-price-policy.mjs` é o único proprietário da ressalva de valor global; `surgical-price-review.mjs` a compõe e `conversation-guidelines.mjs` a importa literalmente. `semantic-reply-policy.mjs` impede que uma redação contextual troque a ressalva atual pela histórica sem composição. `outbound-reply-gate.mjs` exige a composição atual também fora desse seletor, inclusive em perguntas conjuntas. A versão antiga continua reconhecida para históricos/revisões atrasadas, sem autorizar omissão no novo envio. Os dois cenários de preço do gate hospedado exigem a ressalva global, sem novas chamadas. Valores e permissão por procedimento, uso único, negociação, revisão humana, agenda, efeitos e Apps Script não mudam.
+
+Baseline vivo observado em 15/10: produção `6c9cb7ee0129260dd0f9394b1d74c0bd49a05228`, deploy `6ad120701654730b8c969605`, pacote `.2`. O candidato de consumo `.3` permanece bloqueado e não integra esta branch isolada. Referência executiva: Plano Executivo; evidência deste candidato em `auditorias/bruna-referencia-global-2026-10-15/RELATORIO.md`.
+
+## Publicado em 15/10/2026 — continuidade sem vetos de estilo redundantes
+
+BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15 publicado no commit/deploy `.2` acima. Reconhecimento de repetição solicitada pertence a reply-continuity e é consumido pelo gate, sem retirar a proteção de uso único de faixa cirúrgica. Clarificação específica não equivale a recomeçar a conversa. Classificação de convite e negação permanecem integralmente no baseline: a tentativa de relaxar o veto lexical de CTA foi descartada após revisão adversarial. Evoluir para atos conversacionais exige desenho próprio, não multiplicar exceções por frases.
 
 Conta e API são executores distintos, não autoridades distintas. Uma futura proposta pelo plugin precisa de identidade opaca do trabalho, versão da conversa/oportunidade, expiração, idempotência e evidência de processamento. O servidor canônico relê o estado antes de aceitar qualquer efeito. Nenhuma ponte foi implementada neste candidato; envio, agenda, fatos e persistência continuam com seus proprietários atuais. Ver relatório em auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md e ordem no Plano Executivo.
 

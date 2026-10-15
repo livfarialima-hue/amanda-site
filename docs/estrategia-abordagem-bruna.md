@@ -1,8 +1,14 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+## Candidato 2026-10-15.4 — referência global, 15/10/2026
+
+Ainda não publicado. Por instrução de Daniel, o novo texto apresenta o valor global de planejamento e explica os componentes sem inventar preços separados ou inclusões. A ressalva de `surgical-price-policy.mjs` é importada pelo prompt e preservada na redação contextual. O exemplo de preço abaixo descreve esse candidato. Faixas e fatos aprovados permanecem; orçamento individual e conflitos de composição exigem conferência humana. Não há prova de ganho de conversão.
+
+Produção observada continua `.2`, commit `6c9cb7ee0129260dd0f9394b1d74c0bd49a05228`, deploy `6ad120701654730b8c969605`, publicado em 15/10 às 18:54:29.938Z. O candidato `.3` de consumo está bloqueado pelo gate e não integra esta branch; não publicar os dois por associação. Detalhe e rollback em `auditorias/bruna-referencia-global-2026-10-15/RELATORIO.md`; ordem e pendências somente no Plano Executivo.
+
 ## Candidato local — coerência e processamento pela conta, 15/10/2026
 
-Ainda não publicado: BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15, pacote 2026-10-15.2. O registro publicado abaixo continua sendo o estado operacional. A projeção existente no Drive permanece na versão publicada até autorização, testes de release e atualização com readback.
+BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15, pacote 2026-10-15.2, publicado no commit/deploy indicados acima. A projeção existente no Drive não é alterada por este candidato local; requer fechamento autorizado e readback.
 
 O candidato retira dois falsos bloqueios: perguntas específicas iniciadas por “Poderia me dizer” e pedidos coloquiais explícitos de repetição, como “Qual era mesmo o valor da consulta?”. Não libera convite de agenda proibido, reinício genérico, faixa cirúrgica repetida, fatos não aprovados ou conversa sob responsabilidade humana. O protótipo de relaxamento de “se quiser” foi descartado antes do commit: a revisão encontrou escapes de convite e mostrou que o classificador parcial não sustenta essa liberação com segurança.
 
@@ -81,7 +87,7 @@ O histórico documental integral anterior foi arquivado em área restrita. Esta 
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste conteúdo. Estratégia de aquisição e estado vivo seguem suas fontes próprias.
 
-**Versão:** 2026-10-15.2
+**Versão:** 2026-10-15.4
 
 Projeção ativa: 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF. O identificador não concede acesso; as permissões existentes são preservadas.
 
@@ -402,7 +408,7 @@ A autorização de 26/09/2026 substitui a exigência de uma segunda pergunta/ace
 - lifting facial: R$ 26 mil a R$ 42 mil;
 - cervicoplastia (lifting cervical): R$ 18 mil a R$ 26 mil;
 - otoplastia: R$ 8 mil a R$ 14 mil;
-- lipo de papada isolada: R$ 12 mil a R$ 18 mil, extensão autorizada por Daniel em 14/10/2026, candidata ainda sem publicação.
+- lipo de papada isolada: R$ 12 mil a R$ 18 mil, extensão autorizada por Daniel em 14/10/2026 e já publicada antes deste candidato.
 
 As faixas anteriores foram preservadas; a referência de lipo de papada isolada foi acrescentada por autorização explícita em 14/10/2026. Interesse genérico, pergunta apenas sobre pagamento ou recusa de valores não autorizam números. O envio depende do plano determinístico e do gate de saída; a IA não decide uma faixa por conta própria. Minilifting e lifting facial só aparecem juntos quando a própria pergunta comparar ambos ou houver lifting sem especificação. Nunca misturar a faixa cervical com facial.
 
@@ -412,7 +418,7 @@ Exemplo para otoplastia, com apresentação apenas no primeiro contato:
 >
 > Para você ter uma noção de valores, a otoplastia tem uma referência entre R$ 8 mil e R$ 14 mil.
 >
-> É uma referência para planejamento, não é um orçamento fechado. O valor individual é definido após avaliação, conforme o plano cirúrgico, a equipe, o hospital, a anestesia e os materiais.
+> É uma referência para planejamento do valor global, não é um orçamento fechado. O valor individual é definido após avaliação, conforme o plano cirúrgico, a equipe, o hospital, a anestesia e os materiais. O orçamento discrimina esses componentes e o que é incluído ou cobrado à parte.
 >
 > Se quiser, posso te explicar como funciona a avaliação com a Dra. Amanda.
 

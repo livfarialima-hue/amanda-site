@@ -1,5 +1,11 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+## Produção observada e candidato separado — 15/10/2026
+
+Produção `.2`: commit `6c9cb7ee0129260dd0f9394b1d74c0bd49a05228`, deploy `6ad120701654730b8c969605`, publicado em 2026-10-15T18:54:29.938Z; projeto canônico relido em 2026-10-15T20:31:56Z com o mesmo deploy ready. Rollback do recibo `.2`: novo commit/build restrito para comportamento `74c53a17555e95cb81915c33eea8a6053a23a8b4`, deploy de referência `6ad0f6c1fd759be7d5f15b0f`, preservando dados, filas e flags, sem replay. Apps Script v164 é referência herdada, sem inspeção atual do editor.
+
+O candidato isolado `.4` de referência global ainda não foi publicado. Valores existentes permanecem, a composição não autoriza novas inclusões e o gate final exige a ressalva atual. `.3` de consumo permanece bloqueada e não integra esta branch. Testes locais não enviam mensagens reais. Autorização do SHA, integração segura e gates hospedados precedem qualquer alteração de produção. Estado final e projeções só podem ser fechados após verificação no Plano Executivo e nos recibos; manter `SYNC_PENDING` enquanto isso.
+
 <!-- BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15 -->
 ## Publicado e verificado — autonomia contextual, 15/10/2026
 

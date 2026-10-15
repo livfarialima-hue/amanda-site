@@ -15,7 +15,7 @@ import { recordDurableConversationTurn, prepareConversationLedgerReceipt,
 import { hasInternalReferenceExposure } from "./internal-reference-guard.mjs";
 import { withoutNegatedSchedulingMentions } from "./patient-turn-context.mjs";
 import { hasAssertedProtectedClaim } from "./protected-facts.mjs";
-import { APPROVED_SURGICAL_RANGE_PATTERNS, containsApprovedSurgicalRange, containsPreviouslySharedLipoPapadaRange, hasIsolatedLipoPapadaScope, hasOnlyApprovedSurgicalAmounts, hasApprovedSurgicalPriceDisclosure } from "./surgical-price-policy.mjs";
+import { APPROVED_SURGICAL_RANGE_PATTERNS, containsApprovedSurgicalRange, containsPreviouslySharedLipoPapadaRange, hasIsolatedLipoPapadaScope, hasOnlyApprovedSurgicalAmounts, hasApprovedGlobalSurgicalPriceDisclosure } from "./surgical-price-policy.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   BRUNA_CTA_TYPES,
@@ -168,7 +168,7 @@ function isProtectedLiftingRangeReply(value, recentConversation = []) {
     : replyUrls.length === 0;
   return (
     containsApprovedSurgicalRange(value, "lifting_facial") &&
-    hasApprovedSurgicalPriceDisclosure(value) &&
+    hasApprovedGlobalSurgicalPriceDisclosure(value) &&
     hasRequiredGuide
   );
 }
@@ -180,7 +180,7 @@ function isProtectedOtoplastyRangeReply(value, recentConversation = []) {
     : replyUrls.length === 0;
   return (
     containsApprovedSurgicalRange(value, "otoplastia") &&
-    hasApprovedSurgicalPriceDisclosure(value) &&
+    hasApprovedGlobalSurgicalPriceDisclosure(value) &&
     hasRequiredGuide
   );
 }
@@ -192,7 +192,7 @@ function isProtectedCervicalRangeReply(value, recentConversation = []) {
     : replyUrls.length === 0;
   return (
     containsApprovedSurgicalRange(value, "lifting_cervical") &&
-    hasApprovedSurgicalPriceDisclosure(value) &&
+    hasApprovedGlobalSurgicalPriceDisclosure(value) &&
     hasRequiredGuide
   );
 }
@@ -223,7 +223,7 @@ function semanticUnsafeReplyReason(
     recentConversation,
   );
   const protectedLipoPapadaRange = containsApprovedSurgicalRange(raw, 'lipo_papada') &&
-    hasApprovedSurgicalPriceDisclosure(raw) && urls(raw).every(url => FACIAL_PRICE_GUIDE_PATTERN.test(url));
+    hasApprovedGlobalSurgicalPriceDisclosure(raw) && urls(raw).every(url => FACIAL_PRICE_GUIDE_PATTERN.test(url));
   const protectedApprovedRange =
     protectedLiftingRange || protectedCervicalRange || protectedOtoplastyRange || protectedLipoPapadaRange;
   const bundleRangeAuthorized = contract.questionBundle === true && contract.sourceReason === 'consultation_question_bundle' &&

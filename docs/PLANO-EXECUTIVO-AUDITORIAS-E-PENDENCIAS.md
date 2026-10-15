@@ -1,14 +1,22 @@
 # Plano executivo — auditorias, pendências e prazos
 
-## Pendência atual — Bruna coerente e integração pela conta, 15/10/2026
+## Candidato isolado — referência global, 15/10/2026
 
-Fonte de detalhe: [relatório técnico](../auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md). Este painel continua sendo o único planejamento executivo. Sem nova publicação, edição de plugin, rotina, Drive ou dado operacional nesta etapa.
+Daniel solicitou fazer e publicar a estratégia de valor global com componentes explicados. O pacote `2026-10-15.4` é preparado em branch isolada a partir da produção `6c9cb7ee0129260dd0f9394b1d74c0bd49a05228`, deploy `6ad120701654730b8c969605` (`.2`). A publicação deste candidato exige os gates e a autorização do SHA testado previstos no Contrato de Alteração Segura; pedido de implementação não é recibo de publicação. Validação e escopo em `auditorias/bruna-referencia-global-2026-10-15/RELATORIO.md`.
+
+Preservar o candidato independente `.3`, commit `a599aea842545c666b3b2cee780dfc22d7c52f55`, cujo deploy `6ad12b0ac06af392d0dda00a` foi bloqueado por timeout. Não incorporá-lo à publicação de preço nem contornar seu gate. Ao integrar a branch de preço à operacional, preservar documentação e evidências posteriores de `.2/.3`, sem levar o código `.3` como efeito colateral. Revalidar produção e divergências antes da integração e repetir os testes do commit final se o SHA mudar.
+
+Ordem: fechar testes locais e SHA → autorização exata → preflight somente leitura e integração segura → gates hospedados existentes (21 cenários, dois históricos e 3 áudios) → publicação/verificação → reconciliação das mesmas projeções Drive. Até o fechamento, manter `SYNC_PENDING`. Nenhuma mensagem, valor, campanha, agenda ou Apps Script será alterado como teste. Integridade após publicação em 24h; transparência/continuidade em D+7, com n/N e coortes compatíveis; resultado atual N/D.
+
+## Estado anterior reconciliado — Bruna coerente e integração pela conta, 15/10/2026
+
+Fonte de detalhe: [relatório técnico](../auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md). Este painel continua sendo o único planejamento executivo. `.2` foi publicada em 15/10 às 18:54:29.938Z, conforme o baseline acima. O candidato local atual não muda plugin, rotina, Drive ou dado operacional.
 
 | Ordem | Entrega | Estado / gate | Momento de avaliação |
 | --- | --- | --- | --- |
-| 1 | Dois falsos bloqueios de continuidade corrigidos no candidato 2026-10-15.2 | Testado localmente: 2254/2254; revisão independente sem bloqueadores. Falta autorização do commit e gates de publicação Netlify. Apps Script não muda. | Próxima decisão do usuário; depois 24h e 7 dias da publicação autorizada. |
+| 1 | Dois falsos bloqueios de continuidade corrigidos no pacote 2026-10-15.2 | Publicado e verificado no baseline acima; 2254/2254 locais, 21/21 hospedados e 3/3 áudios do recibo anterior. Apps Script não muda. | Revisar 16/10 e 22/10; resultado de conversas naturais ainda N/D. |
 | 2 | Usar plugin 1.0.1 para revisões, resumos e propostas pela conta | Política já existente confirmada; não equivale a ponte do bot. Agendamento cloud 9h/17h não confirmado pelas ferramentas disponíveis. Não duplicar rotinas. | Próxima rodada solicitada; validar estado vivo da rotina antes de agendar. |
-| 3 | Medição por categoria e piloto assíncrono pela conta | Proposto, default-off. Completar cobertura de recibos sem novas inferências; separar captura durável de resposta humana da extração por IA; comprovar elegibilidade, autenticação e retorno estruturado. Revisão histórica de classificação em leitura primeiro, sem substituir worker de cinco minutos por rodada 9h/17h. | Após autorização de pacote específico; amostra sintética antes de dados reais. |
+| 3 | Medição por categoria e piloto assíncrono pela conta | `.3` autorizado e bloqueado pelo gate, sem publicação; separado deste candidato de preço. Piloto permanece proposto/default-off e depende de contrato próprio. | Investigar evidência/simulações antes de nova tentativa paga; janela só após publicação verificada. |
 | 4 | Ativar substituição limitada, sem processamento duplo | Exige zero efeito com resultado obsoleto/duplicado, trilha e comparação de qualidade/custo. Sem fallback pago silencioso; falta de quota vira pendência visível. | Pelo menos 7 dias de piloto e amostra suficiente por tipo; estender se insuficiente. |
 | 5 | Considerar atendimento imediato pela conta | Observar, não executar agora. Só após provar latência, disponibilidade, quota, privacidade e entrega ponta a ponta. | Depois do piloto, sem data artificial. |
 | 6 | Reavaliar vetos lexicais de CTA por contrato de atos conversacionais | Adiado. Protótipo de “se quiser” revertido antes do commit por escapes de convite e falso bloqueio de negação. Não ampliar lista de regex como solução geral. | Desenho e testes próprios antes de nova autorização de publicação. |

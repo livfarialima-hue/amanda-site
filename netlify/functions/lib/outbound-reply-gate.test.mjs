@@ -21,6 +21,7 @@ import {
 import {
   buildConsultationInformationReply,
 } from "./patient-replies.mjs";
+import { SURGICAL_PRICE_DISCLOSURE } from './surgical-price-policy.mjs';
 
 test("a polite specific clarification does not restart an answered discovery", () => {
   const currentText = "A parte de cima";
@@ -407,10 +408,10 @@ test("final validation blocks a substantially repeated answer", () => {
 
 test("the protected lifting range omits a guide already shared", () => {
   const body = [
-    "Como estimativa geral e apenas informativa — não é orçamento, proposta nem garantia de preço:",
+    "Como referência global para planejamento:",
     "• Minilifting: entre R$ 18 mil e R$ 25 mil",
     "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
-    "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
+    SURGICAL_PRICE_DISCLOSURE,
   ].join("\n\n");
   const result = validateOutboundReply({
     body,
@@ -435,10 +436,10 @@ test("the protected lifting range omits a guide already shared", () => {
 
 test("the lifting range without a current or prior guide is allowed with its protected caveats", () => {
   const body = [
-    "Como estimativa geral e apenas informativa — não é orçamento, proposta nem garantia de preço:",
+    "Como referência global para planejamento:",
     "• Minilifting: entre R$ 18 mil e R$ 25 mil",
     "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
-    "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Varia por técnica, complexidade, necessidades individuais, equipe, hospital, anestesia, materiais e acompanhamento. Não representa honorários isolados.",
+    SURGICAL_PRICE_DISCLOSURE,
   ].join("\n\n");
   const result = validateOutboundReply({
     body,
@@ -610,10 +611,10 @@ test("a different otoplasty range remains blocked", () => {
 
 test("the full lifting range and its URL are blocked when already sent", () => {
   const range = [
-    "Como estimativa geral e apenas informativa — não é orçamento, proposta nem garantia de preço:",
+    "Como referência global para planejamento:",
     "• Minilifting: entre R$ 18 mil e R$ 25 mil",
     "• Lifting facial: entre R$ 26 mil e R$ 42 mil",
-    "O valor final é definido após avaliação e planejamento e pode ficar fora dessa faixa. Não representa honorários isolados.",
+    SURGICAL_PRICE_DISCLOSURE,
     "Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
   ].join("\n");
   const result = validateOutboundReply({

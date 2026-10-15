@@ -1,43 +1,53 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15",
-  "title": "Eliminar falsos bloqueios de continuidade e delimitar migração segura para processamento pela conta",
+  "changeId": "BRUNA-REFERENCIA-GLOBAL-2026-10-15",
+  "title": "Apresentar referência global e componentes sem inventar preços ou inclusões",
   "status": "tested_local",
-  "baseCommit": "45d73450f5da28cdbdd222d2574e03f9f0e9fa48",
+  "baseCommit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Pedido atual autoriza ajustes locais e revisão da integração; nova publicação depende de autorização específica do SHA. Recibos do pacote anterior preservados em auditorias/bruna-autonomia-contextual-2026-10-15/PUBLICACAO.json."
+    "note": "Daniel solicitou fazer e publicar esta estratégia; pelo contrato, autorização externa deve identificar o SHA testado. Nenhum SHA futuro é considerado aprovado e nenhum release foi executado."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
     "externalWritesPerformed": false,
-    "note": "Reduz apenas falsos positivos de clarificação e repetição solicitada. Relaxamento CTA não integra a entrega; preservados os guardrails atuais."
+    "note": "Comunicação de preço com valores existentes; componente numérico, inclusões individuais e orçamento fechado continuam vedados. Produção não alterada."
   },
   "scope": {
     "files": [
-      "auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md",
+      "auditorias/bruna-referencia-global-2026-10-15/RELATORIO.md",
+      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
+      "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
       "netlify/functions/lib/bruna-policy/manifest.json",
+      "netlify/functions/lib/bruna-policy/rules.jsonl",
+      "netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
+      "netlify/functions/lib/bruna-preco-direto.integration.test.mjs",
+      "netlify/functions/lib/conversation-guidelines.mjs",
       "netlify/functions/lib/outbound-reply-gate.mjs",
       "netlify/functions/lib/outbound-reply-gate.test.mjs",
-      "netlify/functions/lib/reply-continuity.mjs",
-      "netlify/functions/lib/reply-continuity.test.mjs",
+      "netlify/functions/lib/semantic-reply-policy.mjs",
+      "netlify/functions/lib/semantic-reply-policy.test.mjs",
+      "netlify/functions/lib/surgical-price-policy.mjs",
+      "netlify/functions/lib/surgical-price-policy.test.mjs",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json"
+      "ops/IMPACT-REGISTRY.json",
+      "scripts/check-bruna-model-live.mjs"
     ],
     "contracts": [
       "change-governance",
       "bruna-conversation-safety",
-      "reply-continuity",
+      "bruna-conversion-experience",
       "bruna-regression-governance",
-      "bruna-conversion-experience"
+      "bruna-global-price-reference"
     ],
-    "note": "Somente clarificação específica e repetição explicitamente solicitada. Protótipo de relaxamento CTA descartado após revisão adversarial, com restauração integral de classificação/negação e registro no relatório. Sem alteração de preço, agenda, dados, estratégia, modelo ou integrações externas."
+    "note": "Somente comunicação global e proteção da composição na redação, testes e documentação. Branch isolada da produção .2; código do candidato .3 bloqueado não foi incluído. O gate final exige a ressalva global também em respostas conjuntas que não passam pelo seletor de prévia confirmada. Três cenários travados mantêm IDs/resultados e passam a usar a redação atual."
   },
   "impact": {
     "consumers": [
@@ -57,11 +67,10 @@
       "netlify/functions/lib/bruna-policy/rules.jsonl",
       "netlify/functions/lib/consultation-question-bundle.mjs",
       "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/conversation-guidelines.mjs",
       "netlify/functions/lib/extract-inbound-text.mjs",
       "netlify/functions/lib/extreme-night-policy.mjs",
-      "netlify/functions/lib/human-resume-policy.mjs",
       "netlify/functions/lib/human-resume-processor.mjs",
-      "netlify/functions/lib/inbound-burst-context.mjs",
       "netlify/functions/lib/inbound-message-kind.mjs",
       "netlify/functions/lib/knowledge-learning.mjs",
       "netlify/functions/lib/knowledge-wording.mjs",
@@ -74,29 +83,31 @@
       "netlify/functions/lib/semantic-reply-policy.mjs",
       "netlify/functions/lib/surgical-price-review.mjs",
       "netlify/functions/lib/whatsapp-automation.mjs",
-      "netlify/functions/ycloud-webhook.mjs"
+      "netlify/functions/ycloud-webhook.mjs",
+      "scripts/check-bruna-model-live.mjs"
     ],
     "preservedInvariants": [
-      "Preço cirúrgico somente no fluxo autorizado e uma vez; fatos, ressalvas e limites clínicos preservados.",
-      "Sem convite real de agenda quando contrato proíbe; perguntas genéricas de reinício continuam bloqueadas.",
-      "Sem envio a paciente, replay, alteração de agenda/CRM/LEADS ou fallback pago novo.",
-      "Plugin não possui autoridade de publicação ou envio; servidor revalida qualquer futura proposta externa.",
-      "Produção e recibos anteriores preservados; novo candidato não é publicação."
+      "Valores existentes por procedimento e escopo isolado da lipo de papada não mudam; nenhuma soma da tabela histórica.",
+      "Uso único, consulta separada, negociação e detalhes individuais exigindo revisão humana preservados.",
+      "Nenhum preço inventado por componente, pacote fechado, teto, inclusão não confirmada ou pressão.",
+      "Modelo, esforço, histórico completo, timeout, áudio, cuidado, pausa, opt-out, takeover, agenda e idempotência preservados.",
+      "Nenhum envio real, alteração de Sheet/Calendar/Apps Script/campanha/flag; nenhum replay.",
+      "Produção .2 e candidato .3 bloqueado permanecem distintos; não publicar a HEAD operacional como se fosse este delta."
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "reply-continuity",
-        "status": "verified",
-        "source": "Netlify API get_project + baseline Git",
-        "observedAt": "2026-10-15T18:21:32Z",
-        "evidence": "Produção ready 6ad0f6c1fd759be7d5f15b0f, commit 74c53a17555e95cb81915c33eea8a6053a23a8b4; HEAD local/remote 45d73450f5da28cdbdd222d2574e03f9f0e9fa48 contém somente documentação posterior. Nenhuma conversa real executada."
-      },
-      {
         "contract": "bruna-regression-governance",
         "status": "verified",
-        "source": "manifest.json + produção Netlify + Plugin Creator",
-        "observedAt": "2026-10-15T18:21:32Z",
-        "evidence": "Baseline bundle 2026-10-15.1, Apps Script 164. Plugin Bruna 1.0.1 / pluginrel_6ad0bf7894f48191b35dec0546d430e6 com política conta-primeiro, sem ponte MCP própria. Revalidar antes de publicar; gate de modelo/áudio futuro não executado."
+        "source": "Netlify get_project + Git baseline e manifest operacional",
+        "observedAt": "2026-10-15T20:31:56Z",
+        "evidence": "Projeto canônico aponta para deploy ready 6ad120701654730b8c969605; release .2 commit 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228. Branch operacional contém .3 bloqueada, excluída deste candidato. Apps Script 164 herdado, editor não inspecionado. Revalidar antes de publicar."
+      },
+      {
+        "contract": "bruna-global-price-reference",
+        "status": "verified",
+        "source": "Netlify get_project + Git baseline e manifest operacional",
+        "observedAt": "2026-10-15T20:31:56Z",
+        "evidence": "Projeto canônico aponta para deploy ready 6ad120701654730b8c969605; release .2 commit 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228. Branch operacional contém .3 bloqueada, excluída deste candidato. Apps Script 164 herdado, editor não inspecionado. Revalidar antes de publicar."
       }
     ]
   },
@@ -127,65 +138,65 @@
       "node --test netlify/functions/lib/knowledge-learning.test.mjs",
       "node --test netlify/functions/lib/overnight-webhook.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs",
       "node --test netlify/functions/lib/protected-facts.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs",
-      "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "node --test scripts/check-bruna-model-live.test.mjs",
-      "node --test netlify/functions/lib/reply-continuity.test.mjs netlify/functions/lib/reply-continuity.integration.test.mjs",
-      "node --test netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/inbound-burst-context.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/site-continuity.test.mjs netlify/functions/lib/site-content.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "npm.cmd run site:build",
-      "npm.cmd run site:check",
-      "npm.cmd run ops:check",
       "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
       "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
       "node --test netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
       "node --test netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
-      "node --test netlify/functions/lib/appointment-suggestions.test.mjs"
+      "node --test netlify/functions/lib/appointment-suggestions.test.mjs",
+      "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "node --test scripts/check-bruna-model-live.test.mjs",
+      "node --test netlify/functions/lib/surgical-price-policy.test.mjs netlify/functions/lib/bruna-preco-direto.integration.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs",
+      "npm.cmd run site:build",
+      "npm.cmd run site:check",
+      "npm.cmd run ops:check"
     ],
     "status": "passed_local",
-    "note": "Testes sintéticos locais passaram; nenhuma inferência paga ou mensagem. Comandos por contrato são a matriz de validação; suíte integral inclui os respectivos arquivos. Publicação, gates hospedados e Drive permanecem pendentes.",
+    "note": "Gates locais passaram; npm.cmd do contrato foi executado como npm no Linux com TZ=America/Sao_Paulo, correspondente ao projeto. A matriz de comandos cobre os mesmos arquivos executados na suíte integral; o harness hospedado foi executado separadamente com fetch simulado, sem API paga. Nenhum gate hospedado real, envio ou publicação.",
     "results": {
       "fullSuite": {
-        "command": "npm.cmd test",
-        "passed": 2254,
+        "command": "TZ=America/Sao_Paulo npm test",
+        "passed": 2260,
         "failed": 0
       },
       "focused": {
-        "passed": 140,
-        "failed": 0
-      },
-      "independentReview": {
-        "passed": 107,
+        "passed": 77,
         "failed": 0,
-        "blockers": 0,
-        "note": "Protótipo CTA excluído; quatro arquivos finais de comportamento/testes."
+        "note": "Primeira versão, incluída na suíte integral final; integração adicional do gate integra os 2260."
+      },
+      "hostedGateHarness": {
+        "command": "node --test scripts/check-bruna-model-live.test.mjs",
+        "passed": 19,
+        "failed": 0,
+        "network": "fetch simulado; sem IA paga"
       },
       "siteBuild": {
-        "artifactFiles": 193,
+        "files": 193,
+        "sitemapUrls": 54,
         "auditFiles": 0,
         "errors": 0
       },
-      "siteTechnicalCheck": {
-        "ok": true,
-        "sitemapUrls": 54
-      },
-      "changeCheck": "OK: 11 arquivos",
+      "siteCheck": "OK: 54 URLs, nenhum erro",
+      "changeCheck": "OK: escopo exato; confirmar após última atualização documental",
       "architectureCheck": "OK",
       "diffCheck": "OK",
-      "overlapNote": "Suítes focadas/revisão se sobrepõem à integral; não somar contagens.",
-      "liveModel": "not_run_pending_publication_authorization",
-      "liveAudio": "not_run_pending_publication_authorization"
+      "opsCheck": "SYNC_PENDING: candidato não publicado, branch isolada e projeção Drive anterior; não é fechamento",
+      "environmentNote": "Primeira suíte sob TZ herdado America/New_York mostrou cinco divergências temporais. Com fuso canônico America/Sao_Paulo, 2260/2260 passaram sem alterar código de agenda/retomadas. Status preliminar draft também foi corrigido para implementing_local exigido pelo contrato antes da execução final.",
+      "liveModel": "not_run_pending_exact_commit_authorization",
+      "liveAudio": "not_run_pending_exact_commit_authorization",
+      "overlap": "Suítes sobrepostas; não somar contagens."
     }
   },
   "rollback": {
-    "local": "Reverter intencionalmente apenas o commit deste pacote, preservando trabalho paralelo; baseline 45d73450f5da28cdbdd222d2574e03f9f0e9fa48.",
-    "production": "Somente após publicação autorizada: novo revert/build do commit aprovado para comportamento 74c53a17555e95cb81915c33eea8a6053a23a8b4; manter filas, dados, flags, recibos, deployment canônico e Apps Script 164; sem replay."
+    "local": "Novo revert restrito ao delta deste candidato, preservando evidências e trabalho paralelo; base 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228.",
+    "production": "Após publicação autorizada: novo commit/build restaurando somente comunicação .2, mantendo dados, filas, flags, recibos e Apps Script 164; sem replay. Nunca publicar .3 incidentalmente."
   },
   "monitoring": {
     "owner": "Daniel/equipe Clínica LIV",
-    "window": "Após eventual publicação: smoke imediato, revisão em 24h e 7 dias; sem contato de teste com pacientes.",
+    "window": "Smoke não destrutivo após publicação autorizada; integridade 24h e revisão D+7.",
     "signals": [
-      "Motivos de bloqueio CTA/reinício/repetição antes e depois.",
-      "Convites indevidos, repetição de faixa, resposta fora de contexto: tolerância zero nos cenários críticos.",
-      "Custo real da API antes/depois somente com mesma janela/volume; economia monetária atual N/D."
+      "Zero promessa de pacote fechado, inclusão não confirmada ou preço por componente inventado.",
+      "Conferir primeira conversa natural elegível e preservação de contexto/perguntas, sem mensagens de teste.",
+      "Medir n/N de resposta útil, esclarecimento de composição e consulta em mesma coorte/procedimento/maturação. Baseline/efeito atual N/D."
     ]
   },
   "previousReleaseEvidence": "auditorias/bruna-autonomia-contextual-2026-10-15/PUBLICACAO.json",

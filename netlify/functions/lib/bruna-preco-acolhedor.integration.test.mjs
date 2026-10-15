@@ -48,6 +48,17 @@ test('price disclosure cannot lose its individual budget qualification', () => {
   assert.equal(r.validate(unsafe).allowed,false);
 });
 
+test('the final gate rejects missing global composition even outside confirmed-preview selection', () => {
+  const r = reply(prefill);
+  for (const incomplete of [
+    r.body.replace(' do valor global', ''),
+    r.body.replace(/ O orçamento discrimina esses componentes e o que é incluído ou cobrado à parte\./, ''),
+  ]) {
+    assert.notEqual(incomplete, r.body);
+    assert.equal(r.validate(incomplete).allowed, false);
+  }
+});
+
 for (const extra of [' O preço é garantido.', ' Tudo incluído.', ' São apenas honorários médicos.', ' O valor nunca ultrapassa essa faixa.']) {
   test(`an approved range cannot acquire an unsupported inclusion or price guarantee: ${extra}`, () => {
     const r = reply(prefill);

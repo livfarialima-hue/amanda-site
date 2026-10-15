@@ -11,6 +11,7 @@ import { buildSemanticReplyConversationAction, selectConfirmedReplyText, semanti
 import { buildAcceptedProcedurePriceReply, buildSurgicalPriceSuggestedReply } from '../netlify/functions/lib/surgical-price-review.mjs';
 import { enrichAutomationPlanFromConversation, planAutomation } from '../netlify/functions/lib/whatsapp-automation.mjs';
 import { validateOutboundReply } from '../netlify/functions/lib/outbound-reply-gate.mjs';
+import { hasApprovedGlobalSurgicalPriceDisclosure } from '../netlify/functions/lib/surgical-price-policy.mjs';
 import { decideConversationAction } from '../netlify/functions/lib/conversation-action-controller.mjs';
 import {
   BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS, BRUNA_TEXT_VERBOSITY,
@@ -189,12 +190,12 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       gate?.allowed === true && result.decision?.route === 'standard_reply' && result.decision?.automaticAllowed === true &&
         result.decision?.confidence === 'high' && result.decision?.urgent !== true &&
         result.decision?.replyCode === scenario.code && procedureMatches &&
-        (!scenario.lipoCompound || (/lipo de papada isolada.*R\$ 12 mil e R\$ 18 mil/s.test(selectedReply) &&
+        (!scenario.lipoCompound || (hasApprovedGlobalSurgicalPriceDisclosure(selectedReply) && /lipo de papada isolada.*R\$ 12 mil e R\$ 18 mil/s.test(selectedReply) &&
           /gordura/i.test(selectedReply) && /flacidez/i.test(selectedReply) && /platisma/i.test(selectedReply) &&
           /inchaço/i.test(selectedReply) && /não é um orçamento fechado/i.test(selectedReply) &&
           !/vou confirmar.*valor|retorno pela manhã|R\$ 26/i.test(selectedReply))) &&
         (!scenario.fullHistoryName || (/Elisa/.test(selectedReply) && !/Helena|qual.*nome/i.test(selectedReply))) &&
-        (!scenario.priceWithPhotos || (/Helena/i.test(selectedReply) && /bochechas/i.test(selectedReply) && /boca/i.test(selectedReply) &&
+        (!scenario.priceWithPhotos || (hasApprovedGlobalSurgicalPriceDisclosure(selectedReply) && /Helena/i.test(selectedReply) && /bochechas/i.test(selectedReply) && /boca/i.test(selectedReply) &&
           /R\$ 26 mil e R\$ 42 mil/.test(selectedReply) && /fotos/i.test(selectedReply) && !/confirmar.*valor|recebi.*foto|R\$ 500/i.test(selectedReply))) &&
         !/qual.*(?:dia|período)|quer.*(?:horário|agendar)/i.test(selectedReply);
     const passed = result.status === 'completed' && modelConfirmed && behaviorPassed;

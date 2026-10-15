@@ -82,6 +82,15 @@ test("a contextual consultation and surgery bundle preserves the entire financia
   }), candidate), candidate.decision.suggestedReply);
 });
 
+test('contextual wording cannot downgrade the global reference to the historical disclosure', () => {
+  const replyCode = 'LIFTING-PRICE-RANGE-01';
+  const range = 'Para lifting facial, a faixa é entre R$ 26 mil e R$ 42 mil.';
+  const candidate = { ...approved, decision: { ...approved.decision, replyCode,
+    suggestedReply: `${range} ${SURGICAL_PRICE_DISCLOSURE}` } };
+  const oldDisclosure = 'É uma referência para planejamento, não é um orçamento fechado. O valor individual é definido após avaliação, conforme o plano cirúrgico, a equipe, o hospital, a anestesia e os materiais.';
+  assert.equal(selectConfirmedReplyText(contextual(`${range} ${oldDisclosure}`, {replyCode}), candidate), candidate.decision.suggestedReply);
+});
+
 for (const [replyCode, procedure, range] of [
   ["LIFTING-PRICE-RANGE-01", "lifting_facial", "Para lifting facial, a faixa é entre R$ 26 mil e R$ 42 mil."],
   ["LIFTING-PRICE-RANGE-01", "lifting_cervical", "Para lifting cervical, a faixa é entre R$ 18 mil e R$ 26 mil."],

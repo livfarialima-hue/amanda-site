@@ -1,5 +1,5 @@
 import { UNKNOWN_CLARIFICATION_CODE } from "./knowledge-learning.mjs";
-import { hasApprovedSurgicalPriceDisclosure } from "./surgical-price-policy.mjs";
+import { hasApprovedSurgicalPriceDisclosure, hasApprovedGlobalSurgicalPriceDisclosure } from "./surgical-price-policy.mjs";
 import { preservesProtectedFacts } from "./protected-facts.mjs";
 
 export const CONTEXT_CLARIFICATION_CODE = "CONTEXT-CLARIFY-01";
@@ -23,6 +23,8 @@ export function selectConfirmedReplyText(semanticResult, approvedResult) {
   if ((hasApprovedSurgicalPriceDisclosure(approved) ||
       ["LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01"].includes(approvedResult.decision.replyCode)) &&
       !hasApprovedSurgicalPriceDisclosure(draft)) return approved;
+  if (hasApprovedGlobalSurgicalPriceDisclosure(approved) &&
+      !hasApprovedGlobalSurgicalPriceDisclosure(draft)) return approved;
   return draft;
 }
 
