@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-RECURSOS-VISUAIS-2026-10-15",
-  "status": "tested_local",
+  "status": "google_ads_published_verified_drive_pending",
   "baseCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
-  "authorizedScope": "Pedido do usuário: Ajuste e publique se ficou mais algo pendente. Remoção estrita de associações de Imagem já reprovadas, com cobertura elegível confirmada; publicação só depois de testes, commit, preflight e releitura.",
+  "authorizedScope": "Pedido do usuário: Ajuste e publique se ficou mais algo pendente. Remoção estrita de 14 associações de Imagem já reprovadas, com cobertura elegível confirmada. Aplicação efetuada pelo coordenador após testes, commit exato e release:preflight; readback confirmou 57 associações aprovadas preservadas.",
   "privacy": "Registro público sanitizado; conta, IDs dos objetos, métricas de mídia e snapshots completos ficam na prova privada ignorada pelo Git.",
-  "decision": "Desassociar 14 vínculos não elegíveis entre cinco imagens existentes e seis campanhas, preservando 57 vínculos aprovados e a biblioteca.",
+  "decision": "Desassociados 14 vínculos não elegíveis entre cinco imagens existentes e seis campanhas, preservando os 57 vínculos aprovados. Nenhuma exclusão de recurso da biblioteca foi executada.",
   "reason": "A conferência autenticada mostrou reprovação por sobreposições de texto ou imagem. As seis campanhas já têm associações de Imagem aprovadas.",
   "hypothesis": "Retirar vínculos não elegíveis simplifica a manutenção sem retirar cobertura aprovada. Não há ganho de desempenho ou aprovação nova presumidos.",
   "counts": {
@@ -71,5 +71,7 @@
     ]
   },
   "strategicDecisionChanged": false,
-  "externalWritesPerformed": false
+  "externalWritesPerformed": true,
+  "publishedCommit": "86670909b3e02a9541b7e7f8e2fb9188f20ed01a",
+  "verifiedAt": "2026-10-15T12:10:10.293Z"
 }

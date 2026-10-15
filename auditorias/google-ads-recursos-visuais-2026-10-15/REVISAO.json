@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-RECURSOS-VISUAIS-2026-10-15",
-  "status": "passed_local_awaiting_publication",
+  "status": "google_ads_published_verified_drive_pending",
   "baseCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
   "preparedAt": "2026-10-15T12:04:14.950140+00:00",
-  "externalWritesPerformed": false,
+  "externalWritesPerformed": true,
   "independentSnapshotReview": {
     "status": "passed",
     "countedAssociations": 71,
@@ -61,15 +61,52 @@
     "limitation": "Suíte local não comprova escrita, política ou exibição no Google. A falha de HTML de auditoria observada no checkout primário não ocorreu neste worktree isolado; nenhum teste foi alterado."
   },
   "publication": {
-    "status": "awaiting_commit_and_release_preflight",
-    "approvedCommit": null,
-    "releasePreflight": null
+    "status": "published_verified_google_ads",
+    "approvedCommit": "86670909b3e02a9541b7e7f8e2fb9188f20ed01a",
+    "publicationTimeWindow": "2026-10-15T12:08:01Z–2026-10-15T12:08:56.622Z",
+    "verifiedAt": "2026-10-15T12:10:10.293Z",
+    "releasePreflight": {
+      "approvedCommit": "86670909b3e02a9541b7e7f8e2fb9188f20ed01a",
+      "approvalRecordedAt": "2026-10-15T12:08:01Z",
+      "approvedBy": "Daniel",
+      "authorizationReference": "User current turn: Ajuste e publique se ficou mais algo pendente; earlier PODe publicar ao fim and remaining suggestions authorization.",
+      "gate": "release:preflight",
+      "gateStatus": "CHANGE_SAFETY_STATUS=OK",
+      "scopeFiles": 8,
+      "livePreflightAt": "2026-10-15T12:05:21.054Z",
+      "executedBeforeExternalWrite": true
+    },
+    "operation": "Remover somente as 14 associações de campanha selecionadas; UI confirmou 14 recursos removidos.",
+    "toastEvidenceSha256": "c1741b7f2d6db087b865b42c3e4efda1f4bffb23af66751a49df26173f1b41ad",
+    "scope": "Google Ads; nenhum deploy de site, Netlify ou Apps Script. A nova projeção Drive ainda não foi escrita neste recibo."
   },
   "readback": {
-    "status": "pending",
-    "expectedRemovedAssociations": 14,
-    "expectedPreservedApproved": 57,
-    "expectedLibraryDeletedAssets": 0
+    "status": "passed",
+    "checkedAt": "2026-10-15T12:08:56.622Z",
+    "associationsBefore": 71,
+    "associationsAfter": 57,
+    "removedAssociations": 14,
+    "approvedFullCellsMultisetPreserved": 57,
+    "duplicatesPreserved": true,
+    "beforeSha256": "ba7260ab9e00ee0afbd0f002ce1363520a9cf2343570e9fc82303e8dbf311e0b",
+    "afterSha256": "a7c118973934b63629a6259742df45c928f461c8dc020e8b18c112b6e2be8db9",
+    "qaSha256": "cbb344e46da44465566e15f736fc381a259974a158975ce409710acbf759955e",
+    "method": "Comparação do multiconjunto completo de campos das linhas elegíveis, preservando recursos repetidos em grupos diferentes. Nenhuma linha aprovada perdida.",
+    "libraryOperation": "Nenhuma exclusão de recurso da biblioteca foi executada; somente desassociação no nível campanha.",
+    "removedStatusAndProtectedSettings": {
+      "status": "passed",
+      "removedStatusesVerified": 14,
+      "removedCheckedAt": "2026-10-15T12:09:45.292Z",
+      "removalUiTimestamp": "15 de out. de 2026 09:08 BRT",
+      "removedSnapshotSha256": "f15df8d27f5b0b052267876a07f7e7bcd811865c110739a434474d3a65876637",
+      "preservedCampaigns": 6,
+      "preservedFields": 36,
+      "protectedSettingsCheckedAt": "2026-10-15T12:10:10.293Z",
+      "campaignsAfterSha256": "ac45a6ce0b913775220b645d2f48168f4e835da5fb72bdde89c9efe5715aac05",
+      "settings": "Nomes, estados, orçamentos, métodos de lance, ausência de CPA desejado e metas das seis campanhas afetadas iguais ao before.",
+      "historicalRows": "A visão com removidas tem 83 associações, incluindo 12 remoções históricas e 14 deste lote. Não atribuir todas as removidas à execução atual.",
+      "libraryEvidence": "Os cinco recursos permanecem referenciados com miniaturas e histórico; não houve operação de exclusão de recurso da biblioteca."
+    }
   },
   "driveProjection": {
     "status": "pending",

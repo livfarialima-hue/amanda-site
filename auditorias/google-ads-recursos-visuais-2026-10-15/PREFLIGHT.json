@@ -46,7 +46,14 @@
     "selectedUiFile": "imagens-selected-before.json",
     "selectedUiSha256": "61c101cdce68f87873f2da0d4f92591d42e5f0aaea50aaa5edb0619b54cc5dee",
     "coverageCounting": "Os 57 vínculos incluem níveis de campanha e grupo. Preservar o multiconjunto completo, sem eliminar associações repetidas do mesmo recurso em grupos diferentes.",
-    "approvedCampaignLevelCoverage": {"Marca": 5, "Lifting cervical": 9, "Blefaroplastia": 9, "Cirurgia facial": 6, "Lifting facial": 7, "Otoplastia": 8},
+    "approvedCampaignLevelCoverage": {
+      "Marca": 5,
+      "Lifting cervical": 9,
+      "Blefaroplastia": 9,
+      "Cirurgia facial": 6,
+      "Lifting facial": 7,
+      "Otoplastia": 8
+    },
     "limits": "Snapshot operacional datado. IDs e métricas não publicados. Contagens de recursos não equivalem a exibição ou conversão."
   },
   "accountAndProtectedSettings": {
@@ -70,9 +77,20 @@
     "beforeWrite": "Se a metadata ou conteúdo mudar novamente, integrar a deriva antes de substituir. Requer download e igualdade depois da escrita."
   },
   "release": {
-    "status": "passed_local_awaiting_commit_and_release_preflight",
-    "required": "Suítes e gates aplicáveis, diff exato, commit intencional e release:preflight do HEAD autorizado em worktree limpo.",
-    "note": "2.208 testes integrais e 254 de contratos passaram, com sobreposição; arquitetura, escopo, build/check e diff aprovados. Commit intencional e release:preflight do HEAD autorizado ainda necessários."
+    "status": "passed_before_external_write",
+    "approvedCommit": "86670909b3e02a9541b7e7f8e2fb9188f20ed01a",
+    "receipt": {
+      "approvedCommit": "86670909b3e02a9541b7e7f8e2fb9188f20ed01a",
+      "approvalRecordedAt": "2026-10-15T12:08:01Z",
+      "approvedBy": "Daniel",
+      "authorizationReference": "User current turn: Ajuste e publique se ficou mais algo pendente; earlier PODe publicar ao fim and remaining suggestions authorization.",
+      "gate": "release:preflight",
+      "gateStatus": "CHANGE_SAFETY_STATUS=OK",
+      "scopeFiles": 8,
+      "livePreflightAt": "2026-10-15T12:05:21.054Z",
+      "executedBeforeExternalWrite": true
+    },
+    "note": "Preflight histórico antes da escrita, preservado. Resultado e comparação posteriores em REVISAO.json."
   },
   "exclusions": [
     "Logotipos reprovados sem original aprovado disponível.",
@@ -80,10 +98,10 @@
     "Correção de CERV sem falha comprovada; rastreamento herdado foi confirmado pelo coordenador."
   ],
   "notClaimed": [
-    "Alteração externa aplicada",
     "Aprovação ou exibição nova",
     "Ganho comercial",
-    "Nova auditoria das conversas ou classificação dos 12 contatos"
+    "Nova auditoria das conversas ou classificação dos 12 contatos",
+    "Igualdade da nova projeção Drive antes de seu readback"
   ],
   "selection": {
     "status": "passed",
