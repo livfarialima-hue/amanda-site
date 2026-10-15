@@ -1,0 +1,270 @@
+{
+  "schemaVersion": 1,
+  "changeId": "BRUNA-API-ESSENCIAL-2026-10-15",
+  "status": "production_verified_documentation_pending",
+  "bundleVersion": "2026-10-14.5",
+  "approvedCommit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
+  "netlifyDeployId": "6ad0c377e0be1096575458ca",
+  "productionState": "ready",
+  "context": "production",
+  "branch": "reestruturacao-site",
+  "publishedAt": "2026-10-15T12:17:05.865Z",
+  "verifiedAt": "2026-10-15T12:18:04.837Z",
+  "approval": {
+    "by": "Daniel",
+    "at": "2026-10-15T12:08:47Z",
+    "reference": "Pode sim, publique. Resposta nesta conversa ao SHA exato 3b66195b8b13a896ccdd63740e3f67398f7d7d4c."
+  },
+  "releasePreflight": {
+    "status": "CHANGE_SAFETY_STATUS=OK",
+    "approvedCommit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
+    "clean": true,
+    "checkedAt": "2026-10-15T12:13:32Z",
+    "reference": "release:preflight executado no checkout limpo com SHA aprovado, autorização e preflight vivo em tmp/bruna-api-release/live-preflight.json",
+    "configEvidence": {
+      "checkedAt": "2026-10-15T12:13:32Z",
+      "productionEnvironmentPresent": [
+        "GOOGLE_SHEETS_WEBHOOK_SECRET",
+        "OPENAI_API_KEY",
+        "YCLOUD_API_KEY",
+        "YCLOUD_FOLLOWUP_TEMPLATE_NAME"
+      ],
+      "senderEnvironmentPresent": false,
+      "senderRegistry": {
+        "store": "liv-whatsapp-business-number-v1",
+        "object": "current",
+        "present": true,
+        "bytes": 65
+      },
+      "senderValueRead": false,
+      "senderValueValidated": false,
+      "limitation": "Valor do remetente não baixado/validado; fallback canônico permanece fail-closed"
+    }
+  },
+  "liveModel": {
+    "status": "passed",
+    "passed": 21,
+    "total": 21,
+    "fullHistoryPassed": 2,
+    "model": "gpt-6.1-sol",
+    "checkedAt": "2026-10-15T12:16:49.191Z",
+    "evidence": "BRUNA_MODEL_PREFLIGHT extraído do log Building do deploy de produção 6ad0c377e0be1096575458ca. Os 21 cenários registraram modelRequests=1; nenhum retry diagnóstico."
+  },
+  "liveAudio": {
+    "status": "passed",
+    "passed": 3,
+    "total": 3,
+    "model": "whisper-1",
+    "checkedAt": "2026-10-15T12:16:49.191Z"
+  },
+  "health": {
+    "checkedAt": "2026-10-15T12:18:04.837Z",
+    "deployId": "6ad0c377e0be1096575458ca",
+    "passed": true,
+    "checks": [
+      {
+        "name": "production",
+        "passed": true,
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "signatureProtection": "active",
+        "automationMode": "active",
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled"
+      },
+      {
+        "name": "branch_alias",
+        "passed": true,
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "signatureProtection": "active",
+        "automationMode": "active",
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled"
+      },
+      {
+        "name": "immutable_deploy",
+        "passed": true,
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "signatureProtection": "active",
+        "automationMode": "active",
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled"
+      }
+    ],
+    "staticChecks": [
+      {
+        "path": "/",
+        "passed": true,
+        "statuses": [
+          200,
+          200
+        ],
+        "newSha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e",
+        "oldSha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e"
+      },
+      {
+        "path": "/lipo-de-papada/",
+        "passed": true,
+        "statuses": [
+          200,
+          200
+        ],
+        "newSha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92",
+        "oldSha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92"
+      },
+      {
+        "path": "/lifting-cervical/",
+        "passed": true,
+        "statuses": [
+          200,
+          200
+        ],
+        "newSha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033",
+        "oldSha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033"
+      },
+      {
+        "path": "/campanhas/site-enhancements.css",
+        "passed": true,
+        "statuses": [
+          200,
+          200
+        ],
+        "newSha256": "1a02819eb3508e747beffc4b14184578b3f3dc70c6281b1ab81438d074769d13",
+        "oldSha256": "1a02819eb3508e747beffc4b14184578b3f3dc70c6281b1ab81438d074769d13"
+      }
+    ],
+    "patientMessagesSent": 0,
+    "syntheticOnly": true
+  },
+  "functions": 15,
+  "schedules": 6,
+  "inventoryComparison": {
+    "checkedAt": "2026-10-15T12:18:04.837Z",
+    "baseline": {
+      "deployId": "6ad0b88d46ff84caa6a749e7",
+      "functions": [
+        "appointment-reminder",
+        "appointment-review",
+        "attribution-journey",
+        "attribution-journey-purge",
+        "classify-leads",
+        "classify-leads-background",
+        "conversation-archive",
+        "human-resume",
+        "human-resume-background",
+        "post-consult-followup",
+        "scheduled-followup",
+        "synthetic-integration-health",
+        "ycloud-recovery",
+        "ycloud-recovery-background",
+        "ycloud-webhook"
+      ],
+      "schedules": [
+        {
+          "name": "attribution-journey-purge",
+          "cron": "17 6 * * *"
+        },
+        {
+          "name": "classify-leads",
+          "cron": "*/5 * * * *"
+        },
+        {
+          "name": "conversation-archive",
+          "cron": "*/5 * * * *"
+        },
+        {
+          "name": "human-resume",
+          "cron": "*/5 * * * *"
+        },
+        {
+          "name": "synthetic-integration-health",
+          "cron": "17 12 * * *"
+        },
+        {
+          "name": "ycloud-recovery",
+          "cron": "*/5 * * * *"
+        }
+      ]
+    },
+    "published": {
+      "deployId": "6ad0c377e0be1096575458ca",
+      "functions": [
+        "appointment-reminder",
+        "appointment-review",
+        "attribution-journey",
+        "attribution-journey-purge",
+        "classify-leads",
+        "classify-leads-background",
+        "conversation-archive",
+        "human-resume",
+        "human-resume-background",
+        "post-consult-followup",
+        "scheduled-followup",
+        "synthetic-integration-health",
+        "ycloud-recovery",
+        "ycloud-recovery-background",
+        "ycloud-webhook"
+      ],
+      "schedules": [
+        {
+          "name": "attribution-journey-purge",
+          "cron": "17 6 * * *"
+        },
+        {
+          "name": "classify-leads",
+          "cron": "*/5 * * * *"
+        },
+        {
+          "name": "conversation-archive",
+          "cron": "*/5 * * * *"
+        },
+        {
+          "name": "human-resume",
+          "cron": "*/5 * * * *"
+        },
+        {
+          "name": "synthetic-integration-health",
+          "cron": "17 12 * * *"
+        },
+        {
+          "name": "ycloud-recovery",
+          "cron": "*/5 * * * *"
+        }
+      ]
+    },
+    "functionNamesEqual": true,
+    "scheduleNamesAndCronEqual": true
+  },
+  "appsScript": {
+    "version": 164,
+    "changed": false
+  },
+  "appsScriptVersion": 164,
+  "patientMessagesSent": 0,
+  "syntheticOnly": true,
+  "externalWritesPerformed": true,
+  "drivePlanSha256": null,
+  "documentation": {
+    "status": "awaiting_drive_readback",
+    "sourceCommit": null,
+    "existingFilesRequired": true,
+    "localHashes": {
+      "docs/estrategia-abordagem-bruna.md": "161c9f801739a1508a8869d1c0f8471d8a24e0fd35cbd0e09327bde7eef32708",
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md": "f12e90ff1e5ec740a167abffcdee1bdada609a612a0975a3917db5d3f60f62a1"
+    }
+  },
+  "rollback": {
+    "commit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+    "deployId": "6ad0b88d46ff84caa6a749e7",
+    "constraint": "New Git revert commit/build; preserve data, queues, flags, receipts and Apps Script; no replay"
+  },
+  "limits": [
+    "Synthetic validation does not prove a natural patient interaction or financial savings.",
+    "Operational closure requires the same existing Drive projections and exact local/source-commit/readback equality."
+  ]
+}

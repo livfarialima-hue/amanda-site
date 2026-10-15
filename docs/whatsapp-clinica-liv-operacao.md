@@ -1,12 +1,12 @@
 # WhatsApp Clínica LIV — rotina operacional
 
-## Candidato local — API essencial, 15/10/2026
+## Publicado e verificado em produção — API essencial, 15/10/2026
 
-A solicitação de reservar a API ao fundamental gerou duas correções locais: o gate hospedado registra o timeout observado sem repetir uma requisição paga apenas para diagnóstico; a retomada confere remetente, chave de transporte e template aplicável antes da revisão semântica. A falta de configuração continua bloqueando o envio. Com configuração válida, o veto semântico e os caminhos determinísticos estritos permanecem iguais.
+Commit autorizado 3b66195b8b13a896ccdd63740e3f67398f7d7d4c; deploy 6ad0c377e0be1096575458ca; publicado em 2026-10-15T12:17:05.865Z e verificado em 2026-10-15T12:18:04.837Z. O gate hospedado registra o timeout observado sem repetir uma requisição paga apenas para diagnóstico. A retomada confere remetente, chave de transporte e template aplicável antes da revisão semântica; configuração ausente continua bloqueando, e configuração válida mantém o veto e os caminhos determinísticos estritos.
 
-Modelo, histórico, áudio, políticas, mensagens, cadência e os 21 cenários hospedados com dois históricos e três áudios estão preservados. O plugin privado de revisão foi atualizado separadamente para usar o processamento da conta em análises, propostas e cálculos, sem fallback pago; isso não substitui o backend automático do WhatsApp. Não há redução financeira comprovada.
+Passaram 21/21 cenários hospedados, incluindo dois históricos completos, e 3/3 áudios sintéticos. Saúde, proteção de assinatura, 15 funções e seis programações foram conferidas. Modelo, histórico, áudio, política, mensagens e cadência permanecem preservados; Apps Script v164 não mudou. O plugin privado de revisão foi atualizado separadamente para usar a conta em análises, propostas e cálculos, sem fallback pago; isso não substitui o backend do WhatsApp. Não há economia financeira comprovada nem conversa natural pós-publicação verificada por estes testes.
 
-Este código ainda não foi publicado. O baseline segue 7242d54 / 6ad0b88d46ff84caa6a749e7; Apps Script v164 permanece inalterado. Testes, limites do preflight, reversão e pendências estão em `auditorias/bruna-api-essencial-2026-10-15/RELATORIO.md` e `ops/CHANGE-CANDIDATE.json`. Publicação exige aprovação do novo SHA, novo preflight, gates hospedados, verificação e atualização das mesmas projeções do Drive com readback.
+Reversão: novo commit/build restrito a estes deltas para o comportamento de 7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788 / 6ad0b88d46ff84caa6a749e7, preservando dados, filas, flags, recibos e Apps Script; sem replay. Monitorar primeira retomada natural elegível e 48 horas. O estado da reconciliação documental das mesmas projeções existentes no Drive e seus hashes/readbacks consta exclusivamente em `auditorias/bruna-api-essencial-2026-10-15/PUBLICACAO.json`; publicação técnica não substitui esse fechamento. Evidência e limites em `auditorias/bruna-api-essencial-2026-10-15/RELATORIO.md`.
 
 ## Publicado e verificado — 2026-10-14.5
 

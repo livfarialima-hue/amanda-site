@@ -1,44 +1,85 @@
 {
   "changeId": "BRUNA-API-ESSENCIAL-2026-10-15",
-  "status": "read_only_baseline_verified_with_limits",
-  "checkedAt": "2026-10-15T11:57:51.324Z",
-  "baseline": {
-    "localCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
-    "publishedCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
-    "netlifyDeployId": "6ad0b88d46ff84caa6a749e7",
-    "state": "ready",
-    "context": "production",
-    "publishedAt": "2026-10-15T11:30:20.211Z",
-    "appsScriptVersionPreviouslyVerified": 164
-  },
-  "observations": {
-    "netlifyDeployRead": true,
-    "netlifyProjectCurrentDeployMatched": true,
-    "functionCount": 15,
-    "scheduleCount": 6,
-    "health": {
-      "checkedAt": "2026-10-15T11:57:51.324Z",
-      "homepageHttpStatus": 200,
-      "webhookHealthHttpStatus": 200,
-      "automationMode": "active",
-      "processingMode": "durable_background_intake",
-      "openAIConfigured": true,
-      "sheetsConfigured": true,
-      "signatureProtection": "active",
-      "audioTranscription": "enabled",
-      "conversationArchive": "enabled"
+  "status": "release_preflight_recorded",
+  "initialReadOnlyPreparation": {
+    "changeId": "BRUNA-API-ESSENCIAL-2026-10-15",
+    "status": "read_only_baseline_verified_with_limits",
+    "checkedAt": "2026-10-15T11:57:51.324Z",
+    "baseline": {
+      "localCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
+      "publishedCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+      "netlifyDeployId": "6ad0b88d46ff84caa6a749e7",
+      "state": "ready",
+      "context": "production",
+      "publishedAt": "2026-10-15T11:30:20.211Z",
+      "appsScriptVersionPreviouslyVerified": 164
     },
-    "baselineRuntimeDiff": "Git diff 7242d54..fc9a029 em netlify/functions, scripts/check-bruna-model-live.mjs e netlify.toml contém somente o recibo manifest.json; código de execução igual ao publicado."
+    "observations": {
+      "netlifyDeployRead": true,
+      "netlifyProjectCurrentDeployMatched": true,
+      "functionCount": 15,
+      "scheduleCount": 6,
+      "health": {
+        "checkedAt": "2026-10-15T11:57:51.324Z",
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "automationMode": "active",
+        "processingMode": "durable_background_intake",
+        "openAIConfigured": true,
+        "sheetsConfigured": true,
+        "signatureProtection": "active",
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled"
+      },
+      "baselineRuntimeDiff": "Git diff 7242d54..fc9a029 em netlify/functions, scripts/check-bruna-model-live.mjs e netlify.toml contém somente o recibo manifest.json; código de execução igual ao publicado."
+    },
+    "limits": [
+      "A versão Apps Script é o recibo previamente verificado; não foi publicada nem novamente consultada nesta preparação.",
+      "A saúde confirma presença geral de configuração; valores de remetente, chave YCloud e template não foram lidos. Revalidar presença e alvo antes de publicar.",
+      "Não foram consultados pacientes, filas ou planilhas operacionais: os dois deltas não alteram dados, cadência, elegibilidade ou contratos de payload.",
+      "Sem inferência externa, mensagem real, escrita de configuração, publicação ou alteração do Drive.",
+      "O preflight deve ser repetido para o SHA exato autorizado imediatamente antes da publicação; este recibo não é autorização."
+    ],
+    "paidModelCalls": 0,
+    "audioTranscriptionCalls": 0,
+    "patientMessagesSent": 0,
+    "externalWritesPerformed": false
   },
-  "limits": [
-    "A versão Apps Script é o recibo previamente verificado; não foi publicada nem novamente consultada nesta preparação.",
-    "A saúde confirma presença geral de configuração; valores de remetente, chave YCloud e template não foram lidos. Revalidar presença e alvo antes de publicar.",
-    "Não foram consultados pacientes, filas ou planilhas operacionais: os dois deltas não alteram dados, cadência, elegibilidade ou contratos de payload.",
-    "Sem inferência externa, mensagem real, escrita de configuração, publicação ou alteração do Drive.",
-    "O preflight deve ser repetido para o SHA exato autorizado imediatamente antes da publicação; este recibo não é autorização."
-  ],
-  "paidModelCalls": 0,
-  "audioTranscriptionCalls": 0,
-  "patientMessagesSent": 0,
-  "externalWritesPerformed": false
+  "approvedCommit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
+  "releasePreflight": {
+    "status": "CHANGE_SAFETY_STATUS=OK",
+    "approvedCommit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
+    "clean": true,
+    "checkedAt": "2026-10-15T12:13:32Z",
+    "reference": "release:preflight executado no checkout limpo com SHA aprovado, autorização e preflight vivo em tmp/bruna-api-release/live-preflight.json",
+    "configEvidence": {
+      "checkedAt": "2026-10-15T12:13:32Z",
+      "productionEnvironmentPresent": [
+        "GOOGLE_SHEETS_WEBHOOK_SECRET",
+        "OPENAI_API_KEY",
+        "YCLOUD_API_KEY",
+        "YCLOUD_FOLLOWUP_TEMPLATE_NAME"
+      ],
+      "senderEnvironmentPresent": false,
+      "senderRegistry": {
+        "store": "liv-whatsapp-business-number-v1",
+        "object": "current",
+        "present": true,
+        "bytes": 65
+      },
+      "senderValueRead": false,
+      "senderValueValidated": false,
+      "limitation": "Valor do remetente não baixado/validado; fallback canônico permanece fail-closed"
+    }
+  },
+  "approval": {
+    "by": "Daniel",
+    "at": "2026-10-15T12:08:47Z",
+    "reference": "Pode sim, publique. Resposta nesta conversa ao SHA exato 3b66195b8b13a896ccdd63740e3f67398f7d7d4c."
+  },
+  "productionVerification": {
+    "deployId": "6ad0c377e0be1096575458ca",
+    "publishedAt": "2026-10-15T12:17:05.865Z",
+    "verifiedAt": "2026-10-15T12:18:04.837Z"
+  }
 }
