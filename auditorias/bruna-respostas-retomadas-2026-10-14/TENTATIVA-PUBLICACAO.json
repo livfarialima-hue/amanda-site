@@ -67,7 +67,8 @@
       "build": "passed",
       "site": "passed",
       "independentReview": "passed"
-    }
+    },
+    "commit": "65d757d4962a52a236cff27951452715cc29c1d0"
   },
   "patientMessagesSent": 0,
   "syntheticOnly": true,
@@ -76,5 +77,22 @@
     "changed": false,
     "runtimeInspected": false
   },
-  "nextStep": "Authorize the corrected exact commit, refresh live preflight and require all 21 model scenarios plus three audio checks before publishing."
+  "nextStep": "Authorize the corrected exact commit, refresh live preflight and require all 21 model scenarios plus three audio checks before publishing.",
+  "documentation": {
+    "status": "written_verified",
+    "sourceCommit": "65d757d4962a52a236cff27951452715cc29c1d0",
+    "verifiedAt": "2026-10-15T10:25:00.245Z",
+    "method": "Authenticated readback with exact UTF-8 byte equality and SHA-256",
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "6254952ee6d416a624629ed6d43f9e458985e4d09cb69d6e76ce5b6b71422ce4",
+      "bytes": 73063
+    },
+    "executivePlan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "31e18df70cb359e7d10b137837f3f19ac63110c43d08cb89f1b16d707a799119",
+      "bytes": 10579
+    },
+    "existingFilesPreserved": true
+  }
 }

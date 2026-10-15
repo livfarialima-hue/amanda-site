@@ -319,14 +319,15 @@
       "diff": "passed",
       "independentReview": "passed"
     },
-    "functionalCommit": "8385b919a36e20749ea98c7ed975500658006f7d",
+    "functionalCommit": "65d757d4962a52a236cff27951452715cc29c1d0",
     "previousApprovedCommit": "30b01f4267719effebd094edc2949a163ac1ed98",
     "correctionAfterBlockedBuild": {
       "promptContradictionReproduced": true,
       "diagnosticLinesBounded": true,
       "criteriaUnchanged": true,
       "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json"
-    }
+    },
+    "initialFunctionalCommit": "8385b919a36e20749ea98c7ed975500658006f7d"
   },
   "rollback": {
     "local": "Reverter somente o diff declarado desta branch isolada.",
@@ -371,19 +372,19 @@
     "rebuildNotTriggered": true
   },
   "documentation": {
-    "status": "update_pending",
-    "sourceCommit": "71b22d7",
-    "verifiedAt": "2026-10-15T10:05:20.072Z",
+    "status": "written_verified",
+    "sourceCommit": "65d757d4962a52a236cff27951452715cc29c1d0",
+    "verifiedAt": "2026-10-15T10:25:00.245Z",
     "method": "Authenticated readback with exact UTF-8 byte equality and SHA-256",
     "manual": {
       "path": "docs/estrategia-abordagem-bruna.md",
-      "sha256": "27f960ce10f22f7fcf11ecec8c7fbbe57a30c29a3493e1223b9b6a048e2742bd",
-      "bytes": 72137
+      "sha256": "6254952ee6d416a624629ed6d43f9e458985e4d09cb69d6e76ce5b6b71422ce4",
+      "bytes": 73063
     },
     "executivePlan": {
       "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "sha256": "911227c42b003eeffa3bbb4158896f90b7f3800aeb17030ccfcb03f3463dfcba",
-      "bytes": 9638
+      "sha256": "31e18df70cb359e7d10b137837f3f19ac63110c43d08cb89f1b16d707a799119",
+      "bytes": 10579
     },
     "existingFilesPreserved": true
   }
