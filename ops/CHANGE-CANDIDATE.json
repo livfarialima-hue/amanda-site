@@ -1596,14 +1596,15 @@
       "drive": {
         "status": "written_verified",
         "sameExistingFile": true,
-        "sha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
-        "bytes": 16274,
-        "verifiedAt": "2026-10-15T11:31:14.1519180Z",
-        "sourceCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
-        "modifiedAt": "2026-10-15T11:30:50.929Z",
-        "method": "Authenticated raw download equal to local bytes and committed Git blob dfb9b2eb74eda8a484d9395a79a717c646b0e5af"
+        "sha256": "345d750247179229b48dd4ca135990951b9d3d6c7625e413d30a11151d4a7aca",
+        "bytes": 16921,
+        "verifiedAt": "2026-10-15T11:42:22.111925+00:00",
+        "sourceCommit": "f28a7a51c0cd1a71687478dfc0842c1595065de3",
+        "latestCanonicalCommitCompared": "2205356e25dde664d7ad301fcb857b37211a34fb",
+        "modifiedAt": "2026-10-15T11:36:10.748Z",
+        "method": "Independent authenticated raw download equal to local and latest canonical committed bytes; adopted already reconciled parallel projection without another overwrite."
       },
-      "note": "Componente Ads publicado, relido e reconciliado com a mesma projeção do Plano no Drive. Não encerra nem autoriza a publicação Bruna.",
+      "note": "Componente Ads publicado e relido; Plano integrado já reconciliado no mesmo arquivo Drive, confirmado por nova leitura independente. A publicação Bruna possui autorização e recibos próprios.",
       "releaseGate": {
         "status": "passed_before_first_write",
         "checkedAt": "2026-10-15T11:17:28.9829022Z",
@@ -1673,7 +1674,20 @@
         ],
         "limitations": "Nova revisão somente local; não altera o commit aprovado que precedeu as escritas Ads e não autoriza publicação Bruna."
       },
-      "verifiedAt": "2026-10-15T11:31:14.1519180Z"
+      "verifiedAt": "2026-10-15T11:42:22.111925+00:00",
+      "driveProjectionHistory": [
+        {
+          "status": "written_verified",
+          "sameExistingFile": true,
+          "sha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
+          "bytes": 16274,
+          "verifiedAt": "2026-10-15T11:31:14.1519180Z",
+          "sourceCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
+          "modifiedAt": "2026-10-15T11:30:50.929Z",
+          "method": "Authenticated raw download equal to local bytes and committed Git blob dfb9b2eb74eda8a484d9395a79a717c646b0e5af"
+        }
+      ],
+      "latestCanonicalIntegration": "2205356e25dde664d7ad301fcb857b37211a34fb"
     }
   ]
 }

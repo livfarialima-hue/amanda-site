@@ -328,36 +328,47 @@
       }
     },
     "driveProjectionEquality": "verified_equal",
-    "drivePlanSha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
-    "drivePlanReadbackVerifiedAt": "2026-10-15T11:31:14.1519180Z",
+    "drivePlanSha256": "345d750247179229b48dd4ca135990951b9d3d6c7625e413d30a11151d4a7aca",
+    "drivePlanReadbackVerifiedAt": "2026-10-15T11:42:22.111925+00:00",
     "drive": {
       "status": "written_verified",
       "sameExistingFile": true,
-      "sha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
-      "bytes": 16274,
-      "verifiedAt": "2026-10-15T11:31:14.1519180Z",
-      "sourceCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
-      "modifiedAt": "2026-10-15T11:30:50.929Z",
-      "method": "Authenticated raw download equal to local bytes and committed Git blob dfb9b2eb74eda8a484d9395a79a717c646b0e5af"
+      "sha256": "345d750247179229b48dd4ca135990951b9d3d6c7625e413d30a11151d4a7aca",
+      "bytes": 16921,
+      "verifiedAt": "2026-10-15T11:42:22.111925+00:00",
+      "sourceCommit": "f28a7a51c0cd1a71687478dfc0842c1595065de3",
+      "latestCanonicalCommitCompared": "2205356e25dde664d7ad301fcb857b37211a34fb",
+      "modifiedAt": "2026-10-15T11:36:10.748Z",
+      "method": "Independent authenticated raw download equal to local and latest canonical committed bytes; adopted already reconciled parallel projection without another overwrite."
     },
     "documentationGate": {
       "status": "passed",
       "checkedAt": "2026-10-15T11:30:40.5648952Z",
       "approvedCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
       "scope": "Somente fechamento Ads e mesma projeção Drive; nenhuma autorização Bruna."
-    }
+    },
+    "driveProjectionHistory": [
+      {
+        "status": "written_verified",
+        "sameExistingFile": true,
+        "sha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
+        "bytes": 16274,
+        "verifiedAt": "2026-10-15T11:31:14.1519180Z",
+        "sourceCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
+        "modifiedAt": "2026-10-15T11:30:50.929Z",
+        "method": "Authenticated raw download equal to local bytes and committed Git blob dfb9b2eb74eda8a484d9395a79a717c646b0e5af"
+      }
+    ]
   },
   "parallelCandidate": {
     "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
-    "status": "committed",
-    "release": "blocked_live_gate",
-    "correctedCandidate": "pending_authorization",
-    "codeAndManifestUnchangedByThisComponent": true,
-    "globalOpsExpected": "SYNC_PENDING",
-    "preservedCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788"
+    "status": "published_verified",
+    "sourceCommit": "2205356e25dde664d7ad301fcb857b37211a34fb",
+    "receipt": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json",
+    "note": "Publicação paralela autorizada e verificada em recibo próprio; autorização Ads não a substitui. API Netlify observada coincide com o recibo. Histórico anterior preservado."
   },
   "pending": [
-    "Acompanhamento nas datas registradas; classificação individual e continuidade cervical permanecem abertas. Pendência global Bruna separada."
+    "Acompanhamento nas datas registradas; classificação individual e continuidade cervical continuam abertas."
   ],
   "publicDestinations": {
     "status": "passed_http_html_only",
@@ -564,5 +575,16 @@
       }
     ],
     "limitations": "Nova revisão somente local; não altera o commit aprovado que precedeu as escritas Ads e não autoriza publicação Bruna."
-  }
+  },
+  "parallelCandidateHistory": [
+    {
+      "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
+      "status": "committed",
+      "release": "blocked_live_gate",
+      "correctedCandidate": "pending_authorization",
+      "codeAndManifestUnchangedByThisComponent": true,
+      "globalOpsExpected": "SYNC_PENDING",
+      "preservedCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788"
+    }
+  ]
 }
