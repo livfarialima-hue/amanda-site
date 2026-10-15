@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "BRUNA-REVISAO-CONVERSAS-2026-10-15",
-  "status": "published_runtime_documentation_pending",
+  "status": "published_verified",
   "bundleVersion": "2026-10-15.5",
   "approvedCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
   "netlifyDeployId": "6ad15ebcc63792b19f648797",
@@ -450,14 +450,39 @@
     "unrelatedBranchesPreserved": true
   },
   "documentation": {
-    "status": "pending_same_file_projection",
-    "existingFileIds": {
-      "manual": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-      "executivePlan": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
+    "status": "written_verified",
+    "sourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
+    "verifiedAt": "2026-10-15T23:35:06.840081Z",
+    "method": "Authenticated raw base64 readback, decoded bytes exactly equal committed UTF-8 source and current canonical local files.",
+    "existingFilesPreserved": true,
+    "equalityVerified": true,
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "0bba820114ae89572921639086642b5fc53e9f42c57adc19e76b69f19bc1b57b",
+      "bytes": 89354,
+      "sourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "modifiedAt": "2026-10-15T23:34:29.187Z",
+      "exact": true,
+      "readbackAt": "2026-10-15T23:35:06.840081Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "sourceCommitEqualsReadback": true,
+      "localEqualsReadback": true
     },
-    "beforeWriteReadback": {
-      "manualSha256": "98e54e8b4955ee26970736910b890de651519287ed144920c037cbfc5aa96cc9",
-      "executivePlanSha256": "2acab551e100b7a629cb41f92140d8075302df7f3f45b13ef80a0ef28deb9678"
+    "executivePlan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "917afd119e7cf2486e411f800c08b1606f8e13e25a6287b662c69cc45d13d3f0",
+      "bytes": 39942,
+      "sourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "modifiedAt": "2026-10-15T23:34:32.022Z",
+      "exact": true,
+      "readbackAt": "2026-10-15T23:35:06.840081Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "sourceCommitEqualsReadback": true,
+      "localEqualsReadback": true
     }
   },
   "localVerification": {
@@ -494,8 +519,27 @@
   },
   "limits": [
     "Publicar a ponte nao executa a recuperacao de oito eventos nem invalida o marco accepted; operador e preflight de aplicacao continuam pendentes.",
-    "78 retomadas revisadas continuam sem novos envios nesta segunda rodada; canal YCloud trial exige regularizacao e novo preflight individual.",
-    "Testes sinteticos e saude nao comprovam conversa natural posterior, conversao ou economia.",
-    "Igualdade Drive e fechamento operacional aguardam recibo proprio; este estado intermediario nao e conclusao."
-  ]
+    "78 retomadas revisadas continuam sem novos envios nesta segunda rodada. A criacao de planos na Central tem bloqueio tecnico separado do pagamento; cada contato exige novo preflight e rota aplicavel. Restricao trial observada apenas no Bulk; a API individual ja entregou.",
+    "Testes sinteticos e saude nao comprovam conversa natural posterior, conversao ou economia."
+  ],
+  "documentationReconciledAt": "2026-10-15T23:35:06.840081Z",
+  "drivePlanSha256": "917afd119e7cf2486e411f800c08b1606f8e13e25a6287b662c69cc45d13d3f0",
+  "documentationCloseout": {
+    "sourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
+    "functionalSourceCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
+    "runtimeChangedAfterApprovedCommit": false,
+    "sameFileDriveReadback": true,
+    "canonicalCheckoutReconciliation": "Fast-forward required before final ops:check; final gate receipt stored in private task evidence."
+  },
+  "followupCostClarification": {
+    "observedFinalTemplateUsd": 0.0625,
+    "estimated78SameTariffUsd": 4.875,
+    "rechargeMinimumUsd": 10,
+    "rechargeIsSubscription": false,
+    "bulkTrialRestrictionProvesAllApiBlocked": false,
+    "centralCreationConstraintSeparateFromFunding": true,
+    "manualListPrepared": true,
+    "newMessagesSent": 0,
+    "newPaymentPerformed": false
+  }
 }

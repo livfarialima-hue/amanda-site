@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-REVISAO-CONVERSAS-2026-10-15",
   "title": "Qualificacao contextual com identidade profissional e reconciliacao administrativa auditada",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "723a43bae79faca529e2a53cc39996df62a16107",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Usuario autorizou revisar/corrigir LEADS e executar retomadas elegiveis. Publicacao do novo codigo requer aprovacao do SHA exato apos testes. Execucao da bridge exige configurar/conferir ADMIN_RECONCILIATION_OPERATOR_EMAIL e revalidar o input privado; propriedade nao configurada nesta tarefa."
+    "note": "Daniel autorizou Pode publicar tudo para o pacote preparado nesta conversa. Autorizacao vinculada ao SHA aprovado pelo release:preflight antes das escritas. Fechamento documental nao altera o runtime. Operador administrativo e aplicacao da bridge nao executados."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
     "externalWritesPerformed": true,
-    "note": "Correcoes operacionais autorizadas ocorreram pelos proprietarios ja publicados e pela Central. O codigo deste candidato permanece local. Qualificacao pode afetar conversao; atribuicao, agenda, consentimento e contato permanecem protegidos."
+    "note": "Runtime publicado e verificado no SHA aprovado; correcoes operacionais anteriores preservadas. Publicacao nao criou novos envios, agenda, marcos ou conversoes. Limites pendentes constam no painel e recibo."
   },
   "scope": {
     "files": [
@@ -53,7 +53,7 @@
       "google-ads-acquisition-conversion",
       "patient-journey-funnel-followups"
     ],
-    "note": "Alinhamento ao Norte, aceite contextual pelo helper canonico e bloqueio de classificacao de profissional divergente. Ponte administrativa interna: recuperar somente eventos route_pending existentes e invalidar accepted auditado. Sem nova rota HTTP, IA paga, replay ou envio. Supervisao periodica pelo plugin e evidencia do arquivo sao documentadas separadamente do runtime. Publicacao coordenada Apps Script primeiro, Netlify depois, somente apos aprovacao do SHA exato."
+    "note": "Escopo funcional aprovado de 23 arquivos, acrescido de quatro arquivos de alvo/manual operacional/recibos do fechamento (27 acumulados). Apps Script v165 antes de Netlify; fontes, testes hospedados, saude e mesmas projecoes Drive verificados. Sem runtime novo apos SHA aprovado."
   },
   "impact": {
     "consumers": [
@@ -167,16 +167,16 @@
       "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
       "node --test scripts/check-bruna-model-live.test.mjs"
     ],
-    "status": "passed_local",
-    "note": "Sobre baseline723a43b/runtime2fae:2298/2298 testes integrais finais (TZ America/Sao_Paulo),250 focados/consumidores do novo delta,172 do contrato Ads e30 cenarios adversariais independentes. Preservados14 grupos administrativos e10 cenarios anteriores. Build193arquivos/54URLs; site:check54/54; change:check23arquivos; architecture:check e diff aprovados. Referencia global.4, cenarios hospedados e production-target permanecem iguais. Log privado full-suite-context-professional-final.log. Pluginprivado1.0.2 salvo e relido12/12; rotinaexistente9h/17h ativa; arquivo125/125integros e50/50mensagensdeledger, caught_up19:20BRT. Estes recibos nao publicam runtime. ops:check SYNC_PENDING por publicacao/projecao do manual/branch; semIApaga,replayouenvio nesta extensao."
+    "status": "passed_published",
+    "note": "2298/2298 testes integrais pre-publicacao; 175 focados e 118 Apps Script em revisoes sobrepostas, 30 cenarios adversariais independentes. Modelo21/21, historicos2/2, audio3/3 em log real do build aprovado. Fontes Apps Script4/4 iguais apos reload. Dominios200, assinatura401,15funcoes/6schedules. IMPORT_GOOGLE_ADS12registros identicos antes/depois. Drive: duas projecoes iguais aos bytes do commit documental. Gates de fechamento e ops:check executados antes da conclusao; recibos em PUBLICACAO.json e evidencia privada."
   },
   "rollback": {
     "local": "Reverter somente delta deste candidato, preservando trabalho paralelo e recibos.",
-    "production": "Apos publicacao autorizada, restaurar versao anterior no deployment canonico Apps Script e classificador do baseline2fae; preservar dados e recibos, reconciliar fases por owner API mediante evidencia. Sem apagar historico ou replay."
+    "production": "Novo commit/build restrito para reverter o delta Netlify; Apps Script no deployment canonico com fonte equivalente ao baseline. Preservar dados, filas, flags, historico e trabalho paralelo; sem replay."
   },
   "monitoring": {
     "owner": "Daniel/equipe Clinica LIV",
-    "window": "Plugin1.0.2: primeira rodada natural16/10 09h pela rotina cloud existente. Runtime: primeira classificacao natural, integridade48h e revisaoD+7 apos publicacao autorizada.",
+    "window": "Primeira classificacao natural; integridade48h em17/10, coorteD+7 em22/10. Plugin1.0.2 na rotina cloud existente9h/17h; continuidade de retomadas16/10 09h30 condicional, sem pagamento ou envio novo neste fechamento.",
     "signals": [
       "Nenhum preco isolado qualificado; nenhuma agenda inferida.",
       "Conferir separadamente eventos preparados, importados e atribuidos.",
@@ -189,5 +189,42 @@
     "commit": "723a43bae79faca529e2a53cc39996df62a16107",
     "path": "ops/CHANGE-CANDIDATE.json",
     "note": "Fechamento .4 e recibos .2/.3 preservados por ancestralidade; runtime baseline 2fae17f1, sem codigo do pacote .3."
+  },
+  "release": {
+    "approvedCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
+    "netlifyDeployId": "6ad15ebcc63792b19f648797",
+    "appsScriptVersion": 165,
+    "verifiedAt": "2026-10-15T23:23:36.9828665Z",
+    "drivePlanSha256": "917afd119e7cf2486e411f800c08b1606f8e13e25a6287b662c69cc45d13d3f0",
+    "receiptPath": "auditorias/bruna-revisao-conversas-2026-10-15/PUBLICACAO.json",
+    "liveModel": {
+      "status": "passed",
+      "checkedAt": "2026-10-15T23:19:25.770Z",
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "maxOutputTokens": 4096,
+      "verbosity": "low",
+      "billingMode": "api_paid_authorized",
+      "syntheticOnly": true,
+      "patientMessagesSent": 0,
+      "passed": 21,
+      "total": 21,
+      "fullHistoryPassed": 2
+    },
+    "liveAudio": {
+      "status": "passed",
+      "model": "whisper-1",
+      "passed": 3,
+      "total": 3
+    },
+    "documentationSourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
+    "documentationVerifiedAt": "2026-10-15T23:35:06.840081Z"
+  },
+  "documentationCloseout": {
+    "sourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
+    "sameFileDriveReadback": true,
+    "manualSha256": "0bba820114ae89572921639086642b5fc53e9f42c57adc19e76b69f19bc1b57b",
+    "executivePlanSha256": "917afd119e7cf2486e411f800c08b1606f8e13e25a6287b662c69cc45d13d3f0",
+    "runtimeUnchangedFromApprovedCommit": true
   }
 }

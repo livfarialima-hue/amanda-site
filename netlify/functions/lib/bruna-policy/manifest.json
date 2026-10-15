@@ -17,31 +17,31 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
-    "lastObservedProductionCommit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
-    "functionalDeployId": "6ad140400f41025d3ef0a3f7",
-    "lastObservedProductionDeployId": "6ad140400f41025d3ef0a3f7",
-    "rollbackCommit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
-    "rollbackDeployId": "6ad120701654730b8c969605",
-    "rollbackConstraint": "New Git revert commit/build; preserve data, queues, flags, receipts and Apps Script; no replay",
-    "publishedAt": "2026-10-15T21:09:42.941Z",
+    "functionalCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
+    "lastObservedProductionCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
+    "functionalDeployId": "6ad15ebcc63792b19f648797",
+    "lastObservedProductionDeployId": "6ad15ebcc63792b19f648797",
+    "rollbackCommit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
+    "rollbackDeployId": "6ad140400f41025d3ef0a3f7",
+    "rollbackConstraint": "Novo commit/build restrito para reverter o delta Netlify; Apps Script no deployment canonico com fonte equivalente ao baseline. Preservar dados, filas, flags, historico e trabalho paralelo; sem replay.",
+    "publishedAt": "2026-10-15T23:19:41.688Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-15T21:26:20.633269Z",
-    "candidateChangeId": "BRUNA-REFERENCIA-GLOBAL-2026-10-15",
+    "lastVerifiedAt": "2026-10-15T23:23:36.9828665Z",
+    "candidateChangeId": "BRUNA-REVISAO-CONVERSAS-2026-10-15",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-15.4",
-    "appsScriptVersion": 164
+    "bundleVersion": "2026-10-15.5",
+    "appsScriptVersion": 165
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
     "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "98e54e8b4955ee26970736910b890de651519287ed144920c037cbfc5aa96cc9",
-    "driveProjectionVerifiedAt": "2026-10-15T21:52:38.305Z",
+    "driveProjectionSha256": "0bba820114ae89572921639086642b5fc53e9f42c57adc19e76b69f19bc1b57b",
+    "driveProjectionVerifiedAt": "2026-10-15T23:35:06.840081Z",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
-    "status": "pending_candidate_publication",
-    "sourceCommit": "a2b2c08f2f217d8b387c1373a50258e451d567ed",
-    "note": "Recibo .4 preservado e integrado. A revisao .5 permanece local; o manual ativo no Drive so sera substituido apos publicacao autorizada e readback."
+    "status": "written_verified",
+    "sourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
+    "note": "Mesmos arquivos existentes no Drive substituidos e relidos em bytes; fonte documental commitada e runtime aprovado registrados separadamente no recibo."
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -49,7 +49,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-REVISAO-CONVERSAS-2026-10-15",
-    "status": "tested_local",
+    "status": "published_verified",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
@@ -58,7 +58,7 @@
     "bundleVersion": "2026-10-15.5",
     "baselineDeployId": "6ad140400f41025d3ef0a3f7",
     "baselineAppsScriptVersion": 164,
-    "sourceCommit": "",
-    "note": "Candidato de qualificacao contextual, protecao de identidade profissional e reconciliacao administrativa sobre runtime 2fae e fechamento documental 723a43ba. Aceite curto usa owner existente, sem promover nem agendar. Interesse compativel nao autoriza contato ou pagamento. Recuperacao sem fila paga e invalidacao auditada ainda nao executadas. Supervisao pelo plugin tem recibo separado. Exige aprovacao do SHA exato, Apps Script antes de Netlify e gates hospedados."
+    "sourceCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
+    "note": "Publicado no Apps Script v165 e Netlify do SHA aprovado; 21/21 cenarios, dois historicos completos e 3/3 audios lidos no log real. Gates futuros preservados. Bridge administrativa nao executada; retomadas e recarga permanecem decisao operacional separada."
   }
 }
