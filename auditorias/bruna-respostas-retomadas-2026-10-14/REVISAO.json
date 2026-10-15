@@ -57,7 +57,9 @@
     "protectedFieldsUnchanged": true,
     "identityRevalidated": true,
     "newMessagesRevalidated": true,
-    "omissions": false
+    "omissions": false,
+    "visualReadback": "confirmed_saved",
+    "rebuildNotTriggered": true
   },
   "externalWritesPerformed": true,
   "publication": {
@@ -70,8 +72,25 @@
     "checkedOn": "2026-10-15",
     "pending": [
       "Publicação autorizada do candidato",
-      "Projeções documentais em atualização",
       "Branch isolada ainda não reconciliada com produção"
-    ]
+    ],
+    "documentationReconciled": true
+  },
+  "documentation": {
+    "status": "written_verified",
+    "sourceCommit": "71b22d7",
+    "verifiedAt": "2026-10-15T10:05:20.072Z",
+    "method": "Authenticated readback with exact UTF-8 byte equality and SHA-256",
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "27f960ce10f22f7fcf11ecec8c7fbbe57a30c29a3493e1223b9b6a048e2742bd",
+      "bytes": 72137
+    },
+    "executivePlan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "911227c42b003eeffa3bbb4158896f90b7f3800aeb17030ccfcb03f3463dfcba",
+      "bytes": 9638
+    },
+    "existingFilesPreserved": true
   }
 }
