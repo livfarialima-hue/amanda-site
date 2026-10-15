@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "BRUNA-API-ESSENCIAL-2026-10-15",
-  "status": "production_verified_documentation_pending",
+  "status": "published_verified",
   "bundleVersion": "2026-10-14.5",
   "approvedCommit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
   "netlifyDeployId": "6ad0c377e0be1096575458ca",
@@ -248,14 +248,35 @@
   "patientMessagesSent": 0,
   "syntheticOnly": true,
   "externalWritesPerformed": true,
-  "drivePlanSha256": null,
+  "drivePlanSha256": "f12e90ff1e5ec740a167abffcdee1bdada609a612a0975a3917db5d3f60f62a1",
   "documentation": {
-    "status": "awaiting_drive_readback",
-    "sourceCommit": null,
-    "existingFilesRequired": true,
-    "localHashes": {
-      "docs/estrategia-abordagem-bruna.md": "161c9f801739a1508a8869d1c0f8471d8a24e0fd35cbd0e09327bde7eef32708",
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md": "f12e90ff1e5ec740a167abffcdee1bdada609a612a0975a3917db5d3f60f62a1"
+    "status": "written_verified",
+    "sourceCommit": "4d02e792b8a4e3169c9e8daaca3acc53a84add7e",
+    "verifiedAt": "2026-10-15T12:26:40.166Z",
+    "method": "Authenticated readback with exact local/source-commit/readback byte equality and SHA-256",
+    "existingFilesPreserved": true,
+    "equalityVerified": true,
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "161c9f801739a1508a8869d1c0f8471d8a24e0fd35cbd0e09327bde7eef32708",
+      "bytes": 75912,
+      "readbackAt": "2026-10-15T12:26:40.069Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "localEqualsReadback": true,
+      "sourceCommitEqualsReadback": true,
+      "evidence": "Authenticated readback of the existing manual projection; exact byte equality checked locally"
+    },
+    "executivePlan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "f12e90ff1e5ec740a167abffcdee1bdada609a612a0975a3917db5d3f60f62a1",
+      "bytes": 20790,
+      "readbackAt": "2026-10-15T12:26:40.166Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "localEqualsReadback": true,
+      "sourceCommitEqualsReadback": true,
+      "evidence": "Authenticated readback of the existing executivePlan projection; exact byte equality checked locally"
     }
   },
   "rollback": {
@@ -264,7 +285,21 @@
     "constraint": "New Git revert commit/build; preserve data, queues, flags, receipts and Apps Script; no replay"
   },
   "limits": [
-    "Synthetic validation does not prove a natural patient interaction or financial savings.",
-    "Operational closure requires the same existing Drive projections and exact local/source-commit/readback equality."
-  ]
+    "Synthetic validation does not prove a natural patient interaction or financial savings."
+  ],
+  "documentationReconciledAt": "2026-10-15T12:26:40.166Z",
+  "closeoutValidation": {
+    "checkedAt": "2026-10-15T12:27:12.899Z",
+    "changeSafety": "OK",
+    "exactScopeFiles": 19,
+    "architecture": "OK",
+    "metadataTests": {
+      "passed": 15,
+      "total": 15
+    },
+    "diffCheck": "passed",
+    "runtimeEqualsApprovedCommit": true,
+    "onlyFunctionDigestChanged": "scheduled-followup",
+    "note": "Checks after documentary reconciliation; canonical checkout operational check follows the receipt commit."
+  }
 }
