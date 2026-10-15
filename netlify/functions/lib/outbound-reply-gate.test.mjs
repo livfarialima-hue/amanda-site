@@ -22,6 +22,55 @@ import {
   buildConsultationInformationReply,
 } from "./patient-replies.mjs";
 
+test("a polite specific clarification does not restart an answered discovery", () => {
+  const currentText = "A parte de cima";
+  const recentConversation = [{ role: "assistant", source: "bruna", text: "Qual é sua dúvida sobre a avaliação?" }];
+  const base = decideConversationAction({ text: currentText, recentConversation, conversionExperienceEnabled: true,
+    plan: { route: "standard_reply", reason: "known_procedure", procedure: "blefaroplastia", professional: "amanda", automaticAllowed: true } });
+  const contextual = body => buildSemanticReplyConversationAction(base, {
+    route: "standard_reply", confidence: "high", automaticAllowed: true, urgent: false,
+    replyCode: "CONTEXT-CLARIFY-01", replyWording: "contextual", suggestedReply: body,
+  });
+  for (const body of [
+    "Poderia me dizer se você está falando da pálpebra superior ou da sobrancelha?",
+    "Poderia me explicar se sua dúvida é sobre a pálpebra superior ou a sobrancelha?",
+    "Poderia me explicar um pouco melhor se sua dúvida é sobre a pálpebra superior ou a sobrancelha?",
+  ]) {
+    assert.equal(validateOutboundReply({ body, currentText, recentConversation, conversationAction: contextual(body) }).allowed, true, body);
+  }
+  for (const body of [
+    "Poderia me explicar melhor?", "Poderia me dizer qual sua dúvida?",
+    "Poderia me explicar a sua dúvida?", "Como posso te ajudar?",
+    "O que você gostaria de saber?",
+    "Poderia me dizer um pouco mais?", "Poderia me explicar o que deseja?",
+    "Poderia me explicar um pouco melhor?",
+  ]) {
+    assert.equal(validateOutboundReply({ body, currentText, recentConversation, conversationAction: contextual(body) }).reason,
+      "planned_reply_restarts_context", body);
+  }
+});
+
+test("colloquial recall repeats a requested fact without releasing surgical ranges or closed conversations", () => {
+  const body = "A consulta presencial com a Dra. Amanda custa R$ 500.";
+  const recentConversation = [{ role: "assistant", source: "bruna", text: body }];
+  const conversationAction = { action: CONVERSATION_ACTIONS.RESPOND,
+    replyContract: { owner: "bruna", maxQuestions: 0, maxLinks: 0, allowCta: false } };
+  assert.equal(validateOutboundReply({ body, currentText: "Qual era mesmo o valor da consulta?", recentConversation, conversationAction }).allowed, true);
+  assert.equal(validateOutboundReply({ body, currentText: "A avaliação é presencial?", recentConversation, conversationAction }).reason,
+    "substantially_repeated_reply");
+  assert.equal(validateOutboundReply({ body, currentText: "Qual era mesmo o valor da consulta?", recentConversation,
+    conversationAction: { ...conversationAction, action: CONVERSATION_ACTIONS.CLOSED } }).reason, "conversation_action_blocks_reply");
+  const range = buildSurgicalPriceSuggestedReply({ procedure: "lifting_cervical", directToPatient: true,
+    offerNextStep: false, introduceBruna: false, includeGreeting: false });
+  const rangeAction = { ...conversationAction, replyContract: { ...conversationAction.replyContract,
+    maxLinks: 1, procedure: "lifting_cervical", sourceReason: "lifting_price_range_direct" } };
+  assert.equal(validateOutboundReply({ body: range, currentText: "Quanto custa a cervicoplastia?",
+    recentConversation: [], conversationAction: rangeAction }).allowed, true);
+  assert.equal(validateOutboundReply({ body: range, currentText: "Qual era mesmo a faixa da cervicoplastia?",
+    recentConversation: [{ role: "assistant", source: "bruna", text: range }], conversationAction: rangeAction }).reason,
+    "substantially_repeated_reply");
+});
+
 test("personal concern reply contract reaches the final link guard", () => {
   const currentText="Minha papada me incomoda e estou acima do peso.";
   const recentConversation=[{role:"assistant",source:"bruna",text:"O que gostaria de entender sobre papada?"}];

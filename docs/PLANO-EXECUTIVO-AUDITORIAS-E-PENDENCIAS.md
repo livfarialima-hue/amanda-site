@@ -1,5 +1,20 @@
 # Plano executivo — auditorias, pendências e prazos
 
+## Pendência atual — Bruna coerente e integração pela conta, 15/10/2026
+
+Fonte de detalhe: [relatório técnico](../auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md). Este painel continua sendo o único planejamento executivo. Sem nova publicação, edição de plugin, rotina, Drive ou dado operacional nesta etapa.
+
+| Ordem | Entrega | Estado / gate | Momento de avaliação |
+| --- | --- | --- | --- |
+| 1 | Dois falsos bloqueios de continuidade corrigidos no candidato 2026-10-15.2 | Testado localmente: 2254/2254; revisão independente sem bloqueadores. Falta autorização do commit e gates de publicação Netlify. Apps Script não muda. | Próxima decisão do usuário; depois 24h e 7 dias da publicação autorizada. |
+| 2 | Usar plugin 1.0.1 para revisões, resumos e propostas pela conta | Política já existente confirmada; não equivale a ponte do bot. Agendamento cloud 9h/17h não confirmado pelas ferramentas disponíveis. Não duplicar rotinas. | Próxima rodada solicitada; validar estado vivo da rotina antes de agendar. |
+| 3 | Medição por categoria e piloto assíncrono pela conta | Proposto, default-off. Completar cobertura de recibos sem novas inferências; separar captura durável de resposta humana da extração por IA; comprovar elegibilidade, autenticação e retorno estruturado. Revisão histórica de classificação em leitura primeiro, sem substituir worker de cinco minutos por rodada 9h/17h. | Após autorização de pacote específico; amostra sintética antes de dados reais. |
+| 4 | Ativar substituição limitada, sem processamento duplo | Exige zero efeito com resultado obsoleto/duplicado, trilha e comparação de qualidade/custo. Sem fallback pago silencioso; falta de quota vira pendência visível. | Pelo menos 7 dias de piloto e amostra suficiente por tipo; estender se insuficiente. |
+| 5 | Considerar atendimento imediato pela conta | Observar, não executar agora. Só após provar latência, disponibilidade, quota, privacidade e entrega ponta a ponta. | Depois do piloto, sem data artificial. |
+| 6 | Reavaliar vetos lexicais de CTA por contrato de atos conversacionais | Adiado. Protótipo de “se quiser” revertido antes do commit por escapes de convite e falso bloqueio de negação. Não ampliar lista de regex como solução geral. | Desenho e testes próprios antes de nova autorização de publicação. |
+
+Não afirmar economia financeira atual: custo por tarefa e volume faturado são N/D nesta revisão. Preservar modelo, esforço, história completa, proteção clínica, preço, agenda, takeover e idempotência. A projeção deste painel no mesmo arquivo do Drive será atualizada no fechamento autorizado; por ora está pendente, explicitamente.
+
 <!-- BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15 -->
 ## Publicado e verificado — autonomia contextual, 15/10/2026
 

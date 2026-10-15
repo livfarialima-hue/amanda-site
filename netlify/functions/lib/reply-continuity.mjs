@@ -45,6 +45,9 @@ function isSubstantiveAnswer(value) {
 export function patientRequestsRepetition(currentMessage) {
   const text = fold(currentMessage);
   if (/\bnao\s+(?:precisa\s+(?:explicar|repetir)|repita|repete|explique)\b/.test(text)) return false;
+  // An explicit recall question is not spontaneous repetition. Agreement such
+  // as "isso mesmo" and a later sentence containing "mesmo" are not requests.
+  if (/^(?:qual|quais|como|onde|quanto|quantos|quantas)\s+(?:(?:e|era|sao|eram|fica|ficam|funciona|funcionam|custa|custam)\s+)?mesmo\b/.test(text)) return true;
   return /\b(?:rep(?:ete|etir|ita)|reenvia|reenviar|nao entendi|nao compreendi|como assim|explica melhor|explique melhor)\b|\b(?:explic\w*|mand\w*|envi\w*|cont\w*|mostr\w*)\b.{0,45}\b(?:de novo|novamente)\b/.test(text);
 }
 

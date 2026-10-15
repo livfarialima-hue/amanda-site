@@ -525,7 +525,8 @@ function genericContextResetReason(reply) {
     /\b(?:como|em que) posso (?:te |lhe )?ajudar\b/.test(text) ||
     /\bqual (?:e )?(?:a )?sua (?:duvida|pergunta)\b/.test(text) ||
     /\bo que (?:voce )?gostaria de (?:saber|entender)\b/.test(text) ||
-    /\bpoderia (?:me )?(?:explicar|dizer) (?:melhor )?\b/.test(text)
+    // Courtesy does not make a specific clarification a generic reset.
+    /\bpoderia\s+(?:me\s+)?(?:explicar|dizer)(?:\s+(?:um\s+pouco\s+)?(?:mais|melhor))?(?:\s+(?:isso|(?:a\s+)?(?:sua\s+)?(?:d[uú]vida|pergunta)|o\s+que\s+(?:voc[eê]\s+)?(?:deseja|quer|precisa)))?\s*(?=[.!?]|$)/i.test(String(reply || ""))
   ) {
     return "planned_reply_restarts_context";
   }

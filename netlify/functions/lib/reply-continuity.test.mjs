@@ -1,8 +1,25 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { assessReplyContinuity, buildReplyContinuityContext } from "./reply-continuity.mjs";
+import { assessReplyContinuity, buildReplyContinuityContext, patientRequestsRepetition } from "./reply-continuity.mjs";
 
 const previous = [{ role: "assistant", source: "equipe_humana", text: "Na consulta, a Dra. Amanda examina a região e conversa sobre possibilidades e limites. O que você gostaria de entender primeiro?" }];
+
+test("explicit colloquial recall is repetition, but agreement and negation are not", () => {
+  for (const currentMessage of [
+    "Qual era mesmo o valor da consulta?", "Onde fica mesmo a clínica?",
+    "Como funciona mesmo a avaliação?", "Quanto custa mesmo a consulta",
+  ]) assert.equal(patientRequestsRepetition(currentMessage), true, currentMessage);
+  for (const currentMessage of [
+    "Isso mesmo", "Mesmo assim, vou pensar", "Tenho o mesmo problema",
+    "Qual é o mesmo procedimento?", "Como vou fazer o mesmo?",
+    "Não precisa repetir o valor", "Não repita: qual era mesmo o valor?",
+    "Onde fica a clínica? Mesmo assim, prefiro pensar.",
+  ]) assert.equal(patientRequestsRepetition(currentMessage), false, currentMessage);
+  const body = previous[0].text.split(" O que")[0];
+  const repeated = assessReplyContinuity({ body, currentMessage: "Como funciona mesmo a avaliação?", recentConversation: previous });
+  assert.equal(repeated.body, body);
+  assert.equal(repeated.needsRevision, false);
+});
 
 test("tracks multiple earlier turns rather than only the last reply", () => {
   const recentConversation = [...previous, { role: "user", text: "Onde fica?" }, { role: "assistant", text: "A clínica fica na Rua Pais Leme." }];

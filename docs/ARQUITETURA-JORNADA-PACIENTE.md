@@ -1,5 +1,11 @@
 # Arquitetura da jornada da paciente
 
+## Candidato 15/10/2026 — continuidade sem vetos de estilo redundantes
+
+Não publicado: BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15. Reconhecimento de repetição solicitada pertence a reply-continuity e é consumido pelo gate, sem retirar a proteção de uso único de faixa cirúrgica. Clarificação específica não equivale a recomeçar a conversa. Classificação de convite e negação permanecem integralmente no baseline: a tentativa de relaxar o veto lexical de CTA foi descartada após revisão adversarial. Evoluir para atos conversacionais exige desenho próprio, não multiplicar exceções por frases.
+
+Conta e API são executores distintos, não autoridades distintas. Uma futura proposta pelo plugin precisa de identidade opaca do trabalho, versão da conversa/oportunidade, expiração, idempotência e evidência de processamento. O servidor canônico relê o estado antes de aceitar qualquer efeito. Nenhuma ponte foi implementada neste candidato; envio, agenda, fatos e persistência continuam com seus proprietários atuais. Ver relatório em auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md e ordem no Plano Executivo.
+
 <!-- BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15 -->
 ## Autonomia contextual publicada — 15/10/2026
 

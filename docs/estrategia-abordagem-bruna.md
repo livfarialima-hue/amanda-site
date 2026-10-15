@@ -1,5 +1,13 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+## Candidato local — coerência e processamento pela conta, 15/10/2026
+
+Ainda não publicado: BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15, pacote 2026-10-15.2. O registro publicado abaixo continua sendo o estado operacional. A projeção existente no Drive permanece na versão publicada até autorização, testes de release e atualização com readback.
+
+O candidato retira dois falsos bloqueios: perguntas específicas iniciadas por “Poderia me dizer” e pedidos coloquiais explícitos de repetição, como “Qual era mesmo o valor da consulta?”. Não libera convite de agenda proibido, reinício genérico, faixa cirúrgica repetida, fatos não aprovados ou conversa sob responsabilidade humana. O protótipo de relaxamento de “se quiser” foi descartado antes do commit: a revisão encontrou escapes de convite e mostrou que o classificador parcial não sustenta essa liberação com segurança.
+
+A política do plugin 1.0.1 já prioriza a conta para revisões e propostas. Isso não transfere automaticamente a execução do webhook. Cálculos simples continuam determinísticos, sem IA; migrar classificação ou aprendizado exige uma ponte autenticada, fila durável, contexto versionado e validação no servidor. Desenho, evidências e testes: [relatório deste pacote](../auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md). Próximas autorizações e ordem permanecem exclusivamente no Plano Executivo.
+
 <!-- BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15 -->
 ## Publicado e verificado — autonomia contextual, 15/10/2026
 
@@ -73,7 +81,7 @@ O histórico documental integral anterior foi arquivado em área restrita. Esta 
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste conteúdo. Estratégia de aquisição e estado vivo seguem suas fontes próprias.
 
-**Versão:** 2026-10-15.1
+**Versão:** 2026-10-15.2
 
 Projeção ativa: 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF. O identificador não concede acesso; as permissões existentes são preservadas.
 
