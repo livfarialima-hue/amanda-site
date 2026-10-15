@@ -4,7 +4,35 @@ import {
   buildConversationGuidelines,
   CONVERSATION_GUIDELINES,
 } from "./conversation-guidelines.mjs";
-import { containsApprovedSurgicalRange, hasIsolatedLipoPapadaScope } from "./surgical-price-policy.mjs";
+import { containsApprovedSurgicalRange, hasIsolatedLipoPapadaScope, hasOnlyApprovedSurgicalAmounts, SURGICAL_PRICE_DISCLOSURE } from "./surgical-price-policy.mjs";
+
+test("contextual replies preserve the literal approved financial passage without dropping other questions", () => {
+  for (const conversionExperienceEnabled of [false, true]) {
+    const guidelines = buildConversationGuidelines({ conversionExperienceEnabled });
+    const contextual = guidelines.split("\n").find(line => line.startsWith("- Redação contextual:"));
+    assert.match(contextual, /copie literalmente de policyHints\.deterministicReplyPreview o trecho financeiro aprovado/);
+    assert.match(contextual, /nome do procedimento, faixa com a mesma grafia, símbolos e conectivo, e ressalva comercial integral/);
+    assert.match(contextual, /Contextualize somente ao redor desse trecho/);
+    assert.doesNotMatch(contextual, /Esses códigos aprovam os fatos, não uma frase obrigatória/);
+    assert.match(guidelines, /redija uma única resposta contextual que cubra todos eles/);
+    assert.match(guidelines, /sem devolver só o preço ou outra parte isolada/);
+    const compound = guidelines.split("\n").find(line => line.startsWith("- Quando a pessoa perguntar sobre procedimento, valor e recuperação"));
+    const range = compound.match(/R\$ 12 mil\s+\w+\s+R\$ 18 mil/)?.[0];
+    assert.equal(containsApprovedSurgicalRange(`Lipo de papada isolada: ${range}`, "lipo_papada"), true);
+  }
+  // This is the wording distinction that blocked the hosted photo/price case.
+  // The instructions must match the unchanged monetary owner, including its
+  // refusal of paraphrased connectors, altered bounds and added amounts.
+  const approved = `A referência para lifting facial é de R$ 26 mil e R$ 42 mil. ${SURGICAL_PRICE_DISCLOSURE}`;
+  assert.equal(hasOnlyApprovedSurgicalAmounts(approved), true);
+  for (const invalid of [
+    approved.replace("R$ 26 mil e R$ 42 mil", "R$ 26 mil a R$ 42 mil"),
+    approved.replace("R$ 26 mil", "R$ 25 mil"),
+    approved.replace("R$ 42 mil", "R$ 43 mil"),
+    `${approved} Hospital R$ 5 mil.`,
+    `${approved} Lifting facial: R$ 26 mil e R$ 42 mil.`,
+  ]) assert.equal(hasOnlyApprovedSurgicalAmounts(invalid), false);
+});
 
 test("procedure classification keeps consultation modality in the conversation topic", () => {
   for (const conversionExperienceEnabled of [false, true]) {

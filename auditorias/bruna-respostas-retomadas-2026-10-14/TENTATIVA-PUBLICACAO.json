@@ -176,10 +176,82 @@
         "liveValidation": "pending_new_authorized_build",
         "commit": "58c098b909416a38527e1617ecbeb979ccd356b2"
       }
+    },
+    {
+      "status": "blocked_before_publication",
+      "approvedCommit": "3be4621fd2f82fd032301f74aba565e648567413",
+      "netlifyDeployId": "6ad0b3b112e2fc6ad811f8e1",
+      "branch": "reestruturacao-site",
+      "productionState": "error",
+      "publishedAt": null,
+      "approval": {
+        "by": "Daniel",
+        "reference": "Sim nesta conversa, autorizando publicar o commit integrado 3be4621fd2f82fd032301f74aba565e648567413",
+        "recordedAt": "2026-10-15T11:06:06.207Z"
+      },
+      "releasePreflight": {
+        "status": "CHANGE_SAFETY_STATUS=OK",
+        "scopeFiles": 40,
+        "clean": true,
+        "checkedAt": "2026-10-15T11:06:06.207Z"
+      },
+      "liveGate": {
+        "status": "failed",
+        "checkedAt": "2026-10-15T11:08:50.246Z",
+        "model": "gpt-6.1-sol",
+        "passed": 12,
+        "executed": 13,
+        "required": 21,
+        "fullHistoryPassed": 0,
+        "fullHistoryStatus": "not_reached",
+        "failedScenario": "approved_price_with_photo_request",
+        "gateReason": "unapproved_monetary_amount",
+        "approvedAmountsPreserved": true,
+        "observedRange": "R$ 26 mil a R$ 42 mil",
+        "requiredRange": "R$ 26 mil e R$ 42 mil",
+        "diagnosis": "Both the canonical monetary policy and the hosted scenario require the approved lexical form with e. The draft preserved amounts but paraphrased the connector. Local reproduction passes after changing only that connector.",
+        "liveAudio": {
+          "status": "passed",
+          "passed": 3,
+          "total": 3,
+          "model": "whisper-1"
+        },
+        "evidence": "Netlify production build log, bounded scenario and failure records; deterministic local reproduction"
+      },
+      "productionPreserved": {
+        "commit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
+        "netlifyDeployId": "6acff7b9dc7d30f39ad66b31",
+        "state": "ready",
+        "checkedAt": "2026-10-15T11:11:36.962Z"
+      },
+      "patientMessagesSent": 0,
+      "syntheticOnly": true,
+      "appsScript": {
+        "version": 164,
+        "changed": false,
+        "runtimeInspected": false
+      },
+      "localCorrection": {
+        "status": "tested_local",
+        "scope": "Preserve the exact authorized financial excerpt from the preview while composing contextual information around it. Keep monetary policy and hosted assertions unchanged.",
+        "checkedAt": "2026-10-15T11:13:41.327Z",
+        "fullSuite": {
+          "passed": 2208,
+          "total": 2208
+        },
+        "contractUnion": {
+          "files": 74,
+          "passed": 1534,
+          "total": 1534
+        },
+        "newRegressionFailedBeforeFix": true,
+        "independentReview": "passed",
+        "liveValidation": "pending_new_authorized_build"
+      }
     }
   ],
-  "latestAttempt": "6ad0abedf8ca5991c929014d",
-  "nextStep": "Merge the existing Ads records and verify code equality; request approval for the new exact integrated candidate.",
+  "latestAttempt": "6ad0b3b112e2fc6ad811f8e1",
+  "nextStep": "Validate and commit the prompt correction, reconcile existing documentation, obtain approval for the new exact candidate, then rerun the unchanged hosted gate.",
   "documentation": {
     "status": "written_verified",
     "sourceCommit": "58c098b909416a38527e1617ecbeb979ccd356b2",
