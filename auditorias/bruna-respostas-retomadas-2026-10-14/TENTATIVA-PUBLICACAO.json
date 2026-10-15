@@ -156,7 +156,7 @@
         "runtimeInspected": false
       },
       "localCorrection": {
-        "status": "tested_local",
+        "status": "committed_awaiting_exact_authorization",
         "scope": "Define procedure versus consultation modality in the model instructions and schema description; preserve the parser, free labels, runtime limits and live gate assertions.",
         "checkedAt": "2026-10-15T10:42:35.048Z",
         "fullSuite": {
@@ -173,10 +173,28 @@
           "total": 19,
           "mocked": true
         },
-        "liveValidation": "pending_new_authorized_build"
+        "liveValidation": "pending_new_authorized_build",
+        "commit": "58c098b909416a38527e1617ecbeb979ccd356b2"
       }
     }
   ],
   "latestAttempt": "6ad0abedf8ca5991c929014d",
-  "nextStep": "Commit the validated correction, reconcile the existing Drive projections, obtain approval for the new exact SHA, then rerun the unchanged hosted live gate."
+  "nextStep": "Obtain approval for the new exact candidate SHA, refresh live preflight, then run the unchanged hosted gate and verify publication.",
+  "documentation": {
+    "status": "written_verified",
+    "sourceCommit": "58c098b909416a38527e1617ecbeb979ccd356b2",
+    "verifiedAt": "2026-10-15T10:43:42.507Z",
+    "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "eca9862b22e0f8240597701d8fe5de9e3a563d353cc11663ca650932f0efca2d",
+      "bytes": 73379
+    },
+    "executivePlan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "f8cebe2920fe7bd596732d35e904d0edfdd6832676d52baa95f2f13231e57d77",
+      "bytes": 10893
+    },
+    "existingFilesPreserved": true
+  }
 }

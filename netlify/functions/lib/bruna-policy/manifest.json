@@ -36,8 +36,8 @@
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
     "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "6254952ee6d416a624629ed6d43f9e458985e4d09cb69d6e76ce5b6b71422ce4",
-    "driveProjectionVerifiedAt": "2026-10-15T10:25:00.245Z",
+    "driveProjectionSha256": "eca9862b22e0f8240597701d8fe5de9e3a563d353cc11663ca650932f0efca2d",
+    "driveProjectionVerifiedAt": "2026-10-15T10:43:42.507Z",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata."
   },
   "reliabilityContract": "durable-storage-conditional-writes",
@@ -46,7 +46,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
-    "status": "tested_local",
+    "status": "committed",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
