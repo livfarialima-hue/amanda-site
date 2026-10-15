@@ -254,6 +254,32 @@ test('remote live gate rejects denied availability, obsolete holding, invented b
   }
 });
 
+test('remote continuation still fails when a correct answer misclassifies consultation modality as the procedure', async () => {
+  for (const procedure of ['consulta_online', 'teleconsulta', 'consulta_presencial', 'online', 'presencial']) {
+    const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (url, request) => {
+      const data = await (await syntheticResponse(url, request)).json();
+      const input = JSON.parse(JSON.parse(request.body).input);
+      if (input.currentMessage === 'E qual o valor da consulta?') {
+        const decision = JSON.parse(data.output_text);
+        Object.assign(decision, { procedure, route: 'standard_reply', confidence: 'high', automaticAllowed: true,
+          professional: 'amanda', replyCode: '',
+          suggestedReply: 'A consulta online com a Dra. Amanda custa R$ 500. Se quiser, posso verificar opções de horário com a equipe.' });
+        data.output_text = JSON.stringify(decision);
+      }
+      return Response.json(data);
+    } });
+    assert.equal(result.status, 'failed', procedure);
+    assert.equal(result.results.length, 16);
+    const failed = result.results.at(-1);
+    assert.equal(failed.name, 'remote_consultation_price_continuation_1');
+    assert.equal(failed.passed, false);
+    assert.equal(failed.decision.procedure, procedure, 'the adapter does not silently normalize the invalid label');
+    assert.equal(failed.gate.allowed, true, 'safe wording alone does not satisfy the procedure contract');
+    assert.ok(result.results.slice(0,-1).every(scenario => scenario.passed));
+    assert.equal(result.patientMessagesSent, 0);
+  }
+});
+
 test('administrative knowledge accepts an empty unspecified procedure from the real model', async () => {
   const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (url, request) => {
     const data = await (await syntheticResponse(url, request)).json();

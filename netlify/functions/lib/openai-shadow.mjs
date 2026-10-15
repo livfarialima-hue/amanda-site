@@ -107,7 +107,10 @@ const SHADOW_DECISION_SCHEMA = {
     automaticAllowed: { type: "boolean" },
     urgent: { type: "boolean" },
     professional: { type: "string", enum: PROFESSIONALS },
-    procedure: { type: "string" },
+    procedure: {
+      type: "string",
+      description: "Procedimento cirúrgico, estético ou área de avaliação identificado com segurança; não é a modalidade nem o assunto administrativo da consulta. Nunca use consulta_online, teleconsulta, consulta_presencial, online ou presencial: registre esses assuntos em conversationState.activeTopic. Sem procedimento confiável, use unknown. Preserve procedureContext quando válido; a correção explícita mais recente prevalece. Outros procedimentos legítimos continuam permitidos.",
+    },
     replyCode: { type: "string" },
     replyWording: { type: "string", enum: ["approved_exact", "contextual"] },
     suggestedReply: { type: "string", maxLength: 1_200 },

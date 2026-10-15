@@ -6,6 +6,18 @@ import {
 } from "./conversation-guidelines.mjs";
 import { containsApprovedSurgicalRange, hasIsolatedLipoPapadaScope } from "./surgical-price-policy.mjs";
 
+test("procedure classification keeps consultation modality in the conversation topic", () => {
+  for (const conversionExperienceEnabled of [false, true]) {
+    const guidelines = buildConversationGuidelines({ conversionExperienceEnabled });
+    assert.match(guidelines, /procedure identifica o procedimento cirúrgico, estético ou a área de avaliação/);
+    assert.match(guidelines, /consulta_online, teleconsulta, consulta_presencial, online e presencial não são valores de procedure/);
+    assert.match(guidelines, /modalidade.*conversationState\.activeTopic/);
+    assert.match(guidelines, /Sem procedimento confiável.*procedure="unknown"/);
+    assert.match(guidelines, /correção explícita mais recente.*prevalece sobre procedureContext/);
+    assert.match(guidelines, /Outros procedimentos legítimos continuam permitidos/);
+  }
+});
+
 test("all price sections agree with the isolated papada policy without authorizing associations", () => {
   for (const conversionExperienceEnabled of [false, true]) {
     const guidelines = buildConversationGuidelines({ conversionExperienceEnabled });

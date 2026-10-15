@@ -1,25 +1,25 @@
 {
   "status": "passed_local",
-  "checkedAt": "2026-10-15T10:23:13.431Z",
+  "checkedAt": "2026-10-15T10:42:35.048Z",
   "baseline": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
   "incidentReproducedBeforeFix": {
     "failingCases": 5
   },
   "tests": {
     "fullSuite": {
-      "passed": 2205,
-      "total": 2205
+      "passed": 2207,
+      "total": 2207
     },
     "contractUnion": {
       "files": 74,
-      "passed": 1531,
-      "total": 1531,
+      "passed": 1533,
+      "total": 1533,
       "overlapsFullSuite": true,
       "selection": "requiredTestFiles of all declared contracts"
     },
     "liveGateHarness": {
-      "passed": 18,
-      "total": 18,
+      "passed": 19,
+      "total": 19,
       "mocked": true
     },
     "siteBuild": {
@@ -34,14 +34,30 @@
   },
   "independentReview": {
     "status": "passed",
-    "scope": "Prompt complete price lists, approved isolated scope, forbidden combinations, bounded redacted logs, unchanged gate assertions/timeouts/retries, accurate failed-deploy receipt."
+    "scope": "Procedure versus consultation modality in instructions and schema description; known and corrected procedures and free labels retained; parser and live gate criteria unchanged; five invalid modalities still rejected; 19/19 harness tests."
   },
   "productionModelAudioHistory": {
-    "status": "failed_before_publication",
-    "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
-    "failedScenario": "not_observable_in_hosted_log",
-    "requiredModelScenarios": 21,
-    "requiredAudioScenarios": 3,
+    "status": "failed",
+    "checkedAt": "2026-10-15T10:35:39.774Z",
+    "model": "gpt-6.1-sol",
+    "passed": 15,
+    "executed": 16,
+    "required": 21,
+    "fullHistoryPassed": 2,
+    "failedScenario": "remote_consultation_price_continuation_1",
+    "failedField": "decision.procedure",
+    "observedValue": "consulta_online",
+    "expectedValue": "unknown",
+    "outboundGateAllowed": true,
+    "approvedConsultationPriceAnswered": true,
+    "schemaCause": "procedure accepts a string without field description; the instructions did not distinguish procedure from consultation modality.",
+    "liveAudio": {
+      "status": "passed",
+      "passed": 3,
+      "total": 3,
+      "model": "whisper-1"
+    },
+    "evidence": "Netlify production build log; bounded scenario and failure records",
     "syntheticOnly": true
   },
   "operationalPlanning": {
@@ -67,25 +83,24 @@
   "publication": {
     "status": "blocked_live_gate",
     "externalWritesPerformed": true,
-    "approvedCommit": "30b01f4267719effebd094edc2949a163ac1ed98",
-    "failedDeployId": "6ad0a6f33904b3954a95aec5",
+    "approvedCommit": "94f066e663fcd85f28f3e52ff15d8a2d5c75cedc",
+    "failedDeployId": "6ad0abedf8ca5991c929014d",
     "baselineDeployId": "6acff7b9dc7d30f39ad66b31",
     "baselineAppsScriptVersion": 164,
     "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
-    "correctedCandidateStatus": "pending_authorization"
+    "correctedCandidateStatus": "tested_local"
   },
   "operationalConsistency": {
     "status": "SYNC_PENDING",
     "checkedOn": "2026-10-15",
     "pending": [
-      "Correção local após bloqueio do gate hospedado",
       "Autorização do novo commit exato",
-      "Gates vivos e verificação da publicação"
+      "21 cenários vivos, áudio e verificação da publicação"
     ],
-    "documentationReconciled": true
+    "documentationReconciled": false
   },
   "documentation": {
-    "status": "written_verified",
+    "status": "update_pending",
     "sourceCommit": "65d757d4962a52a236cff27951452715cc29c1d0",
     "verifiedAt": "2026-10-15T10:25:00.245Z",
     "method": "Authenticated readback with exact UTF-8 byte equality and SHA-256",
@@ -106,5 +121,15 @@
     "diagnosticLinesBounded": true,
     "criteriaUnchanged": true,
     "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json"
+  },
+  "classificationCorrection": {
+    "status": "passed_local",
+    "checkedAt": "2026-10-15T10:42:35.048Z",
+    "focusedTests": 125,
+    "regressionsFailedBeforeFix": 2,
+    "modelInstructionsAndSchemaAligned": true,
+    "parserAndFreeLabelsPreserved": true,
+    "gateCriteriaUnchanged": true,
+    "liveValidation": "pending_new_authorized_build"
   }
 }

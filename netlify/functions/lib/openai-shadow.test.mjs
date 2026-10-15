@@ -25,6 +25,46 @@ import webhook, {
 
 const PHONE = "+5511961957144";
 
+test("the real adapter sends the procedure versus consultation-topic contract without changing context or free procedure labels", async () => {
+  const remoteHistory = [
+    { role: "user", source: "patient", text: "A Dra. Amanda atende por teleconsulta? Moro no exterior." },
+    { role: "assistant", source: "bruna", text: "Sim, a Dra. Amanda atende por consulta online, inclusive quem está no exterior." },
+  ];
+  for (const scenario of [
+    { procedure: "unknown", expected: "unknown", text: "E qual o valor da consulta?", history: remoteHistory },
+    { procedure: "lifting_facial", expected: "lifting_facial", text: "Quanto custa a consulta online?",
+      history: [{ role: "user", source: "patient", text: "Estou pesquisando lifting facial." }, ...remoteHistory] },
+    { procedure: "lifting_facial", expected: "blefaroplastia", text: "Na verdade quero blefaroplastia, não lifting facial. Qual o valor da consulta online?", history: remoteHistory },
+    { procedure: "rinoplastia_secundaria", expected: "rinoplastia_secundaria", text: "Quanto custa a consulta online?",
+      history: [{ role: "user", source: "patient", text: "Estou pesquisando rinoplastia secundária." }, ...remoteHistory] },
+  ]) {
+    let payload;
+    const decision = validDecision({ procedure: scenario.expected, suggestedReply: "A consulta online com a Dra. Amanda custa R$ 500." });
+    decision.conversationState.activeTopic = "consulta online";
+    const result = await runOpenAIShadow({ phone: PHONE, professional: "amanda", procedure: scenario.procedure,
+      text: scenario.text, recentConversation: scenario.history, priorInteractionKnown: true }, {
+      env: { OPENAI_API_KEY: "synthetic-test-key" }, logImpl: () => {},
+      fetchImpl: async (_url, options) => { payload = JSON.parse(options.body); return Response.json(validResponse(decision)); },
+    });
+    const field = payload.text.format.schema.properties.procedure;
+    assert.equal(field.type, "string");
+    assert.equal("enum" in field, false, "other legitimate procedure labels must remain available");
+    assert.match(field.description, /não é a modalidade/i);
+    assert.match(field.description, /conversationState\.activeTopic/);
+    assert.match(field.description, /Sem procedimento confiável, use unknown/);
+    assert.match(payload.instructions, /consulta_online, teleconsulta, consulta_presencial, online e presencial não são valores de procedure/);
+    assert.match(payload.instructions, /correção explícita mais recente.*prevalece sobre procedureContext/);
+    const input = JSON.parse(payload.input);
+    assert.equal(input.procedureContext, scenario.procedure);
+    assert.equal(input.currentMessage, scenario.text);
+    assert.equal(input.recentConversation.at(-1).text, scenario.history.at(-1).text);
+    assert.equal(result.status, "completed");
+    assert.equal(result.decision.procedure, scenario.expected, "the adapter must not replace the model classification with a fallback");
+    assert.equal(result.decision.conversationState.activeTopic, "consulta online");
+    assert.match(result.decision.suggestedReply, /R\$ 500/);
+  }
+});
+
 test("inference telemetry records all initial and revised usage once, including a rejected revision", async () => {
   for (const revisionOutcome of ["accepted", "invalid", "incomplete", "http", "timeout", "network", "json"]) {
     const logs = [];
