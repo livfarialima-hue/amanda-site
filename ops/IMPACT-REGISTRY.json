@@ -748,6 +748,9 @@
     {
       "id": "patient-journey-funnel-followups",
       "ownerFiles": [
+      "apps-script/clinica-liv-leads/BusinessMilestones.gs",
+      "apps-script/clinica-liv-leads/Code.gs",
+      "apps-script/clinica-liv-leads/DataQualityRepair.gs",
         "apps-script/clinica-liv-leads/LeadClassification.gs",
         "apps-script/clinica-liv-leads/Retomadas.gs",
         "netlify/functions/lib/commercial-contact.mjs",
@@ -772,6 +775,12 @@
         "netlify/functions/ycloud-webhook.mjs"
       ],
       "coveredPaths": [
+      "apps-script/clinica-liv-leads/BusinessMilestones.gs",
+      "apps-script/clinica-liv-leads/BusinessMilestones.test.mjs",
+      "apps-script/clinica-liv-leads/Code.gs",
+      "apps-script/clinica-liv-leads/DataQualityRepair.gs",
+      "apps-script/clinica-liv-leads/DataQualityRepair.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
         "apps-script/clinica-liv-leads/CentralAtendimento.gs",
         "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
         "apps-script/clinica-liv-leads/ClassificationReconciliation.gs",
@@ -797,6 +806,7 @@
         "auditorias/bruna-retomada-manha-2026-09-26/PREFLIGHT.json",
         "auditorias/bruna-retomada-manha-2026-09-26/PUBLICACAO.json",
         "auditorias/bruna-retomada-manha-2026-09-26/RELATORIO.md",
+        "auditorias/bruna-revisao-conversas-2026-10-15/RELATORIO.md",
         "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json",
         "auditorias/reconciliacao-leads-conversas-2026-09-13/RELATORIO.md",
         "docs/estrategia-abordagem-bruna.md",
@@ -829,6 +839,8 @@
         "netlify/functions/ycloud-webhook.mjs"
       ],
       "requiredTestFiles": [
+      "apps-script/clinica-liv-leads/BusinessMilestones.test.mjs",
+      "apps-script/clinica-liv-leads/DataQualityRepair.test.mjs",
         "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
         "apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs",
         "apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs",
@@ -854,6 +866,7 @@
         "netlify/functions/lib/whatsapp-automation.test.mjs"
       ],
       "requiredCommands": [
+      "node --test apps-script/clinica-liv-leads/Code.schema.test.mjs apps-script/clinica-liv-leads/DataQualityRepair.test.mjs apps-script/clinica-liv-leads/BusinessMilestones.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
         "git diff --check",
         "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
         "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",

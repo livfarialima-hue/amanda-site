@@ -86,6 +86,31 @@ test("ignora marco Meta de fechamento explicitamente invalidado", () => {
   assert.equal(direct[15], 0);
 });
 
+test("corrigir fase e anular accepted preserva a qualificação legítima na Meta", () => {
+  const build = load("construirAgregadosFunilMetaAds_");
+  const aggregate = (phase, milestoneState) => build([
+    ["Opportunity ID", "Profissional", "Estado", "Fase", "Data do contato", "Plataforma de aquisição", "Campanha", "Criativo"],
+    ["opp_auditada", "amanda", "open", phase, new Date("2026-08-14T12:00:00Z"), "Meta Ads", "M26F01W", "C06H01"],
+  ], [
+    ["Event ID", "Opportunity ID", "Marco", "Estado"],
+    ["evt_aceite_incorreto", "opp_auditada", "accepted", milestoneState],
+  ], new Date("2026-08-15T15:00:00Z"))
+    .find((row) => row[2] === 7 && row[5] === "meta_whatsapp_direct" && row[6] === "M26F01W" && row[7] === "__TOTAL__");
+
+  const before = aggregate("Paciente convertido", "recorded");
+  const after = aggregate("Qualificado", "voided");
+  assert.equal(before[11], 1);
+  assert.equal(before[14], 1);
+  assert.equal(before[15], 1);
+  assert.equal(after[8], 1);
+  assert.equal(after[10], 1);
+  assert.equal(after[11], 1);
+  assert.equal(after[12], 0);
+  assert.equal(after[13], 0);
+  assert.equal(after[14], 0);
+  assert.equal(after[15], 0);
+});
+
 test("criativo exige código CxxHxx explícito", () => {
   const resolve = load("resolverCriativoMetaAds_");
   assert.equal(resolve("Ref. M26F01W-C06H01"), "C06H01");

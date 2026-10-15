@@ -1,5 +1,13 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+## Revisão do lote de conversas — 15/10/2026
+
+O lote de 224 conversas distintas reforça a ordem: responder a dúvida concreta, completar perguntas conjuntas e só então propor um próximo passo compatível. Preço isolado é pesquisa, não objeção nem qualificação. Intenção pessoal de tratamento pode qualificar sem pedido de data, conforme o Norte; isso não autoriza agenda, fechamento ou retomada. O classificador foi alinhado e testado localmente nessa regra, ainda sem publicação deste pacote. A revisão completa passou em 2280 testes e preservou os proprietários de preço, agenda, cuidado e contato.
+
+Para retomadas, entregar primeiro a resposta prometida; depois, quando apropriado, fazer uma única pergunta simples ligada à conversa. Não repetir preço já respondido, pedir novamente informação conhecida, pressionar quem pediu tempo ou sobrepor atendimento humano. Silêncio após uma tentativa não cria novo motivo. Revalidar contexto e preferências imediatamente antes de programar. Texto-base adaptável: “Sobre o que conversamos, ficou alguma dúvida que eu possa esclarecer para o seu planejamento? Se preferir deixar para outro momento, tudo bem.” Usar o assunto real apenas quando conhecido.
+
+Perguntas mais recorrentes: valores e pagamento, localização, agenda, imagens/resultados, atendimento on-line e recuperação. Respostas históricas da equipe são evidência de atendimento; fatos clínicos, preços conflitantes e condições individuais não viram conhecimento aprovado por frequência. Detalhes e denominadores em [revisão das conversas](../auditorias/bruna-revisao-conversas-2026-10-15/RELATORIO.md); estado e execução no Plano Executivo.
+
 ## Publicado — referência global 2026-10-15.4, 15/10/2026
 
 Publicado após aprovação explícita de Daniel para o commit `2fae17f1e0c0903a7d282d93ac7467a786a1fb58`. Netlify `6ad140400f41025d3ef0a3f7`, produção ready em 2026-10-15T21:09:42.941Z (18h09 BRT). O novo texto apresenta o valor global de planejamento e explica os componentes sem inventar preços separados ou inclusões. A ressalva de `surgical-price-policy.mjs` é importada pelo prompt, preservada na redação contextual e exigida no gate final. Faixas e fatos aprovados permanecem; orçamento individual e conflitos de composição exigem conferência humana. Não há prova de ganho de conversão.
@@ -91,7 +99,7 @@ O histórico documental integral anterior foi arquivado em área restrita. Esta 
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste conteúdo. Estratégia de aquisição e estado vivo seguem suas fontes próprias.
 
-**Versão:** 2026-10-15.4
+**Versão:** 2026-10-15.5
 
 Projeção ativa: 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF. O identificador não concede acesso; as permissões existentes são preservadas.
 

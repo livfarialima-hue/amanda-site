@@ -28,7 +28,8 @@ test("duplicate provider deliveries still reach canonical content recovery witho
     SpreadsheetApp: { openById: () => ({}) } };
   vm.runInNewContext(source, sandbox);
   Object.assign(sandbox, {
-    parseBody_: () => ({ secret: "synthetic-secret", action: "append_lead", lead: {} }),
+    parseBody_: () => ({ secret: "synthetic-secret", action: "append_lead", lead: {},
+      internalOptions: { capability: {}, historical: true, skipQueue: true } }),
     normalizeLead_: () => ({ phone: "+5511900000000", messageId: "synthetic-wamid", eventId: "synthetic-new", contactAt: new Date(), messageType: "text", text: "Lifting cervical", professional: "amanda" }),
     getOrCreateEventSheet_: () => ({}), houveAtendimentoHumanoNoDia_: () => true,
     findProcessedEvent_: () => ({ result: "inserted", routeStatus: "resolved", leadRow: 8, opportunityId: "synthetic-opp", professional: "amanda" }),
@@ -44,6 +45,34 @@ test("duplicate provider deliveries still reach canonical content recovery witho
   assert.equal(result.contentRecovered, true);
   assert.equal(result.messageEventId, "synthetic-original");
   assert.equal(result.humanTakeoverToday, true);
+});
+
+test("HTTP JSON cannot fabricate administrative capability and a missing or lost lock is rejected", () => {
+  const sandbox = { Object, json_: value => value };
+  vm.createContext(sandbox); vm.runInContext(source, sandbox);
+  sandbox.json_ = value => value;
+  const capability = vm.runInContext("ADMIN_RECONCILIATION_CAPABILITY_", sandbox);
+  for (const options of [{ capability: {}, lock: { hasLock: () => true } },
+    { capability }, { capability, lock: { hasLock: () => false } }]) {
+    assert.equal(sandbox.doPost({}, options).error, "unauthorized_internal_context");
+  }
+});
+
+test("administrative internal context retains ingest authentication and never acquires or releases the caller lock", () => {
+  let secret = "wrong";
+  let action = "append_lead";
+  const sandbox = { Object, console,
+    PropertiesService: { getScriptProperties: () => ({ getProperty: () => "synthetic-secret" }) },
+    LockService: { getScriptLock: () => assert.fail("Borrowed lock must not be requested again") },
+    SpreadsheetApp: { openById: () => assert.fail("Must fail before opening operational sheets") },
+  };
+  vm.createContext(sandbox); vm.runInContext(source, sandbox);
+  Object.assign(sandbox, { json_: value => value, parseBody_: () => ({ secret, action }) });
+  const options = { capability: vm.runInContext("ADMIN_RECONCILIATION_CAPABILITY_", sandbox),
+    lock: { hasLock: () => true, tryLock: () => assert.fail("No nested lock"), releaseLock: () => assert.fail("Caller owns release") } };
+  assert.equal(sandbox.doPost({}, options).error, "unauthorized");
+  secret = "synthetic-secret"; action = "claim_due_classifications";
+  assert.equal(sandbox.doPost({}, options).error, "invalid_administrative_action");
 });
 
 function loadCode({ schemaEnabled = true } = {}) {

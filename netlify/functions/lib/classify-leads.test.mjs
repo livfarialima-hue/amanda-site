@@ -1,6 +1,48 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { processClaimedJobs } from "../classify-leads.mjs";
+import { runLeadClassifier } from "./lead-classifier.mjs";
+
+test("personal qualification reaches the canonical writer without becoming scheduling consent", async () => {
+  const calls = [];
+  const classification = {
+    recommendedStatus: "Qualificado", confidence: "high", professional: "amanda", procedure: "lifting cervical",
+    summary: "Interesse pessoal em avaliação; recebeu as informações solicitadas.",
+    nextAction: "Aguardar retorno da pessoa.", expectedParty: "patient", commercialReason: "Em andamento",
+    evidence: "Procura pessoal de tratamento, além da mensagem de origem.",
+    appointmentOutcome: "none", procedureMilestone: "none",
+  };
+  const job = {
+    phone: "+551100000090", leaseToken: "lease-personal", opportunityId: "opp-personal",
+    professional: "amanda", currentStatus: "Novo", conversationRevision: "revision-personal",
+    patientRelationship: { found: true, relationshipState: "new_lead", hasPendingHumanTask: false },
+    messages: [
+      { direction: "IN", text: "Tenho flacidez no pescoço e procuro tratamento. Qual o valor da consulta?" },
+      { direction: "OUT", text: "A consulta custa R$ 500. A indicação é definida na avaliação.", source: "equipe_humana" },
+    ],
+  };
+  const results = await processClaimedJobs([job], {
+    classifier: input => runLeadClassifier(input, {
+      env: { OPENAI_API_KEY: "test-key" },
+      fetchImpl: async (_url, options) => {
+        const request = JSON.parse(options.body);
+        assert.match(request.instructions, /Interesse pessoal compatível pode ser qualificado sem pedido de agenda/);
+        assert.match(request.instructions, /Qualificado não é autorização de agenda/);
+        assert.doesNotMatch(request.instructions, /Só qualifique quando houver pedido prático/);
+        return new Response(JSON.stringify({ status: "completed", output_text: JSON.stringify(classification) }),
+          { status: 200, headers: { "content-type": "application/json" } });
+      },
+    }),
+    callSheets: async (action, payload) => { calls.push({ action, payload }); return { status: "completed" }; },
+    waitImpl: async () => {},
+  });
+  assert.equal(results[0].recommendedStatus, "Qualificado");
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].action, "complete_classification");
+  assert.deepEqual(calls[0].payload.classification, classification);
+  assert.equal(calls[0].payload.job.conversationRevision, job.conversationRevision);
+  assert.equal(calls[0].payload.job.opportunityId, job.opportunityId);
+});
 
 test("an unresponsive classifier releases its exact lease instead of waiting for lease expiry", { timeout: 250 }, async () => {
   const writes = [];

@@ -85,6 +85,107 @@ test("explicit request to schedule and explicit financial barriers remain distin
   assert.equal(refused.recommendedStatus, "Não qualificado");
 });
 
+test("personal treatment interest remains qualified when the same message asks about price", () => {
+  for (const text of [
+    "Tenho flacidez no pescoço e quero entender o tratamento. Qual o valor da consulta?",
+    "Minha papada me incomoda. Como funciona a avaliação?",
+    "Quero melhorar o contorno do rosto. Qual o valor do procedimento?",
+    "Minha filha tem orelhas de abano e quer avaliar a otoplastia. Qual o valor?",
+    "Procuro tratamento para minha mãe. Como funciona a avaliação?",
+  ]) {
+    const classification = validClassification({
+      summary: "Interesse pessoal em avaliação; recebeu as informações solicitadas.",
+      nextAction: "Aguardar retorno da pessoa.",
+      expectedParty: "patient",
+      evidence: "Manifestação pessoal de procura de tratamento, além da origem da conversa.",
+    });
+    const result = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages: [
+      { direction: "IN", text, messageType: "text" },
+      { direction: "OUT", text: "A consulta custa R$ 500. A indicação é definida na avaliação.", source: "equipe_humana" },
+    ], classification });
+    assert.equal(result.recommendedStatus, "Qualificado", text);
+    assert.equal(result.nextAction, classification.nextAction, text);
+    assert.equal(result.expectedParty, "patient", text);
+    assert.equal(result.appointmentOutcome, "none", text);
+    assert.equal(result.procedureMilestone, "none", text);
+  }
+});
+
+test("a concern signal does not create qualification, scheduling or closure on its own", () => {
+  const classification = validClassification({
+    recommendedStatus: "Novo", confidence: "low", expectedParty: "clinic",
+    nextAction: "Equipe deve esclarecer o contexto antes de classificar.",
+  });
+  const result = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages: [
+    { direction: "IN", text: "Minha papada me incomoda.", messageType: "text" },
+  ], classification });
+  assert.deepEqual(result, classification);
+});
+
+for (const [name, texts, expectedStatus] of [
+  ["explicit research overrides a personal appearance phrase", [
+    "Minha pele me incomoda e quero avaliar o tratamento. Qual o valor?",
+    "Qual o valor da consulta? Só estou pesquisando sobre minha pele, não procuro tratamento.",
+  ], "Novo"],
+  ["a negated beneficiary request is not treatment interest", [
+    "Minha mãe não quer melhorar nada nem fazer avaliação. Qual o valor da consulta?",
+  ], "Novo"],
+  ["declining surgery does not veto a personal request for evaluation", [
+    "Só estou pesquisando sobre minha pele, não procuro tratamento.",
+    "Não quero operar agora, mas gostaria de avaliar as possibilidades para minha pele. Qual o valor da consulta?",
+  ], "Qualificado"],
+  ["declining surgery does not veto a beneficiary request for evaluation", [
+    "Minha mãe não quer cirurgia agora, mas quer avaliar as possibilidades de tratamento. Qual o valor da consulta?",
+  ], "Qualificado"],
+]) {
+  test(name, () => {
+    const result = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages: [
+      ...texts.map(text => ({ direction: "IN", text, messageType: "text" })),
+      { direction: "OUT", text: "A consulta custa R$ 500.", source: "equipe_humana" },
+    ], classification: validClassification() });
+    assert.equal(result.recommendedStatus, expectedStatus);
+    assert.equal(result.expectedParty, "patient");
+    assert.doesNotMatch(result.nextAction, /Oferecer datas/);
+    assert.equal(result.appointmentOutcome, "none");
+    assert.equal(result.procedureMilestone, "none");
+  });
+}
+
+test("preserving personal qualification does not relax the independent scheduling guard", () => {
+  const result = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages: [
+    { direction: "IN", text: "Minha papada me incomoda. Como funciona a avaliação?" },
+    { direction: "OUT", text: "A médica avalia a região e explica as possibilidades." },
+  ], classification: validClassification() });
+  assert.equal(result.recommendedStatus, "Qualificado");
+  assert.equal(result.expectedParty, "patient");
+  assert.doesNotMatch(result.nextAction, /Oferecer datas/);
+  assert.equal(result.appointmentOutcome, "none");
+  assert.equal(result.procedureMilestone, "none");
+});
+
+test("generic treatment research and a personal-looking prefill still cannot qualify", () => {
+  for (const messages of [
+    [{ direction: "IN", text: "Como funciona o tratamento e qual o valor?" }],
+    [{ direction: "IN", text: "Qual o valor da consulta para minha mãe?" }],
+    [{ direction: "IN", text: "Minha filha perguntou quanto custa o tratamento." }],
+    [{ direction: "IN", text: "Quero avaliar o custo antes de decidir. Qual o valor da consulta?" }],
+    [{ direction: "IN", text: "Minha mãe quer avaliar o preço antes de decidir. Quanto custa a consulta?" }],
+    [
+      { direction: "IN", text: "Quero melhorar minha papada.", marketingPrefill: true },
+      { direction: "IN", text: "Qual o valor?" },
+    ],
+    [
+      { direction: "IN", text: "Minha papada", contentUnavailable: true, messageType: "image" },
+    ],
+  ]) {
+    const result = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages,
+      classification: validClassification({ expectedParty: "patient", nextAction: "Aguardar retorno" }) });
+    assert.equal(result.recommendedStatus, "Novo");
+    assert.equal(result.appointmentOutcome, "none");
+    assert.equal(result.procedureMilestone, "none");
+  }
+});
+
 const PHONE = "+5511967743374";
 
 function validClassification(overrides = {}) {

@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-10-15.4",
-  "promptVersion": "bruna-concierge-2026-10-15.4",
+  "bundleVersion": "2026-10-15.5",
+  "promptVersion": "bruna-concierge-2026-10-15.5",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-10-15.4",
+  "knowledgeSnapshot": "kb-2026-10-15.5",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -39,26 +39,26 @@
     "driveProjectionSha256": "98e54e8b4955ee26970736910b890de651519287ed144920c037cbfc5aa96cc9",
     "driveProjectionVerifiedAt": "2026-10-15T21:52:38.305Z",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
-    "status": "written_verified",
+    "status": "pending_candidate_publication",
     "sourceCommit": "a2b2c08f2f217d8b387c1373a50258e451d567ed",
-    "note": "Mesma projeção existente substituída e relida; conteúdo UTF-8 e tamanho iguais à fonte commitada. Nenhuma mudança de comportamento neste fechamento."
+    "note": "Recibo .4 preservado e integrado. A revisao .5 permanece local; o manual ativo no Drive so sera substituido apos publicacao autorizada e readback."
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
-    "changeId": "BRUNA-REFERENCIA-GLOBAL-2026-10-15",
-    "status": "published_verified",
+    "changeId": "BRUNA-REVISAO-CONVERSAS-2026-10-15",
+    "status": "tested_local",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
     "liveModelScenarioCount": 21,
-    "baselineCommit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
-    "bundleVersion": "2026-10-15.4",
-    "baselineDeployId": "6ad120701654730b8c969605",
+    "baselineCommit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
+    "bundleVersion": "2026-10-15.5",
+    "baselineDeployId": "6ad140400f41025d3ef0a3f7",
     "baselineAppsScriptVersion": 164,
-    "sourceCommit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
-    "note": "SHA exato autorizado publicado e verificado. Código .3 excluído; recibos históricos preservados. Gates obrigatórios mantidos para próximos builds; contagens desta publicação inferidas do build obrigatório concluído, sem leitura direta das linhas de log."
+    "sourceCommit": "",
+    "note": "Candidato de qualificacao e reconciliacao administrativa sobre runtime 2fae e fechamento documental 723a43ba. Interesse compativel nao autoriza agenda, contato ou pagamento. Recuperacao sem fila paga e invalidacao auditada ainda nao executadas. Exige aprovacao do SHA exato, Apps Script antes de Netlify e gates hospedados."
   }
 }

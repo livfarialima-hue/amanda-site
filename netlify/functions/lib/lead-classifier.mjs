@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { normalizeMarketingPrefillTemplateId } from "./marketing-prefill.mjs";
-import { isAutomatedBusinessReply } from "./patient-turn-context.mjs";
+import { isAutomatedBusinessReply, isPersonalAppearanceConcern } from "./patient-turn-context.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 import {
@@ -134,7 +134,7 @@ Classifique somente informações comerciais e administrativas. Não diagnostiqu
 
 Use exatamente estas definições:
 - Novo: contato inicial ou pergunta apenas sobre preço, localização ou informação genérica, sem intenção concreta de avançar.
-- Qualificado: uma manifestação pessoal posterior ao prefill demonstra intenção concreta de avançar na avaliação ou procedimento. Pedido pessoal de agenda, datas ou declaração de querer fazer uma avaliação são evidências; pergunta isolada sobre preço ou formas de pagamento não basta.
+- Qualificado: uma manifestação pessoal posterior ao prefill demonstra procura compatível de avaliação ou tratamento com a profissional. Interesse pessoal compatível pode ser qualificado sem pedido de agenda: um relato próprio ou do beneficiário identificado, ligado à procura de tratamento, é evidência além da pesquisa genérica. Pedido pessoal de agenda, datas ou declaração de querer fazer uma avaliação também são evidências; pergunta isolada sobre preço, formas de pagamento, localização ou informação genérica não basta.
 - Consulta agendada: data e horário foram confirmados.
 - Consulta realizada: há evidência explícita de que a pessoa efetivamente compareceu à consulta.
 - Paciente convertido: há evidência explícita de que fechou o procedimento.
@@ -149,7 +149,7 @@ Use professional para proteger a separação das bases:
 Uma simples menção, indicação ou encaminhamento feito por outro médico não torna a conversa external: identifique quem a pessoa realmente quer consultar. Quando external ou nonpatient estiver claro, use Não qualificado e confiança high para que o contato seja retirado das abas de leads, mas preserve evidência administrativa curta.
 
 Mensagens com marketingPrefill true foram compostas pelo anúncio ou pelo site. Elas indicam somente a origem e o tema provável; não provam que a pessoa pediu agenda, disponibilidade, avaliação ou pagamento. Só avance a classificação quando uma mensagem pessoal posterior trouxer essa intenção de forma concreta.
-Pergunta apenas de preço, pesquisa inicial, curiosidade ou comparação sem pedido prático continua como Novo. Uma recusa explícita e definitiva pode ser Não qualificado; silêncio sozinho nunca pode.
+Pergunta apenas de preço, pesquisa inicial, curiosidade ou comparação sem manifestação pessoal de procura de tratamento continua como Novo. Não apague interesse pessoal compatível porque a mesma mensagem também perguntou um valor. Relato de aparência isolado, sem contexto de procura de atendimento, não cria qualificação por si só. Declaração de estar apenas pesquisando ou de não procurar atendimento prevalece sobre menção à própria aparência; considere a manifestação mais recente e o objeto da recusa. Recusar cirurgia não é recusar uma avaliação explicitamente desejada. Uma recusa explícita e definitiva pode ser Não qualificado; silêncio sozinho nunca pode.
 patientRelationship informa o contexto operacional da pessoa, mas não congela a oportunidade atual. Use-o assim:
 - appointment_scheduled sustenta Consulta agendada quando se refere à oportunidade atual.
 - consultation_completed sustenta Consulta realizada quando se refere à oportunidade atual.
@@ -175,7 +175,7 @@ Não deduza consulta realizada ou paciente convertido apenas pela passagem do te
 summary deve ser um resumo curto, objetivo e administrativo da evolução da conversa.
 nextAction deve indicar a próxima ação comercial concreta, ou "Aguardar retorno" quando apropriado.
 expectedParty deve ser patient quando a clínica já respondeu ou fez uma pergunta e agora depende de nova manifestação da pessoa. Use clinic somente quando a clínica ainda deve uma resposta, cumprir uma promessa, revisar uma mensagem/mídia ou executar o próximo passo concreto. A direção da última mensagem, isoladamente, não decide esse campo.
-Uma oferta da clínica ("posso ver horários?") não é aceite da pessoa. "Entendi", "tá certo" ou agradecimento, depois de uma explicação, não autorizam enviar agenda nem provam interesse pessoal em consultar. Perguntar como funciona a avaliação pode ser apenas pesquisa. Só qualifique quando houver pedido prático pessoal de avanço, situado no histórico.
+Uma oferta da clínica ("posso ver horários?") não é aceite da pessoa. "Entendi", "tá certo" ou agradecimento, depois de uma explicação, não autorizam enviar agenda nem provam interesse pessoal em consultar. Perguntar como funciona a avaliação pode ser apenas pesquisa; considere se existe manifestação pessoal de procura de tratamento no histórico. Qualificado não é autorização de agenda, retomada, pagamento ou conversão no Google Ads. Preserve expectedParty patient quando a clínica já respondeu e aguarda manifestação; horários exigem pedido ou aceite próprio, e os demais efeitos mantêm seus critérios e proprietários.
 source distingue paciente, bruna, equipe_humana e autoria desconhecida. Uma saída automática não prova que a equipe conferiu agenda, examinou uma imagem, enviou documento ou concluiu tarefa. Não use uma alegação da própria Bruna como comprovação de ação humana.
 Uma confirmação automática de recebimento que informa que a equipe foi avisada não resolve a solicitação: expectedParty continua clinic, com a tarefa concreta ainda pendente. Um "obrigada, aguardo" posterior também não transfere essa tarefa à paciente. Nova manifestação humana ou cancelamento explícito pode mudar essa leitura; uma dúvida simples respondida pela Bruna não apaga outros compromissos humanos.
 contentUnavailable sinaliza mídia ou mensagem sem texto recuperável. Não invente seu conteúdo nem a trate como confirmação, ausência de resposta ou desinteresse. Quando ainda depender de leitura, a próxima ação é revisão humana do conteúdo.
@@ -364,6 +364,38 @@ export function enforcePrefillOnlyClassificationGuard({
   };
 }
 
+function explicitTreatmentIntent(messages) {
+  let hasTreatmentRequest = false;
+  let researchOnly = false;
+  for (const message of messages) {
+    if (message.contentUnavailable) continue;
+    const text = String(message.text || "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+    const hasBeneficiary = /\b(?:minha|meu)\s+(?:mae|pai|filh[oa]|espos[oa]|marido|mulher|irmao|irma|avo)\b/.test(text);
+    // Order explicit statements within each clause and across turns. A refusal
+    // of surgery is not a refusal of evaluation; only the named request is negated.
+    for (const clause of text.split(/[.!?;\n]+|\b(?:mas|porem|contudo|entretanto)\b/)) {
+      const signals = [];
+      for (const match of clause.matchAll(/\b(?:so|somente|apenas)\s+(?:(?:estou|estamos|esta|estao)\s+)?(?:pesquisando|pesquisar|comparando|comparar)\b/g)) {
+        if (!/\bnao\s+(?:(?:estou|estamos|esta|estao|quero|quer)\s+)?$/.test(clause.slice(0, match.index))) {
+          signals.push({ index: match.index, requested: false });
+        }
+      }
+      for (const match of clause.matchAll(/\b(?:(quero|queremos|pretendo|pretendemos|gostaria de|quer|pretende)\s+(ser avaliad[oa]|avaliar|tratar|melhorar|marcar|agendar|fazer (?:a |uma )?(?:avaliacao|consulta))|(?:procuro|procuramos|busco|buscamos)\s+(?:um )?tratamento)\b/g)) {
+        if (["quer", "pretende"].includes(match[1]) && !hasBeneficiary) continue;
+        // Evaluating a cost is research, not a request for clinical evaluation.
+        if (match[2] === "avaliar" && /^\s+(?:(?:melhor|primeiro)\s+)?(?:(?:o|a|os|as|um|uma)\s+)?(?:custos?|precos?|valores?|orcamentos?|investimentos?|parcelamento|formas? de pagamento|quanto custa)\b/.test(clause.slice(match.index + match[0].length))) continue;
+        const negated = /\b(?:nao|nem)\s+(?:(?:mais|mesmo|realmente|ainda|tambem)\s+)?$/.test(clause.slice(0, match.index));
+        signals.push({ index: match.index, requested: !negated });
+      }
+      for (const signal of signals.sort((a, b) => a.index - b.index)) {
+        researchOnly = !signal.requested;
+        hasTreatmentRequest = signal.requested;
+      }
+    }
+  }
+  return { hasTreatmentRequest, researchOnly };
+}
+
 // Narrow evidence gates around common classifier overreach. These gates never
 // infer a booking, payment or identity; uncertain administrative milestones stay human.
 export function enforceCommercialEvidenceGuard({ currentStatus = "Novo", messages = [], classification }) {
@@ -385,14 +417,24 @@ export function enforceCommercialEvidenceGuard({ currentStatus = "Novo", message
   }
   if (result.commercialReason === "Preço" && !financialBarrier) result.commercialReason = "Em andamento";
   const practicalIntent = /\b(?:quero|gostaria de|pretendo|vou|preciso)\s+(?:mesmo\s+)?(?:marcar|agendar|fazer (?:a|uma) (?:consulta|avalia[cç][aã]o))|\b(?:quais? (?:os )?(?:dias|hor[aá]rios|datas)|como (?:fa[cç]o para )?(?:agendar|marcar)|pode (?:ver|verificar|marcar|agendar))\b/i.test(personalText);
-  const onlyResearch = inbound.length > 0 && inbound.every(message => message.contentUnavailable ||
+  // The shared linguistic signal only prevents a mixed personal/price message
+  // from being treated as research alone. It never promotes a lead or authorizes
+  // scheduling: the semantic classification and the independent owners still decide.
+  const hasPersonalConcern = inbound.some(message => !message.contentUnavailable &&
+    isPersonalAppearanceConcern(message.text));
+  const explicitIntent = explicitTreatmentIntent(inbound);
+  const researchLikeMessages = inbound.length > 0 && inbound.every(message => message.contentUnavailable ||
     /^(?:t[aá] certo|entendi|ok|obrigad[oa]|certo|sim)[.!\s]*$/i.test(String(message.text || "")) ||
     /(?:qual|quanto|onde|como).*(?:valor|custa|pre[cç]o|fica|funciona|avalia[cç][aã]o)|avalia[cç][aã]o.*(?:saber|melhor procedimento)|^(?:voc[eê]s? |a cl[ií]nica )?(?:parcelam|parcela|tem parcelamento|aceitam cart[aã]o|aceita cart[aã]o|quais (?:as )?formas de pagamento)[?!.\s]*$/i.test(String(message.text || "")));
-  if (currentStatus === "Novo" && result.recommendedStatus === "Qualificado" && onlyResearch && !practicalIntent) {
+  const hasPersonalEvidence = !explicitIntent.researchOnly && (hasPersonalConcern || explicitIntent.hasTreatmentRequest);
+  const onlyResearch = !hasPersonalEvidence && researchLikeMessages;
+  if (currentStatus === "Novo" && result.recommendedStatus === "Qualificado" &&
+      (explicitIntent.researchOnly || (onlyResearch && !practicalIntent))) {
     result.recommendedStatus = "Novo";
     result.evidence = "Pesquisa ou ciência da informação, sem pedido pessoal de avanço confirmado.";
   }
-  if (!practicalIntent && onlyResearch && /(?:oferecer|enviar|apresentar|verificar).*(?:datas|hor[aá]rios|agenda)/i.test(result.nextAction)) {
+  if ((explicitIntent.researchOnly || (!practicalIntent && (researchLikeMessages || hasPersonalEvidence))) &&
+      /(?:oferecer|enviar|apresentar|verificar).*(?:datas|hor[aá]rios|agenda)/i.test(result.nextAction)) {
     const last = meaningful.at(-1);
     const lastText = String(last?.text || "");
     const question = last?.direction === "IN" && /\?|como|qual|quanto|onde|avalia[cç][aã]o/i.test(lastText);

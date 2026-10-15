@@ -1,0 +1,63 @@
+# Revisão das conversas importadas em 15/10/2026
+
+Estado: correções pelos proprietários publicados verificadas; candidato local de adaptação e recuperação administrativa ainda sem publicação. Nove contatos ausentes e um marco histórico permanecem nas pendências abaixo.
+
+## Cobertura e fontes
+
+228 arquivos ZIP enviados à pasta restrita de exportação em 15/10, entre 17h30 e 18h01 BRT: 224 conteúdos distintos e quatro duplicatas. O conteúdo cobre conversas de junho a outubro; upload hoje não significa atendimento hoje. Exportações originais permanecem no Drive restrito; não há transcrição, telefone, nome ou dado clínico neste repositório. Identidades e recibos individuais ficam no registro operacional e na evidência privada.
+
+LEADS, CRM, mensagens, compromissos, consultas, Central e filas foram lidos ao vivo. Revisão determinística e humana nesta conta, sem chamadas de IA paga para auditoria ou reclassificação. Mídias ocultas e conversas sem identidade exata permanecem inconclusivas.
+
+## Google Ads
+
+18 conversas do lote foram vinculadas por telefone exato a oportunidades com referência Google: 12 Novo, duas Qualificado, três Consulta agendada e uma Consulta realizada. Nenhuma alteração de fase Google recomendada. Dezessete têm click ID; cinco dos seis qualificados ou posteriores têm evento pronto, e o sexto não tem click ID. Não inventar atribuição.
+
+Fonte de importação com 12 transações únicas e exatamente um click ID cada, correspondentes aos 12 eventos ready. Cinco eventos antigos em quarentena e dois invalidados fora da importação. Ajustes sem pendências. Na conta 995-334-4486, conexão LEADS: execução de 15/10 às 05h05 BRT concluída com 12 registros importados e zero erros; próxima execução 16/10. Isso comprova processamento da conexão, não 12 novos clientes nem atribuição integral.
+
+## Correções operacionais verificadas
+
+37 oportunidades distintas receberam correção de fase e/ou metadados administrativos. Foram 17 mudanças de fase: quinze Novo→Qualificado por interesse pessoal concreto, uma Qualificado→Consulta realizada com comprovação de atendimento e uma Paciente convertido→Qualificado sem aceite de proposta comprovado. As outras vinte tiveram somente resumo, próxima ação, objeção, relacionamento, responsável ou parte aguardada corrigidos. A releitura final comparou sete campos por oportunidade em LEADS e CRM: 518 comparações, zero divergências. Os quinze novos qualificados não são de origem Google.
+
+Dois vínculos indevidos na base da Amanda foram arquivados pelo proprietário, preservando as oportunidades corretas do Daniel e a trilha. Oito compromissos antigos já atendidos foram concluídos, sem apagar pendências posteriores de áudio, cuidado ou resposta clínica. Uma consulta cancelada foi reconciliada na aba Consultas e no Calendar, com confirmação do evento cancelado e sem nova data inventada. Nenhuma dessas correções enviou mensagem à pessoa.
+
+Na leitura final, os 12 registros de IMPORT_GOOGLE_ADS continuam correspondendo exatamente aos 12 eventos ready, sem duplicidade, sem identificador extra e sem evento pronto ausente da fonte. Não houve alteração de orçamento, campanha ou lance. Recibos individuais e comparações permanecem na evidência privada desta revisão.
+
+## Aprendizados de atendimento
+
+Das 224 conversas distintas, 150 contêm texto pessoal além da entrada automática. Em categorias sobrepostas, há menções a valores/pagamento em 80, localização em 33, agenda em 26, imagens/resultados/cicatriz em 15, atendimento on-line em 12, recuperação em sete, convênio em seis e credenciais em cinco. São pistas de demanda, não taxas de conversão.
+
+A melhor resposta começa pela pergunta concreta e preserva cada parte de uma pergunta conjunta. Dúvida sobre preço não é objeção financeira sem manifestação explícita. Resposta humana antiga não autoriza copiar preço divergente, indicação clínica ou promessa de resultado. As melhorias de perguntas conjuntas, lipo de papada, teleconsulta e referência global já presentes na produção observada foram preservadas.
+
+O novo delta técnico alinha a classificação ao Norte: intenção pessoal e compatível de tratamento pode qualificar antes da escolha de data; pedido isolado de preço, localização, informação genérica, prefill ou mídia indisponível não qualifica. Qualificação não autoriza agenda, contato proativo, aceite de orçamento nem fechamento. Classificação e prontidão para agenda permanecem decisões distintas.
+
+## Estratégia de retomada
+
+Prioridade 1: entregar resposta prometida ou resolver uma pendência concreta da clínica. Não transformar dívida de atendimento em convite genérico.
+Prioridade 2: continuidade breve de pergunta respondida, se houver contexto útil, interesse atual e nenhum bloqueio. Uma pergunta simples que facilite a resposta, sem repetir valor ou presumir agenda.
+Prioridade 3: quem pediu tempo ou já recebeu tentativa sem resposta fica em espera; segunda tentativa depende de novo motivo concreto e revisão individual.
+
+Antes de programar: reler última entrada e saída, oportunidade/profissional, posse humana, preferência, cuidado, pendência, idade do contexto, número de tentativas e horário. Rótulo “elegível” da Central é apenas indicação estrutural. Nenhuma autorização de envio decorre da fase Qualificado ou da ausência de bloqueio preenchido.
+
+Foram revisados 27 casos para retomada: vinte cartões e sete conversas adicionais distintas. Uma retomada foi programada individualmente na Central, enviada pelo gatilho natural das 18h49 e entregue pelo provedor às 18h49min38s BRT, com o texto exato registrado no histórico. A fila confirma Enviada; o callback ycloud_message_updated confirma delivered para o mesmo externalId. Isso comprova entrega, sem comprovar leitura, resposta ou conversão. Não houve execução manual do processador global nem reenvio.
+
+Duas candidatas continuam sem caminho individual acionável: uma sem plano persistido e outra com plano cancelado que a aprovação pública não reativa. As outras 24 ficaram sem retomada automática por contexto: seis sob atendimento humano, quatro com resposta devida pela equipe, quatro já retomadas sem resposta, sete aberturas genéricas antigas, uma âncora desatualizada e duas já contatadas hoje. Não tratar essas categorias como novos opt-outs ou perdas definitivas. A aba técnica exibida para evidência voltou ao estado oculto original.
+
+## Validação e limites
+
+Baseline técnico observado: commit 2fae17f1e0c0903a7d282d93ac7467a786a1fb58, deploy Netlify 6ad140400f41025d3ef0a3f7, Apps Script v164 preservado. Este pacote usa worktree isolado. Publicação exige aprovação do SHA exato depois dos testes, conforme o contrato local.
+
+Passaram 2280/2280 testes integrais após integrar o fechamento documental 723a43ba, dez cenários independentes do classificador e quatorze grupos adversariais independentes da interface administrativa. Os seis hashes do núcleo administrativo e seus testes permaneceram iguais durante a integração. Build (193 arquivos), site:check (54 URLs), change:check (19 arquivos), architecture:check e diff aprovados. Os testes negativos cobrem pesquisa explícita, negação e avaliação de custo; os positivos preservam procura própria ou por beneficiário e avaliação desejada mesmo quando há recusa de cirurgia. As regressões administrativas cobrem identidade, operador, trava, limite, falha parcial, repetição aplicada, ausência de fila e exclusão de accepted voided nos consumidores Google/Meta. Não houve chamada de IA paga nesta auditoria. Gates hospedados de modelo, áudio e histórico ainda pertencem à publicação autorizada. ops:check mantém SYNC_PENDING; este estado não é encerramento de publicação.
+
+O primeiro lote administrativo atingiu seis minutos após oito correções. A releitura identificou exatamente os itens aplicados; os seguintes usaram lotes menores. Uma falha de codificação na transferência local de JSON foi identificada e corrigida na origem, com releitura dos textos pelo identificador da oportunidade. Não houve replay de webhook ou envio de paciente como teste.
+
+## Pendências com evidência específica
+
+- Nove contatos do lote ainda não têm oportunidade: oito eventos chegaram como route_pending sem texto utilizável no ledger, e uma conversa precedeu a ativação da integração. A revisão individual encontrou oito Novo e um Qualificado, todos sem atribuição Google. O candidato inclui uma interface administrativa para recuperar os oito eventos existentes por identidade exata, sob operador autenticado e responsabilidade humana. A nona conversa segue separada por não ter evento original; nenhuma identidade de provedor será fabricada. A credencial mascarada do Netlify não foi contornada. Recuperação ainda depende de publicação autorizada e revalidação viva; não foi executada neste pacote.
+- Um registro histórico accepted foi gerado a partir de uma pergunta sobre teste, sem aceite comprovado após orçamento. A fase já foi corrigida para Qualificado e relida em LEADS/CRM; o candidato inclui invalidação auditada do marco para voided, preservando histórico e os demais campos. O contador histórico continua pendente até publicar e executar essa correção específica. Não registrar procedimento realizado nem confundir orçamento aceito com conclusão clínica.
+- Duas continuidades contextualmente possíveis não têm plano individual acionável na Central. Uma está em cartão followup sem plano persistido; a outra em cartão CRM. Aprovação/cancelamento existentes exigem token de plano. Não foram inseridas linhas técnicas nem executada rotina global de e-mail para contornar essa ausência.
+
+Durante a revisão, o fechamento documental da produção .4 chegou ao remoto no commit 723a43bae79faca529e2a53cc39996df62a16107. O readback autenticado da projeção executiva confirmou o hash c0b24ef084fb469750a0302f21b034afd17fa0fa8a59d0ff61bccfbebe51cbad. Esse avanço documental foi integrado antes do candidato, preservando os recibos .2/.3 e o runtime de produção 2fae17f1; o código .3 continua excluído. O recibo .4 explicita que os totais hospedados são inferidos do build obrigatório concluído, sem leitura direta das linhas de log. A projeção ativa do manual espera publicação deste candidato .5; o painel executivo tem atualização própria no mesmo arquivo Drive.
+
+A interface administrativa local exige operador ativo correspondente à propriedade configurada, um único ScriptLock e preflight integral de no máximo dois itens; preserva também a trava documental do proprietário existente. Não há nova rota HTTP pública. Recuperação reutiliza append_lead sem enfileirar classificação paga, enviar mensagem ou liberar retomada. Recibo applied repetido é sem efeito; interrupção em prepared/needs_review exige conferência e reparo manual, sem retomada automática de escrita parcial. Publicação deve ocorrer primeiro no deployment canônico Apps Script e depois no Netlify, somente após autorização do commit exato e os gates de cada destino.
+
+Não há evidência de aumento de conversão. Medir, na mesma coorte e janela: respostas úteis, consultas confirmadas e realizadas, correções humanas, repetição e recusas. Revisar integridade no primeiro ciclo e em 48h; desempenho após sete dias com maturação e denominadores explícitos.

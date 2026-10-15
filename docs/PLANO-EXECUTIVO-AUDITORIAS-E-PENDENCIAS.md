@@ -1,5 +1,15 @@
 # Plano executivo — auditorias, pendências e prazos
 
+## Correções verificadas e candidato local — conversas importadas em 15/10/2026
+
+Lote de 228 ZIPs, 224 conteúdos distintos, comparado às fontes operacionais vivas. Corrigidas 37 oportunidades: quinze novas qualificações sem origem Google, uma consulta comprovadamente realizada, uma reversão de convertido sem aceite e vinte correções somente administrativas. Releitura de 518 campos LEADS/CRM sem divergência. Dois vínculos no profissional errado arquivados preservando o profissional correto; oito compromissos antigos atendidos concluídos; um cancelamento reconciliado em Consultas/Calendar.
+
+As 18 conversas Google mantêm fases adequadas; os 12 eventos ready correspondem exatamente às 12 transações da fonte. Conexão LEADS: 12 importados e zero erros em 15/10 às 05h05 BRT. De 27 casos de retomada revisados, uma mensagem contextual foi entregue às 18h49min38s BRT; duas candidatas carecem de plano individual acionável e 24 não comportavam envio automático naquele contexto. Respostas prometidas e atendimento humano têm precedência; entrega não comprova conversão.
+
+Delta técnico isolado sobre runtime 2fae17f1 e fechamento documental 723a43ba: qualificação por interesse pessoal sem exigir agenda, recuperação administrativa de oito eventos route_pending e invalidação auditada de um accepted indevido. Nove contatos continuam sem oportunidade: oito recuperáveis após publicar/revalidar e um sem evento original, fora deste contrato. O marco indevido aguarda a nova operação; sua fase já foi corrigida. Nenhum click ID ou identidade de provedor fabricado. A propriedade de operador não foi configurada nesta tarefa; execução bloqueada até publicação autorizada e preflight.
+
+2280/2280 testes locais, revisões independentes, build/site, escopo de 19 arquivos e arquitetura aprovados. Candidato pronto para revisão; publicação depende de autorização do SHA exato, Apps Script canônico primeiro e Netlify depois. Responsável Daniel/equipe; conferir primeira classificação natural e integridade em 48h após publicação, conversão em D+7 sem atribuir causalidade com amostra pequena. [Relatório e limites](../auditorias/bruna-revisao-conversas-2026-10-15/RELATORIO.md). Este painel é a fonte da projeção no mesmo arquivo Drive, cuja igualdade será registrada no recibo privado da tarefa após o commit; o manual ativo permanece na versão publicada até a aprovação e verificação da nova versão. O pacote continua SYNC_PENDING.
+
 ## Publicado — referência global, 15/10/2026
 
 Daniel aprovou explicitamente `2fae17f1e0c0903a7d282d93ac7467a786a1fb58`; o pacote `2026-10-15.4` foi publicado pelo Git/Netlify em `6ad140400f41025d3ef0a3f7`, ready em 2026-10-15T21:09:42.941Z (18h09 BRT). Baseline/rollback por novo commit/build restrito: `6c9cb7ee0129260dd0f9394b1d74c0bd49a05228`, deploy `6ad120701654730b8c969605` (`.2`), preservando dados, filas, flags e Apps Script, sem replay. Código e números correspondem ao commit aprovado; nenhuma alteração funcional integra este fechamento documental. Validação, evidência e limites em `auditorias/bruna-referencia-global-2026-10-15/PUBLICACAO.json`.

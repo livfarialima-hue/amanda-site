@@ -2,11 +2,202 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import vm from "node:vm";
+import { createHash } from "node:crypto";
 
 const source = readFileSync(
   new URL("./DataQualityRepair.gs", import.meta.url),
   "utf8",
 );
+
+function administrativeFixture() {
+  const writes = [];
+  const sheets = new Map();
+  let held = false;
+  let acquisitions = 0;
+  let releases = 0;
+  const lock = { tryLock() { acquisitions += 1; assert.equal(held, false); held = true; return true; },
+    hasLock: () => held, releaseLock() { assert.equal(held, true); held = false; releases += 1; } };
+  function sheet(name, initial = []) {
+    const rows = initial;
+    const result = { rows, getLastRow: () => rows.length, getLastColumn: () => rows[0]?.length || 0,
+      getRange(row, column, height = 1, width = 1) {
+        const range = { getValues: () => Array.from({ length: height }, (_, y) =>
+          Array.from({ length: width }, (_, x) => rows[row - 1 + y]?.[column - 1 + x] ?? "")),
+          getDisplayValues() { return this.getValues().map(line => line.map(value => String(value))); },
+          getDisplayValue() { return this.getDisplayValues()[0][0]; },
+          setValues(values) { writes.push({ name, row, column }); values.forEach((line, y) => line.forEach((value, x) => {
+            rows[row - 1 + y] ||= []; rows[row - 1 + y][column - 1 + x] = value;
+          })); return this; },
+          setValue(value) { return this.setValues([[value]]); },
+          createTextFinder(value) { return { matchEntireCell() { return this; }, findNext() {
+            for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+              if (String(rows[row - 1 + y]?.[column - 1 + x] || "") === value) return { getRow: () => row + y };
+            } return null;
+          } }; } };
+        return range;
+      },
+      appendRow(row) { writes.push({ name, append: true }); rows.push([...row]); },
+    };
+    sheets.set(name, result); return result;
+  }
+  const spreadsheet = { getSheetByName: name => sheets.get(name) || null };
+  const properties = new Map([["ADMIN_RECONCILIATION_OPERATOR_EMAIL", "operator@example.test"], ["LEADS_INGEST_SECRET", "synthetic-secret"]]);
+  const sandbox = { console: { log() {}, error() {} }, Date, JSON, Math, Number, Object, Array, String, Set,
+    LockService: { getScriptLock: () => lock },
+    Session: { getActiveUser: () => ({ getEmail: () => "operator@example.test" }) },
+    PropertiesService: { getScriptProperties: () => ({ getProperty: key => properties.get(key) || "" }) },
+    SpreadsheetApp: { openById: () => spreadsheet, flush() {} },
+    Utilities: { DigestAlgorithm: { SHA_256: "SHA256" }, Charset: { UTF_8: "UTF8" },
+      computeDigest: (_algorithm, value) => [...createHash("sha256").update(value).digest()].map(n => n > 127 ? n - 256 : n),
+      formatDate: date => date.toISOString(), },
+    UrlFetchApp: { fetch() { assert.fail("Administrative reconciliation must never call a network provider"); } },
+  };
+  const code = readFileSync(new URL("./Code.gs", import.meta.url), "utf8");
+  const messages = readFileSync(new URL("./LeadClassification.gs", import.meta.url), "utf8");
+  const milestones = readFileSync(new URL("./BusinessMilestones.gs", import.meta.url), "utf8");
+  vm.createContext(sandbox);
+  vm.runInContext(`${code}\n${messages}\n${source}\n${milestones}\nconst OPPORTUNITY_STORE_CONFIG={sheetName:'_CRM_OPORTUNIDADES'};const OPPORTUNITY_HEADERS=Array(26).fill('');`, sandbox);
+  Object.assign(sandbox, {
+    json_: value => ({ getContent: () => JSON.stringify(value) }),
+    normalizePhone_: value => String(value || "").replace(/\D/g, ""),
+    normalizeLead_: input => ({ ...input, phone: String(input.phone).replace(/\D/g, ""), contactAt: new Date(input.contactAt) }),
+    resolverRotaLeadComContexto_: () => ({ professional: "amanda", sheetName: "Google Ads - Conversões", routeStatus: "resolved" }),
+    resolverLinhaLeadCanonica_: () => ({ ok: false, reason: "lead_not_found" }),
+    resolucaoLeadBloqueiaInsercao_: () => false,
+    getOrCreateEventSheet_: () => sheets.get("_WHATSAPP_EVENTOS"),
+    assertHeaders_() {}, houveAtendimentoHumanoNoDia_: () => false,
+    findFirstAvailableRow_: target => target.getLastRow() + 1,
+    writeRoutedLead_(target, row, lead) { target.getRange(row, 1, 1, 5).setValues([[lead.contactAt, "", lead.phone, "", "Novo"]]); },
+    garantirOportunidadeLead_(_spreadsheet, lead, target, row) {
+      const id = "opp_v2_amanda_12345678";
+      const values = [id, lead.phone, "", "amanda", "Google Ads - Conversões", row, "open", "Novo", "new_lead", "bruna", "patient", "", "", ""];
+      sheets.get("_CRM_OPORTUNIDADES").appendRow(values);
+      return { opportunityId: id };
+    },
+    aplicarCorrecoesClassificacaoAuditadas_(input) {
+      assert.equal(input.apply, true); const c = input.corrections[0];
+      assert.equal(c.expectedStage, "Novo"); assert.equal(c.owner, "human_team");
+      const target = sheets.get("_CRM_OPORTUNIDADES");
+      target.getRange(2, 8, 1, 7).setValues([[c.stage, c.relationship, c.owner, c.expectedParty, "", c.summary, c.nextAction]]);
+      return { ok: true };
+    },
+    getOrCreateLeadAuxiliarySheet_: (_spreadsheet, name, headers) => sheets.get(name) || sheet(name, [[...headers]]),
+    findMessageRowInSheet_: (target, id) => { const index = target.rows.findIndex(row => row[3] === id); return index >= 1 ? index + 1 : null; },
+    recordLeadMessageAndQueue_() { assert.fail("Historical recovery must never create or reopen classification queue"); },
+  });
+  const at = "2026-10-01T12:00:05.000Z";
+  const lead = { phone: "5511900000000", messageId: "original-provider-message", eventId: "original-event", contactAt: at,
+    professional: "amanda", messageType: "text", text: "Tenho interesse na avaliação online.", platform: "Meta", reference: "M26C01W-C07H01" };
+  sheet("Google Ads - Conversões", [Array(25).fill("")]);
+  sheet("Leads Dr. Daniel", [Array(25).fill("")]);
+  sheet("_CRM_OPORTUNIDADES", [Array(26).fill("")]);
+  sheet("_WHATSAPP_EVENTOS", [Array(9).fill(""), [lead.messageId, lead.eventId, lead.phone, at, "", "route_pending", "", "unknown", "pending"]]);
+  sheet("_WHATSAPP_MENSAGENS", [Array(14).fill(""), [lead.phone, "IN", new Date(at), lead.messageId, lead.eventId, "", "", "", "unknown", "", "patient", "", "unsupported", ""],
+    [lead.phone, "IN", new Date("2026-10-01T12:01:00Z"), "later-audio", "later-event", "", "", "", "unknown", "", "patient", "", "audio", ""]]);
+  const payload = { lead, review: { stage: "Qualificado", owner: "human_team", expectedParty: "clinic", relationship: "engaged_lead",
+    summary: "Revisão humana: pedido pessoal de avaliação online; áudio pendente.", nextAction: "Equipe deve revisar o áudio antes de contato.",
+    sourceRef: `drive:synthetic_source_id#sha256:${"a".repeat(64)}` } };
+  const input = sheet("_AUDITORIA_RECONCILIACAO", [["Request ID", "Ação", "Payload JSON"], [`admin_${"1".repeat(32)}`, "recover_route", JSON.stringify(payload)]]);
+  function seal() {
+    const preview = sandbox.simularReconciliacaoAdministrativaDaAba();
+    payload.expectedStateHash = preview.items[0].stateHash;
+    input.rows[1][2] = JSON.stringify(payload); return preview;
+  }
+  return { sandbox, sheets, spreadsheet, sheet, writes, properties, input, payload, seal,
+    stats: () => ({ held, acquisitions, releases }) };
+}
+
+test("administrative recovery uses original unbound message, manual owner and one lock without queue or replay", () => {
+  const f = administrativeFixture();
+  const unrelated = JSON.stringify(f.sheets.get("_WHATSAPP_MENSAGENS").rows[2]);
+  f.seal(); assert.equal(f.writes.length, 0);
+  const result = f.sandbox.aplicarReconciliacaoAdministrativaDaAba();
+  assert.equal(result.changed, 1);
+  assert.equal(f.sheets.get("_CRM_OPORTUNIDADES").rows[1][9], "human_team");
+  assert.equal(f.sheets.get("_WHATSAPP_MENSAGENS").rows[1][4], "original-event");
+  assert.equal(JSON.stringify(f.sheets.get("_WHATSAPP_MENSAGENS").rows[2]), unrelated);
+  assert.equal(f.sheets.has("_WHATSAPP_CLASSIFICACAO"), false);
+  assert.deepEqual(f.stats(), { held: false, acquisitions: 2, releases: 2 });
+  const count = f.writes.length;
+  const repeated = f.sandbox.aplicarReconciliacaoAdministrativaDaAba();
+  assert.equal(repeated.alreadyApplied, 1); assert.equal(f.writes.length, count);
+  const receipts = JSON.stringify(f.sheets.get("_AUDITORIA_RECONCILIACAO_RECIBOS").rows);
+  for (const sensitive of [f.payload.lead.phone, f.payload.lead.text, f.payload.review.summary, "synthetic-secret", "operator@example.test"]) {
+    assert.equal(receipts.includes(sensitive), false);
+  }
+});
+
+test("administrative authentication and hard batch limit fail before every write", () => {
+  for (const mode of ["unknown", "blank", "unconfigured", "three"]) {
+    const f = administrativeFixture();
+    if (mode === "unknown") f.sandbox.Session.getActiveUser = () => ({ getEmail: () => "other@example.test" });
+    if (mode === "blank") f.sandbox.Session.getActiveUser = () => ({ getEmail: () => "" });
+    if (mode === "unconfigured") f.properties.delete("ADMIN_RECONCILIATION_OPERATOR_EMAIL");
+    if (mode === "three") f.input.rows.push([...f.input.rows[1]], [...f.input.rows[1]]);
+    assert.throws(() => f.sandbox.aplicarReconciliacaoAdministrativaDaAba(), /administrative_(operator_unauthorized|input_count_invalid)/);
+    assert.equal(f.writes.length, 0);
+  }
+});
+
+test("administrative full preflight rejects conflicts and a bad second item without writing the first", () => {
+  for (const mode of ["wrongPhone", "crossedIds", "missingEvent", "changedHistory", "boundMessage", "content", "daniel", "wrongProfessional", "unresolvedRoute", "secondBad", "existingQueue", "existingOpportunity", "existingLead"]) {
+    const f = administrativeFixture(); f.seal();
+    const event = f.sheets.get("_WHATSAPP_EVENTOS").rows[1];
+    if (mode === "wrongPhone") event[2] = "5511900000001";
+    if (mode === "wrongProfessional") event[7] = "daniel";
+    if (mode === "unresolvedRoute") f.sandbox.resolverRotaLeadComContexto_ = () => ({ professional: "amanda", sheetName: "Google Ads - Conversões", routeStatus: "pending" });
+    if (mode === "crossedIds") f.sheets.get("_WHATSAPP_EVENTOS").rows.push(["other-message", event[1], ...event.slice(2)]);
+    if (mode === "missingEvent") f.sheets.get("_WHATSAPP_EVENTOS").rows.pop();
+    if (mode === "changedHistory") f.sheets.get("_WHATSAPP_MENSAGENS").rows[2][5] = "new information";
+    if (mode === "boundMessage") f.sheets.get("_WHATSAPP_MENSAGENS").rows[1][7] = "other-opportunity";
+    if (mode === "content") f.sheets.get("_WHATSAPP_MENSAGENS").rows[1][5] = "valid existing text";
+    if (mode === "daniel") { f.payload.lead.professional = "daniel"; f.input.rows[1][2] = JSON.stringify(f.payload); }
+    if (mode === "secondBad") f.input.rows.push([`admin_${"2".repeat(32)}`, "void_accepted", JSON.stringify({})]);
+    if (mode === "existingQueue") f.sheet("_WHATSAPP_CLASSIFICACAO", [["Telefone"], [f.payload.lead.phone]]);
+    if (mode === "existingOpportunity") f.sheets.get("_CRM_OPORTUNIDADES").rows.push(["existing", f.payload.lead.phone]);
+    if (mode === "existingLead") f.sheets.get("Google Ads - Conversões").rows.push(["", "", f.payload.lead.phone]);
+    assert.throws(() => f.sandbox.aplicarReconciliacaoAdministrativaDaAba(), /administrative_/);
+    assert.equal(f.writes.length, 0, mode);
+  }
+});
+
+test("administrative milestone batch preserves qualified phase and repeats only its completed receipt", () => {
+  const f = administrativeFixture();
+  const opportunityId = "opp_v2_amanda_87654321";
+  f.sheets.get("_CRM_OPORTUNIDADES").rows.push([opportunityId, "5511900000001", "", "amanda", "", "", "open", "Qualificado"]);
+  const original = ["accepted-original", opportunityId, "accepted", new Date("2026-10-01T12:00:00Z"), "whatsapp_classifier", "high", "recorded", new Date("2026-10-01T12:01:00Z")];
+  const milestone = f.sheet("_OPORTUNIDADE_MARCOS", [["Event ID", "Opportunity ID", "Marco", "Data e hora", "Origem", "Confiança", "Estado", "Criado em"], [...original]]);
+  const payload = { eventId: original[0], opportunityId, expectedMilestone: "accepted", expectedState: "recorded", reasonCode: "no_concrete_proposal_acceptance" };
+  f.input.rows[1][1] = "void_accepted"; f.input.rows[1][2] = JSON.stringify(payload);
+  payload.expectedStateHash = f.sandbox.simularReconciliacaoAdministrativaDaAba().items[0].stateHash;
+  f.input.rows[1][2] = JSON.stringify(payload);
+  assert.equal(f.writes.length, 0);
+  assert.equal(f.sandbox.aplicarReconciliacaoAdministrativaDaAba().changed, 1);
+  const expected = [...original]; expected[6] = "voided";
+  assert.deepEqual(milestone.rows[1], expected);
+  assert.equal(f.sheets.get("_CRM_OPORTUNIDADES").rows[1][7], "Qualificado");
+  const receipts = f.sheets.get("_AUDITORIA_RECONCILIACAO_RECIBOS").rows;
+  assert.deepEqual(receipts.slice(1).map(row => row[3]), ["prepared", "milestone_voided", "applied"]);
+  assert.equal(receipts[2][8], "no_concrete_proposal_acceptance");
+  const count = f.writes.length;
+  assert.equal(f.sandbox.aplicarReconciliacaoAdministrativaDaAba().alreadyApplied, 1);
+  assert.equal(f.writes.length, count);
+  payload.expectedStateHash = "different"; f.input.rows[1][2] = JSON.stringify(payload);
+  assert.throws(() => f.sandbox.aplicarReconciliacaoAdministrativaDaAba(), /request_payload_conflict/);
+  assert.equal(f.writes.length, count);
+});
+
+test("administrative interrupted recovery leaves a durable review block and never duplicates on retry", () => {
+  const f = administrativeFixture(); f.seal();
+  f.sandbox.aplicarMetadadosRecuperacaoAdministrativa_ = () => { throw new Error("synthetic interruption"); };
+  assert.throws(() => f.sandbox.aplicarReconciliacaoAdministrativaDaAba(), /partial_requires_review/);
+  assert.equal(f.sheets.get("_CRM_OPORTUNIDADES").rows.length, 2);
+  const count = f.writes.length;
+  assert.throws(() => f.sandbox.aplicarReconciliacaoAdministrativaDaAba(), /partial_requires_review/);
+  assert.equal(f.writes.length, count);
+  assert.equal(f.sheets.has("_WHATSAPP_CLASSIFICACAO"), false);
+  assert.equal(f.stats().held, false);
+});
 
 function load() {
   const sandbox = {

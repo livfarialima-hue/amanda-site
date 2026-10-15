@@ -1,5 +1,17 @@
 # Arquitetura da jornada da paciente
 
+## Candidato 2026-10-15.5 — classificação e reconciliação administrativa auditada
+
+Ainda local, sem autorização de publicação. `lead-classifier.mjs` preserva qualificação por interesse pessoal compatível sob o Norte, com vetos próprios para pesquisa financeira e negação de tratamento. Qualificação não cria agenda, aceite, pagamento ou permissão de contato.
+
+`DataQualityRepair.gs` é proprietário da entrada administrativa autenticada por operador ativo e propriedade permitida, do limite rígido de duas ações, do preflight integral e dos recibos sem conteúdo de paciente. A entrada não é ação HTTP. O adaptador `Code.gs` aceita somente uma capacidade por identidade de objeto interno e o ScriptLock já adquirido pelo proprietário; não adquire nem libera a trava emprestada. Recupera apenas o par exato de evento/mensagem `route_pending`, com oportunidade ausente, e importa metadados humanos auditados para Amanda. `LeadClassification.gs` continua proprietário de `recordLeadMessageOnly_` e da classificação; a ponte usa somente o registro original sem fila paga. A correção de fase e metadados delega ao proprietário existente, com `human_team` obrigatório. Não há replay, envio, novos gatilhos, retomada ou vínculo de outras mensagens por proximidade.
+
+`BusinessMilestones.gs` é proprietário da invalidação estrita de `accepted`: exige evento, oportunidade, tipo, estado anterior e hash exatos; conserva todas as colunas, exceto Estado→`voided`, e registra a transição pelo ledger administrativo. Google/Meta já excluem `voided` ao contar fechamento; a fase atual e a qualificação permanecem dimensões separadas. Os consumidores não ganham novas regras concorrentes.
+
+A trava protege o lote de código, não cria transação entre abas nem bloqueia edição manual. O recibo `prepared` é persistido antes dos efeitos; `applied` torna a repetição do mesmo pedido/hash idempotente. Interrupção com `prepared`/`needs_review` bloqueia e exige conferência manual, sem recomposição automática de estado parcial ou exclusão da trilha. O contato sem evento original não é admitido pela capacidade. A propriedade de operador e a versão publicada serão conferidas no preflight do SHA aprovado; Apps Script precede Netlify e o pacote mantém `SYNC_PENDING` até os recibos externos.
+
+Contrato e regressão: `patient-journey-funnel-followups` em `ops/IMPACT-REGISTRY.json`, com testes do adaptador, do proprietário administrativo, do marco e dos consumidores Google/Meta. Procedimento operacional: README canônico do Apps Script.
+
 ## Publicado 2026-10-15.4 — referência global e composição transparente
 
 Publicado em `2fae17f1e0c0903a7d282d93ac7467a786a1fb58`, Netlify `6ad140400f41025d3ef0a3f7`, 2026-10-15T21:09:42.941Z. `surgical-price-policy.mjs` é o único proprietário da ressalva de valor global; `surgical-price-review.mjs` a compõe e `conversation-guidelines.mjs` a importa literalmente. `semantic-reply-policy.mjs` impede que uma redação contextual troque a ressalva atual pela histórica sem composição. `outbound-reply-gate.mjs` exige a composição atual também fora desse seletor, inclusive em perguntas conjuntas. A versão antiga continua reconhecida para históricos/revisões atrasadas, sem autorizar omissão no novo envio. Os dois cenários de preço do gate hospedado exigem a ressalva global, sem novas chamadas. Valores e permissão por procedimento, uso único, negociação, revisão humana, agenda, efeitos e Apps Script não mudam.

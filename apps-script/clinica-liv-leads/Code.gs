@@ -250,8 +250,20 @@ function doGet(e) {
   });
 }
 
-function doPost(e) {
-  const lock = LockService.getScriptLock();
+// Object identity is intentionally unavailable to HTTP/JSON callers. Only the
+// authenticated editor bridge may lend its already-held lock to append_lead.
+const ADMIN_RECONCILIATION_CAPABILITY_ = Object.freeze({});
+
+function doPost(e, internalOptions) {
+  const administrativeRecovery = Boolean(internalOptions &&
+    internalOptions.capability === ADMIN_RECONCILIATION_CAPABILITY_ &&
+    internalOptions.lock && internalOptions.lock.hasLock());
+  if (internalOptions && !administrativeRecovery) {
+    return json_({ ok: false, error: "unauthorized_internal_context" });
+  }
+  const lock = administrativeRecovery
+    ? internalOptions.lock
+    : LockService.getScriptLock();
   let stage = "parse_body";
 
   try {
@@ -262,6 +274,9 @@ function doPost(e) {
 
     if (!expectedSecret || body.secret !== expectedSecret) {
       return json_({ ok: false, error: "unauthorized" });
+    }
+    if (administrativeRecovery && body.action !== "append_lead") {
+      return json_({ ok: false, error: "invalid_administrative_action" });
     }
 
     if (
@@ -732,6 +747,15 @@ function doPost(e) {
     const spreadsheet = SpreadsheetApp.openById(
       CONFIG.spreadsheetId,
     );
+    if (administrativeRecovery) {
+      // Repeat the complete preflight under the caller's single lock before
+      // getOrCreate helpers, routing recovery or any patient-sheet write.
+      validarRecuperacaoRotaAdministrativa_(spreadsheet, internalOptions.item);
+      if (hashReconciliacaoAdministrativa_(body.lead) !==
+          hashReconciliacaoAdministrativa_(internalOptions.item.payload.lead)) {
+        throw new Error("administrative_lead_payload_mismatch");
+      }
+    }
     const route = typeof resolverRotaLeadComContexto_ === "function"
       ? resolverRotaLeadComContexto_(spreadsheet, lead)
       : typeof resolverRotaLead_ === "function"
@@ -767,7 +791,7 @@ function doPost(e) {
 
     stage = "acquire_lock";
 
-    if (!lock.tryLock(5000)) {
+    if (!administrativeRecovery && !lock.tryLock(5000)) {
       return json_({ ok: false, error: "busy_retry" });
     }
 
@@ -855,6 +879,10 @@ function doPost(e) {
       );
       lead.opportunityId = recoveredOpportunity.opportunityId;
       lead.leadSheetName = route.sheetName;
+      if (administrativeRecovery) {
+        aplicarMetadadosRecuperacaoAdministrativa_(spreadsheet, lead,
+          internalOptions.item.payload.review);
+      }
       resolvePendingProcessedEvent_(
         eventSheet,
         processedEvent.eventRow,
@@ -863,12 +891,17 @@ function doPost(e) {
         route.professional,
         route.routeStatus,
       );
-      const recoveredMessage = recordLeadMessageAndQueue_(
+      const recoveredMessage = (administrativeRecovery
+        ? recordLeadMessageOnly_
+        : recordLeadMessageAndQueue_)(
         spreadsheet,
         recoveredLeadRow,
         lead,
         "IN",
       );
+      if (administrativeRecovery && !recoveredMessage) {
+        throw new Error("administrative_content_recovery_failed");
+      }
 
       return json_({
         ok: true,
@@ -889,6 +922,12 @@ function doPost(e) {
         professional: route.professional,
         routeStatus: route.routeStatus,
       });
+    }
+
+    // The administrative capability never creates an ordinary incoming event,
+    // falls through to a duplicate queue or replays a provider delivery.
+    if (administrativeRecovery) {
+      return json_({ ok: false, error: "administrative_route_precondition_changed" });
     }
 
     if (processedEvent) {
@@ -1172,7 +1211,9 @@ function doPost(e) {
       routeStatus: route.routeStatus,
     });
   } catch (error) {
-    console.error(error && error.stack ? error.stack : error);
+    if (!administrativeRecovery) {
+      console.error(error && error.stack ? error.stack : error);
+    }
 
     const allowedStages = new Set([
       "parse_body",
@@ -1234,7 +1275,7 @@ function doPost(e) {
       error: `internal_error_${safeStage}`,
     });
   } finally {
-    if (lock.hasLock()) {
+    if (!administrativeRecovery && lock.hasLock()) {
       lock.releaseLock();
     }
   }

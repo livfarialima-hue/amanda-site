@@ -69,6 +69,31 @@ test("ignora marco de fechamento explicitamente invalidado", () => {
   assert.equal(total7[13], 0);
 });
 
+test("corrigir fase e anular accepted preserva a qualificação legítima no Google", () => {
+  const build = load("construirAgregadosFunilGoogleAds_");
+  const aggregate = (phase, milestoneState) => build([
+    ["Opportunity ID", "Profissional", "Estado", "Fase", "Data do contato", "Plataforma de aquisição", "Campanha"],
+    ["opp_auditada", "amanda", "open", phase, new Date("2026-08-14T12:00:00Z"), "Google", "G26BLEF"],
+  ], [
+    ["Event ID", "Opportunity ID", "Marco", "Estado"],
+    ["evt_aceite_incorreto", "opp_auditada", "accepted", milestoneState],
+  ], new Date("2026-08-15T15:00:00Z"))
+    .find((row) => row[2] === 7 && row[5] === "__TOTAL__");
+
+  const before = aggregate("Paciente convertido", "recorded");
+  const after = aggregate("Qualificado", "voided");
+  assert.equal(before[9], 1);
+  assert.equal(before[12], 1);
+  assert.equal(before[13], 1);
+  assert.equal(after[6], 1);
+  assert.equal(after[8], 1);
+  assert.equal(after[9], 1);
+  assert.equal(after[10], 0);
+  assert.equal(after[11], 0);
+  assert.equal(after[12], 0);
+  assert.equal(after[13], 0);
+});
+
 test("alias legado documentado é resolvido sem ser contado como código canônico", () => {
   const resolve = load("resolverAtribuicaoCampanhaGoogleAds_");
   assert.deepEqual(

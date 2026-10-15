@@ -2221,6 +2221,303 @@ function aplicarCorrecoesClassificacaoAuditadas_(input) {
 }
 
 const CLASSIFICATION_AUDIT_INPUT_SHEET = "_AUDITORIA_CLASSIFICACAO";
+
+// Deliberately not an HTTP action. This editor-only bridge accepts reviewed
+// input, never provider replay, and uses one ScriptLock for the small batch.
+// Existing canonical owners retain their own document lock when available.
+const ADMIN_RECONCILIATION_INPUT_SHEET = "_AUDITORIA_RECONCILIACAO";
+const ADMIN_RECONCILIATION_OPERATOR_PROPERTY = "ADMIN_RECONCILIATION_OPERATOR_EMAIL";
+const ADMIN_RECONCILIATION_HEADERS = Object.freeze(["Request ID", "Ação", "Payload JSON"]);
+const ADMIN_RECONCILIATION_RECEIPT_SHEET = "_AUDITORIA_RECONCILIACAO_RECIBOS";
+const ADMIN_RECONCILIATION_RECEIPT_HEADERS = Object.freeze([
+  "Request ID", "Ação", "Payload SHA-256", "Estado", "Event SHA-256",
+  "Opportunity SHA-256", "Estado anterior", "Estado posterior", "Motivo",
+  "Operador SHA-256", "Registrado em",
+]);
+
+function hashReconciliacaoAdministrativa_(value) {
+  return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,
+    JSON.stringify(value), Utilities.Charset.UTF_8).map(function hex(byte) {
+      return (byte + 256).toString(16).slice(-2);
+    }).join("");
+}
+
+function operadorReconciliacaoAdministrativa_() {
+  const active = String(Session.getActiveUser().getEmail() || "").trim().toLowerCase();
+  const permitted = String(PropertiesService.getScriptProperties()
+    .getProperty(ADMIN_RECONCILIATION_OPERATOR_PROPERTY) || "").trim().toLowerCase();
+  if (!active || !permitted || active !== permitted) {
+    throw new Error("administrative_operator_unauthorized");
+  }
+  return hashReconciliacaoAdministrativa_(active);
+}
+
+function linhasReconciliacaoAdministrativa_(spreadsheet, name, columns) {
+  const sheet = spreadsheet.getSheetByName(name);
+  return sheet && sheet.getLastRow() >= 2
+    ? sheet.getRange(2, 1, sheet.getLastRow() - 1, columns).getValues() : [];
+}
+
+function lerEntradaReconciliacaoAdministrativa_(spreadsheet) {
+  const sheet = spreadsheet.getSheetByName(ADMIN_RECONCILIATION_INPUT_SHEET);
+  if (!sheet || sheet.getLastRow() < 2 || sheet.getLastRow() > 3) {
+    throw new Error("administrative_input_count_invalid");
+  }
+  const headers = sheet.getRange(1, 1, 1, 3).getDisplayValues()[0];
+  if (JSON.stringify(headers) !== JSON.stringify(ADMIN_RECONCILIATION_HEADERS)) {
+    throw new Error("administrative_input_headers_invalid");
+  }
+  const ids = {};
+  return sheet.getRange(2, 1, sheet.getLastRow() - 1, 3).getValues().map(function parse(row) {
+    const requestId = String(row[0] || "");
+    const action = String(row[1] || "");
+    if (!/^admin_[a-f0-9]{32}$/.test(requestId) || ids[requestId] ||
+        ["recover_route", "void_accepted"].indexOf(action) < 0) {
+      throw new Error("administrative_input_identity_invalid");
+    }
+    ids[requestId] = true;
+    let payload;
+    try { payload = JSON.parse(String(row[2] || "")); }
+    catch (_) { throw new Error("administrative_input_json_invalid"); }
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+      throw new Error("administrative_input_payload_invalid");
+    }
+    return { requestId, action, payload,
+      payloadHash: hashReconciliacaoAdministrativa_({ action, payload }) };
+  });
+}
+
+function reciboReconciliacaoAdministrativa_(spreadsheet, item) {
+  const rows = linhasReconciliacaoAdministrativa_(spreadsheet,
+    ADMIN_RECONCILIATION_RECEIPT_SHEET, ADMIN_RECONCILIATION_RECEIPT_HEADERS.length);
+  const matches = rows.filter(function same(row) { return row[0] === item.requestId; });
+  if (!matches.length) return null;
+  if (matches.some(function conflict(row) {
+    return row[1] !== item.action || row[2] !== item.payloadHash;
+  })) throw new Error("administrative_request_payload_conflict");
+  return matches[matches.length - 1];
+}
+
+function registrarReciboReconciliacaoAdministrativa_(spreadsheet, item, state, details) {
+  details = details || {};
+  const sheet = getOrCreateLeadAuxiliarySheet_(spreadsheet,
+    ADMIN_RECONCILIATION_RECEIPT_SHEET, ADMIN_RECONCILIATION_RECEIPT_HEADERS);
+  sheet.appendRow([item.requestId, item.action, item.payloadHash, state,
+    hashReconciliacaoAdministrativa_(details.eventId || ""),
+    hashReconciliacaoAdministrativa_(details.opportunityId || ""),
+    details.beforeState || "", details.afterState || "",
+    item.action === "void_accepted" ? "no_concrete_proposal_acceptance" : "human_export_audit",
+    item.operatorHash, new Date()]);
+  SpreadsheetApp.flush();
+}
+
+function validarRevisaoRecuperacaoAdministrativa_(review) {
+  if (!review || ["Novo", "Qualificado", "Não qualificado"].indexOf(review.stage) < 0 ||
+      review.owner !== "human_team" || ["patient", "clinic"].indexOf(review.expectedParty) < 0 ||
+      ["new_lead", "engaged_lead", "unknown"].indexOf(review.relationship) < 0 ||
+      typeof review.summary !== "string" || !review.summary.trim() || review.summary.length > 600 ||
+      typeof review.nextAction !== "string" || !review.nextAction.trim() || review.nextAction.length > 300 ||
+      !/^drive:[A-Za-z0-9_-]{10,200}#sha256:[a-f0-9]{64}$/.test(String(review.sourceRef || ""))) {
+    throw new Error("administrative_review_invalid");
+  }
+}
+
+function validarRecuperacaoRotaAdministrativa_(spreadsheet, item, preview) {
+  const payload = item.payload;
+  validarEntradaRecuperacaoAdministrativa_(payload);
+  const lead = normalizeLead_(payload.lead);
+  const events = linhasReconciliacaoAdministrativa_(spreadsheet, CONFIG.eventSheetName, 9);
+  // Both identifiers must identify the same unique row, not the first match.
+  const matches = events.filter(function match(row) {
+    return row[0] === lead.messageId || row[1] === lead.eventId;
+  });
+  if (matches.length !== 1) throw new Error("administrative_event_not_unique");
+  const event = matches[0];
+  const expectedAt = Utilities.formatDate(lead.contactAt, CONFIG.timezone, "dd/MM/yyyy HH:mm:ss");
+  if (event[0] !== lead.messageId || event[1] !== lead.eventId ||
+      normalizePhone_(event[2]) !== lead.phone || String(event[3]) !== expectedAt ||
+      event[4] || event[5] !== "route_pending" || event[6] || event[8] !== "pending" ||
+      !["", "unknown", lead.professional].includes(String(event[7] || ""))) {
+    throw new Error("administrative_event_precondition_failed");
+  }
+  const messages = linhasReconciliacaoAdministrativa_(spreadsheet, CONFIG.messageSheetName, 14);
+  const original = messages.filter(function match(row) {
+    return row[3] === lead.messageId || row[4] === lead.eventId;
+  });
+  if (original.length !== 1) throw new Error("administrative_message_not_unique");
+  const message = original[0];
+  if (message[3] !== lead.messageId || message[4] !== lead.eventId ||
+      normalizePhone_(message[0]) !== lead.phone || message[1] !== "IN" ||
+      new Date(message[2]).getTime() !== lead.contactAt.getTime() ||
+      String(message[5] || "").trim() || message[6] || message[7] ||
+      !["", "unknown", "unsupported", "text"].includes(String(message[12] || "")) ||
+      (message[8] && !["unknown", lead.professional].includes(message[8])) || message[9]) {
+    throw new Error("administrative_message_precondition_failed");
+  }
+  const opportunities = linhasReconciliacaoAdministrativa_(spreadsheet,
+    OPPORTUNITY_STORE_CONFIG.sheetName, OPPORTUNITY_HEADERS.length);
+  if (opportunities.some(function exists(row) { return normalizePhone_(row[1]) === lead.phone; })) {
+    throw new Error("administrative_opportunity_already_exists");
+  }
+  [CONFIG.sheetName, CONFIG.danielSheetName].forEach(function noVisible(name) {
+    const sheet = spreadsheet.getSheetByName(name);
+    if (sheet && findLeadRowByPhone_(sheet, lead.phone)) {
+      throw new Error("administrative_lead_already_exists");
+    }
+  });
+  const queue = linhasReconciliacaoAdministrativa_(spreadsheet, CONFIG.classificationSheetName, 1);
+  if (queue.some(function queued(row) { return normalizePhone_(row[0]) === lead.phone; })) {
+    throw new Error("administrative_classification_already_exists");
+  }
+  const route = resolverRotaLeadComContexto_(spreadsheet, lead);
+  if (!route || route.professional !== lead.professional || route.opportunityId ||
+      !["resolved", "resolved_by_acquisition"].includes(route.routeStatus) ||
+      route.sheetName !== (lead.professional === "amanda" ? CONFIG.sheetName : CONFIG.danielSheetName) ||
+      !spreadsheet.getSheetByName(route.sheetName)) {
+    throw new Error("administrative_route_not_resolved");
+  }
+  const stateHash = hashReconciliacaoAdministrativa_({ event, messages: messages.filter(function same(row) {
+    return normalizePhone_(row[0]) === lead.phone;
+  }) });
+  if (payload.expectedStateHash !== stateHash && !(preview && !payload.expectedStateHash)) {
+    throw new Error("administrative_state_changed");
+  }
+  return { stateHash, eventId: lead.eventId, beforeState: "route_pending", afterState: "route_recovered",
+    unrelatedMessagesHash: hashReconciliacaoAdministrativa_(messages.filter(function unrelated(row) {
+      return normalizePhone_(row[0]) === lead.phone && row[3] !== lead.messageId;
+    })) };
+}
+
+function validarEntradaRecuperacaoAdministrativa_(payload) {
+  if (!payload || !payload.lead || !payload.lead.contactAt ||
+      !payload.lead.eventId || !payload.lead.messageId ||
+      payload.lead.professional !== "amanda" ||
+      payload.lead.messageType !== "text" || !String(payload.lead.text || "").trim() ||
+      String(payload.lead.text).length > 32768 ||
+      payload.lead.opportunityId || payload.lead.gclid || payload.lead.gbraid || payload.lead.wbraid) {
+    throw new Error("administrative_lead_input_invalid");
+  }
+  validarRevisaoRecuperacaoAdministrativa_(payload.review);
+}
+
+function verificarRecuperacaoAdministrativa_(spreadsheet, item, result, before) {
+  const lead = normalizeLead_(item.payload.lead);
+  const review = item.payload.review;
+  const events = linhasReconciliacaoAdministrativa_(spreadsheet, CONFIG.eventSheetName, 9)
+    .filter(function same(row) { return row[0] === lead.messageId || row[1] === lead.eventId; });
+  const messages = linhasReconciliacaoAdministrativa_(spreadsheet, CONFIG.messageSheetName, 14);
+  const original = messages.filter(function same(row) { return row[3] === lead.messageId; });
+  const opportunities = linhasReconciliacaoAdministrativa_(spreadsheet,
+    OPPORTUNITY_STORE_CONFIG.sheetName, OPPORTUNITY_HEADERS.length)
+    .filter(function same(row) { return row[0] === result.opportunityId; });
+  const queue = linhasReconciliacaoAdministrativa_(spreadsheet, CONFIG.classificationSheetName, 1);
+  const unrelatedHash = hashReconciliacaoAdministrativa_(messages.filter(function unrelated(row) {
+    return normalizePhone_(row[0]) === lead.phone && row[3] !== lead.messageId;
+  }));
+  const opportunity = opportunities[0] || [];
+  if (events.length !== 1 || events[0][5] !== "route_recovered" || events[0][6] !== result.opportunityId ||
+      original.length !== 1 || original[0][4] !== lead.eventId || original[0][5] !== lead.text ||
+      original[0][7] !== result.opportunityId || unrelatedHash !== before.unrelatedMessagesHash ||
+      opportunities.length !== 1 || normalizePhone_(opportunity[1]) !== lead.phone ||
+      opportunity[3] !== lead.professional || opportunity[7] !== review.stage ||
+      opportunity[9] !== "human_team" || opportunity[10] !== review.expectedParty ||
+      opportunity[12] !== review.summary || opportunity[13] !== review.nextAction ||
+      queue.some(function queued(row) { return normalizePhone_(row[0]) === lead.phone; })) {
+    throw new Error("administrative_recovery_postflight_failed");
+  }
+}
+
+function aplicarMetadadosRecuperacaoAdministrativa_(spreadsheet, lead, review) {
+  validarRevisaoRecuperacaoAdministrativa_(review);
+  const result = aplicarCorrecoesClassificacaoAuditadas_({ apply: true,
+    confirmation: "APLICAR_CORRECOES_CLASSIFICACAO_AUDITADAS_V1",
+    corrections: [{ opportunityId: lead.opportunityId, expectedStage: "Novo",
+      stage: review.stage, owner: "human_team", expectedParty: review.expectedParty,
+      relationship: review.relationship, summary: review.summary, nextAction: review.nextAction,
+      reason: "Revisão humana de exportação; proveniência " + hashReconciliacaoAdministrativa_(review.sourceRef) }],
+  });
+  if (!result || !result.ok) throw new Error("administrative_manual_reconciliation_failed");
+}
+
+function executarReconciliacaoAdministrativaDaAba_(apply) {
+  const operatorHash = operadorReconciliacaoAdministrativa_();
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) throw new Error("administrative_reconciliation_busy");
+  try {
+    const spreadsheet = SpreadsheetApp.openById(CONFIG.spreadsheetId);
+    const items = lerEntradaReconciliacaoAdministrativa_(spreadsheet);
+    if (apply && !PropertiesService.getScriptProperties().getProperty(CONFIG.secretProperty)) {
+      throw new Error("administrative_ingest_auth_missing");
+    }
+    const identities = {};
+    // No receipt, schema helper or patient write is allowed until ALL pass.
+    const planned = items.map(function preflight(item) {
+      item.operatorHash = operatorHash;
+      const receipt = reciboReconciliacaoAdministrativa_(spreadsheet, item);
+      if (receipt) {
+        if (receipt[3] !== "applied") throw new Error("administrative_partial_requires_review");
+        return { item, alreadyApplied: true };
+      }
+      const identity = item.action === "recover_route"
+        ? normalizePhone_(item.payload.lead && item.payload.lead.phone)
+        : String(item.payload.opportunityId || "");
+      if (!identity || identities[identity]) throw new Error("administrative_batch_identity_conflict");
+      identities[identity] = true;
+      const details = item.action === "recover_route"
+        ? validarRecuperacaoRotaAdministrativa_(spreadsheet, item, !apply)
+        : planejarInvalidacaoMarcoAuditada_(spreadsheet, item.payload, !apply);
+      return { item, details };
+    });
+    if (!apply) return { ok: true, applied: false, maximumBatch: 2,
+      items: planned.map(function summary(plan) {
+        return { requestId: plan.item.requestId, action: plan.item.action,
+          alreadyApplied: Boolean(plan.alreadyApplied), stateHash: plan.details && plan.details.stateHash || "" };
+      }) };
+    let applied = 0;
+    let alreadyApplied = 0;
+    planned.forEach(function execute(plan) {
+      if (plan.alreadyApplied) { alreadyApplied += 1; return; }
+      const item = plan.item;
+      registrarReciboReconciliacaoAdministrativa_(spreadsheet, item, "prepared", plan.details);
+      try {
+        if (item.action === "recover_route") {
+          const secret = PropertiesService.getScriptProperties().getProperty(CONFIG.secretProperty);
+          const response = doPost({ postData: { contents: JSON.stringify({
+            action: "append_lead", secret, lead: item.payload.lead,
+          }) } }, { capability: ADMIN_RECONCILIATION_CAPABILITY_, lock, item });
+          const result = JSON.parse(response.getContent());
+          if (!result.ok || result.duplicateReason !== "route_pending_recovered" ||
+              !result.opportunityId || !result.contentRecovered) {
+            throw new Error("administrative_recovery_failed");
+          }
+          plan.details.opportunityId = result.opportunityId;
+          verificarRecuperacaoAdministrativa_(spreadsheet, item, result, plan.details);
+        } else {
+          invalidarMarcoOportunidadeAuditado_(spreadsheet, item, plan.details);
+        }
+        registrarReciboReconciliacaoAdministrativa_(spreadsheet, item, "applied", plan.details);
+        applied += 1;
+      } catch (_) {
+        registrarReciboReconciliacaoAdministrativa_(spreadsheet, item, "needs_review", plan.details);
+        throw new Error("administrative_partial_requires_review");
+      }
+    });
+    return { ok: true, applied: true, changed: applied, alreadyApplied };
+  } finally { lock.releaseLock(); }
+}
+
+function simularReconciliacaoAdministrativaDaAba() {
+  const result = executarReconciliacaoAdministrativaDaAba_(false);
+  console.log("ADMINISTRATIVE_RECONCILIATION_PREVIEW " + JSON.stringify(result));
+  return result;
+}
+
+function aplicarReconciliacaoAdministrativaDaAba() {
+  const result = executarReconciliacaoAdministrativaDaAba_(true);
+  console.log("ADMINISTRATIVE_RECONCILIATION_APPLY " + JSON.stringify(result));
+  return result;
+}
+
 const CLASSIFICATION_AUDIT_INPUT_HEADERS = Object.freeze([
   "Ação",
   "Opportunity ID",
