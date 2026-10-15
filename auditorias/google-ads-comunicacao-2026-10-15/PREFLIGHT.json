@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-COMUNICACAO-2026-10-15",
+  "status": "verified_baseline_with_limits",
+  "baseCommit": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
+  "externalWritesPerformed": false,
+  "accountIdentityVerified": true,
+  "objectsReadBack": true,
+  "reason": "Identidade da conta, before dos três RSAs, três recursos compartilhados e duas palavras conferidos; destinos públicos e baseline de campanhas relidos. Comparação independente dos 13 campos aprovada. Nenhuma escrita externa. Proceder somente após commit exato e release:preflight com autorização da conversa.",
+  "requiredBeforeWriting": [
+    "Confirmar conta autorizada e objetos pelos identificadores, texto, hierarquia e associações atuais.",
+    "Guardar before vivo de cada campo, fixação, status, URL, parâmetros e sufixo.",
+    "Conferir todos os consumidores dos recursos compartilhados, duplicatas e herança.",
+    "Reconciliar orçamento/estado vigente com os registros datados, sem restaurar ou alterar valores por suposição.",
+    "Conferir destinos públicos, âncora cervical e preservação da atribuição.",
+    "Confirmar diff exato, testes, commit intencional limpo, autorização desta conversa vinculada ao HEAD e release:preflight."
+  ],
+  "driveProjection": {
+    "status": "verified_baseline_with_limits",
+    "policy": "Substituir a mesma projeção existente do Plano; nenhum novo planejamento concorrente. Identificador e parent ficam em evidência privada.",
+    "metadataIdentity": "verified_by_coordinator",
+    "metadataEvidence": "O coordenador releu o mesmo ID histórico e confirmou título, tipo text/markdown, parent e modificação em 2026-10-14T21:52:22.493Z. O conector não devolveu canEdit/checksum; não inferir permissão ou igualdade do conteúdo.",
+    "contentReadback": "downloaded_same_file_bytes_equal_to_git_baseline",
+    "contentSha256": "9d5a502f5cdec68750246c20ca198dec400d1a9536b204ea213ce3cb5b58414a",
+    "contentComparison": "O coordenador baixou o mesmo arquivo e comparou o hash ao Plano do baseline b77b1d6; nenhuma divergência. A projeção posterior deste candidato ainda precisa de escrita e readback.",
+    "permission": "canEdit_not_returned_by_metadata; no_external_write_performed"
+  },
+  "notClaimed": [
+    "Aplicação de mudança",
+    "Aprovação de política ou veiculação após edição",
+    "Resultado comercial",
+    "Nova auditoria integral da mensuração herdada ou da jornada privada"
+  ],
+  "accountIdentityEvidence": "Relato de releitura do coordenador nesta tarefa em 15/10/2026; identificador restrito não copiado para material público.",
+  "partialChecks": [
+    {
+      "action": "campaign_baseline",
+      "status": "before_live_verified_no_write",
+      "checkedAt": "2026-10-15T09:57:10.715Z",
+      "evidence": "Coordenador releu seis campanhas ativas e duas finalizadas. A composição vigente corresponde à proposta; diferença frente ao registro histórico decorre do estado das campanhas secundárias. Lifting facial permanece em Maximizar conversões sem CPA desejado; outras cinco campanhas ativas em Maximizar cliques e sem CPA desejado. Nenhum orçamento, data, status ou lance será restaurado por suposição. Valores e identidades permanecem somente na evidência privada; nenhuma escrita funcional no Ads."
+    },
+    {
+      "action": "A03",
+      "status": "before_live_observed_no_write",
+      "evidence": "O coordenador reabriu o recurso de consulta cervical e confirmou aplicação a uma única campanha cervical, copy e URL iguais à proposta. Modelo, sufixo, parâmetros personalizados e URL móvel vazios; sem datas e programação de todos os dias preservadas. Alterar somente URL, sem tocar status ou reativar associação em otoplastia.",
+      "restrictedBefore": "Identidade e snapshot completos preservados em evidência privada."
+    },
+    {
+      "action": "A01",
+      "status": "before_observed_pending_package_completion",
+      "evidence": "O coordenador reabriu o recurso universal de conta e confirmou texto, descrições e URL iguais à proposta. Modelo, sufixo, parâmetros personalizados e URL móvel vazios; sem datas e programação de todos os dias preservadas. Nenhum salvamento realizado.",
+      "restrictedBefore": "Snapshot privado do editor; identidade não copiada ao material público."
+    },
+    {
+      "action": "B01-B13",
+      "status": "before_live_independently_compared_no_write",
+      "evidence": "Comparação independente aprovada dos três editores com a proposta: 90 valores de campos conferidos (87 ligados à proposta e três nomes de empresa preservados), 57 espaços de texto e 57 seletores de fixação. Exatamente 13 deltas aprovados. Descrição 1 fixada na posição 1 em cada RSA; os outros 54 seletores sem fixação. URLs, caminhos, nomes de empresa e rastreamento de cada anúncio preservados, inclusive sufixo vazio de lipo.",
+      "checkedAt": "2026-10-15T09:47:38.243220+00:00",
+      "limitation": "Snapshots validam os campos no nível do anúncio; não afirmam nova auditoria das configurações herdadas de campanha/grupo. Nenhum campo de rastreamento é alterado."
+    },
+    {
+      "action": "A02",
+      "status": "before_live_observed_no_write",
+      "evidence": "Coordenador confirmou o mesmo recurso de segurança compartilhado em exatamente duas campanhas, lifting cervical e otoplastia, ambas com destino cervical. Copy coincide com a proposta; modelo/sufixo/parâmetros/URL móvel vazios e agenda sem restrição adicional. O recurso distinto de lifting facial já aponta ao guia correto e será preservado. Edição do recurso existente corrige ambas as associações, sem criar nova associação ou duplicata.",
+      "restrictedBefore": "Identidade e snapshots completos preservados em evidência privada."
+    },
+    {
+      "action": "C01-C02",
+      "status": "before_live_observed_no_write",
+      "evidence": "Coordenador conferiu as duas palavras únicas por identidade, grupo e campanha. Ambas exatas e ativadas, com qualificação limitada por baixo índice de qualidade. URL final, URL móvel, modelo, sufixo e parâmetros personalizados vazios; CPC máximo não definido. Estratégia efetiva herdada Maximizar cliques. Alterar somente URL final e preservar todos os demais campos; nenhum salvamento.",
+      "scope": "Alterar somente URL final; não trocar correspondência, status ou lance para tentar contornar o diagnóstico.",
+      "checkedAt": "2026-10-15T09:56:26.883Z"
+    }
+  ],
+  "publicDestinations": {
+    "status": "passed",
+    "checkedAt": "2026-10-15T09:43:13.807376+00:00",
+    "method": "HTTP GET público e inspeção do HTML; sem clique, execução de JavaScript, envio de mensagem ou escrita externa.",
+    "sources": "Duas conferências independentes em 15/10/2026, por volta de 09:39 e 09:43 UTC; corpos e hashes privados concordam.",
+    "destinations": [
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "checked_at_utc": "2026-10-15T09:43:13.819379+00:00",
+        "status": 200,
+        "effective_url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "sha256": "33e3f29a588cb2f293279ea57d2d0bb38b21148e8cd8ee99442f944e018bfd8f",
+        "anchor_count": null,
+        "whatsapp_intents": [],
+        "passed": true
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+        "checked_at_utc": "2026-10-15T09:43:13.902334+00:00",
+        "status": 200,
+        "effective_url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+        "sha256": "e96bd2c75636bd0be66d72b7b6a368819a85ded06054382884dd682201228cbf",
+        "anchor_count": null,
+        "whatsapp_intents": [
+          "price_planning"
+        ],
+        "passed": true
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/",
+        "checked_at_utc": "2026-10-15T09:43:14.078612+00:00",
+        "status": 200,
+        "effective_url": "https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/",
+        "sha256": "d5c8a986299cb79924901096937d9fb462fb9c630628d47159f1074f80982f49",
+        "anchor_count": null,
+        "whatsapp_intents": [],
+        "passed": true
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/lifting-cervical/#consulta",
+        "checked_at_utc": "2026-10-15T09:43:14.119397+00:00",
+        "status": 200,
+        "effective_url": "https://draamandaschroeder.com.br/lifting-cervical/#consulta",
+        "sha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033",
+        "anchor_count": 1,
+        "whatsapp_intents": [],
+        "passed": true
+      }
+    ],
+    "limitations": "Disponibilidade e conteúdo do HTML não comprovam entrega de clique, execução de JavaScript, envio ou resultado comercial.",
+    "intent": "Guia BLEF mantém price_planning: composição do orçamento e avaliação; não promete faixa privada automática."
+  },
+  "checkedAt": "2026-10-15T10:00:27.977056+00:00",
+  "remainingReleaseGates": [
+    "Commit intencional exato e limpo",
+    "Autorização desta conversa vinculada ao HEAD e release:preflight",
+    "Aplicação dos campos aprovados e readback",
+    "Substituição da mesma projeção do Plano no Drive e igualdade",
+    "Monitoramento após publicação"
+  ]
+}

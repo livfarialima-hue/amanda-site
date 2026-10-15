@@ -179,7 +179,7 @@
     }
   ],
   "latestAttempt": "6ad0abedf8ca5991c929014d",
-  "nextStep": "Obtain approval for the new exact candidate SHA, refresh live preflight, then run the unchanged hosted gate and verify publication.",
+  "nextStep": "Merge the existing Ads records and verify code equality; request approval for the new exact integrated candidate.",
   "documentation": {
     "status": "written_verified",
     "sourceCommit": "58c098b909416a38527e1617ecbeb979ccd356b2",
@@ -196,5 +196,29 @@
       "bytes": 10893
     },
     "existingFilesPreserved": true
-  }
+  },
+  "preflightBlocks": [
+    {
+      "status": "blocked_before_push",
+      "checkedAt": "2026-10-15T10:52:33.170Z",
+      "approvedCommit": "51e57c695d106263a42255cc9b0fa6139755b41b",
+      "remoteHead": "20d4b5be99c15b24a26cded8b6c9a0a33dafbf93",
+      "reason": "Remote branch contains parallel published Google Ads records; the authorized commit cannot be pushed as a fast-forward, and forcing it would remove the parallel commits.",
+      "newDeployCreated": false,
+      "productionPreserved": {
+        "commit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
+        "deployId": "6acff7b9dc7d30f39ad66b31",
+        "state": "ready"
+      },
+      "resolution": "Merge the existing Ads records and verify code equality; request approval for the new exact integrated candidate.",
+      "patientMessagesSent": 0,
+      "publicHealth": {
+        "checkedAt": "2026-10-15T10:53:23.930Z",
+        "httpStatus": 200,
+        "ok": true,
+        "automationMode": "active",
+        "signatureProtection": "active"
+      }
+    }
+  ]
 }

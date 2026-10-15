@@ -1,5 +1,17 @@
 # Norte estratégico de aquisição e conversão
 
+## 43. Comunicação e destinos no Google Ads — publicado em 15/10/2026
+
+**Publicado e conferido no Google Ads; recibo documental em `auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json`.** Foram corrigidos três destinos de sitelinks em quatro associações existentes, 13 campos nos anúncios de blefaroplastia/cervicoplastia/lipo de papada e a URL final de duas palavras exatas existentes de preço de blefaroplastia. Before vivo e after em `PLANO.json`. Commit autorizado `2f5adbecb3712e99786cbf91acfa32510103b975`, com gate antes das escritas. Sugestões de reserva para lifting facial, otoplastia e destaques permaneceram fora do lote.
+
+**Motivo e hipótese:** alinhar promessa, conteúdo e próximo passo com linguagem específica de cada procedimento. Busca de preço é planejamento legítimo; o guia de blefaroplastia explica composição e avaliação sem prometer faixa privada automática. Hipótese de menos atrito até contato útil, sem ganho comercial demonstrado. Os exports foram reconciliados com preflight vivo, e o after passou por comparação independente.
+
+**Invariantes verificados:** orçamentos, lances e estados das seis campanhas ativas e duas finalizadas preservados. Identificação médica, fixações, URLs de RSA e rastreamento não mudaram; o sufixo vazio de lipo foi mantido. Não houve novas palavras/negativas, grupos, campanhas, associações ou reativação, nem alteração de site, atendimento, Apps Script ou dados. Registros históricos não autorizam restaurar configurações antigas por suposição.
+
+**Status e limites:** três RSAs relidos Ativado/Qualificada, com indicador de qualidade Pendente — campo distinto de política. Duas palavras ativadas: ficaram Pendente/Em análise após a edição da URL e, às 10:31 UTC, voltaram a Qualificada (limitada), raramente mostrado por baixo Índice de qualidade preexistente. Configuração salva não comprova exibição ou resultado comercial. A igualdade da projeção documental do Plano no Drive é exigida e registrada separadamente no recibo; nenhuma conclusão é inferida antes do readback.
+
+**Revisão e manutenção:** integridade/política em 17/10/2026; coortes em 29/10/2026 e 12/11/2026 por contatos válidos, qualificados e consultas, com maturação/cobertura comparáveis. Daniel/equipe acompanha, sem automação nova. Manter clareza e pertinência; diante de erro, reprovação atribuível ao delta ou regressão consistente, restaurar somente o campo responsável ao before vivo, preservando histórico. Baixa amostra é inconclusiva; CTR ou nota não substituem etapas reais do funil.
+
 ## 42. Continuidade útil e obrigações da clínica — 14/10/2026
 
 **Decisão autorizada:** corrigir respostas conjuntas para entregar procedimento, recuperação e informação financeira aprovada no mesmo contexto; Daniel confirmou referência de R$12–18mil exclusivamente para lipo de papada isolada. Preservar ressalvas, solicitação explícita, envio único e revisão de qualquer associação ou orçamento individual. A tabela histórica não contém linha específica desse procedimento.

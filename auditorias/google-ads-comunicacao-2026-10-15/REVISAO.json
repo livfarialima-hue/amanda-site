@@ -1,0 +1,551 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-COMUNICACAO-2026-10-15",
+  "status": "published_verified",
+  "counts": {
+    "sitelinkDestinations": 3,
+    "rsaFields": 13,
+    "rsaContexts": 3,
+    "keywordDestinations": 2
+  },
+  "textLimits": "13 textos novos recontados por caracteres Unicode; todos dentro do limite aplicável.",
+  "externalWritesPerformed": true,
+  "publication": {
+    "status": "published_verified",
+    "approvedCommit": "2f5adbecb3712e99786cbf91acfa32510103b975",
+    "authorization": "O usuário autorizou publicar ao fim o lote apresentado; autorização vinculada ao commit exato no release:preflight em 15/10/2026 às 10:02 UTC.",
+    "releasePreflight": "CHANGE_SAFETY_STATUS=OK; HEAD exato, worktree limpo e nove arquivos declarados.",
+    "externalSystems": [
+      "Google Ads",
+      "Google Drive: mesma projeção do Plano"
+    ],
+    "googleAds": {
+      "status": "published_verified",
+      "firstReadbackAt": "2026-10-15T10:03:37.842Z",
+      "lastFieldReadbackAt": "2026-10-15T10:13:24.745Z",
+      "finalStatusReadbackAt": "2026-10-15T10:31:45Z",
+      "independentQaAt": "2026-10-15T10:16:27.532067+00:00",
+      "counts": {
+        "sitelinkResources": 3,
+        "existingAssociations": 4,
+        "rsaObjects": 3,
+        "rsaFields": 13,
+        "keywordFinalUrls": 2
+      },
+      "actionsApplied": [
+        {
+          "type": "rsa",
+          "context": "Blefaroplastia",
+          "status": "applied_verified",
+          "readbackAt": "2026-10-15T10:10:09.846Z",
+          "changedFields": [
+            {
+              "before": "Cirurgia de Pálpebras Caídas",
+              "after": "Pálpebras, Bolsas e Pele",
+              "field": "Título 4"
+            },
+            {
+              "before": "Preparo e Pós-Operatório",
+              "after": "O Que a Cirurgia Pode Tratar",
+              "field": "Título 11"
+            },
+            {
+              "before": "Cardiologia na Própria Clínica",
+              "after": "Avaliação do Olhar",
+              "field": "Título 14"
+            },
+            {
+              "before": "Blefaroplastia superior e inferior: avalie pálpebras, formato dos olhos e cicatrizes.",
+              "after": "Blefaroplastia superior e inferior: entenda pele, bolsas, cicatrizes e recuperação.",
+              "field": "Descrição 2"
+            },
+            {
+              "before": "Cirurgia de pálpebras com equipe anestésica selecionada e acompanhamento próximo.",
+              "after": "Converse com a Dra. Amanda sobre cicatrizes, anestesia e recuperação da blefaroplastia.",
+              "field": "Descrição 4"
+            }
+          ],
+          "changedCount": 5,
+          "textboxValuesCompared": 30,
+          "pinsPreserved": true,
+          "nonDeltaValuesPreserved": 25,
+          "afterEvidenceSha256": "b71dcf935c2fca06adc76e3031f4b732ee2696d401a9c07478e11145ed44c38d",
+          "operationalStatus": "Ativado",
+          "eligibility": "Qualificada",
+          "adStrengthIndicator": "Pendente",
+          "statusCheckedAt": "2026-10-15T10:15:34.114Z",
+          "finalStatusRecheckedAt": "2026-10-15T10:31:45Z"
+        },
+        {
+          "type": "rsa",
+          "context": "Cervicoplastia",
+          "status": "applied_verified",
+          "readbackAt": "2026-10-15T10:10:59.081Z",
+          "changedFields": [
+            {
+              "before": "Conheça o Plano Cirúrgico",
+              "after": "Pele, Gordura e Músculos",
+              "field": "Título 6"
+            },
+            {
+              "before": "Cardiologia na Própria Clínica",
+              "after": "Lipo ou Lifting Cervical",
+              "field": "Título 14"
+            },
+            {
+              "before": "Cervicoplastia e lifting de pescoço: contorno, pele e músculos orientam o plano cirúrgico.",
+              "after": "Cervicoplastia: o pescoço é avaliado junto ao contorno da mandíbula e da face.",
+              "field": "Descrição 2"
+            },
+            {
+              "before": "Platismoplastia e flacidez no pescoço: avalie indicação, preparo e recuperação.",
+              "after": "Converse com a Dra. Amanda sobre cicatrizes, preparo e recuperação do lifting cervical.",
+              "field": "Descrição 4"
+            }
+          ],
+          "changedCount": 4,
+          "textboxValuesCompared": 30,
+          "pinsPreserved": true,
+          "nonDeltaValuesPreserved": 26,
+          "afterEvidenceSha256": "9327928e98e42c1a9d859991fa6576da2ca91d6af5f6808dd817139e49b127c2",
+          "operationalStatus": "Ativado",
+          "eligibility": "Qualificada",
+          "adStrengthIndicator": "Pendente",
+          "statusCheckedAt": "2026-10-15T10:15:34.114Z",
+          "finalStatusRecheckedAt": "2026-10-15T10:31:45Z"
+        },
+        {
+          "type": "rsa",
+          "context": "Lipo de papada",
+          "status": "applied_verified",
+          "readbackAt": "2026-10-15T10:12:01.962Z",
+          "changedFields": [
+            {
+              "before": "Planejamento do Pescoço",
+              "after": "Gordura ou Flacidez?",
+              "field": "Título 6"
+            },
+            {
+              "before": "Cardiologia na Própria Clínica",
+              "after": "Lipo de Papada: Indicação",
+              "field": "Título 14"
+            },
+            {
+              "before": "Plano para a gordura abaixo do queixo, considerando o contorno e a firmeza da pele.",
+              "after": "Na lipo de papada, a firmeza da pele ajuda a definir a indicação e os limites.",
+              "field": "Descrição 2"
+            },
+            {
+              "before": "Equipe anestésica selecionada com critério e comunicação próxima com a cirurgiã.",
+              "after": "Converse sobre cicatrizes, anestesia e recuperação na consulta com a Dra. Amanda.",
+              "field": "Descrição 4"
+            }
+          ],
+          "changedCount": 4,
+          "textboxValuesCompared": 30,
+          "pinsPreserved": true,
+          "nonDeltaValuesPreserved": 26,
+          "afterEvidenceSha256": "6857f59279c8b63c6a84b6c7896799f3a93287e1221fc2e359cd89ee3acbc933",
+          "operationalStatus": "Ativado",
+          "eligibility": "Qualificada",
+          "adStrengthIndicator": "Pendente",
+          "statusCheckedAt": "2026-10-15T10:15:34.114Z",
+          "finalStatusRecheckedAt": "2026-10-15T10:31:45Z"
+        },
+        {
+          "type": "sitelink",
+          "action": "A01",
+          "status": "applied_verified",
+          "readbackAt": "2026-10-15T10:03:37.842Z",
+          "exactChange": {
+            "field": "URL final",
+            "before": "https://draamandaschroeder.com.br/avaliacao-facial/#consulta",
+            "after": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/"
+          },
+          "associationsPreserved": 1,
+          "textboxValuesCompared": 8,
+          "selectedControlsPreserved": true,
+          "afterEvidenceSha256": "812f1863268da78f0db6572a135b9a02649adf1bb3e7f9574a846b107cece720"
+        },
+        {
+          "type": "sitelink",
+          "action": "A02",
+          "status": "applied_verified",
+          "readbackAt": "2026-10-15T10:04:36.853Z",
+          "exactChange": {
+            "field": "URL final",
+            "before": "https://draamandaschroeder.com.br/lifting-cervical/",
+            "after": "https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/"
+          },
+          "associationsPreserved": 2,
+          "textboxValuesCompared": 8,
+          "selectedControlsPreserved": true,
+          "afterEvidenceSha256": "8a5ae29a370a72cf60abb7bb30180c4566f56a351e2bc3edcb4b40a405c272c2"
+        },
+        {
+          "type": "sitelink",
+          "action": "A03",
+          "status": "applied_verified",
+          "readbackAt": "2026-10-15T10:05:36.918Z",
+          "exactChange": {
+            "field": "URL final",
+            "before": "https://draamandaschroeder.com.br/lifting-cervical/",
+            "after": "https://draamandaschroeder.com.br/lifting-cervical/#consulta"
+          },
+          "associationsPreserved": 1,
+          "textboxValuesCompared": 8,
+          "selectedControlsPreserved": true,
+          "afterEvidenceSha256": "add85d904ba52c830f92856391de9021ad3335a2fd8715648567abfa7b6a9488"
+        },
+        {
+          "type": "keyword",
+          "action": "C01",
+          "keyword": "[blefaroplastia preço]",
+          "status": "applied_verified",
+          "readbackAt": "2026-10-15T10:13:24.745Z",
+          "beforeFinalUrl": "",
+          "afterFinalUrl": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+          "operationalStatus": "Ativado",
+          "priorDiagnostic": "Raramente mostrado por baixo índice de qualidade, já presente antes.",
+          "preservedFields": "Texto, correspondência, grupo/campanha, identidade, CPC máximo, modelo, sufixo, parâmetros e estratégia efetiva.",
+          "afterEvidenceSha256": "4a9e32ed3ac821fa90871e9730100c57d8baf6ff0070538869b4cd91218f334d",
+          "limitation": "Editor reaberto; URL aprovada e override móvel desativado preservados.",
+          "mobileOverrideReadback": {
+            "status": "verified_disabled",
+            "checkedAt": "2026-10-15T10:25:00.631Z",
+            "evidenceSha256": "e14f64e1cf47011a5b4b078d453f2078213c55b91b58d455f3cfe0f2153db7be",
+            "additionalWrites": false
+          },
+          "immediatePostEditStatus": "Pendente / Em análise",
+          "primaryStatus": "Qualificada (limitada) / Raramente mostrado (baixo Índice de qualidade)",
+          "finalStatusCheckedAt": "2026-10-15T10:31:03.610Z",
+          "finalStatusEvidenceSha256": "4618f4eef3a3853997bbe591b007ab2e27e49b0ca99e9ccb508117f8e665830d"
+        },
+        {
+          "type": "keyword",
+          "action": "C02",
+          "keyword": "[quanto custa uma blefaroplastia]",
+          "status": "applied_verified",
+          "readbackAt": "2026-10-15T10:13:24.745Z",
+          "beforeFinalUrl": "",
+          "afterFinalUrl": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+          "operationalStatus": "Ativado",
+          "priorDiagnostic": "Raramente mostrado por baixo índice de qualidade, já presente antes.",
+          "preservedFields": "Texto, correspondência, grupo/campanha, identidade, CPC máximo, modelo, sufixo, parâmetros e estratégia efetiva.",
+          "afterEvidenceSha256": "4a9e32ed3ac821fa90871e9730100c57d8baf6ff0070538869b4cd91218f334d",
+          "limitation": "Editor reaberto; URL aprovada e override móvel desativado preservados.",
+          "mobileOverrideReadback": {
+            "status": "verified_disabled",
+            "checkedAt": "2026-10-15T10:24:38.364Z",
+            "evidenceSha256": "e14f64e1cf47011a5b4b078d453f2078213c55b91b58d455f3cfe0f2153db7be",
+            "additionalWrites": false
+          },
+          "immediatePostEditStatus": "Pendente / Em análise",
+          "primaryStatus": "Qualificada (limitada) / Raramente mostrado (baixo Índice de qualidade)",
+          "finalStatusCheckedAt": "2026-10-15T10:31:03.610Z",
+          "finalStatusEvidenceSha256": "4618f4eef3a3853997bbe591b007ab2e27e49b0ca99e9ccb508117f8e665830d"
+        }
+      ],
+      "budgetsAndBids": {
+        "status": "preserved_live_readback",
+        "checkedAt": "2026-10-15T10:14:41.886Z",
+        "activeCampaigns": 6,
+        "finishedCampaigns": 2,
+        "note": "Orçamentos e estados vivos preservados; lifting facial em Maximizar conversões sem CPA desejado, demais cinco ativas em Maximizar cliques. Valores e IDs ficam na evidência privada."
+      }
+    },
+    "readback": "passed_exact_approved_fields",
+    "driveProjectionEquality": "verified_exact_bytes",
+    "drivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
+    "drivePlanReadbackVerifiedAt": "2026-10-15T10:34:43.126Z",
+    "preservedDestinations": {
+      "netlifyDeployId": "6acff7b9dc7d30f39ad66b31",
+      "appsScriptVersion": 164,
+      "newDeployment": false,
+      "appsScriptChanged": false,
+      "functionsChanged": false,
+      "brunaManifestChanged": false,
+      "note": "Recibos históricos do baseline preservados; nenhum novo deploy ou alegação de auditoria viva desses sistemas."
+    },
+    "limitations": [
+      "Campos salvos não comprovam exibição em leilão, aprovação futura nem efeito comercial.",
+      "Nos três RSAs, status operacional Ativado e elegibilidade Qualificada; indicador de qualidade Pendente é campo distinto de política.",
+      "As duas palavras seguem ativadas. Ficaram Pendente/Em análise imediatamente após a edição e foram relidas às 10:31 UTC como Qualificada (limitada), raramente mostrado por baixo Índice de qualidade, diagnóstico já preexistente. O estado não comprova impressões.",
+      "Sem nova auditoria dos dados privados ou da mensuração herdada; nenhum contato, conversão artificial ou mensagem de teste."
+    ],
+    "note": "Componente Ads publicado e relido; projeção única do Plano substituída e baixada com igualdade local/commit/Drive. O estado global continua SYNC_PENDING exclusivamente pela publicação pendente do candidato Bruna preservado na integração.",
+    "drive": {
+      "status": "written_verified",
+      "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
+      "modifiedAt": "2026-10-15T10:34:20.732Z",
+      "verifiedAt": "2026-10-15T10:34:43.126Z",
+      "bytes": 12768,
+      "sha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
+      "sameExistingFile": true,
+      "localEqualsDownload": true,
+      "commitEqualsDownload": true,
+      "method": "Authenticated update of the existing projection, followed by raw download, exact byte comparison and SHA-256."
+    },
+    "verifiedAt": "2026-10-15T10:34:43.126Z"
+  },
+  "executed": [
+    {
+      "command": "npm.cmd test",
+      "status": "passed",
+      "passed": 2175,
+      "failed": 0
+    },
+    {
+      "command": "focused_contract_union",
+      "status": "passed",
+      "passed": 192,
+      "failed": 0,
+      "includedInFullSuite": true,
+      "note": "União dos testes focados de aquisição, configurações, piloto LIFT, qualidade RSA, governança e recibo da Bruna."
+    },
+    {
+      "command": "npm.cmd run change:check",
+      "status": "passed",
+      "exactFiles": 9
+    },
+    {
+      "command": "npm.cmd run architecture:check",
+      "status": "passed"
+    },
+    {
+      "command": "npm.cmd run site:build",
+      "status": "passed",
+      "files": 193,
+      "sitemapUrls": 54,
+      "auditFilesInArtifact": 0
+    },
+    {
+      "command": "npm.cmd run site:check",
+      "status": "passed"
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed"
+    },
+    {
+      "command": "npm.cmd run ops:check",
+      "status": "SYNC_PENDING",
+      "reasons": [
+        "CHANGE_PUBLICATION_PENDING",
+        "WRONG_BRANCH",
+        "DIRTY_WORKTREE"
+      ],
+      "note": "Candidato planejado em worktree de desenvolvimento; fechamento ainda não permitido."
+    }
+  ],
+  "pending": [
+    "Monitoramento de integridade/política em 17/10/2026",
+    "Leituras comerciais em 29/10/2026 e 12/11/2026"
+  ],
+  "checkedAt": "2026-10-15T09:45:41.145831+00:00",
+  "liveRsaBaselineReview": {
+    "status": "passed",
+    "checkedAt": "2026-10-15T09:47:38.243220+00:00",
+    "objects": 3,
+    "textboxValues": 90,
+    "textSlots": 57,
+    "pins": 57,
+    "exactDeltas": 13,
+    "externalWritesPerformed": false,
+    "limit": "Campo de rastreamento vazio preservado literalmente; herança superior não inferida."
+  },
+  "publicDestinations": {
+    "status": "passed",
+    "checkedAt": "2026-10-15T09:43:13.807376+00:00",
+    "method": "HTTP GET público e inspeção do HTML; sem clique, execução de JavaScript, envio de mensagem ou escrita externa.",
+    "sources": "Duas conferências independentes em 15/10/2026, por volta de 09:39 e 09:43 UTC; corpos e hashes privados concordam.",
+    "destinations": [
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "checked_at_utc": "2026-10-15T09:43:13.819379+00:00",
+        "status": 200,
+        "effective_url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "sha256": "33e3f29a588cb2f293279ea57d2d0bb38b21148e8cd8ee99442f944e018bfd8f",
+        "anchor_count": null,
+        "whatsapp_intents": [],
+        "passed": true
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+        "checked_at_utc": "2026-10-15T09:43:13.902334+00:00",
+        "status": 200,
+        "effective_url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+        "sha256": "e96bd2c75636bd0be66d72b7b6a368819a85ded06054382884dd682201228cbf",
+        "anchor_count": null,
+        "whatsapp_intents": [
+          "price_planning"
+        ],
+        "passed": true
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/",
+        "checked_at_utc": "2026-10-15T09:43:14.078612+00:00",
+        "status": 200,
+        "effective_url": "https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/",
+        "sha256": "d5c8a986299cb79924901096937d9fb462fb9c630628d47159f1074f80982f49",
+        "anchor_count": null,
+        "whatsapp_intents": [],
+        "passed": true
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/lifting-cervical/#consulta",
+        "checked_at_utc": "2026-10-15T09:43:14.119397+00:00",
+        "status": 200,
+        "effective_url": "https://draamandaschroeder.com.br/lifting-cervical/#consulta",
+        "sha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033",
+        "anchor_count": 1,
+        "whatsapp_intents": [],
+        "passed": true
+      }
+    ],
+    "limitations": "Disponibilidade e conteúdo do HTML não comprovam entrega de clique, execução de JavaScript, envio ou resultado comercial.",
+    "intent": "Guia BLEF mantém price_planning: composição do orçamento e avaliação; não promete faixa privada automática."
+  },
+  "proposalReview": {
+    "status": "passed",
+    "checkedAt": "2026-10-15T09:43:13.807376+00:00",
+    "exactScope": true,
+    "sourceHashesMatch": true,
+    "rsaFieldsCompared": 57,
+    "sitelinkCopyUnchanged": true,
+    "keywordUniqueExportMatches": 2,
+    "note": "Validação da proposta/export separada do preflight autenticado; não é prova de salvamento."
+  },
+  "livePreflightStatus": "verified_baseline_with_limits",
+  "parallelIntegration": {
+    "localCommittedBaseline": "94f066e663fcd85f28f3e52ff15d8a2d5c75cedc",
+    "activeCandidate": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
+    "activeCandidateStatus": "committed",
+    "brunaPublication": "blocked_before_publication",
+    "brunaCorrectedCandidate": "pending_authorization",
+    "brunaAttemptReceipt": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
+    "scopeFilesFromCommonBaseline": 38,
+    "brunaCodeTestsManifestPreserved": true,
+    "executivePlan": "Integra a tentativa Bruna bloqueada, correção pendente e componente Ads; aguarda substituir a mesma projeção e novo readback.",
+    "globalOpsExpected": "SYNC_PENDING",
+    "note": "Autorização e publicação Ads não abrangem o candidato Bruna corrigido; o recibo Ads não encerra essa pendência global.",
+    "validation": {
+      "status": "passed_local",
+      "localCommittedBaseline": "94f066e663fcd85f28f3e52ff15d8a2d5c75cedc",
+      "exactScopeFiles": 38,
+      "note": "Validações anteriores de 2.175 Ads, 2.204 Bruna e 2.205 Bruna corrigida pertencem às revisões indicadas; esta integração documental não publica o candidato bloqueado.",
+      "checkedAt": "2026-10-15T10:32:59Z",
+      "adsFilesAgainstLocalCommittedBaseline": 9,
+      "brunaCodeTestsManifestEqualBaseline": true,
+      "unmergedFiles": 0,
+      "commands": [
+        {
+          "command": "npm.cmd run change:check",
+          "result": "CHANGE_SAFETY_STATUS=OK",
+          "exactFiles": 38
+        },
+        {
+          "command": "npm.cmd run architecture:check",
+          "result": "JOURNEY_MODULE_BOUNDARIES=OK"
+        },
+        {
+          "command": "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs scripts/check-bruna-model-live.test.mjs",
+          "passed": 53,
+          "failed": 0,
+          "liveGateHarnessMocked": true
+        },
+        {
+          "command": "git diff --check",
+          "result": "passed"
+        },
+        {
+          "command": "git diff --cached --check",
+          "result": "passed"
+        },
+        {
+          "command": "npm.cmd run ops:check",
+          "result": "SYNC_PENDING",
+          "reasons": [
+            "CHANGE_PUBLICATION_PENDING",
+            "WRONG_BRANCH",
+            "DIRTY_WORKTREE"
+          ],
+          "note": "Bruna continua committed, tentativa anterior bloqueada e correção aguardando autorização; merge ainda sem commit na branch de integração."
+        }
+      ]
+    }
+  },
+  "parallelIntegrationHistory": [
+    {
+      "remoteCommit": "30b01f4267719effebd094edc2949a163ac1ed98",
+      "activeCandidate": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
+      "activeCandidateStatus": "committed",
+      "brunaPublication": "pending_authorization",
+      "scopeFilesFromCommonBaseline": 36,
+      "brunaCodeTestsManifestPreserved": true,
+      "executivePlan": "Integra a pendência Bruna e o componente Ads, aguardando substituição da mesma projeção e novo readback.",
+      "globalOpsExpected": "SYNC_PENDING",
+      "note": "A autorização e publicação Ads não abrangem o candidato Bruna; o recibo deste componente não encerra a pendência global.",
+      "validation": {
+        "status": "passed_local",
+        "checkedAt": "2026-10-15T10:28:15Z",
+        "remoteBaseline": "30b01f4267719effebd094edc2949a163ac1ed98",
+        "adsReadbackCommit": "9846d4840ab3bc1c1668d491c98215bc7200b7ab",
+        "exactScopeFiles": 36,
+        "adsFilesAgainstRemote": 9,
+        "brunaCodeTestsManifestEqualRemote": true,
+        "unmergedFiles": 0,
+        "commands": [
+          {
+            "command": "npm.cmd run change:check",
+            "result": "CHANGE_SAFETY_STATUS=OK",
+            "exactFiles": 36
+          },
+          {
+            "command": "npm.cmd run architecture:check",
+            "result": "JOURNEY_MODULE_BOUNDARIES=OK"
+          },
+          {
+            "command": "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
+            "passed": 15,
+            "failed": 0
+          },
+          {
+            "command": "git diff --check",
+            "result": "passed"
+          },
+          {
+            "command": "git diff --cached --check",
+            "result": "passed"
+          },
+          {
+            "command": "npm.cmd run ops:check",
+            "result": "SYNC_PENDING",
+            "reasons": [
+              "CHANGE_PUBLICATION_PENDING",
+              "WRONG_BRANCH",
+              "DIRTY_WORKTREE"
+            ],
+            "note": "Candidato Bruna committed, aguardando sua própria autorização/publicação; branch de integração e merge ainda sem commit."
+          }
+        ],
+        "note": "Resultados anteriores de 2.204 testes Bruna e 2.175 testes Ads são históricos das respectivas revisões. A integração documental não publica Bruna; sua pendência global permanece visível.",
+        "independentReview": {
+          "status": "passed",
+          "scopeFiles": 36,
+          "adsFilesAgainstRemote": 9,
+          "brunaCodeTestsManifestPreserved": true,
+          "noPrivateIdsAdded": true,
+          "executivePlanHashVerified": true
+        }
+      }
+    }
+  ],
+  "documentaryCloseout": {
+    "status": "verified_component",
+    "planSourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
+    "approvedAdsCommit": "2f5adbecb3712e99786cbf91acfa32510103b975",
+    "globalOperationalStatus": "SYNC_PENDING",
+    "globalPendingReason": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14 permanece committed/pending_authorization. Nenhuma publicação desse código foi executada nesta tarefa."
+  }
+}

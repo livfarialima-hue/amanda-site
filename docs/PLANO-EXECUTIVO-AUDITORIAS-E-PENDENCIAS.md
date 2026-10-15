@@ -2,6 +2,8 @@
 
 ## Publicação bloqueada — respostas e retomadas de 15/10
 
+O commit 51e57c69 foi autorizado em 15/10, mas o preflight encontrou registros paralelos do Google Ads no remoto 20d4b5be antes de qualquer envio. A integração preserva esses registros e mantém código, testes e manifesto Bruna idênticos ao aprovado. Nenhum novo deploy foi iniciado; o commit integrado aguarda autorização exata. A produção anterior continua ativa.
+
 A segunda tentativa autorizada, commit 94f066e / deploy 6ad0abedf8ca5991c929014d, foi bloqueada em 15/10/2026 às 07:35:39 (America/Sao_Paulo), antes de publicar. Passaram 15 dos 16 cenários executados, incluindo os dois históricos, e os três áudios; eram exigidos 21 cenários. A resposta de preço de teleconsulta estava correta, mas o modelo colocou consulta_online no campo procedure, cujo valor esperado era unknown. O gate de saída aceitou a mensagem, porém o gate de qualidade rejeitou a classificação. A correção explicita no prompt e no schema que modalidade pertence ao assunto da conversa e não substitui procedimento conhecido; parser, rótulos livres, prazos, retries e critérios de aprovação são preservados. A primeira tentativa e a limitação do diagnóstico anterior permanecem no recibo. Produção segue no deploy 6acff7b9dc7d30f39ad66b31 / commit cbda0cf. Recibo: auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json. A correção passou nos 2.207 testes integrais, nos 1.533 testes dos 74 arquivos de contratos e nos 19 testes simulados do gate, além do build e dos checks locais. O novo commit exato exige autorização antes da próxima publicação e ainda precisa passar pelos 21 cenários vivos.
 
 Pacote 2026-10-14.5, ainda sem publicação. Corrigir perguntas conjuntas de procedimento/recuperação/preço e incorporar exclusivamente a faixa de lipo de papada isolada autorizada pelo responsável. Preservar oferta de informações úteis, revisão clínica, confirmação semântica e envio único. Baseline local b77b1d6 e deploy vigente 6acff7b9dc7d30f39ad66b31; Apps Script v164 preservado.
@@ -14,6 +16,18 @@ Pacote 2026-10-14.5, ainda sem publicação. Corrigir perguntas conjuntas de pro
 
 
 Versão pública revisada em 14/10/2026 com autorização do responsável. O conteúdo integral anterior foi preservado como histórico fechado em área restrita. Esta edição remove contatos, gastos, identificadores de contas/campanhas e registros operacionais detalhados; não cancela decisões ou pendências anteriores. Não altera permissões de arquivos nem apaga o histórico Git já existente.
+
+## Google Ads — configuração publicada e acompanhamento
+
+### Comunicação e destinos, 15/10/2026
+
+**Publicado e conferido no Google Ads em 15/10/2026.** Três destinos de sitelinks corrigidos em quatro associações existentes, 13 campos de três anúncios e duas URLs de palavras existentes de preço de blefaroplastia. Todos os campos foram salvos, reabertos e comparados ao lote aprovado; QA independente aprovada. Commit autorizado `2f5adbecb3712e99786cbf91acfa32510103b975`, com gate do HEAD exato antes das escritas. Recibos: `auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json`.
+
+Orçamentos, lances e estados das campanhas preservados; nenhuma palavra nova/negativa, associação adicional ou reativação. Identificação médica, fixações, demais textos, URLs de RSA e atribuição preservados. Sem alteração de site, atendimento ou dados. Três anúncios relidos Ativado/Qualificada, com indicador de qualidade Pendente, distinto do status de política. Duas palavras ativadas: ficaram Pendente/Em análise após editar o destino e, na releitura das 10:31 UTC, voltaram a Qualificada (limitada), raramente mostrado por baixo Índice de qualidade já preexistente. Não há alegação de exibição ou ganho comercial.
+
+Daniel/equipe: conferir integridade e política em **17/10/2026**; avaliar contatos válidos, qualificados e consultas em **29/10/2026** e **12/11/2026**, com maturação e cobertura comparáveis. Baixa amostra continua inconclusiva. Restaurar somente o campo responsável ao before vivo diante de erro, reprovação atribuível ao delta ou regressão consistente, preservando histórico. Nenhuma automação nova.
+
+O fechamento documental do componente Ads exige substituir esta mesma projeção no Drive, baixar novamente e comprovar igualdade; o resultado efetivo fica no recibo, sem criar planejamento concorrente. O candidato Bruna acima permanece sem publicação: a autorização Ads não o abrange, e o estado operacional global continua SYNC_PENDING até seu próprio fechamento autorizado. Publicações anteriores abaixo permanecem preservadas.
 
 ## Publicação verificada
 
@@ -53,7 +67,7 @@ Os identificadores abaixo são referências de releases públicos de software, j
 | Modalidade de consulta | Publicado e verificado | Observar primeira confirmação natural e revisar as 48 horas após a publicação |
 | Integridade da agenda | Contrato preservado | Exigir identidade, consentimento e modalidade inequívocos antes de qualquer efeito |
 | Outras pendências operacionais | Fora deste registro público | Consultar as fontes restritas antes de definir qualquer ação |
-| Campanhas e orçamento | Fora deste release | Consultar decisões vigentes e obter autorização própria para qualquer mudança |
+| Comunicação e destinos no Google Ads | Publicado e relido; análise e qualidade em estados distintos | Integridade/política em 17/10; etapas comerciais em 29/10 e 12/11; recibo de igualdade documental obrigatório |
 | Conteúdos e imagens | Revisão conforme fonte | Preservar consentimento e revisão clínica, sem supor aprovação |
 | Histórico anterior | Arquivo restrito fechado | Revalidar pendências nas fontes atuais antes de retomar a execução |
 

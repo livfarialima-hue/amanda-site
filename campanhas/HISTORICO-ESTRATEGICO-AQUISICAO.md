@@ -1,4 +1,8 @@
-## 2026-10-14 — continuidade entre site e WhatsApp
+## 2026-10-15 — lote prioritário de comunicação e destinos do Google Ads
+
+**Publicado e conferido no Google Ads em 15/10/2026**, a partir do commit autorizado `2f5adbecb3712e99786cbf91acfa32510103b975`, com gate do HEAD exato antes das escritas. Três destinos de sitelinks corrigidos em quatro associações existentes; 13 campos de três RSAs e duas URLs finais de palavras de preço de blefaroplastia salvos e relidos, com QA independente aprovada. Sem mudanças de orçamento/lance, novas palavras/negativas, site ou atendimento. Três RSAs Ativado/Qualificada, indicador de qualidade Pendente; duas palavras ativadas, inicialmente Pendente/Em análise após edição e relidas às 10:31 UTC como Qualificada (limitada), raramente mostrado por baixo Índice de qualidade anterior. Não confundir configuração, revisão de política, veiculação e efeito comercial.
+
+Decisão canônica na seção 43 do Norte; antes/depois e recibos em auditorias/google-ads-comunicacao-2026-10-15/. Motivo: corresponder intenção, anúncio e conteúdo; hipótese de menos atrito até contato útil, sem resultado demonstrado. Daniel/equipe revê integridade/política em 17/10 e etapas reais do funil em 29/10 e 12/11, com maturação comparável. Manter clareza/integridade e reverter somente o campo responsável ao before vivo diante de erro ou regressão consistente. A igualdade da mesma projeção do Plano no Drive é exigida no recibo de fechamento; nenhuma automação nova.
 
 ## 14/10/2026 — continuidade da Bruna e retomadas devidas
 
@@ -6,6 +10,7 @@ Pedido do responsável: concluir correção iniciada em diagnóstico no Cloud e 
 
 Decisão, motivo, hipótese, métricas e revisão estão na seção 42 do Norte estratégico. Prioridade: responder dívida da clínica e cumprir promessa antes de nova abordagem; depois apenas continuidade contextual individual elegível. Preservados dados, cadência, flags, campanhas e consentimento. Estado: candidato em implementação; nenhum envio ou publicação deste pacote. Evidência técnica sanitizada: auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md.
 
+## 2026-10-14 — continuidade entre site e WhatsApp
 
 Correções do site e publicação autorizadas pelo usuário: convites de consulta sem promessa de horários, mensagens iniciais sem alegar leitura, destinos de seção compatíveis, remoção de breadcrumbs duplicados e abertura direta do guia de preço de lifting. Decisão canônica na seção 41 do Norte; recibos técnicos em auditorias/site-continuidade-2026-10-14/. Sem mudanças de mídia, preço, automação, qualificação ou agenda. Hipótese: reduzir atrito até conversa útil. Revisar integridade em 21/10 e etapas comerciais em 11/11 com maturação equivalente; não inferir causalidade de cada ajuste. Manter se coerente e íntegro; reverter somente o pacote diante de regressão comprovada.
 

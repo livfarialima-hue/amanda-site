@@ -94,13 +94,13 @@
     "status": "SYNC_PENDING",
     "checkedOn": "2026-10-15",
     "pending": [
-      "Autorização do novo commit exato",
+      "Autorização do commit com registros paralelos preservados",
       "21 cenários vivos, áudio e verificação da publicação"
     ],
-    "documentationReconciled": true
+    "documentationReconciled": false
   },
   "documentation": {
-    "status": "written_verified",
+    "status": "update_pending",
     "sourceCommit": "58c098b909416a38527e1617ecbeb979ccd356b2",
     "verifiedAt": "2026-10-15T10:43:42.507Z",
     "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
@@ -114,7 +114,15 @@
       "sha256": "f8cebe2920fe7bd596732d35e904d0edfdd6832676d52baa95f2f13231e57d77",
       "bytes": 10893
     },
-    "existingFilesPreserved": true
+    "existingFilesPreserved": true,
+    "previousParallelProjection": {
+      "status": "written_verified",
+      "note": "Os recibos anteriores acima permanecem históricos. A mesma projeção do Plano integrado foi atualizada e relida com igualdade; mantém a tentativa Bruna bloqueada, a correção pendente e Ads publicado. Manual e manifesto preservados.",
+      "executivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
+      "verifiedAt": "2026-10-15T10:34:43.126Z",
+      "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
+      "bytes": 12768
+    }
   },
   "correctionAfterBlockedBuild": {
     "promptContradictionReproduced": true,
@@ -131,5 +139,23 @@
     "parserAndFreeLabelsPreserved": true,
     "gateCriteriaUnchanged": true,
     "liveValidation": "pending_new_authorized_build"
+  },
+  "integrationValidation": {
+    "status": "passed_local",
+    "checkedAt": "2026-10-15T10:53:21.921Z",
+    "approvedFunctionalCandidate": "51e57c695d106263a42255cc9b0fa6139755b41b",
+    "remoteBaseline": "20d4b5be99c15b24a26cded8b6c9a0a33dafbf93",
+    "scopeFiles": 40,
+    "codeTestsAndManifestEqualApproved": true,
+    "publicationAttempted": false,
+    "fullSuite": {
+      "passed": 2207,
+      "total": 2207
+    },
+    "changeSafety": "passed",
+    "architecture": "passed",
+    "siteCheck": "passed",
+    "diff": "passed",
+    "independentReview": "passed"
   }
 }

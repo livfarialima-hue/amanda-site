@@ -2,6 +2,8 @@
 
 Estado: publicação autorizada bloqueada pelo gate vivo em 15/10/2026, sem troca de produção ou mensagens reais.
 
+O commit 51e57c69 foi autorizado em 15/10, mas o preflight encontrou registros paralelos do Google Ads no remoto 20d4b5be antes de qualquer envio. A integração preserva esses registros e mantém código, testes e manifesto Bruna idênticos ao aprovado. Nenhum novo deploy foi iniciado; o commit integrado aguarda autorização exata. A produção anterior continua ativa.
+
 A segunda tentativa autorizada, commit 94f066e / deploy 6ad0abedf8ca5991c929014d, foi bloqueada em 15/10/2026 às 07:35:39 (America/Sao_Paulo), antes de publicar. Passaram 15 dos 16 cenários executados, incluindo os dois históricos, e os três áudios; eram exigidos 21 cenários. A resposta de preço de teleconsulta estava correta, mas o modelo colocou consulta_online no campo procedure, cujo valor esperado era unknown. O gate de saída aceitou a mensagem, porém o gate de qualidade rejeitou a classificação. A correção explicita no prompt e no schema que modalidade pertence ao assunto da conversa e não substitui procedimento conhecido; parser, rótulos livres, prazos, retries e critérios de aprovação são preservados. A primeira tentativa e a limitação do diagnóstico anterior permanecem no recibo. Produção segue no deploy 6acff7b9dc7d30f39ad66b31 / commit cbda0cf. Recibo: auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json. A correção passou nos 2.207 testes integrais, nos 1.533 testes dos 74 arquivos de contratos e nos 19 testes simulados do gate, além do build e dos checks locais. O novo commit exato exige autorização antes da próxima publicação e ainda precisa passar pelos 21 cenários vivos.
 
 ## Problema e mudança
