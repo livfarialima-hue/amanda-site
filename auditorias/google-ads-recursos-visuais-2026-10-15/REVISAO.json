@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-RECURSOS-VISUAIS-2026-10-15",
-  "status": "google_ads_published_verified_drive_pending",
+  "status": "published_verified",
   "baseCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
   "preparedAt": "2026-10-15T12:04:14.950140+00:00",
   "externalWritesPerformed": true,
@@ -119,8 +119,25 @@
     }
   },
   "driveProjection": {
-    "status": "pending",
-    "sameExistingFileRequired": true
+    "status": "written_verified",
+    "sameExistingFile": true,
+    "sameParentPreserved": true,
+    "sourceCommit": "2a342be0b407f406770195ca7331cd3843da57a0",
+    "bytes": 20355,
+    "sha256": "e145c6c3a3b7bce95612650d86b42390d1920b590d8a43dd268c73f4c111946a",
+    "modifiedAt": "2026-10-15T12:18:46.362Z",
+    "verifiedAt": "2026-10-15T12:19:18.7001912+00:00",
+    "method": "Download autenticado do mesmo arquivo; igualdade exata de bytes com o Plano local e o blob do commit de origem, confirmada independentemente no worktree.",
+    "localEqualsReadback": true,
+    "sourceCommitEqualsReadback": true,
+    "releasePreflight": {
+      "status": "CHANGE_SAFETY_STATUS=OK",
+      "checkedAt": "2026-10-15T12:18:32Z",
+      "approvedCommit": "2a342be0b407f406770195ca7331cd3843da57a0",
+      "scopeFiles": 17,
+      "authorizationScope": "Somente substituir a mesma projeção do Plano no Drive. Nenhuma autorização ou publicação Bruna."
+    },
+    "note": "O Plano integra Ads publicado e o candidato Bruna ainda local. A igualdade deste arquivo não publica Bruna nem encerra a projeção de seu manual."
   },
   "preservedPublishedReleases": [
     {
@@ -146,7 +163,11 @@
   },
   "parallelIntegration": {
     "status": "passed_local",
-    "independentReview": {"status": "passed", "reviewer": "cerv_pendencias", "scope": "17 arquivos exatos; nove arquivos próprios Bruna byte a byte iguais a 3b66195b; autorização, rollback e monitoramento Bruna preservados; Plano integrado e registro de impacto restrito aos quatro caminhos Ads."},
+    "independentReview": {
+      "status": "passed",
+      "reviewer": "cerv_pendencias",
+      "scope": "17 arquivos exatos; nove arquivos próprios Bruna byte a byte iguais a 3b66195b; autorização, rollback e monitoramento Bruna preservados; Plano integrado e registro de impacto restrito aos quatro caminhos Ads."
+    },
     "sourceCommit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
     "baseCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
     "exactUnionFiles": 17,
@@ -200,5 +221,13 @@
         "note": "Candidato Bruna não publicado, projeção de seu manual pendente e integração em worktree; Ads tem recibo próprio e não autoriza Bruna."
       }
     }
+  },
+  "componentClosure": {
+    "status": "published_verified",
+    "verifiedAt": "2026-10-15T12:19:18.7001912+00:00",
+    "googleAdsAppliedAndVerified": true,
+    "executivePlanProjectionVerified": true,
+    "globalBrunaCandidateStatus": "tested_local",
+    "globalOperationalClosure": "SYNC_PENDING por publicação Bruna e projeção de seu manual ainda pendentes; a autorização Ads não cobre essas ações."
   }
 }

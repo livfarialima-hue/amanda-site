@@ -1427,18 +1427,44 @@
     "note": "O responsável desta tarefa confirmou atualização e readback do plugin privado Bruna — Gestão e Conversão 1.0.1. Revisões, propostas e cálculos usam a conta e conectores existentes sem fallback pago. Recibo privado mantido fora do repositório; esse componente não publica as funções Netlify nem migra o atendimento."
   },
   "documentation": {
-    "status": "local_pending_drive_projection",
+    "status": "executive_plan_written_verified_manual_pending",
     "paths": [
       "docs/estrategia-abordagem-bruna.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md"
     ],
-    "note": "Substituir as mesmas projeções existentes somente no fechamento autorizado e comprovar hash/readback; nenhum destino externo foi escrito nesta preparação.",
-    "integrationNote": "Plano deve incluir candidato Bruna local e componente Ads publicado antes de substituir a mesma projeção. Projeção do manual Bruna continua pendente no seu pacote; sincronizar apenas o Plano não encerra a pendência global."
+    "note": "A mesma projeção do Plano foi atualizada e relida com igualdade ao commit de origem. O manual e a publicação Bruna permanecem pendentes sob autorização própria; não houve alteração de manifesto, código ou produção Bruna.",
+    "integrationNote": "Plano integrado e verificado no mesmo arquivo Drive; candidato Bruna continua tested_local. A sincronização do Plano encerra apenas o componente documental Ads, sem converter o estado global em published_verified.",
+    "executivePlanProjection": {
+      "status": "written_verified",
+      "sameExistingFile": true,
+      "sameParentPreserved": true,
+      "sourceCommit": "2a342be0b407f406770195ca7331cd3843da57a0",
+      "bytes": 20355,
+      "sha256": "e145c6c3a3b7bce95612650d86b42390d1920b590d8a43dd268c73f4c111946a",
+      "modifiedAt": "2026-10-15T12:18:46.362Z",
+      "verifiedAt": "2026-10-15T12:19:18.7001912+00:00",
+      "method": "Download autenticado do mesmo arquivo; igualdade exata de bytes com o Plano local e o blob do commit de origem, confirmada independentemente no worktree.",
+      "localEqualsReadback": true,
+      "sourceCommitEqualsReadback": true,
+      "releasePreflight": {
+        "status": "CHANGE_SAFETY_STATUS=OK",
+        "checkedAt": "2026-10-15T12:18:32Z",
+        "approvedCommit": "2a342be0b407f406770195ca7331cd3843da57a0",
+        "scopeFiles": 17,
+        "authorizationScope": "Somente substituir a mesma projeção do Plano no Drive. Nenhuma autorização ou publicação Bruna."
+      },
+      "note": "O Plano integra Ads publicado e o candidato Bruna ainda local. A igualdade deste arquivo não publica Bruna nem encerra a projeção de seu manual."
+    },
+    "manualProjection": {
+      "status": "pending",
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "note": "Documento do candidato Bruna local; não foi projetado nem publicado por esta tarefa Ads."
+    }
   },
   "integratedExternalComponents": [
     {
       "changeId": "GOOGLE-ADS-RECURSOS-VISUAIS-2026-10-15",
-      "status": "google_ads_published_verified_drive_pending",
+      "status": "published_verified",
       "approvedCommit": "86670909b3e02a9541b7e7f8e2fb9188f20ed01a",
       "reference": "auditorias/google-ads-recursos-visuais-2026-10-15/REVISAO.json",
       "publication": {
@@ -1500,8 +1526,25 @@
         }
       },
       "driveProjection": {
-        "status": "pending",
-        "sameExistingFileRequired": true
+        "status": "written_verified",
+        "sameExistingFile": true,
+        "sameParentPreserved": true,
+        "sourceCommit": "2a342be0b407f406770195ca7331cd3843da57a0",
+        "bytes": 20355,
+        "sha256": "e145c6c3a3b7bce95612650d86b42390d1920b590d8a43dd268c73f4c111946a",
+        "modifiedAt": "2026-10-15T12:18:46.362Z",
+        "verifiedAt": "2026-10-15T12:19:18.7001912+00:00",
+        "method": "Download autenticado do mesmo arquivo; igualdade exata de bytes com o Plano local e o blob do commit de origem, confirmada independentemente no worktree.",
+        "localEqualsReadback": true,
+        "sourceCommitEqualsReadback": true,
+        "releasePreflight": {
+          "status": "CHANGE_SAFETY_STATUS=OK",
+          "checkedAt": "2026-10-15T12:18:32Z",
+          "approvedCommit": "2a342be0b407f406770195ca7331cd3843da57a0",
+          "scopeFiles": 17,
+          "authorizationScope": "Somente substituir a mesma projeção do Plano no Drive. Nenhuma autorização ou publicação Bruna."
+        },
+        "note": "O Plano integra Ads publicado e o candidato Bruna ainda local. A igualdade deste arquivo não publica Bruna nem encerra a projeção de seu manual."
       },
       "authorizationBoundary": "Somente as 14 associações Ads e a projeção documental do Plano; nenhuma autorização de publicar Bruna.",
       "rollback": {
@@ -1516,7 +1559,8 @@
           "Nenhuma alteração de orçamento, lance, identidade, anúncio, palavra, recurso elegível ou biblioteca.",
           "Elegibilidade e exibição são distintas. Desempenho comercial segue o acompanhamento existente por contatos válidos, qualificados e consultas, sem alegar ganho pela limpeza."
         ]
-      }
+      },
+      "verifiedAt": "2026-10-15T12:19:18.7001912+00:00"
     }
   ]
 }

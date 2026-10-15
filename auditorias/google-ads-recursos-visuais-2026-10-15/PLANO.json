@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-RECURSOS-VISUAIS-2026-10-15",
-  "status": "google_ads_published_verified_drive_pending",
+  "status": "published_verified",
   "baseCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
   "authorizedScope": "Pedido do usuário: Ajuste e publique se ficou mais algo pendente. Remoção estrita de 14 associações de Imagem já reprovadas, com cobertura elegível confirmada. Aplicação efetuada pelo coordenador após testes, commit exato e release:preflight; readback confirmou 57 associações aprovadas preservadas.",
   "privacy": "Registro público sanitizado; conta, IDs dos objetos, métricas de mídia e snapshots completos ficam na prova privada ignorada pelo Git.",
@@ -73,5 +73,26 @@
   "strategicDecisionChanged": false,
   "externalWritesPerformed": true,
   "publishedCommit": "86670909b3e02a9541b7e7f8e2fb9188f20ed01a",
-  "verifiedAt": "2026-10-15T12:10:10.293Z"
+  "verifiedAt": "2026-10-15T12:10:10.293Z",
+  "driveProjection": {
+    "status": "written_verified",
+    "sameExistingFile": true,
+    "sameParentPreserved": true,
+    "sourceCommit": "2a342be0b407f406770195ca7331cd3843da57a0",
+    "bytes": 20355,
+    "sha256": "e145c6c3a3b7bce95612650d86b42390d1920b590d8a43dd268c73f4c111946a",
+    "modifiedAt": "2026-10-15T12:18:46.362Z",
+    "verifiedAt": "2026-10-15T12:19:18.7001912+00:00",
+    "method": "Download autenticado do mesmo arquivo; igualdade exata de bytes com o Plano local e o blob do commit de origem, confirmada independentemente no worktree.",
+    "localEqualsReadback": true,
+    "sourceCommitEqualsReadback": true,
+    "releasePreflight": {
+      "status": "CHANGE_SAFETY_STATUS=OK",
+      "checkedAt": "2026-10-15T12:18:32Z",
+      "approvedCommit": "2a342be0b407f406770195ca7331cd3843da57a0",
+      "scopeFiles": 17,
+      "authorizationScope": "Somente substituir a mesma projeção do Plano no Drive. Nenhuma autorização ou publicação Bruna."
+    },
+    "note": "O Plano integra Ads publicado e o candidato Bruna ainda local. A igualdade deste arquivo não publica Bruna nem encerra a projeção de seu manual."
+  }
 }
