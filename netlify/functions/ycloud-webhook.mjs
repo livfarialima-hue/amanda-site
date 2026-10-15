@@ -2512,6 +2512,10 @@ async function completeOpenAIActive({
     });
     const consultationBundle = buildConsultationQuestionBundle({plan, text:input.text,
       recentConversation:input.recentConversation, patientName:input.patientProfileName, introduceBruna});
+    const hasPendingHumanObligation = Boolean(
+      input.hasPendingHumanObligation || humanTakeoverToday ||
+      patientRelationship?.hasPendingHumanTask || consultationBundle?.pendingDetails.length,
+    );
     const insuranceAcceptanceReply = buildInsuranceAcceptanceReply({
       text: input.text,
       patientName: input.patientProfileName,
@@ -2604,6 +2608,7 @@ async function completeOpenAIActive({
             professional: "amanda",
             procedure: plan?.procedure || input.procedure || "",
             replyCode: "AMANDA-AGENDA-PREFERENCE-01",
+            replyWording: "approved_exact",
             suggestedReply: appointmentPreferenceBody,
             reviewReason: "",
           },
@@ -2825,6 +2830,7 @@ async function completeOpenAIActive({
               deterministicReplyResult?.decision?.procedure || "",
           },
           replyContract: conversationAction?.replyContract,
+          hasPendingHumanObligation,
         });
     const semanticConfirmedDeterministicReply =
       semanticDecisionConfirmsDeterministicReply(
@@ -2862,7 +2868,9 @@ async function completeOpenAIActive({
                 deterministicReplyResult.decision.procedure,
               replyCode:
                 deterministicReplyResult.decision.replyCode,
-              suggestedReply: selectConfirmedReplyText(semanticResult, deterministicReplyResult),
+              suggestedReply: consultationBundle?.pendingDetails.length
+                ? consultationBundle.body
+                : selectConfirmedReplyText(semanticResult, deterministicReplyResult),
             },
           }
         : semanticResult;
@@ -3294,6 +3302,7 @@ async function completeOpenAIActive({
         activeResult.decision,
         {
           deterministicReplyConfirmed: selectedDeterministicReply,
+          hasPendingHumanObligation,
         },
       ),
     });
@@ -5908,6 +5917,9 @@ export async function handleYCloudWebhook(
       conversationAction: buildSemanticReplyConversationAction(
         conversationAction,
         clarificationDecision,
+        { hasPendingHumanObligation: Boolean(
+          delivery.pendingCommitments?.length || humanTakeoverActive || patientRelationship?.hasPendingHumanTask,
+        ) },
       ),
       replyDebounceMarkerStatus,
       patientRelationship,
@@ -6685,6 +6697,9 @@ export async function handleYCloudWebhook(
           ),
         learningContext,
         replyContract: openAIConversationAction.replyContract,
+        hasPendingHumanObligation: Boolean(
+          delivery.pendingCommitments?.length || humanTakeoverActive || patientRelationship?.hasPendingHumanTask,
+        ),
         deterministicUrgent:
           automationPlan.reason === "possible_urgent_symptoms",
       },

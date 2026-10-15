@@ -67,6 +67,7 @@ import {
   buildSemanticReplyConversationAction,
   prepareSemanticContextContinuationAction,
   semanticDecisionConfirmsDeterministicReply,
+  selectConfirmedReplyText,
   deterministicReplyCoversPatientQuestions,
 } from "./lib/semantic-reply-policy.mjs";
 import {
@@ -834,6 +835,10 @@ export async function processHumanResumeJob(
     : null);
   const runOpenAI =
     dependencies.runOpenAIShadowImpl || runOpenAIShadow;
+  const hasPendingHumanObligation = Boolean(
+    consultationBundle?.pendingDetails.length ||
+    job.pendingCommitments?.length || job.preserveHumanOwnership,
+  );
   const knowledge = await (dependencies.callClassificationSheetsImpl || callClassificationSheets)(
     "get_bot_knowledge_context", { knowledge: { phone: job.phone, eventId: job.eventId,
       opportunityId: job.opportunityId || "", professional: job.professional || "",
@@ -863,6 +868,7 @@ export async function processHumanResumeJob(
           approvedPriceReplyCandidate?.decision?.procedure || "",
       },
       replyContract: openAIConversationAction.replyContract,
+      hasPendingHumanObligation,
       deterministicUrgent:
         enrichedPlan.reason === "possible_urgent_symptoms",
     },
@@ -980,6 +986,7 @@ export async function processHumanResumeJob(
       deterministicReplyConfirmed: approvedPriceReplyConfirmed,
       coordinationAcknowledgement:
         policy.reason === "semantic_coordination_candidate",
+      hasPendingHumanObligation,
     },
   );
 
@@ -988,7 +995,9 @@ export async function processHumanResumeJob(
     approvedPriceReplyConfirmed &&
     deterministicReplyCoversPatientQuestions(approvedPriceReplyCandidate, openAIConversationAction)
   ) {
-    const reply = approvedPriceReply;
+    const reply = consultationBundle?.pendingDetails.length
+      ? approvedPriceReply
+      : selectConfirmedReplyText(aiResult, approvedPriceReplyCandidate);
     if (consultationBundle?.pendingDetails.length) {
       return holdAndAlert(job, 'consultation_details_review', dependencies, reply,
         `Confirmar: ${consultationBundle.pendingDetails.join('; ')}.\nResposta com fatos já confirmados: ${reply}`,

@@ -33,6 +33,60 @@ test("personal concern reply contract reaches the final link guard", () => {
   assert.equal(linked.reason,"too_many_links_for_context");
 });
 
+test('semantic informational freedom preserves specific clarification and all material limits',()=>{
+  const base={action:CONVERSATION_ACTIONS.RESPOND,replyContract:{owner:'bruna',risk:'green',allowedResponseKind:'direct_answer',
+    experienceVersion:'bruna-conversion-v1',maxQuestions:0,maxLinks:0,allowCta:false,allowedCtaTypes:[],allowAppointmentConfirmation:false}};
+  const contextual=(body,code='',options={})=>buildSemanticReplyConversationAction(base,
+    {route:'standard_reply',confidence:'high',automaticAllowed:true,urgent:false,replyCode:code,replyWording:'contextual',suggestedReply:body},options);
+  for(const body of [
+    'Você quer saber sobre a recuperação em casa ou sobre a volta ao trabalho?',
+    'Você quer saber os valores da consulta ou da cirurgia?',
+  ]) {
+    const action=contextual(body,'CONTEXT-CLARIFY-01');
+    assert.equal(validateOutboundReply({body,currentText:'Pode esclarecer?',conversationAction:action}).allowed,true,body);
+  }
+  const offer='Na avaliação, a Dra. Amanda conversa sobre os objetivos e examina a região. Se quiser, posso explicar essa etapa com mais detalhes.';
+  const action=contextual(offer);
+  assert.equal(validateOutboundReply({body:offer,currentText:'Não entendi a avaliação.',conversationAction:action}).allowed,true);
+  assert.equal(conformOutboundReplyToContract({body:offer,currentText:'Não entendi a avaliação.',recentConversation:[],conversationAction:action}),offer);
+  for(const [body,reason] of [
+    ['Você quer saber indicação, recuperação ou valores?','menu_like_continuation'],
+    ['A dúvida é sobre a recuperação? Você já fez a avaliação?','too_many_questions_for_context'],
+    ['Se quiser, posso verificar horários.','cta_not_allowed_for_context'],
+    ['Se quiser, posso explicar a avaliação e verificar horários.','cta_not_allowed_for_context'],
+    ['Prefere manhã ou tarde?','cta_type_not_allowed_for_context'],
+    ['A cirurgia custa R$ 30 mil.','unapproved_monetary_amount'],
+    ['Sua consulta está confirmada para amanhã.','unverified_appointment_confirmation'],
+    ['Pela sua foto, predomina flacidez.','remote_diagnosis_or_indication'],
+    ['O resultado é garantido.','medical_or_result_promise'],
+  ]) assert.equal(validateOutboundReply({body,currentText:'Pode esclarecer?',conversationAction:contextual(body,'CONTEXT-CLARIFY-01')}).reason,reason,body);
+  assert.equal(validateOutboundReply({body:offer,currentText:'Não entendi a avaliação.',conversationAction:contextual(offer,'',{hasPendingHumanObligation:true})}).reason,'cta_not_allowed_for_context');
+  assert.equal(validateOutboundReply({body:offer,currentText:'Não quero mais explicações, obrigada.',conversationAction:{...action,action:CONVERSATION_ACTIONS.CLOSED}}).reason,'conversation_action_blocks_reply');
+  assert.equal(validateOutboundReply({body:'Se quiser, posso verificar horários.',currentText:'Não quero agendar agora.',conversationAction:contextual(offer)}).allowed,false);
+  for(const body of [
+    'Se quiser, posso explicar a recuperação ou ajudar você a agendar uma consulta.',
+    'Posso explicar a avaliação. Quer que eu marque uma consulta para você?',
+    'Você quer saber valores ou agendar uma consulta?',
+  ]) {
+    const mixedAction=contextual(body,'CONTEXT-CLARIFY-01');
+    assert.equal(validateOutboundReply({body,currentText:'Não quero marcar agora, apenas entender.',conversationAction:mixedAction}).allowed,false,body);
+    const conformed=conformOutboundReplyToContract({body,currentText:'Não quero marcar agora, apenas entender.',recentConversation:[],conversationAction:mixedAction});
+    assert.doesNotMatch(conformed,/ajudar você a agendar|que eu marque|ou agendar/);
+  }
+  const refusal='Não quero mais explicações, obrigada.';
+  const declinedAction=decideConversationAction({text:'Não tenho interesse, obrigada.',
+    recentConversation:[],plan:{route:'standard_reply',reason:'open_question_for_ai',automaticAllowed:true},conversionExperienceEnabled:true});
+  const declinedSemantic=buildSemanticReplyConversationAction(declinedAction,{route:'standard_reply',confidence:'high',automaticAllowed:true,
+    urgent:false,replyWording:'contextual',suggestedReply:offer});
+  assert.equal(validateOutboundReply({body:offer,currentText:'Não tenho interesse, obrigada.',conversationAction:declinedSemantic}).reason,'conversation_action_blocks_reply');
+  assert.equal(validateOutboundReply({body:offer,currentText:refusal,conversationAction:action}).reason,'cta_not_allowed_for_context');
+  const refusalHistory=[{role:'user',source:'patient',text:refusal}];
+  assert.equal(validateOutboundReply({body:offer,currentText:'Obrigada.',recentConversation:refusalHistory,conversationAction:action}).allowed,false);
+  assert.equal(validateOutboundReply({body:offer,currentText:'Pode explicar a avaliação agora?',recentConversation:refusalHistory,conversationAction:action}).allowed,true);
+  assert.equal(validateOutboundReply({body:'A clínica fica na Rua Pais Leme, 215, em Pinheiros.',currentText:'Qual é o endereço?',recentConversation:refusalHistory,conversationAction:action}).allowed,true);
+  assert.doesNotMatch(conformOutboundReplyToContract({body:offer,currentText:refusal,recentConversation:[],conversationAction:action}),/Se quiser/);
+});
+
 function fakeBlobs() {
   const values = new Map();
   let version = 0;
@@ -746,7 +800,7 @@ test("an explicit semantic continuation can fulfill a human information offer", 
     currentText: "Sim",
     recentConversation: context,
     conversationAction: action,
-  }).reason, "too_many_questions_for_context");
+  }).reason, "cta_not_allowed_for_context");
 });
 
 test("a semantic reopen still cannot override a closing or deferral", () => {

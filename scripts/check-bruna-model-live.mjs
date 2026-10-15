@@ -7,7 +7,7 @@ import { reviewScheduledFollowupContext } from '../netlify/functions/lib/schedul
 import { buildConsultationInformationReply, buildAdministrativeSideAnswer } from '../netlify/functions/lib/patient-replies.mjs';
 import { approvedPartialAnswer } from '../netlify/functions/lib/knowledge-learning.mjs';
 import { buildLiftingFacialInformationReply } from '../netlify/functions/lib/lifting-information.mjs';
-import { selectConfirmedReplyText, semanticDecisionConfirmsDeterministicReply, deterministicReplyCoversPatientQuestions } from '../netlify/functions/lib/semantic-reply-policy.mjs';
+import { buildSemanticReplyConversationAction, selectConfirmedReplyText, semanticDecisionConfirmsDeterministicReply, deterministicReplyCoversPatientQuestions } from '../netlify/functions/lib/semantic-reply-policy.mjs';
 import { buildAcceptedProcedurePriceReply, buildSurgicalPriceSuggestedReply } from '../netlify/functions/lib/surgical-price-review.mjs';
 import { enrichAutomationPlanFromConversation, planAutomation } from '../netlify/functions/lib/whatsapp-automation.mjs';
 import { validateOutboundReply } from '../netlify/functions/lib/outbound-reply-gate.mjs';
@@ -157,7 +157,8 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         selectedReply = scenario.knowledge || scenario.educational || scenario.remoteAssessment ? result.decision?.suggestedReply : confirmed && deterministicReplyCoversPatientQuestions(candidate,conversationAction)
           ? selectConfirmedReplyText(result,candidate) : result.decision?.suggestedReply || '';
         gate = validateOutboundReply({ body: selectedReply, currentText: scenario.text, recentConversation: scenarioHistory,
-          conversationAction: { ...conversationAction, semanticReplyAuthorized: true, semanticReplyCode: scenario.code } });
+          conversationAction: buildSemanticReplyConversationAction(conversationAction, result.decision, {
+            deterministicReplyConfirmed: confirmed, hasPendingHumanObligation: !!scenario.patientRelationship?.hasPendingHumanTask }) });
       }
     }
     const modelConfirmed = requests.length > 0 && requests.every(r => r.httpStatus === 200 &&

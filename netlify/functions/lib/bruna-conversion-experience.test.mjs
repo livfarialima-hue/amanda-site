@@ -98,6 +98,21 @@ test("a local scheduling refusal is not an offer but positive and interrogative 
   }
 });
 
+test('an explanatory clause cannot conceal a booking invitation',()=>{
+  for(const text of [
+    'Se quiser, posso explicar a recuperação ou ajudar você a agendar uma consulta.',
+    'Posso explicar a avaliação. Quer que eu marque uma consulta para você?',
+    'Você quer saber valores ou agendar uma consulta?',
+    'Posso explicar a avaliação e marcar uma consulta.',
+  ]) assert.equal(classifyBrunaCta(text),BRUNA_CTA_TYPES.AVAILABILITY,text);
+  for(const text of [
+    'O agendamento depende da conferência de disponibilidade pela equipe.',
+    'A equipe orienta como agendar ou remarcar uma consulta.',
+    'Não vamos agendar agora. A equipe confere os pedidos de consulta.',
+  ]) assert.equal(classifyBrunaCta(text),'',text);
+  assert.equal(classifyBrunaCta('Se quiser, posso explicar como funciona o agendamento.'),BRUNA_CTA_TYPES.INFORMATION);
+});
+
 test("mechanical internal safeguards are detected but natural medical limits remain allowed", () => {
   assert.equal(
     patientFacingPolicyLanguageReason(

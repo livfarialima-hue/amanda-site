@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { prepareSemanticContextContinuationAction } from "./semantic-reply-policy.mjs";
+import { buildSemanticReplyConversationAction, prepareSemanticContextContinuationAction } from "./semantic-reply-policy.mjs";
 import { selectConfirmedReplyText } from "./semantic-reply-policy.mjs";
 import { validateOutboundReply } from "./outbound-reply-gate.mjs";
 import { SURGICAL_PRICE_DISCLOSURE } from "./surgical-price-policy.mjs";
@@ -20,6 +20,10 @@ test("missing or invalid contextual permission keeps the exact approved text", (
   for (const replyWording of [undefined, "approved_exact", "anything"]) {
     assert.equal(selectConfirmedReplyText(contextual("A consulta é R$ 500.", { replyWording }), approved), approved.decision.suggestedReply);
   }
+});
+test("an explicitly exact operational preview cannot be rewritten by contextual permission", () => {
+  const candidate = { ...approved, decision: { ...approved.decision, replyWording: "approved_exact" } };
+  assert.equal(selectConfirmedReplyText(contextual("Outra redação com R$ 500."), candidate), candidate.decision.suggestedReply);
 });
 test("rewriting cannot alter or drop approved amounts and links", () => {
   const withLink = { ...approved, decision: { ...approved.decision, suggestedReply: approved.decision.suggestedReply + " https://example.test/consulta" } };
@@ -53,17 +57,29 @@ test("contextual wording preserves protected quantity units and institutional de
     assert.equal(selectConfirmedReplyText(contextual(draft), candidate), source);
   }
 });
-test("initial price guidance, agenda, insurance, pending tasks and unknown codes remain exact", () => {
+test("confirmed previews permit contextual wording independently of their code", () => {
   for (const replyCode of ["SURGICAL-PRICE-INITIAL-01",
     "AMANDA-AGENDA-PREFERENCE-01", "INSURANCE-ACCEPTANCE-01", "AMANDA-CONSULTA-BUNDLE-01", "NEW-UNKNOWN-CODE"]) {
     const candidate = { ...approved, decision: { ...approved.decision, replyCode } };
-    assert.equal(selectConfirmedReplyText(contextual("Outra redação com R$ 500.", { replyCode }), candidate), candidate.decision.suggestedReply);
+    const draft = "Outra redação com R$ 500.";
+    assert.equal(selectConfirmedReplyText(contextual(draft, { replyCode }), candidate), draft);
+    assert.equal(selectConfirmedReplyText(contextual(draft, { replyCode, replyWording: "approved_exact" }), candidate), candidate.decision.suggestedReply);
   }
 });
 test("wording permission cannot override semantic uncertainty, urgency or a different professional", () => {
   for (const changes of [{ confidence: "low" }, { automaticAllowed: false }, { urgent: true }, { professional: "daniel" }, { procedure: "otoplastia" }]) {
     assert.equal(selectConfirmedReplyText(contextual("Outra redação com R$ 500.", changes), approved), approved.decision.suggestedReply);
   }
+});
+
+test("a contextual consultation and surgery bundle preserves the entire financial disclosure", () => {
+  const candidate = { ...approved, decision: { ...approved.decision, replyCode: "AMANDA-CONSULTA-BUNDLE-01",
+    suggestedReply: `A consulta custa R$ 500. Para lifting facial, a faixa é entre R$ 26 mil e R$ 42 mil. ${SURGICAL_PRICE_DISCLOSURE}` } };
+  const natural = `Para você organizar seu planejamento: ${candidate.decision.suggestedReply}`;
+  assert.equal(selectConfirmedReplyText(contextual(natural, { replyCode: candidate.decision.replyCode }), candidate), natural);
+  assert.equal(selectConfirmedReplyText(contextual(natural.replace(SURGICAL_PRICE_DISCLOSURE, ""), {
+    replyCode: candidate.decision.replyCode,
+  }), candidate), candidate.decision.suggestedReply);
 });
 
 for (const [replyCode, procedure, range] of [
@@ -136,4 +152,45 @@ test("ordinary takeover continuation remains linkless and without CTA", () => {
   assert.equal(action.replyContract.maxQuestions, 1);
   assert.equal(action.replyContract.maxLinks, 0);
   assert.equal(action.replyContract.allowCta, false);
+});
+
+const directAction = { action: "respond", owner: "bruna", replyContract: {
+  owner: "bruna", risk: "green", allowedResponseKind: "direct_answer",
+  maxQuestions: 0, maxLinks: 0, allowCta: false, allowAppointmentConfirmation: false,
+} };
+
+test("semantic clarification and continuation allow one useful question without agenda permission", () => {
+  for (const replyCode of ["CONTEXT-CLARIFY-01", "CONTEXT-CONTINUE-01"]) {
+    const action = buildSemanticReplyConversationAction(directAction, contextual("Qual aspecto você quer entender?", { replyCode }).decision);
+    assert.equal(action.replyContract.maxQuestions, 1);
+    assert.equal(action.replyContract.maxLinks, 0);
+    assert.equal(action.replyContract.allowCta, false);
+    assert.equal(action.replyContract.allowAppointmentConfirmation, false);
+    assert.equal(action.replyContract.informationalContinuationAllowed, true);
+    assert.equal(action.action, directAction.action);
+  }
+});
+
+test("contextual informational continuation requires the original safe direct-answer envelope", () => {
+  const decision = contextual("Posso explicar como funciona.").decision;
+  const allowed = buildSemanticReplyConversationAction(directAction, decision);
+  assert.equal(allowed.replyContract.informationalContinuationAllowed, true);
+  assert.equal(allowed.replyContract.maxQuestions, 0, "ordinary intent limits are not widened");
+  for (const action of [
+    { ...directAction, action: "wait_team" },
+    { ...directAction, owner: "human_team" },
+    { ...directAction, pendingHumanCommitmentAcknowledged: true },
+    ...[{ owner: "human_team" }, { risk: "red" }, { risk: undefined }, { allowedResponseKind: "specific_acknowledgement" }]
+      .map(change => ({ ...directAction, replyContract: { ...directAction.replyContract, ...change } })),
+  ]) {
+    for (const replyCode of [decision.replyCode, "CONTEXT-CONTINUE-01"]) {
+      assert.notEqual(buildSemanticReplyConversationAction(action, { ...decision, replyCode }).replyContract.informationalContinuationAllowed, true);
+    }
+  }
+  for (const change of [{ replyWording: "approved_exact" }, { route: "human_review" }, { confidence: "low" }, { urgent: true }, { automaticAllowed: false }]) {
+    assert.notEqual(buildSemanticReplyConversationAction(directAction, { ...decision, ...change }).replyContract.informationalContinuationAllowed, true);
+  }
+  assert.notEqual(buildSemanticReplyConversationAction(directAction, decision, { hasPendingHumanObligation: true }).replyContract.informationalContinuationAllowed, true);
+  const priorPermission = { ...directAction, replyContract: { ...directAction.replyContract, informationalContinuationAllowed: true } };
+  assert.notEqual(buildSemanticReplyConversationAction(priorPermission, decision, { hasPendingHumanObligation: true }).replyContract.informationalContinuationAllowed, true);
 });

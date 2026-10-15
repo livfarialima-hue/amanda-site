@@ -1,5 +1,20 @@
 # Plano executivo — auditorias, pendências e prazos
 
+<!-- BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15 -->
+## Candidato local — autonomia contextual, 15/10/2026
+
+A seleção deixa de depender de uma lista de reply codes: um preview confirmado pode receber redação contextual quando a IA escolhe contextual e o candidato operacional não exige approved_exact. Escolha semântica ou operacional approved_exact conserva a cópia. preservesProtectedFacts compara números, URLs e algumas afirmações explícitas, com equivalência BRL conservadora; não é um verificador semântico geral. O prompt exige copiar o trecho financeiro aprovado, e o seletor preserva a ressalva obrigatória. Nenhuma dessas permissões autoriza preço novo, mudança de procedimento ou condição comercial.
+
+Entrada e retomada usam a mesma seleção. O contrato derivado da decisão semântica é aplicado antes da revisão de estilo, para que uma pergunta específica permitida pelo contexto não seja vetada por um contrato determinístico desatualizado. CONTEXT-CLARIFY e CONTEXT-CONTINUE admitem no máximo uma pergunta útil. Continuação informativa exige resposta direta autorizada, posse da Bruna, risco verde ou amarelo e ausência de pendência ou posse humana; mantém links, CTA comercial e agenda bloqueados.
+
+Identidade, destinatário, procedimento, fatos clínicos, preços, consentimento, urgência, cuidado ativo, takeover, pendências, confirmação humana de agenda, revisão da conversa e idempotência continuam protegidos. O webhook transmite as pendências à avaliação; não se libera resposta por falta de contexto. Uma pendência clínica ou administrativa não deve ser disfarçada por convite comercial.
+
+Pacote, prompt e identificador do snapshot avançam juntos para 2026-10-15.1. O snapshot representa o mesmo conhecimento aprovado, sem fato novo. Modelo, esforço, histórico completo, limites de geração, áudio, Apps Script v164, filas, cadência, campanhas e configurações permanecem. Nenhuma nova chamada de IA é acrescentada; a validação paga fica restrita ao gate do release autorizado, com os 21 cenários existentes, incluindo dois históricos completos, e três áudios.
+
+Estado: tested_local. Passaram 2251/2251 testes integrais e 19/19 testes do harness hospedado simulado, sem inferência paga. Os 74 arquivos exigidos pelos contratos estão cobertos. Revisões cruzadas confirmaram as correções de seleção, estilo, recusa e convite misto, sem bloqueador restante; 200/200 e 211/211 testes focados também passaram, com sobreposição. change:check, architecture:check, site:build/site:check (193 artefatos, 54 URLs) e diff passaram. ops:check permanece SYNC_PENDING até publicação e igualdade das projeções. A leitura viva está em auditorias/bruna-autonomia-contextual-2026-10-15/PREFLIGHT.json. O release registrado no manifest continua sendo o anterior até publicação, verificação e igualdade das mesmas projeções no Drive. ops:check deve manter SYNC_PENDING enquanto essas etapas estiverem pendentes.
+
+Próximos passos: concluir código e regressões dos dois caminhos; conferir escopo e consumidores; executar gates locais e revisão independente; commit intencional; vincular autorização de publicação ao SHA; preflight fresco e gate hospedado; verificar produção; commit documental e substituição das mesmas projeções Drive com download e igualdade real. Nenhuma nova automação. Acompanhar primeira conversa e retomada naturais elegíveis e 48 horas; conter/reverter somente este delta diante de fato alterado, envio indevido, duplicidade ou interferência humana.
+
 <!-- BRUNA-PROCEDIMENTO-CONTEXTUAL-2026-10-15 -->
 ## Publicado e verificado — procedimento contextual, 15/10/2026
 

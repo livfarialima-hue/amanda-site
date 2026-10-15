@@ -7,31 +7,21 @@ export const CONTEXT_REOPEN_CODE = "CONTEXT-REOPEN-01";
 export const CONTEXT_CONTINUATION_CODE = "CONTEXT-CONTINUE-01";
 export const COORDINATION_ACKNOWLEDGEMENT_CODE = "COORDINATION-ACK-01";
 
-export const CONTEXTUAL_APPROVED_REPLY_CODES = Object.freeze([
-  "MARKETING-PREFILL-OPENING-01",
-  "CONTEXT-CONTINUE-01",
-  "AMANDA-CONSULTA-INFO-01",
-  "LIFTING-FACIAL-INFORMATION-01",
-  "LIFTING-SCOPE-COMPARISON-01",
-  "LIFTING-PRICE-RANGE-01",
-  "OTOPLASTY-PRICE-RANGE-01",
-  "LIPO-PAPADA-PRICE-RANGE-01",
-]);
-
 // This selects wording only. The confirmed route and the final outbound gate
-// remain authoritative; protected operational copies are never rewritten here.
+// remain authoritative. Exact wording is explicit; codes do not impose style.
 export function selectConfirmedReplyText(semanticResult, approvedResult) {
   const approved = String(approvedResult?.decision?.suggestedReply || "");
   const draft = String(semanticResult?.decision?.suggestedReply || "").trim();
   if (!semanticDecisionConfirmsDeterministicReply(semanticResult, approvedResult) ||
       semanticResult.decision.replyWording !== "contextual" ||
-      !CONTEXTUAL_APPROVED_REPLY_CODES.includes(approvedResult.decision.replyCode) ||
+      approvedResult.decision.replyWording === "approved_exact" ||
       !draft || draft.length > 1200 || !preservesProtectedFacts(draft, approved)) {
     return approved;
   }
   // Wording is flexible, not the approved commercial facts. The outbound
   // gate still checks procedure-specific amounts, clinical claims and effects.
-  if (["LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01"].includes(approvedResult.decision.replyCode) &&
+  if ((hasApprovedSurgicalPriceDisclosure(approved) ||
+      ["LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01"].includes(approvedResult.decision.replyCode)) &&
       !hasApprovedSurgicalPriceDisclosure(draft)) return approved;
   return draft;
 }
@@ -115,7 +105,7 @@ function contextContinuationContract(replyContract) {
     owner: "bruna",
     allowedResponseKind: "direct_answer",
     silenceReason: "",
-    maxQuestions: 0,
+    maxQuestions: 1,
     maxLinks: 0,
     allowCta: false,
     allowAppointmentConfirmation: false,
@@ -185,6 +175,7 @@ export function buildSemanticReplyConversationAction(
   {
     deterministicReplyConfirmed = false,
     coordinationAcknowledgement = false,
+    hasPendingHumanObligation = false,
   } = {},
 ) {
   const replyCode = String(decision?.replyCode || "").trim();
@@ -211,6 +202,30 @@ export function buildSemanticReplyConversationAction(
     deterministicReplyConfirmed === true;
   const clarification = contextClarification || unknownClarification;
   const replyContract = conversationAction?.replyContract || null;
+  // This only permits an informational continuation inside the original
+  // response envelope; semantic continuation cannot acquire human ownership.
+  const informationalContinuationAllowed = Boolean(
+    decisionValidated &&
+    (decision?.replyWording === "contextual" || contextClarification || contextContinuation) &&
+    conversationAction?.action === "respond" &&
+    (!conversationAction.owner || conversationAction.owner === "bruna") &&
+    replyContract?.owner === "bruna" &&
+    replyContract.allowedResponseKind === "direct_answer" &&
+    ["green", "yellow"].includes(replyContract.risk) &&
+    conversationAction.pendingHumanCommitmentAcknowledged !== true &&
+    hasPendingHumanObligation !== true,
+  );
+  const effectiveContract = contextContinuation
+    ? contextContinuationContract(replyContract)
+    : clarification
+    ? {
+        ...(replyContract || {}),
+        maxQuestions: 1,
+        maxLinks: 0,
+        allowCta: false,
+        allowAppointmentConfirmation: false,
+      }
+    : replyContract;
 
   return {
     ...conversationAction,
@@ -223,16 +238,8 @@ export function buildSemanticReplyConversationAction(
       contextContinuation ||
       coordinationConfirmed ||
       deterministicConfirmed,
-    replyContract: contextContinuation
-      ? contextContinuationContract(replyContract)
-      : clarification
-      ? {
-          ...(replyContract || {}),
-          maxQuestions: 1,
-          maxLinks: 0,
-          allowCta: false,
-          allowAppointmentConfirmation: false,
-        }
-      : replyContract,
+    replyContract: effectiveContract
+      ? { ...effectiveContract, informationalContinuationAllowed }
+      : effectiveContract,
   };
 }

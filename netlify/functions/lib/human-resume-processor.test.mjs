@@ -27,6 +27,28 @@ test('resumed teleconsultation price uses the approved bundle without creating h
   assert.equal(deps.alerts.length,0);
 });
 
+for (const scenario of ['contextual', 'approved_exact', 'invalid_literal']) {
+  test(`resumed consultation bundle preserves confirmed contextual wording and facts: ${scenario}`, async () => {
+    const deps = dependencies(); let preview; let draft;
+    deps.runOpenAIShadowImpl = async payload => {
+      assert.equal(payload.hasPendingHumanObligation, false);
+      preview = payload.policyHints.deterministicReplyPreview;
+      draft = `Para você que está no exterior: ${preview}`;
+      if (scenario === 'invalid_literal') draft = draft.replace('R$ 500', 'R$ 700');
+      return { status: 'completed', decision: { route: 'standard_reply', confidence: 'high', automaticAllowed: true,
+        urgent: false, professional: 'amanda', procedure: '', replyCode: 'AMANDA-CONSULTA-BUNDLE-01',
+        replyWording: scenario === 'approved_exact' ? 'approved_exact' : 'contextual', suggestedReply: draft, reviewReason: '' } };
+    };
+    const result = await processHumanResumeJob(job({text:'Quanto custa a teleconsulta da Dra. Amanda? Moro no exterior.',procedure:'',
+      recentConversation:[{role:'assistant',source:'bruna',text:'Como posso ajudar?'}]}), { env: ACTIVE_ENV, now: NOW, ...deps });
+    assert.equal(deps.patientMessages.length, 1, JSON.stringify(result));
+    const expected = scenario === 'contextual' ? draft : preview;
+    assert.equal(deps.patientMessages[0].body, expected);
+    assert.ok(deps.memory.some(turn => turn.text === expected));
+    assert.equal(deps.alerts.length, 0);
+  });
+}
+
 test('resumed remote assessment uses semantics without repeating a surgical price holding', async () => {
   const deps=dependencies(); let calls=0;
   deps.runOpenAIShadowImpl=async()=>{calls++;return {status:'completed',decision:{route:'human_review',confidence:'high',automaticAllowed:false,urgent:false,
@@ -123,9 +145,9 @@ for (const scenario of ['explanation', 'recovery', 'invalid_amount']) {
   });
 }
 
-for (const scenario of ['complete', 'alert_failed', 'semantic_veto', 'newer_activity', 'combined_price']) {
+for (const scenario of ['complete', 'contextual_pending', 'alert_failed', 'semantic_veto', 'newer_activity', 'combined_price']) {
   test(`multiple pending questions after human contact: ${scenario}`, async()=>{
-    const deps=dependencies(); const order=[];
+    const deps=dependencies(); const order=[]; let approvedPendingReply;
     const texts=scenario==='combined_price' ? ['Quanto custa a consulta e o lifting cervical?'] : [
       'O pescoço é o que mais me incomoda.', 'Qual o preço da consulta? Pode ser online?',
       'Tenho Unimed e preciso de relatório para reembolso.', 'Qual a média de valores para lifting?'];
@@ -138,9 +160,12 @@ for (const scenario of ['complete', 'alert_failed', 'semantic_veto', 'newer_acti
     deps.runOpenAIShadowImpl=async payload=>{
       assert.equal(payload.policyHints.deterministicReplyCode,'AMANDA-CONSULTA-BUNDLE-01');
       assert.match(payload.policyHints.deterministicReplyPreview,/R\$ 500/);
+      assert.equal(payload.hasPendingHumanObligation, scenario !== 'combined_price');
+      approvedPendingReply = payload.policyHints.deterministicReplyPreview;
       return {status:'completed',decision:{route:'standard_reply',confidence:'high',automaticAllowed:true,urgent:false,
         professional:'amanda',procedure:scenario==='combined_price'?'lifting_cervical':'',replyCode:scenario==='semantic_veto'?'INSURANCE-ACCEPTANCE-01':'AMANDA-CONSULTA-BUNDLE-01',
-        suggestedReply:scenario==='semantic_veto'?'Atendimento particular.':payload.policyHints.deterministicReplyPreview,reviewReason:''}};
+        replyWording:scenario==='contextual_pending'?'contextual':'approved_exact',
+        suggestedReply:scenario==='semantic_veto'?'Atendimento particular.':scenario==='contextual_pending'?`Sobre o que conversamos: ${approvedPendingReply}`:approvedPendingReply,reviewReason:''}};
     };
     if(scenario==='newer_activity') deps.readConversationTurnsImpl=async()=>({status:'completed',turns:[{role:'assistant',source:'equipe_humana',text:'Já respondi.',at:'2026-07-28T15:20:00Z',eventId:'new-human'}]});
     const result=await processHumanResumeJob(input,{env:ACTIVE_ENV,now:NOW,...deps});
@@ -151,6 +176,7 @@ for (const scenario of ['complete', 'alert_failed', 'semantic_veto', 'newer_acti
     }
     assert.equal(deps.patientMessages.length,1,JSON.stringify(result));
     const body=deps.patientMessages[0].body;
+    if (scenario==='contextual_pending') assert.equal(body, approvedPendingReply);
     assert.match(body,/R\$ 500/);
     if(scenario==='combined_price') assert.match(body,/18 mil e R\$ 26 mil/);
     else {
@@ -234,9 +260,9 @@ function dependencies() {
   };
 }
 
-for (const scenario of ['complete','price_only','semantic_veto','new_human','wrong_procedure']) {
+for (const scenario of ['complete','contextual','price_only','semantic_veto','new_human','wrong_procedure']) {
   test(`isolated lipo resumption preserves the whole request and ownership: ${scenario}`,async()=>{
-    const deps=dependencies();
+    const deps=dependencies(); let contextualReply;
     const text=scenario==='price_only' ? 'Qual o valor da lipo de papada?' : 'Gostaria de saber sobre o procedimento, valor e recuperação';
     const turns=[{role:'user',source:'patient',text:'Estou pesquisando lipo de papada para minha esposa.'},
       {role:'assistant',source:'bruna',text:'Qual é a dúvida de vocês?'}];
@@ -248,15 +274,21 @@ for (const scenario of ['complete','price_only','semantic_veto','new_human','wro
         assert.ok(payload.replyContract.unresolvedIntents.includes('recovery'));
       }
       const veto=scenario==='semantic_veto';
+      contextualReply = `Para o planejamento de vocês: ${payload.policyHints.deterministicReplyPreview}`;
       return {status:'completed',decision:{route:veto?'human_review':'standard_reply',confidence:'high',automaticAllowed:!veto,urgent:false,
         professional:'amanda',procedure:scenario==='wrong_procedure'?'lifting_cervical':'lipo_papada',replyCode:'LIPO-PAPADA-PRICE-RANGE-01',
-        suggestedReply:payload.policyHints.deterministicReplyPreview,reviewReason:veto?'clinical_detail_review':''}};
+        replyWording: scenario==='contextual' ? 'contextual' : 'approved_exact',
+        suggestedReply:scenario==='contextual' ? contextualReply : payload.policyHints.deterministicReplyPreview,reviewReason:veto?'clinical_detail_review':''}};
     };
     if(scenario==='new_human')deps.readConversationTurnsImpl=async()=>({status:'completed',turns:[{role:'assistant',source:'equipe_humana',text:'Já estou atendendo.',at:'2026-07-28T15:20:00Z',eventId:'synthetic-lipo-human'}]});
     const result=await processHumanResumeJob(job({text,procedure:'lipo_papada',recentConversation:turns}),{env:ACTIVE_ENV,now:NOW,...deps});
-    if(!['complete','price_only'].includes(scenario)){assert.equal(deps.patientMessages.length,0,JSON.stringify(result));return;}
+    if(!['complete','contextual','price_only'].includes(scenario)){assert.equal(deps.patientMessages.length,0,JSON.stringify(result));return;}
     assert.equal(deps.patientMessages.length,1,JSON.stringify(result));
     const body=deps.patientMessages[0].body;
+    if (scenario==='contextual') {
+      assert.equal(body, contextualReply);
+      assert.ok(deps.memory.some(turn => turn.text === contextualReply));
+    }
     assert.match(body,/lipo de papada isolada.*R\$ 12 mil e R\$ 18 mil/);assert.match(body,/não é um orçamento fechado/);
     if(scenario==='complete')assert.match(body,/gordura.*flacidez.*Dra\. Amanda.*inchaço.*sensibilidade.*roxos/s);
     assert.doesNotMatch(body,/26 mil|42 mil|Olá|sou a Bruna|confirmar.*equipe/);assert.equal(deps.alerts.length,0);
@@ -377,6 +409,7 @@ for (const scenario of ["address", "invoice", "semantic_veto", "new_human", "new
       ? [{ role: scenario === "new_human" ? "assistant" : "user", source: scenario === "new_human" ? "human" : "patient", text: "Outra mensagem", at: "2026-07-28T15:29:00Z" }] : [] });
     deps.runOpenAIShadowImpl = async input => {
       assert.equal(input.patientRelationship.hasPendingHumanTask, true);
+      assert.equal(input.hasPendingHumanObligation, true);
       if (scenario === "unknown_professional") assert.doesNotMatch(input.policyHints.deterministicReplyCode || "", /^ADMIN-SIDE/);
       const veto = scenario === "semantic_veto";
       return { status: "completed", decision: { route: veto ? "human_review" : "standard_reply", confidence: "high", automaticAllowed: !veto,

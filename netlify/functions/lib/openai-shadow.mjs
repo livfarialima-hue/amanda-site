@@ -24,7 +24,9 @@ import {
   CONTEXT_CLARIFICATION_CODE,
   CONTEXT_CONTINUATION_CODE,
   CONTEXT_REOPEN_CODE,
+  buildSemanticReplyConversationAction,
 } from "./semantic-reply-policy.mjs";
+import { CONVERSATION_ACTIONS } from './conversation-action-controller.mjs';
 import { approvedProcedureInformationFacts } from "./lifting-information.mjs";
 import { assessReplyContinuity, buildReplyContinuityContext } from "./reply-continuity.mjs";
 import { replyStyleRevisionReason } from "./outbound-reply-gate.mjs";
@@ -630,7 +632,7 @@ export function applyContextContinuationGuard(
     enabled !== true ||
     decision?.route !== "standard_reply" ||
     !reply ||
-    reply.includes("?")
+    (reply.match(/\?+/g) || []).length > 1
   ) {
     return {
       ...decision,
@@ -979,6 +981,7 @@ export async function runOpenAIShadow(
     patientRelationship,
     learningContext,
     replyContract,
+    hasPendingHumanObligation = false,
     priorInteractionKnown = false,
     deterministicUrgent = false,
   },
@@ -1187,8 +1190,15 @@ export async function runOpenAIShadow(
 
     const assess = value => assessReplyContinuity({ body: value, currentMessage: text, recentConversation: normalizedConversation });
     const continuity = assess(parsed.decision.suggestedReply);
-    const styleReason = value => replyStyleRevisionReason({ body: value, currentText: text, recentConversation: normalizedConversation, replyContract: normalizedReplyContract });
-    const styleFailure = styleReason(continuity.body);
+    const effectiveAction = decision => buildSemanticReplyConversationAction({
+      action: normalizedReplyContract?.owner === 'bruna' && normalizedReplyContract.allowedResponseKind === 'direct_answer'
+        ? CONVERSATION_ACTIONS.RESPOND : CONVERSATION_ACTIONS.WAIT_TEAM,
+      replyContract: normalizedReplyContract,
+    }, decision, {hasPendingHumanObligation});
+    const styleReason = (value, decision) => replyStyleRevisionReason({ body: value, currentText: text,
+      recentConversation: normalizedConversation, replyContract: normalizedReplyContract,
+      conversationAction: effectiveAction(decision) });
+    const styleFailure = styleReason(continuity.body, parsed.decision);
     if (!continuity.needsRevision && !styleFailure) return { ...parsed, decision: { ...parsed.decision, suggestedReply: continuity.body } };
 
     continuityFallback = { ...parsed, decision: { ...parsed.decision, route: "human_review", automaticAllowed: false,
@@ -1204,7 +1214,7 @@ export async function runOpenAIShadow(
       previousDraft: parsed.decision.suggestedReply,
       repeatedElements: continuity.removed,
       styleFailure,
-      replyContract: normalizedReplyContract,
+      replyContract: effectiveAction(parsed.decision).replyContract,
       instruction: "Reescreva a resposta a partir da informação nova da paciente e dos approvedClinicalFacts disponíveis. Corrija styleFailure respeitando os limites de perguntas, links e CTA do replyContract; use uma conversa natural, sem menu. A descrição já recebida responde à descoberta: ofereça uma informação específica útil, sem repetir a explicação geral da consulta, presumir sofrimento ou pedir novamente região/objetivo. Não acrescente fatos, promessas, indicação ou agenda sem base. Encerre sem pergunta quando suficiente; se não houver resposta útil e segura, mantenha revisão humana.",
     } });
     const revisionAttempt = await fetchAttempt({ ...request, body: JSON.stringify(revisionRequest) }, "revision");
@@ -1217,7 +1227,7 @@ export async function runOpenAIShadow(
     if (revised.decision?.route !== "standard_reply" || !revised.decision.automaticAllowed || revised.decision.urgent) return revised;
     if (revised.decision.confidence !== "high") return continuityFallback;
     const revisedContinuity = assess(revised.decision.suggestedReply);
-    if (revisedContinuity.needsRevision || !revisedContinuity.body || styleReason(revisedContinuity.body)) return continuityFallback;
+    if (revisedContinuity.needsRevision || !revisedContinuity.body || styleReason(revisedContinuity.body, revised.decision)) return continuityFallback;
     return { ...revised, decision: { ...revised.decision, suggestedReply: revisedContinuity.body } };
   } catch (error) {
     if (continuityFallback) return continuityFallback;

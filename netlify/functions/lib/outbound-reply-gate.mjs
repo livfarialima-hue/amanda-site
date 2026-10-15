@@ -18,6 +18,7 @@ import { hasAssertedProtectedClaim } from "./protected-facts.mjs";
 import { APPROVED_SURGICAL_RANGE_PATTERNS, containsApprovedSurgicalRange, containsPreviouslySharedLipoPapadaRange, hasIsolatedLipoPapadaScope, hasOnlyApprovedSurgicalAmounts, hasApprovedSurgicalPriceDisclosure } from "./surgical-price-policy.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
+  BRUNA_CTA_TYPES,
   classifyBrunaCta,
   patientFacingPolicyLanguageReason,
 } from "./bruna-conversion-experience.mjs";
@@ -97,6 +98,26 @@ function withoutDisallowedTrailingCta(value, allowedCtaTypes = []) {
     : segments.slice(0, -1).join(" ").trim();
 }
 
+function declinedFurtherExplanation(currentText, recentConversation = []) {
+  const patientTexts = [...recentConversation].reverse()
+    .filter(turn => ['user','patient'].includes(turn?.role) || ['patient','paciente'].includes(turn?.source))
+    .map(turn => turn?.text);
+  for (const value of [currentText, ...patientTexts]) {
+    const text = normalizedText(value);
+    if (/\bnao\s+(?:(?:quero|preciso)(?:\s+mais)?(?:\s+de)?\s+(?:explicacoes?|detalhes)|precisa\s+(?:me\s+)?explicar)\b/.test(text)) return true;
+    // A new explicit request reopens that information, without permanently
+    // vetoing a later conversation after an earlier refusal.
+    if (/\b(?:pode|poderia|quero|gostaria)\s+(?:me\s+|de\s+)?(?:explicar|detalhar|entender)\b/.test(text)) return false;
+  }
+  return false;
+}
+
+function allowsInformationalContinuation(conversationAction, currentText, recentConversation = []) {
+  return conversationAction?.semanticReplyAuthorized === true &&
+    conversationAction?.replyContract?.informationalContinuationAllowed === true &&
+    !declinedFurtherExplanation(currentText, recentConversation);
+}
+
 export function conformOutboundReplyToContract({
   body,
   conversationAction,
@@ -118,9 +139,8 @@ export function conformOutboundReplyToContract({
   ) {
     reply = withoutDisallowedTrailingCta(
       reply,
-      Array.isArray(contract.allowedCtaTypes)
-        ? contract.allowedCtaTypes
-        : [],
+      [...(Array.isArray(contract.allowedCtaTypes) ? contract.allowedCtaTypes : []),
+        ...(allowsInformationalContinuation(conversationAction, currentText, recentConversation) ? [BRUNA_CTA_TYPES.INFORMATION] : [])],
     );
   }
 
@@ -317,8 +337,13 @@ function semanticUnsafeReplyReason(
     return "medical_or_result_promise";
   }
 
+  const menuTopicCount = [/\bindica[cç][aã]o\b/i, /\brecupera[cç][aã]o\b/i,
+    /\b(?:valores?|pre[cç]os?)\b/i, /\bagenda(?:mento)?\b/i].filter(pattern => pattern.test(raw)).length;
+  const specificContextClarification = allowsInformationalContinuation(conversationAction, currentText, recentConversation) &&
+    conversationAction.semanticReplyCode === 'CONTEXT-CLARIFY-01' && menuTopicCount <= 1;
   if (
     /\b(?:voc[eê]\s+quer|quer\s+saber|prefere\s+falar)\b[\s\S]{0,100}\b(?:indica[cç][aã]o|recupera[cç][aã]o|valores?|agenda(?:mento)?)\b[\s\S]{0,50}\bou\b/i.test(raw)
+    && !specificContextClarification
   ) {
     return "menu_like_continuation";
   }
@@ -340,10 +365,12 @@ function semanticUnsafeReplyReason(
   const ctaPattern =
     /\b(?:se\s+(?:fizer\s+sentido|quiser)|quer\s+que\s+eu|posso\s+(?:te|lhe)\s+ajudar|podemos\s+agendar|prefere\s+(?:manh[aã]|tarde))\b/i;
   const containsCta = ctaPattern.test(withoutNegatedSchedulingMentions(raw));
-  if (contract.allowCta === false && containsCta) {
+  const classifiedCta = classifyBrunaCta(raw);
+  const contextualInformationOffer = allowsInformationalContinuation(conversationAction, currentText, recentConversation) &&
+    classifiedCta === BRUNA_CTA_TYPES.INFORMATION;
+  if (contract.allowCta === false && containsCta && !contextualInformationOffer) {
     return "cta_not_allowed_for_context";
   }
-  const classifiedCta = classifyBrunaCta(raw);
   if (
     contract.experienceVersion === BRUNA_CONVERSION_EXPERIENCE_VERSION &&
     classifiedCta &&
@@ -351,6 +378,7 @@ function semanticUnsafeReplyReason(
       Array.isArray(contract.allowedCtaTypes) &&
       contract.allowedCtaTypes.includes(classifiedCta)
     )
+    && !contextualInformationOffer
   ) {
     return "cta_type_not_allowed_for_context";
   }
@@ -678,10 +706,10 @@ export function validateOutboundReply({
 
 // Only these presentation failures can use the one existing bounded rewrite.
 // The same content/safety validator remains mandatory after the rewrite.
-export function replyStyleRevisionReason({ body, currentText, recentConversation = [], replyContract }) {
+export function replyStyleRevisionReason({ body, currentText, recentConversation = [], replyContract, conversationAction }) {
   if (!replyContract) return "";
   const gate = validateOutboundReply({ body, currentText, recentConversation,
-    conversationAction: { action: CONVERSATION_ACTIONS.RESPOND, replyContract, semanticHumanContextReplyAuthorized: true } });
+    conversationAction: conversationAction || { action: CONVERSATION_ACTIONS.RESPOND, replyContract, semanticHumanContextReplyAuthorized: true } });
   return ["menu_like_continuation", "too_many_questions_for_context", "too_many_links_for_context",
     "cta_not_allowed_for_context", "cta_type_not_allowed_for_context"].includes(gate.reason) ? gate.reason : "";
 }

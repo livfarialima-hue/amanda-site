@@ -364,11 +364,19 @@ test("context continuation fulfills an accepted information offer without a new 
   assert.equal(guarded.replyCode, "CONTEXT-CONTINUE-01");
 });
 
-test("context continuation fails closed outside the bounded candidate or with a follow-up question", () => {
+test("context continuation permits one useful question inside its bounded candidate", () => {
+  const decision = validDecision({replyCode:'CONTEXT-CONTINUE-01',
+    suggestedReply:'Na avaliação, a Dra. Amanda entende seus objetivos. A dúvida de vocês é sobre a consulta presencial ou online?'});
+  const guarded=applyContextContinuationGuard(decision,{enabled:true});
+  assert.equal(guarded.route,'standard_reply');
+  assert.equal(guarded.suggestedReply,decision.suggestedReply);
+});
+
+test("context continuation fails closed outside the bounded candidate or with multiple questions", () => {
   const decision = validDecision({
     replyCode: "CONTEXT-CONTINUE-01",
     suggestedReply:
-      "Na consulta, a Dra. Amanda entende seus objetivos. Quer ver horários?",
+      "Na consulta, a Dra. Amanda entende seus objetivos. Quer ver horários? Qual dia prefere?",
     reviewReason: "context_continue:consulta",
   });
 
@@ -656,6 +664,70 @@ test("known prior interaction prevents a repeated introduction when conversation
   });
 
   assert.deepEqual(guarded, decision);
+});
+
+for (const scenario of [
+  {id:'address_clarification',text:'Onde fica a clínica?',code:'CONTEXT-CLARIFY-01',maxQuestions:0,
+    body:'A clínica fica na Rua Pais Leme, 215, em Pinheiros. Você vem de carro ou de transporte público?'},
+  {id:'specific_recovery',text:'E a recuperação?',code:'CONTEXT-CLARIFY-01',maxQuestions:1,
+    body:'Você quer saber sobre a recuperação em casa ou sobre a volta ao trabalho?'},
+  {id:'accepted_information_question',text:'Sim, pode explicar.',code:'CONTEXT-CONTINUE-01',maxQuestions:0,
+    body:'Na avaliação, a Dra. Amanda conversa sobre os objetivos e examina a região. A dúvida de vocês é sobre consulta presencial ou online?'},
+  {id:'optional_explanation',text:'Não entendi a parte da avaliação.',code:'',maxQuestions:0,
+    body:'Na avaliação, a Dra. Amanda conversa sobre o objetivo e examina a região. Se quiser, posso explicar essa etapa com mais detalhes.'},
+]) {
+  test(`effective semantic contract avoids a style-only inference: ${scenario.id}`,async()=>{
+    let calls=0;
+    const decision=validDecision({procedure:'lipo_papada',replyCode:scenario.code,replyWording:'contextual',suggestedReply:scenario.body});
+    const result=await runOpenAIShadow({phone:PHONE,text:scenario.text,procedure:'lipo_papada',
+      recentConversation:[{role:'assistant',source:'bruna',text:'Posso explicar como funciona a avaliação.'}],
+      policyHints:{humanContextContinuationCandidate:scenario.code==='CONTEXT-CONTINUE-01'},
+      replyContract:{experienceVersion:'bruna-conversion-v1',owner:'bruna',risk:'green',allowedResponseKind:'direct_answer',
+        maxQuestions:scenario.maxQuestions,maxLinks:0,allowCta:false,allowedCtaTypes:[],allowAppointmentConfirmation:false},
+    },{env:{OPENAI_API_KEY:'test-key',BRUNA_CONVERSION_EXPERIENCE_V1:'true'},logImpl:()=>{},
+      fetchImpl:async()=>{calls++;return Response.json(validResponse(decision));}});
+    assert.equal(calls,1,JSON.stringify(result));
+    assert.equal(result.decision.route,'standard_reply');
+    assert.equal(result.decision.suggestedReply,scenario.body);
+  });
+}
+
+test('a necessary style revision receives the same effective clarification contract',async()=>{
+  let calls=0;
+  const body='A clínica fica na Rua Pais Leme, 215, em Pinheiros. Você vem de carro ou de transporte público?';
+  const result=await runOpenAIShadow({phone:PHONE,text:'Onde fica a clínica?',
+    recentConversation:[{role:'assistant',source:'bruna',text:'Como posso ajudar?'}],
+    replyContract:{experienceVersion:'bruna-conversion-v1',owner:'bruna',risk:'green',allowedResponseKind:'direct_answer',
+      maxQuestions:0,maxLinks:0,allowCta:false,allowedCtaTypes:[]}},
+    {env:{OPENAI_API_KEY:'test-key',BRUNA_CONVERSION_EXPERIENCE_V1:'true'},logImpl:()=>{},
+      fetchImpl:async(_url,options)=>{
+        calls++;
+        if(calls===2) {
+          const revision=JSON.parse(JSON.parse(options.body).input).continuityRevision;
+          assert.equal(revision.styleFailure,'too_many_links_for_context');
+          assert.equal(revision.replyContract.maxQuestions,1);
+          assert.equal(revision.replyContract.maxLinks,0);
+          assert.equal(revision.replyContract.informationalContinuationAllowed,true);
+        }
+        return Response.json(validResponse(validDecision({replyCode:'CONTEXT-CLARIFY-01',replyWording:'contextual',
+          suggestedReply:body+(calls===1?' https://draamandaschroeder.com.br/contato/':'')})));
+      }});
+  assert.equal(calls,2);assert.equal(result.decision.route,'standard_reply');
+  assert.equal(result.decision.suggestedReply,body);
+});
+
+test('semantic style review cannot grant an informational offer while a human obligation is pending',async()=>{
+  let calls=0;
+  const body='Na avaliação, a Dra. Amanda conversa sobre os objetivos. Se quiser, posso explicar essa etapa.';
+  const result=await runOpenAIShadow({phone:PHONE,text:'Como funciona?',hasPendingHumanObligation:true,
+    recentConversation:[{role:'assistant',source:'equipe_humana',text:'Estou conferindo a informação.'}],
+    replyContract:{experienceVersion:'bruna-conversion-v1',owner:'bruna',risk:'green',allowedResponseKind:'direct_answer',
+      maxQuestions:0,maxLinks:0,allowCta:false,allowedCtaTypes:[]}},
+    {env:{OPENAI_API_KEY:'test-key',BRUNA_CONVERSION_EXPERIENCE_V1:'true'},logImpl:()=>{},
+      fetchImpl:async()=>{calls++;return Response.json(validResponse(validDecision({replyWording:'contextual',suggestedReply:body})));}});
+  assert.equal(calls,2);assert.equal(result.decision.route,'human_review');
+  assert.equal(result.decision.suggestedReply,'');
+  assert.equal(result.decision.reviewReason,'cta_not_allowed_for_context');
 });
 
 function validResponse(decision = validDecision()) {

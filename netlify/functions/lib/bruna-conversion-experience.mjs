@@ -140,7 +140,10 @@ export function classifyBrunaCta(value) {
     /\b(?:verificar|ver|consultar|conferir|confira)\s+(?:(?:as?|os?)\s+)?(?:pr[oó]ximos?\s+)?(?:op[cç][oõ]es\s+de\s+)?(?:hor[aá]rios?|disponibilidade)\b/i.test(
       text,
     ) ||
-    /\b(?:podemos|posso)\s+agendar\b/i.test(text)
+    /\b(?:podemos|posso|vamos|quer|gostaria(?:\s+de)?)\s+(?:agendar|marcar)\b/i.test(text) ||
+    /\b(?:quer|gostaria)\s+que\s+eu\s+(?:agende|marque)\b/i.test(text) ||
+    /\b(?:ajudar|ajudo)\s+(?:(?:voc[eê]|te|lhe)\s+)?a\s+(?:agendar|marcar)\b/i.test(text) ||
+    /\b(?:posso|podemos|quer|gostaria)\b[^.!?\n]{0,100}\b(?:ou|e)\s+(?:agendar|marcar)\b/i.test(text)
   ) {
     return BRUNA_CTA_TYPES.AVAILABILITY;
   }

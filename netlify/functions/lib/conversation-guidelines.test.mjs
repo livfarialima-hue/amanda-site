@@ -46,6 +46,17 @@ test("procedure classification keeps consultation modality in the conversation t
   }
 });
 
+test('contextual wording is based on facts and obligations rather than a code whitelist',()=>{
+  const line=CONVERSATION_GUIDELINES.split('\n').find(value=>value.startsWith('- Redação contextual:'));
+  assert.match(line,/prévias informativas confirmadas integralmente, independentemente do código/);
+  assert.match(line,/esclarecimento específico.*pode usar alternativas/);
+  assert.match(line,/Respeite recusas, não repita ofertas/);
+  assert.match(line,/Nas cópias operacionais de agenda, confirmação de efeitos e pendências humanas, use replyWording="approved_exact"/);
+  assert.doesNotMatch(line,/nos códigos|Nos demais códigos/);
+  assert.match(CONVERSATION_GUIDELINES,/Cumpra primeiro a explicação aceita; depois, no máximo uma pergunta específica/);
+  assert.doesNotMatch(CONVERSATION_GUIDELINES,/Não acrescente pergunta, CTA ou link/);
+});
+
 test("all price sections agree with the isolated papada policy without authorizing associations", () => {
   for (const conversionExperienceEnabled of [false, true]) {
     const guidelines = buildConversationGuidelines({ conversionExperienceEnabled });

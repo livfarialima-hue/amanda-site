@@ -1,5 +1,16 @@
 # Arquitetura da jornada da paciente
 
+<!-- BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15 -->
+## Candidato local — seleção semântica e contrato de resposta, 15/10/2026
+
+semantic-reply-policy.mjs é o proprietário compartilhado da escolha entre preview confirmado e redação contextual. A seleção exige confirmação semântica, escolha contextual da IA, candidato operacional sem approved_exact e preservesProtectedFacts; não usa whitelist de reply codes. approved_exact conserva a cópia. O comparador cobre literais e classes explícitas, com equivalência BRL conservadora; não verifica toda a semântica. O contrato resultante é construído por buildSemanticReplyConversationAction; informationalContinuationAllowed identifica apenas continuação informativa válida, com resposta direta, posse da Bruna, risco verde ou amarelo e sem pendência ou intervenção humana.
+
+openai-shadow.mjs aplica esse contrato antes de avaliar estilo/continuidade. outbound-reply-gate.mjs consome o contrato preservando fatos, destinatário, contexto e barreiras materiais; uma pergunta específica e oferta informativa permitidas não autorizam links, agenda ou abordagem comercial. human-resume.mjs usa o mesmo proprietário da entrada; ycloud-webhook.mjs transporta as pendências ao contexto avaliado. conversation-guidelines.mjs alinha a instrução ao contrato efetivo. bruna-conversion-experience.mjs mantém a classificação de CTA: convite explícito para agendar tem prioridade mesmo quando vem misturado com explicação; informação descritiva sobre agenda não equivale a convite. O prompt pede cópia literal do trecho financeiro aprovado; o seletor exige preservar a ressalva aplicável, e os gates de preço continuam obrigatórios.
+
+Pacote/prompt/snapshot 2026-10-15.1 representa o mesmo conhecimento aprovado, sem fatos novos. Modelo, esforço, história completa, limites, áudio, agenda, Apps Script v164 e dados não mudam. O cenário contextual existente no gate hospedado será reforçado sem aumentar os 21 cenários, dois históricos completos ou três áudios.
+
+Candidato tested_local, com gates locais e revisão cruzada aprovados; publicação deste delta ainda pendente. Baseline local e8b11e4136d0bef328a34680b3aaf9c94baddf48; produção funcional observada b7bad3c4e93f313993f8c9cb6b08b1a6ba7506f1 / 6ad0ca6cd91f0138092c5d88. Contratos, consumidores e limites em ops/CHANGE-CANDIDATE.json e auditorias/bruna-autonomia-contextual-2026-10-15/.
+
 <!-- BRUNA-PROCEDIMENTO-CONTEXTUAL-2026-10-15 -->
 ## Procedimento contextual publicado — 15/10/2026
 
@@ -319,7 +330,7 @@ O `conversation-action-controller.mjs` continua proprietário da permissão: `re
 
 `bruna-model-config.mjs` é o proprietário único do modelo `gpt-6.1-sol`, esforço `medium` e teto de 4096 tokens de saída, incluindo raciocínio. `openai-shadow`, `lead-classifier` e `scheduled-followup-context-review` importam essa configuração, ignorando overrides legados. O pacote 2026-10-11.2, publicado em 11/10/2026, centraliza os prazos em 20 segundos para conversa/retomada humana, 15 para classificação e 12 para revisão de retomada. A revisão única compartilha os 20 segundos e exige 8 segundos restantes; não há retry em falha nem reinício do prazo. A classificação mantém seu envelope externo de 20 segundos. Os três adaptadores pedem saída concisa e rejeitam respostas explicitamente incompletas. Histórico e prefixo estável do prompt permanecem preservados.
 
-`semantic-reply-policy.mjs` seleciona apenas a redação de prévias confirmadas, em lista fechada. O campo `replyWording` diferencia redação contextual de cópia exata; decisões legadas conservam cópia exata. Divergência de número/URL conserva a prévia aprovada. A cobertura do pedido, rota, procedimento, profissional e todos os gates de saída continuam exigidos. Retomada humana já usa redação livre fora dos preços protegidos e consome o mesmo adaptador de IA. O gate de indicação individual corrige a fronteira da palavra acentuada “é”, sem ampliar permissões clínicas.
+No release de 11/10/2026, a seleção contextual dependia de uma lista de códigos e mantinha os preços fora da redação livre da retomada. Esse é o registro histórico daquele pacote. O candidato 2026-10-15.1 descrito no início deste documento substitui essa seleção nos dois caminhos: preview semanticamente confirmado pode receber redação contextual se a IA escolher contextual, o candidato operacional não exigir approved_exact e preservesProtectedFacts passar. approved_exact conserva a cópia. A comparação é limitada a literais e classes explícitas, com equivalência BRL conservadora; o prompt exige trecho financeiro aprovado literal e o seletor preserva a ressalva aplicável. Divergência conserva a prévia aprovada; cobertura do pedido, rota, profissional, procedimento e gates materiais continuam exigidos.
 
 Consumo do plano ChatGPT não foi implementado: hospedagem remota requer elegibilidade/autorização específica e transporte SSE/OAuth compatível. Daniel autorizou publicar usando a API paga enquanto a integração da assinatura aguarda aprovação. Não há alternância automática de cobrança. Nenhuma credencial do Codex pode ser reaproveitada por suposição.
 

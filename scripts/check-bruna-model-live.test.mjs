@@ -177,6 +177,9 @@ async function syntheticResponse(url, request) {
       if (unknown) decision.partialAnswer = { knowledgeIds: ['SYNTHETIC-PARKING'], pendingQuestion: 'Qual equipamento específico é usado?' };
       if (remote) Object.assign(decision,{route:'standard_reply',automaticAllowed:true,replyCode:'',reviewReason:'',suggestedReply:'A Dra. Amanda atende por consulta online, inclusive quem está no exterior. A teleconsulta custa R$ 500. O orçamento individual da cirurgia depende da avaliação.'});
       if (input.currentMessage.includes('comprovante fiscal')) Object.assign(decision, { replyCode: 'KB:SYNTHETIC-INVOICE', suggestedReply: 'Sim, emitimos nota fiscal da consulta.' });
+      if (input.currentMessage.includes('É para minha esposa.')) {
+        decision.suggestedReply = `Para vocês se planejarem: ${decision.suggestedReply}`;
+      }
       if (input.currentMessage.includes('levar para a primeira consulta')) decision.suggestedReply = 'Leve os exames que já tiver e suas dúvidas.';
       if (input.currentMessage.includes('nome que pedi no início')) {
         assert.equal(input.fullConversation.turns.length, 80);
@@ -212,6 +215,10 @@ test('all twenty-one synthetic scenarios use the real adapters and pass the outb
   assert.equal(result.patientMessagesSent, 0);
   assert.match(result.results.find(r=>r.name==='consultation_contextual').requests[0].syntheticDraft, /consulta presencial/);
   assert.equal(JSON.stringify(result).includes(env.OPENAI_API_KEY), false);
+  const compound = result.results.find(r => r.name === 'lipo_papada_complete_requested_answer');
+  assert.match(compound.selectedReply, /^Para vocês se planejarem:/);
+  assert.equal(compound.selectedReply, compound.decision.suggestedReply);
+  assert.equal(compound.requests.length, 1, 'contextual wording is accepted without a paid style retry');
 });
 
 test('the association probe rejects isolated prices even inside a human-review suggestion', async () => {
