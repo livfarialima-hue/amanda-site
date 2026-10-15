@@ -36,8 +36,8 @@
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
     "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "eca9862b22e0f8240597701d8fe5de9e3a563d353cc11663ca650932f0efca2d",
-    "driveProjectionVerifiedAt": "2026-10-15T10:43:42.507Z",
+    "driveProjectionSha256": "2b0b4e1159e9ac788b1755c6bef4af28ab4f5ed75caaff2d77481d5626098ebc",
+    "driveProjectionVerifiedAt": "2026-10-15T11:14:56.252Z",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata."
   },
   "reliabilityContract": "durable-storage-conditional-writes",

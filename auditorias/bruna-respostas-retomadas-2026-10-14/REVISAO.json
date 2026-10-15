@@ -89,7 +89,7 @@
     "baselineDeployId": "6acff7b9dc7d30f39ad66b31",
     "baselineAppsScriptVersion": 164,
     "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
-    "correctedCandidateStatus": "tested_local"
+    "correctedCandidateStatus": "committed_awaiting_exact_authorization"
   },
   "operationalConsistency": {
     "status": "SYNC_PENDING",
@@ -98,22 +98,22 @@
       "Autorização do novo commit exato",
       "21 cenários vivos, histórico, áudio e verificação da publicação"
     ],
-    "documentationReconciled": false
+    "documentationReconciled": true
   },
   "documentation": {
-    "status": "update_pending",
-    "sourceCommit": "e9f584b93e9cbbcbcb2bd2f48ae2599244e060d3",
-    "verifiedAt": "2026-10-15T10:55:08.069Z",
+    "status": "written_verified",
+    "sourceCommit": "e5ac48e7b3636a61419f52e2822616073fe76c68",
+    "verifiedAt": "2026-10-15T11:14:56.252Z",
     "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
     "manual": {
       "path": "docs/estrategia-abordagem-bruna.md",
-      "sha256": "eca9862b22e0f8240597701d8fe5de9e3a563d353cc11663ca650932f0efca2d",
-      "bytes": 73379
+      "sha256": "2b0b4e1159e9ac788b1755c6bef4af28ab4f5ed75caaff2d77481d5626098ebc",
+      "bytes": 73293
     },
     "executivePlan": {
       "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "sha256": "f26b242b6d68d47f84a83f27748f33a235035dc59a4726ae908d17e034425bd8",
-      "bytes": 13459
+      "sha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
+      "bytes": 13075
     },
     "existingFilesPreserved": true,
     "previousParallelProjection": {
