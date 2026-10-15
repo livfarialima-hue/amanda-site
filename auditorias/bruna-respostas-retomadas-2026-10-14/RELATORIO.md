@@ -14,7 +14,7 @@ A seleção foi baseada em leitura dos sistemas canônicos privados, preservando
 
 ## Fontes e limites
 
-Preflight Netlify/projeto/deploy e webhook público atuais, baseline Git b77b1d6, docs/contratos, histórico do chat Cloud, LEADS/CRM/compromissos/Central/retomadas/preferências/Calendar e tabela indicada. Não se afirma leitura de mídia omitida, entrega pelo provedor, editor Apps Script ou reservas privadas do worker. Nenhum dado operacional foi escrito.
+Preflight Netlify/projeto/deploy e webhook público atuais, baseline Git b77b1d6, docs/contratos, histórico do chat Cloud, LEADS/CRM/compromissos/Central/retomadas/preferências/Calendar e tabela indicada. Não se afirma leitura de mídia omitida, entrega pelo provedor, editor Apps Script ou reservas privadas do worker. O planejamento individual foi escrito somente em Observação da equipe na Central canônica, após revalidar identidade, chave, oportunidade, profissional e mensagens. Releitura confirmou todos os alvos, nenhuma omissão e nenhum outro campo modificado. Pausas e recusa foram preservadas; detalhes identificáveis permanecem exclusivamente na fonte privada.
 
 ## Validação e publicação
 

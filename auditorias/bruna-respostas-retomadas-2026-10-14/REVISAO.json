@@ -43,17 +43,35 @@
     "syntheticOnly": true
   },
   "operationalPlanning": {
-    "status": "prepared",
-    "patientMessagesSent": 0
+    "status": "written_verified",
+    "date": "2026-10-15",
+    "target": "Central de Atendimento canônica, observação da equipe",
+    "authorization": "Adequação estratégica solicitada nesta conversa",
+    "patientMessagesSent": 0,
+    "queuesOrFlagsChanged": false,
+    "requiresFreshIdentityAndSourceKeyReadback": true,
+    "writtenAt": "2026-10-15T10:02:12Z",
+    "verifiedAt": "2026-10-15T10:02:24Z",
+    "allTargetNotesVerified": true,
+    "onlyTeamObservationChanged": true,
+    "protectedFieldsUnchanged": true,
+    "identityRevalidated": true,
+    "newMessagesRevalidated": true,
+    "omissions": false
   },
-  "externalWritesPerformed": false,
+  "externalWritesPerformed": true,
   "publication": {
     "status": "pending_authorization",
     "baselineDeployId": "6acff7b9dc7d30f39ad66b31",
     "appsScriptVersion": 164
   },
   "operationalConsistency": {
-    "expected": "SYNC_PENDING",
-    "reason": "Candidato local testado, ainda sem autorização/publicação."
+    "status": "SYNC_PENDING",
+    "checkedOn": "2026-10-15",
+    "pending": [
+      "Publicação autorizada do candidato",
+      "Projeções documentais em atualização",
+      "Branch isolada ainda não reconciliada com produção"
+    ]
   }
 }

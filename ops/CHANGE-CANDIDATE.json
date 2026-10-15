@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false
+    "externalWritesPerformed": true
   },
   "scope": {
     "files": [
@@ -175,7 +175,7 @@
       "Handoff real antes de promessa; nenhuma promessa nova artificial de horário.",
       "Opt-out, pausa, urgência, risco clínico, posse humana, identidade, mensagem mais recente, janela e idempotência intactos.",
       "Retornos prometidos são dívida da clínica; não reativar filas históricas nem disparar lote.",
-      "Apps Script v164, LEADS/CRM/Calendar, flags, triggers, campanhas e orçamento preservados.",
+      "Apps Script v164, dados clínicos, agenda, flags, triggers, campanhas e orçamento preservados; somente observações manuais de planejamento na Central foram alteradas e relidas.",
       "Estado published_verified e recibos anteriores preservados como baseline; este pacote continua candidato.",
       "Dados pessoais e evidência de conversas ficam nas fontes privadas, nunca neste repositório público."
     ],
@@ -315,7 +315,8 @@
       "changeSafety": "passed",
       "diff": "passed",
       "independentReview": "passed"
-    }
+    },
+    "functionalCommit": "8385b919a36e20749ea98c7ed975500658006f7d"
   },
   "rollback": {
     "local": "Reverter somente o diff declarado desta branch isolada.",
@@ -337,12 +338,20 @@
     "baselineAppsScriptVersion": 164
   },
   "operationalPlanning": {
-    "status": "prepared",
+    "status": "written_verified",
     "date": "2026-10-15",
     "target": "Central de Atendimento canônica, observação da equipe",
     "authorization": "Adequação estratégica solicitada nesta conversa",
     "patientMessagesSent": 0,
     "queuesOrFlagsChanged": false,
-    "requiresFreshIdentityAndSourceKeyReadback": true
+    "requiresFreshIdentityAndSourceKeyReadback": true,
+    "writtenAt": "2026-10-15T10:02:12Z",
+    "verifiedAt": "2026-10-15T10:02:24Z",
+    "allTargetNotesVerified": true,
+    "onlyTeamObservationChanged": true,
+    "protectedFieldsUnchanged": true,
+    "identityRevalidated": true,
+    "newMessagesRevalidated": true,
+    "omissions": false
   }
 }

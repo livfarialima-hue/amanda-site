@@ -8,7 +8,7 @@ Pacote 2026-10-14.5, ainda sem publicação. Corrigir perguntas conjuntas de pro
 
 **Gates:** testes focados/cruzados/integrais e revisão independente; commit; autorização de publicação do pacote; preflight vivo; modelo/áudio/histórico; publicação e equivalência; projeção neste mesmo arquivo do Drive. Até lá, SYNC_PENDING. Relatório: auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md.
 
-**Revisão:** 15/10 para obrigações; 48h após eventual publicação e 22/10 para completude, promessas, duplicidade e contato indevido. Manter abordagem somente com continuidade útil; corrigir qualquer mistura de preço/procedimento ou insistência. Nenhuma campanha, flag, gatilho, fila ou dado operacional foi modificado.
+**Revisão:** 15/10 para obrigações; 48h após eventual publicação e 22/10 para completude, promessas, duplicidade e contato indevido. Manter abordagem somente com continuidade útil; corrigir qualquer mistura de preço/procedimento ou insistência. As orientações individuais foram registradas apenas em Observação da equipe na Central canônica, com identidade e histórico relidos antes da escrita e igualdade dos demais campos verificada depois. Pausas e recusa preservadas. Nenhuma campanha, flag, gatilho, fila, agenda ou mensagem foi alterada por esse planejamento.
 
 
 Versão pública revisada em 14/10/2026 com autorização do responsável. O conteúdo integral anterior foi preservado como histórico fechado em área restrita. Esta edição remove contatos, gastos, identificadores de contas/campanhas e registros operacionais detalhados; não cancela decisões ou pendências anteriores. Não altera permissões de arquivos nem apaga o histórico Git já existente.
