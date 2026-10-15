@@ -106,6 +106,16 @@
       "settings": "Nomes, estados, orçamentos, métodos de lance, ausência de CPA desejado e metas das seis campanhas afetadas iguais ao before.",
       "historicalRows": "A visão com removidas tem 83 associações, incluindo 12 remoções históricas e 14 deste lote. Não atribuir todas as removidas à execução atual.",
       "libraryEvidence": "Os cinco recursos permanecem referenciados com miniaturas e histórico; não houve operação de exclusão de recurso da biblioteca."
+    },
+    "libraryVerification": {
+      "status": "passed",
+      "checkedAt": "2026-10-15T12:11:33.025Z",
+      "resourcesReopened": 5,
+      "metadataIdsMatched": 5,
+      "sourceFile": "biblioteca-after.json",
+      "sourceSha256": "3964b76927ebef41b21dad6c85027d1129c2c831578a06b7bef15601908a0120",
+      "method": "Os cinco recursos foram reabertos após a desassociação. O código de cada recurso no painel Sobre este recurso coincidiu com seu ID original; tipo Imagem e metadados continuaram disponíveis.",
+      "conclusion": "Os cinco recursos originais continuam acessíveis na biblioteca; somente as 14 associações selecionadas foram removidas."
     }
   },
   "driveProjection": {
