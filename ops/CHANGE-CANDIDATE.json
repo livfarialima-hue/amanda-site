@@ -250,8 +250,8 @@
     "evidence": "auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json"
   },
   "documentationReconciliation": {
-    "status": "written_verified_local",
-    "sourceCommit": null,
+    "status": "written_verified",
+    "sourceCommit": "0fda38b516e7b633a0da85bc18106336461b49d2",
     "evidence": "auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json"
   }
 }

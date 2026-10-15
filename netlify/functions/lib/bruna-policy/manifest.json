@@ -39,8 +39,8 @@
     "driveProjectionSha256": "518cbfa98dd788eb92b00ff5dd8466447864044eda1be3c3e90ca1a4a1ea99f5",
     "driveProjectionVerifiedAt": "2026-10-15T18:57:47.0493268Z",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
-    "status": "written_verified_local",
-    "sourceCommit": null
+    "status": "written_verified",
+    "sourceCommit": "0fda38b516e7b633a0da85bc18106336461b49d2"
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",

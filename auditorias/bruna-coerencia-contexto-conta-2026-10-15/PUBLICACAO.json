@@ -172,10 +172,10 @@
   "syntheticOnly": true,
   "externalWritesPerformed": true,
   "documentation": {
-    "status": "written_verified_local",
-    "sourceCommit": null,
+    "status": "written_verified",
+    "sourceCommit": "0fda38b516e7b633a0da85bc18106336461b49d2",
     "verifiedAt": "2026-10-15T18:57:47.7504780Z",
-    "method": "Authenticated raw readback; exact SHA-256 and byte-length equality with local files; source commit pending documentation commit.",
+    "method": "Authenticated raw readback; exact SHA-256 and byte-length equality with local files and source commit.",
     "existingFilesPreserved": true,
     "equalityVerified": true,
     "manual": {
@@ -185,7 +185,8 @@
       "localEqualsReadback": true,
       "readbackAt": "2026-10-15T18:57:47.0493268Z",
       "authenticated": true,
-      "sameExistingFile": true
+      "sameExistingFile": true,
+      "sourceCommitEqualsReadback": true
     },
     "executivePlan": {
       "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
@@ -194,7 +195,8 @@
       "localEqualsReadback": true,
       "readbackAt": "2026-10-15T18:57:47.7504780Z",
       "authenticated": true,
-      "sameExistingFile": true
+      "sameExistingFile": true,
+      "sourceCommitEqualsReadback": true
     }
   },
   "reportPath": "auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md",
@@ -224,5 +226,6 @@
     "Nenhuma prova de conversa natural posterior, ganho de conversão ou economia financeira.",
     "Próximo pacote de medição não publicado e ponte pela conta não implementada."
   ],
-  "drivePlanSha256": "fd320e3a43b194a65ac94e704534a6e4e71b652c02a5407e0d60add609f1ae0f"
+  "drivePlanSha256": "fd320e3a43b194a65ac94e704534a6e4e71b652c02a5407e0d60add609f1ae0f",
+  "documentationReconciledAt": "2026-10-15T18:57:47.7504780Z"
 }
