@@ -84,36 +84,48 @@
     "publishedAt": "2026-10-15T11:30:20.211Z",
     "verifiedAt": "2026-10-15T11:30:58.679Z",
     "appsScriptVersion": 164,
-    "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json"
+    "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json",
+    "documentationReconciledAt": "2026-10-15T11:34:00.700Z",
+    "drivePlanSha256": "d15cce6e2932fa8e2ba414baace4526ab1e76f440b614a070e86388b0432a55a"
   },
   "operationalConsistency": {
     "status": "SYNC_PENDING",
-    "checkedAt": "2026-10-15T11:32:17.769Z",
+    "checkedAt": "2026-10-15T11:34:00.700Z",
+    "documentationReconciled": true,
     "pending": [
-      "Releitura autenticada das projeções existentes no Drive",
-      "Commit dos recibos e reconciliação do checkout principal",
-      "Gates finais de change, arquitetura e ops"
-    ],
-    "documentationReconciled": false
+      "Commit these JSON receipts",
+      "Reconcile canonical checkout and run final Git/operational gates"
+    ]
   },
   "documentation": {
-    "status": "awaiting_drive_readback",
-    "preparedAt": "2026-10-15T11:32:17.769Z",
-    "approvedSourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
-    "localCandidates": {
-      "manual": {
-        "path": "docs/estrategia-abordagem-bruna.md",
-        "sha256": "4f234b291aab79540d9b82cf25bdcac3da6602059a552e0fa48f413ad1666c73",
-        "bytes": 74146
-      },
-      "executivePlan": {
-        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-        "sha256": "d15cce6e2932fa8e2ba414baace4526ab1e76f440b614a070e86388b0432a55a",
-        "bytes": 13684
-      }
+    "status": "written_verified",
+    "sourceCommit": "2138b679ef1ad1099e55baa74df9d1888d26bca8",
+    "verifiedAt": "2026-10-15T11:34:00.700Z",
+    "method": "Authenticated readback with exact byte equality to local and source-commit content and SHA-256",
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "4f234b291aab79540d9b82cf25bdcac3da6602059a552e0fa48f413ad1666c73",
+      "bytes": 74146,
+      "readbackAt": "2026-10-15T11:34:00.700Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "localEqualsReadback": true,
+      "sourceCommitEqualsReadback": true,
+      "evidence": "Authenticated Drive fetch of existing manual file 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF"
     },
-    "existingFilesMustBePreserved": true,
-    "equalityVerified": false,
+    "executivePlan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "d15cce6e2932fa8e2ba414baace4526ab1e76f440b614a070e86388b0432a55a",
+      "bytes": 13684,
+      "readbackAt": "2026-10-15T11:34:00.700Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "localEqualsReadback": true,
+      "sourceCommitEqualsReadback": true,
+      "evidence": "Authenticated Drive fetch of existing plan file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
+    },
+    "existingFilesPreserved": true,
+    "equalityVerified": true,
     "previousVerifiedProjection": {
       "status": "written_verified",
       "sourceCommit": "e5ac48e7b3636a61419f52e2822616073fe76c68",
@@ -154,7 +166,9 @@
     "modelInstructionsAndSchemaAligned": true,
     "parserAndFreeLabelsPreserved": true,
     "gateCriteriaUnchanged": true,
-    "liveValidation": "pending_new_authorized_build"
+    "liveValidation": "passed",
+    "liveValidationDeployId": "6ad0b88d46ff84caa6a749e7",
+    "liveValidationEvidence": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json"
   },
   "integrationValidation": {
     "status": "passed_local",
@@ -183,7 +197,9 @@
     "canonicalPolicyUnchanged": true,
     "hostedAssertionsUnchanged": true,
     "contextualCompletenessPreserved": true,
-    "liveValidation": "pending_new_authorized_build"
+    "liveValidation": "passed",
+    "liveValidationDeployId": "6ad0b88d46ff84caa6a749e7",
+    "liveValidationEvidence": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json"
   },
   "previousPublication": {
     "status": "blocked_live_gate",
@@ -218,5 +234,70 @@
     },
     "evidence": "Netlify production build log, bounded scenario and failure records; deterministic local reproduction",
     "syntheticOnly": true
+  },
+  "functionScheduleInventory": {
+    "status": "written_verified",
+    "checkedAt": "2026-10-15T11:30:58.676Z",
+    "comparisonSha256": "e9ba048d397ed4f1296f6ab98a71f09123d56c2a7e8d0a8e1e0f7e97570dabb3",
+    "baseline": {
+      "deployId": "6acff7b9dc7d30f39ad66b31",
+      "commit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
+      "sourceSha256": "25a82666352ed91c2534ef8a5b47dc604255b02d8f62df3297131e5e3bd91626",
+      "checkedAt": "2026-10-15T11:26:36.6683525Z",
+      "evidence": "Authenticated Netlify get_deploy API"
+    },
+    "published": {
+      "deployId": "6ad0b88d46ff84caa6a749e7",
+      "commit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+      "checkedAt": "2026-10-15T11:30:58.676Z",
+      "evidence": "Authenticated Netlify get_deploy API"
+    },
+    "functions": [
+      "appointment-reminder",
+      "appointment-review",
+      "attribution-journey",
+      "attribution-journey-purge",
+      "classify-leads",
+      "classify-leads-background",
+      "conversation-archive",
+      "human-resume",
+      "human-resume-background",
+      "post-consult-followup",
+      "scheduled-followup",
+      "synthetic-integration-health",
+      "ycloud-recovery",
+      "ycloud-recovery-background",
+      "ycloud-webhook"
+    ],
+    "schedules": [
+      {
+        "name": "attribution-journey-purge",
+        "cron": "17 6 * * *"
+      },
+      {
+        "name": "classify-leads",
+        "cron": "*/5 * * * *"
+      },
+      {
+        "name": "conversation-archive",
+        "cron": "*/5 * * * *"
+      },
+      {
+        "name": "human-resume",
+        "cron": "*/5 * * * *"
+      },
+      {
+        "name": "synthetic-integration-health",
+        "cron": "17 12 * * *"
+      },
+      {
+        "name": "ycloud-recovery",
+        "cron": "*/5 * * * *"
+      }
+    ],
+    "functionCount": 15,
+    "scheduleCount": 6,
+    "functionNamesEqual": true,
+    "scheduleNamesAndCronEqual": true
   }
 }
