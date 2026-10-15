@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "changeId": "BRUNA-PROCEDIMENTO-CONTEXTUAL-2026-10-15",
+  "status": "production_verified_documentation_pending",
+  "bundleVersion": "2026-10-14.5",
+  "approvedCommit": "b7bad3c4e93f313993f8c9cb6b08b1a6ba7506f1",
+  "netlifyDeployId": "6ad0ca6cd91f0138092c5d88",
+  "productionState": "ready",
+  "context": "production",
+  "branch": "reestruturacao-site",
+  "publishedAt": "2026-10-15T12:46:37.032Z",
+  "verifiedAt": "2026-10-15T12:47:27Z",
+  "approval": {
+    "by": "Daniel",
+    "at": "2026-10-15T12:43:02Z",
+    "reference": "Pedido atual nesta conversa: Veja o problema. A ia nao enxerga bem o contexto antes de responder. Ele queria saber de lipo de papada apesar de ter vindo pro cervicoplastia. Ajuste e publique. Aplicado ao commit final b7bad3c4e93f313993f8c9cb6b08b1a6ba7506f1, revisado e testado nesta execução."
+  },
+  "releasePreflight": {
+    "status": "CHANGE_SAFETY_STATUS=OK",
+    "approvedCommit": "b7bad3c4e93f313993f8c9cb6b08b1a6ba7506f1",
+    "clean": true,
+    "checkedAt": "2026-10-15T12:42:21.363Z",
+    "reference": "release:preflight executado no checkout limpo para este SHA, com aprovação atual e tmp/bruna-api-release/context-preflight-live.json",
+    "configEvidence": {
+      "checkedAt": "2026-10-15T12:42:21.363Z",
+      "productionEnvironmentPresent": [
+        "GOOGLE_SHEETS_WEBHOOK_SECRET",
+        "OPENAI_API_KEY",
+        "WHATSAPP_AUTOMATION_MODE",
+        "WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED",
+        "YCLOUD_API_KEY",
+        "YCLOUD_FOLLOWUP_TEMPLATE_NAME"
+      ],
+      "scope": "No sender/template configuration change in this runtime delta",
+      "senderRegistryRevalidated": false,
+      "senderEvidence": {
+        "source": "baselineRuntimeRelease",
+        "approvedCommit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
+        "deployId": "6ad0c377e0be1096575458ca",
+        "checkedAt": "2026-10-15T12:13:32Z",
+        "metadata": {
+          "checkedAt": "2026-10-15T12:13:32Z",
+          "productionEnvironmentPresent": [
+            "GOOGLE_SHEETS_WEBHOOK_SECRET",
+            "OPENAI_API_KEY",
+            "YCLOUD_API_KEY",
+            "YCLOUD_FOLLOWUP_TEMPLATE_NAME"
+          ],
+          "senderEnvironmentPresent": false,
+          "senderRegistry": {
+            "store": "liv-whatsapp-business-number-v1",
+            "object": "current",
+            "present": true,
+            "bytes": 65
+          },
+          "senderValueRead": false,
+          "senderValueValidated": false,
+          "limitation": "Valor do remetente não baixado/validado; fallback canônico permanece fail-closed"
+        }
+      },
+      "senderValueRead": false,
+      "senderValueValidated": false,
+      "failClosedPreserved": true,
+      "limitation": "Sender object was verified in the baseline release at 12:13Z; this release changes no sender/template settings. Existing fail-closed checks remain. Apps Script v164 is unchanged; its version is taken from the previously verified receipt."
+    },
+    "checkedAtMeaning": "Timestamp of the live state supplied to release:preflight; command execution bounded by approval and actual deployment creation, without an invented exact second",
+    "executionWindow": {
+      "after": "2026-10-15T12:43:02Z",
+      "before": "2026-10-15T12:43:24.634Z",
+      "source": "Ordem observada das ferramentas: approval bound, release:preflight OK, git push, criação do deploy."
+    }
+  },
+  "liveModel": {
+    "status": "passed",
+    "passed": 21,
+    "total": 21,
+    "fullHistoryPassed": 2,
+    "model": "gpt-6.1-sol",
+    "checkedAt": "2026-10-15T12:46:21.796Z",
+    "evidence": "BRUNA_MODEL_PREFLIGHT e 21 BRUNA_MODEL_SCENARIO extraídos da seção Building do deploy de produção 6ad0ca6cd91f0138092c5d88, com uma requisição por cenário.",
+    "allScenariosSingleRequest": true,
+    "lipoContextScenario": {
+      "name": "lipo_papada_complete_requested_answer",
+      "passed": true,
+      "gateAllowed": true,
+      "modelRequests": 1,
+      "replyCode": "LIPO-PAPADA-PRICE-RANGE-01"
+    }
+  },
+  "liveAudio": {
+    "status": "passed",
+    "passed": 3,
+    "total": 3,
+    "model": "whisper-1",
+    "checkedAt": "2026-10-15T12:46:21.796Z"
+  },
+  "health": {
+    "checkedAt": "2026-10-15T12:46:56.391Z",
+    "deployId": "6ad0ca6cd91f0138092c5d88",
+    "passed": true,
+    "checks": [
+      {
+        "name": "production",
+        "passed": true,
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "signatureProtection": "active",
+        "automationMode": "active",
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled"
+      },
+      {
+        "name": "branch_alias",
+        "passed": true,
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "signatureProtection": "active",
+        "automationMode": "active",
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled"
+      },
+      {
+        "name": "immutable_deploy",
+        "passed": true,
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "signatureProtection": "active",
+        "automationMode": "active",
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled"
+      }
+    ],
+    "staticChecks": [
+      {
+        "path": "/",
+        "passed": true,
+        "statuses": [
+          200,
+          200
+        ],
+        "newSha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e",
+        "oldSha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e"
+      },
+      {
+        "path": "/lipo-de-papada/",
+        "passed": true,
+        "statuses": [
+          200,
+          200
+        ],
+        "newSha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92",
+        "oldSha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92"
+      },
+      {
+        "path": "/lifting-cervical/",
+        "passed": true,
+        "statuses": [
+          200,
+          200
+        ],
+        "newSha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033",
+        "oldSha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033"
+      },
+      {
+        "path": "/campanhas/site-enhancements.css",
+        "passed": true,
+        "statuses": [
+          200,
+          200
+        ],
+        "newSha256": "1a02819eb3508e747beffc4b14184578b3f3dc70c6281b1ab81438d074769d13",
+        "oldSha256": "1a02819eb3508e747beffc4b14184578b3f3dc70c6281b1ab81438d074769d13"
+      }
+    ],
+    "patientMessagesSent": 0,
+    "syntheticOnly": true
+  },
+  "functions": 15,
+  "schedules": 6,
+  "inventoryComparison": {
+    "checkedAt": "2026-10-15T12:46:56.391Z",
+    "baseline": {
+      "deployId": "6ad0c377e0be1096575458ca",
+      "functions": [
+        "appointment-reminder",
+        "appointment-review",
+        "attribution-journey",
+        "attribution-journey-purge",
+        "classify-leads",
+        "classify-leads-background",
+        "conversation-archive",
+        "human-resume",
+        "human-resume-background",
+        "post-consult-followup",
+        "scheduled-followup",
+        "synthetic-integration-health",
+        "ycloud-recovery",
+        "ycloud-recovery-background",
+        "ycloud-webhook"
+      ],
+      "schedules": [
+        {
+          "name": "attribution-journey-purge",
+          "cron": "17 6 * * *"
+        },
+        {
+          "name": "classify-leads",
+          "cron": "*/5 * * * *"
+        },
+        {
+          "name": "conversation-archive",
+          "cron": "*/5 * * * *"
+        },
+        {
+          "name": "human-resume",
+          "cron": "*/5 * * * *"
+        },
+        {
+          "name": "synthetic-integration-health",
+          "cron": "17 12 * * *"
+        },
+        {
+          "name": "ycloud-recovery",
+          "cron": "*/5 * * * *"
+        }
+      ]
+    },
+    "published": {
+      "deployId": "6ad0ca6cd91f0138092c5d88",
+      "functions": [
+        "appointment-reminder",
+        "appointment-review",
+        "attribution-journey",
+        "attribution-journey-purge",
+        "classify-leads",
+        "classify-leads-background",
+        "conversation-archive",
+        "human-resume",
+        "human-resume-background",
+        "post-consult-followup",
+        "scheduled-followup",
+        "synthetic-integration-health",
+        "ycloud-recovery",
+        "ycloud-recovery-background",
+        "ycloud-webhook"
+      ],
+      "schedules": [
+        {
+          "name": "attribution-journey-purge",
+          "cron": "17 6 * * *"
+        },
+        {
+          "name": "classify-leads",
+          "cron": "*/5 * * * *"
+        },
+        {
+          "name": "conversation-archive",
+          "cron": "*/5 * * * *"
+        },
+        {
+          "name": "human-resume",
+          "cron": "*/5 * * * *"
+        },
+        {
+          "name": "synthetic-integration-health",
+          "cron": "17 12 * * *"
+        },
+        {
+          "name": "ycloud-recovery",
+          "cron": "*/5 * * * *"
+        }
+      ]
+    },
+    "functionNamesEqual": true,
+    "scheduleNamesAndCronEqual": true
+  },
+  "appsScript": {
+    "version": 164,
+    "changed": false
+  },
+  "appsScriptVersion": 164,
+  "patientMessagesSent": 0,
+  "syntheticOnly": true,
+  "externalWritesPerformed": true,
+  "drivePlanSha256": null,
+  "documentation": {
+    "status": "awaiting_drive_readback",
+    "sourceCommit": null,
+    "existingFilesRequired": true,
+    "localHashes": {
+      "docs/estrategia-abordagem-bruna.md": "1b16a427f5a25243c412053e7d8f6135e7f3f90c63e5391cee55236e21760ccf",
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md": "03b965dc020843e5ba3577c6c0270eee273066ab762bbd12b34940605e4b4fdd"
+    }
+  },
+  "rollback": {
+    "commit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
+    "deployId": "6ad0c377e0be1096575458ca",
+    "constraint": "New Git revert commit/build; preserve data, queues, flags, receipts and Apps Script; no replay"
+  },
+  "limits": [
+    "Synthetic validation does not prove a natural patient interaction or financial savings.",
+    "Operational closure requires the same existing Drive projections and exact local/source-commit/readback equality."
+  ],
+  "localVerification": {
+    "sourceCommit": "b7bad3c4e93f313993f8c9cb6b08b1a6ba7506f1",
+    "checkedAt": "2026-10-15T12:43:02Z",
+    "checkedAtMeaning": "Registro do commit após testes concluídos; não representa o segundo de término de cada teste.",
+    "fullSuite": {
+      "passed": 2232,
+      "total": 2232,
+      "failed": 0
+    },
+    "focusedResults": {
+      "ownerAndConsumers": {
+        "passed": 187,
+        "total": 187,
+        "failed": 0
+      },
+      "humanResumeAdditional": {
+        "passed": 88,
+        "total": 88,
+        "failed": 0
+      },
+      "hostedGateHarness": {
+        "passed": 19,
+        "total": 19,
+        "failed": 0
+      }
+    },
+    "requiredContractFiles": 59,
+    "results": {
+      "status": "passed_local",
+      "fullSuite": {
+        "passed": 2232,
+        "total": 2232,
+        "command": "npm.cmd test"
+      },
+      "harness": {
+        "passed": 19,
+        "total": 19,
+        "command": "node --test scripts/check-bruna-model-live.test.mjs"
+      },
+      "requiredContractCoverage": {
+        "allCovered": true,
+        "method": "npm.cmd test cobre os arquivos de contratos apps-script/netlify e os dois testes de governança em scripts; o harness hospedado simulado cobre o restante.",
+        "requiredFiles": 59
+      },
+      "changeSafety": {
+        "status": "OK",
+        "exactFiles": 17
+      },
+      "architecture": "OK",
+      "siteBuild": {
+        "files": 193,
+        "urls": 54
+      },
+      "siteCheck": {
+        "ok": true,
+        "urls": 54,
+        "artifacts": 193
+      },
+      "diffCheck": "passed",
+      "opsCheckExpected": "SYNC_PENDING"
+    },
+    "overlapNote": "Focused suites overlap the full suite; counts are not additive."
+  }
+}

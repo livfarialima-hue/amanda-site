@@ -1,13 +1,17 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
 <!-- BRUNA-PROCEDIMENTO-CONTEXTUAL-2026-10-15 -->
-## Candidato local — procedimento definido pela conversa, 15/10/2026
+## Publicado e verificado — procedimento contextual, 15/10/2026
 
-O pedido explícito atual da pessoa prevalece sobre o último procedimento explicitado por ela, e ambos prevalecem sobre a origem do site ou anúncio. A referência de aquisição continua preservada para atribuição. Texto da equipe, referência antiga e classificação salva na fila não substituem a escolha da pessoa. Uma comparação ou recusa que deixe o procedimento indefinido bloqueia a faixa do assunto anterior.
+Commit autorizado b7bad3c4e93f313993f8c9cb6b08b1a6ba7506f1; deploy 6ad0ca6cd91f0138092c5d88; publicado em 2026-10-15T12:46:37.032Z e verificado em 2026-10-15T12:47:27Z.
 
-A entrada e a retomada devem aproveitar o contexto de quem pesquisa para outra pessoa e responder às dúvidas de procedimento, recuperação e preço já permitidas, sem reiniciar a descoberta. Informação ausente ou ambígua permanece com a equipe. Este candidato não altera fatos, fontes, valores, prompt, modelo ou conhecimento aprovado; mantém o pacote 2026-10-14.5. Autoria humana não equivale a regra aprovada para envio automático.
+O pedido explícito atual prevalece sobre o último procedimento explicitado pela pessoa, e ambos prevalecem sobre a origem do site ou anúncio. A origem permanece para atribuição. Ambiguidade ou recusa bloqueia a faixa antiga. Entrada e retomada compartilham a resolução, preservando perguntas de procedimento e recuperação e o contexto de quem pesquisa para outra pessoa.
 
-Preparação local em andamento, com testes finais e publicação ainda pendentes. Evidência e limites: auditorias/bruna-procedimento-contextual-2026-10-15/RELATORIO.md. A nova versão documental será projetada nos mesmos arquivos do Drive somente no fechamento autorizado.
+Passaram 2232/2232 testes integrais, 187/187 focados, 88/88 de retomada e 19/19 do harness simulado, com sobreposição; 59 arquivos de contratos estão cobertos. O build autorizado passou em 21/21 cenários hospedados, incluindo dois históricos completos, e 3/3 áudios. Saúde, proteção de assinatura, 15 funções e seis programações foram conferidas. O cenário contextual reforça um caso existente, sem aumentar chamadas. Nenhuma mensagem real foi enviada como teste.
+
+Pacote 2026-10-14.5, prompt, conhecimento, preços, fatos e fontes permanecem; Apps Script v164 não mudou. Não há prova de conversa natural posterior, ganho de conversão ou economia financeira. Os três componentes Ads e seus recibos são preservados.
+
+Reversão por novo commit/build restrito ao delta para o comportamento de 3b66195b8b13a896ccdd63740e3f67398f7d7d4c / 6ad0c377e0be1096575458ca, preservando dados, filas, flags, Apps Script e trabalho paralelo; sem replay. Monitorar primeira conversa e retomada natural elegíveis e 48 horas, sem automação nova. A igualdade das mesmas projeções no Drive e o estado final constam em auditorias/bruna-procedimento-contextual-2026-10-15/PUBLICACAO.json; publicação técnica não substitui o fechamento documental.
 
 ## Publicado e verificado em produção — API essencial, 15/10/2026
 
