@@ -25,26 +25,6 @@ function contradictsApprovedRemoteConsultation(reply) {
     /(?:consulta online|teleconsulta)\b[^.!?;\n]{0,40}\b(?:indisponivel|nao\s+(?:(?:e|esta)\s+(?:disponivel|disponibilizada|oferecida|possivel)|pode\s+ser\s+realizada|custa\s+r\$\s*500))/.test(text);
 }
 
-// A separate synthetic measurement after a failed runtime call. It cannot
-// change the failed gate, extend the runtime deadline, or send patient data.
-async function measureTimedOutSyntheticRequest(request, fetchImpl, secret) {
-  const startedAt = Date.now();
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 45_000);
-  try {
-    const response = await fetchImpl(request.url, { ...request.options, signal: controller.signal });
-    if (!response.ok) return { diagnosticOnly: true, httpStatus: response.status, elapsedMs: Date.now() - startedAt };
-    const data = await response.json();
-    const output = data.output_text || data.output?.flatMap(item => item.content || []).find(item => item.type === 'output_text')?.text;
-    return { diagnosticOnly: true, deadlineMs: 45_000, httpStatus: response.status, elapsedMs: Date.now() - startedAt,
-      model: data.model, status: data.status, usage: data.usage,
-      syntheticOutput: typeof output === 'string' ? output.slice(0, 12_000).replaceAll(secret, '[redacted]') : '' };
-  } catch (error) {
-    return { diagnosticOnly: true, deadlineMs: 45_000, elapsedMs: Date.now() - startedAt,
-      errorCode: error?.name === 'AbortError' ? 'diagnostic_timeout' : 'diagnostic_request_failed' };
-  } finally { clearTimeout(timeout); }
-}
-
 // Run only during an explicitly marked release, inside the hosted production
 // build. Netlify injects the secret; it never leaves the runtime except as the
 // Authorization header sent to the existing OpenAI endpoint.
@@ -112,7 +92,6 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
   for (const scenario of scenarios) {
     const scenarioHistory = scenario.recentConversation || history;
     const requests = [];
-    let lastSyntheticRequest;
     const startedAt = Date.now();
     const auditedFetch = async (url, options) => {
       const body = JSON.parse(options.body);
@@ -120,7 +99,6 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
           body.max_output_tokens !== BRUNA_MAX_OUTPUT_TOKENS || body.text?.verbosity !== BRUNA_TEXT_VERBOSITY) {
         throw new Error('model_request_contract_mismatch');
       }
-      lastSyntheticRequest = { url, options };
       const start = Date.now();
       const response = await fetchImpl(url, options);
       const data = await response.clone().json();
@@ -218,9 +196,9 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     const passed = result.status === 'completed' && modelConfirmed && behaviorPassed;
     const timeoutMs = scenario.classification ? BRUNA_CLASSIFICATION_TIMEOUT_MS : scenario.followup ? BRUNA_FOLLOWUP_REVIEW_TIMEOUT_MS : BRUNA_CONVERSATION_TIMEOUT_MS;
     const elapsedMs = Date.now() - startedAt;
-    const timeoutDiagnostic = !passed && result.errorCode === 'timeout' && lastSyntheticRequest
-      ? await measureTimedOutSyntheticRequest(lastSyntheticRequest, fetchImpl, env.OPENAI_API_KEY) : undefined;
-    results.push({ name: scenario.name, passed, elapsedMs, timeoutMs, requests, status: result.status, timeoutDiagnostic,
+    // Preserve the observed failure; diagnostics never spend on a second
+    // model request or extend the adapter's original deadline.
+    results.push({ name: scenario.name, passed, elapsedMs, timeoutMs, requests, status: result.status,
       errorCode: result.errorCode, decision: result.decision, replyCode: result.decision?.replyCode, replyWording: result.decision?.replyWording, selectedReply, gate });
     if (!passed) break;
   }

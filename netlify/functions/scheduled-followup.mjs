@@ -594,6 +594,30 @@ export async function handleScheduledFollowup(
     );
   }
 
+  // A semantic review cannot make missing delivery configuration usable.
+  const from = await getBusinessNumberImpl({ env });
+
+  if (!from || !env.YCLOUD_API_KEY) {
+    return json(
+      { ok: false, sent: false, error: "configuration_missing" },
+      503,
+    );
+  }
+
+  if (
+    payload.deliveryMode === "template" &&
+    !String(env.YCLOUD_FOLLOWUP_TEMPLATE_NAME || "").trim()
+  ) {
+    return json(
+      {
+        ok: false,
+        sent: false,
+        error: "followup_template_missing",
+      },
+      503,
+    );
+  }
+
   const reusedFirstFollowupReview =
     canReuseFirstFollowupSemanticReview(payload);
   const contextReview = simpleUnansweredInterest
@@ -636,29 +660,6 @@ export async function handleScheduledFollowup(
           contextReview.reasonCode || "context_not_aligned",
       },
       409,
-    );
-  }
-
-  const from = await getBusinessNumberImpl({ env });
-
-  if (!from || !env.YCLOUD_API_KEY) {
-    return json(
-      { ok: false, sent: false, error: "configuration_missing" },
-      503,
-    );
-  }
-
-  if (
-    payload.deliveryMode === "template" &&
-    !String(env.YCLOUD_FOLLOWUP_TEMPLATE_NAME || "").trim()
-  ) {
-    return json(
-      {
-        ok: false,
-        sent: false,
-        error: "followup_template_missing",
-      },
-      503,
     );
   }
 

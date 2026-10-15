@@ -90,39 +90,47 @@ test('incomplete model output blocks the build instead of accepting HTTP success
   assert.equal(result.results[0].errorCode, 'incomplete_response');
 });
 
-test('successful synthetic timeout measurement never converts a failed runtime gate into a pass', async () => {
+test('a hosted runtime timeout fails without repeating the paid request', async () => {
   const calls = [];
   const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (url, request) => {
     calls.push({url, request});
     if (calls.length === 1) throw Object.assign(new Error('synthetic abort'), { name: 'AbortError' });
     return Response.json({ model: 'gpt-6.1-sol', status: 'completed', usage: {output_tokens: 700}, output_text: JSON.stringify({suggestedReply: env.OPENAI_API_KEY}) });
   }});
-  assert.equal(calls.length, 2);
-  assert.equal(calls[1].url, calls[0].url);
-  assert.equal(calls[1].request.body, calls[0].request.body);
-  assert.notEqual(calls[1].request.signal, calls[0].request.signal);
+  assert.equal(calls.length, 1);
   assert.equal(result.status, 'failed');
   assert.equal(result.results.length, 1);
   assert.equal(result.results[0].passed, false);
   assert.equal(result.results[0].timeoutMs, 20000);
   assert.equal(result.results[0].requests.length, 0);
-  assert.equal(result.results[0].timeoutDiagnostic.diagnosticOnly, true);
-  assert.equal(result.results[0].timeoutDiagnostic.deadlineMs, 45000);
-  assert.equal(result.results[0].timeoutDiagnostic.status, 'completed');
-  assert.equal(result.results[0].timeoutDiagnostic.usage.output_tokens, 700);
+  assert.equal(result.results[0].errorCode, 'timeout');
+  assert.equal(Object.hasOwn(result.results[0], 'timeoutDiagnostic'), false);
   assert.equal(JSON.stringify(result).includes(env.OPENAI_API_KEY), false);
   assert.equal(result.patientMessagesSent, 0);
 });
 
-test('synthetic timeout diagnostics suppress provider errors and do not retry again', async () => {
+test('a hosted timeout keeps the independent audio gate without another model request or leaked errors', async () => {
   let calls = 0;
-  const result = await checkBrunaModelLive({env,manifest,fetchImpl:async()=>{
-    calls++;
-    throw Object.assign(new Error(env.OPENAI_API_KEY),{name:calls === 1 ? 'AbortError' : 'Error'});
+  let audioCalls = 0;
+  const result = await checkBrunaModelLive({env,
+    manifest: { pendingRelease: { liveModelCheckRequired: true, audioTranscriptionCheckRequired: true } },
+    fetchImpl:async(url)=>{
+      if (url === 'https://api.openai.com/v1/responses') {
+        calls++;
+        throw Object.assign(new Error(env.OPENAI_API_KEY), {name: 'AbortError'});
+      }
+      assert.equal(url, 'https://api.openai.com/v1/audio/transcriptions');
+      audioCalls++;
+      return new Response(env.OPENAI_API_KEY, { status: 503 });
   }});
-  assert.equal(calls,2);
+  assert.equal(calls,1);
+  assert.equal(audioCalls,3);
   assert.equal(result.status,'failed');
-  assert.equal(result.results[0].timeoutDiagnostic.errorCode,'diagnostic_request_failed');
+  assert.equal(result.results[0].errorCode,'timeout');
+  assert.equal(result.results.length,1);
+  assert.equal(result.audioCheck.status,'failed');
+  assert.equal(result.patientMessagesSent,0);
+  assert.equal(Object.hasOwn(result.results[0], 'timeoutDiagnostic'),false);
   assert.equal(JSON.stringify(result).includes(env.OPENAI_API_KEY),false);
 });
 
