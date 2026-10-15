@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 1,
+  "changeId": "BRUNA-REFERENCIA-GLOBAL-2026-10-15",
+  "status": "published_pending_documentation",
+  "bundleVersion": "2026-10-15.4",
+  "approvedCommit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
+  "netlifyDeployId": "6ad140400f41025d3ef0a3f7",
+  "productionState": "ready",
+  "context": "production",
+  "branch": "reestruturacao-site",
+  "publishedAt": "2026-10-15T21:09:42.941Z",
+  "verifiedAt": "2026-10-15T21:26:20.633269Z",
+  "approval": {
+    "by": "Daniel",
+    "at": "2026-10-15T21:02:15Z",
+    "reference": "Confirmação Sim nesta conversa à solicitação explícita de publicar o commit 2fae17f1e0c0903a7d282d93ac7467a786a1fb58."
+  },
+  "releasePreflight": {
+    "status": "CHANGE_SAFETY_STATUS=OK",
+    "approvedCommit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
+    "clean": true,
+    "checkedAt": "2026-10-15T21:04:56Z",
+    "reference": "PREFLIGHT.json; comando release:preflight executado antes da promoção da ref."
+  },
+  "liveModel": {
+    "status": "passed",
+    "passed": 21,
+    "total": 21,
+    "fullHistoryPassed": 2,
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "evidenceMethod": "inferred_from_successful_mandatory_production_build",
+    "directLogRead": false,
+    "evidence": "Deploy de produção ready do SHA exato, manual_deploy false. netlify.toml executa check-bruna-model-live.mjs antes do build; manifest mantém liveModelCheckRequired, fullHistoryCheckRequired e 21 cenários. O script falha fechado se algum cenário falhar. Totais deduzidos do contrato, sem inventar linhas de log.",
+    "requestsObserved": null,
+    "usageObserved": null,
+    "individualLatencies": null,
+    "syntheticOnly": true,
+    "patientMessagesSent": 0
+  },
+  "liveAudio": {
+    "status": "passed",
+    "passed": 3,
+    "total": 3,
+    "model": "whisper-1",
+    "evidenceMethod": "inferred_from_successful_mandatory_production_build",
+    "directLogRead": false,
+    "evidence": "audioTranscriptionCheckRequired true; o gate de áudio da versão requer três fixtures aprovadas e é dependência do gate principal.",
+    "syntheticOnly": true
+  },
+  "health": {
+    "checkedAt": "2026-10-15T21:26:20.633269Z",
+    "path": "/api/ycloud/webhook",
+    "checks": [
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled",
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        }
+      },
+      {
+        "origin": "https://6ad140400f41025d3ef0a3f7--inspiring-sprite-b35ca4.netlify.app",
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled",
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        }
+      }
+    ]
+  },
+  "functions": {
+    "count": 15,
+    "names": [
+      "appointment-reminder",
+      "appointment-review",
+      "attribution-journey",
+      "attribution-journey-purge",
+      "classify-leads",
+      "classify-leads-background",
+      "conversation-archive",
+      "human-resume",
+      "human-resume-background",
+      "post-consult-followup",
+      "scheduled-followup",
+      "synthetic-integration-health",
+      "ycloud-recovery",
+      "ycloud-recovery-background",
+      "ycloud-webhook"
+    ],
+    "changedFromBaseline": [
+      "human-resume",
+      "human-resume-background",
+      "ycloud-recovery",
+      "ycloud-recovery-background",
+      "ycloud-webhook"
+    ],
+    "namesEqualBaseline": true
+  },
+  "schedules": {
+    "count": 6,
+    "equalBaseline": true,
+    "entries": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "conversation-archive"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ]
+  },
+  "appsScript": {
+    "version": 164,
+    "changed": false,
+    "editorInspected": false,
+    "source": "Recibo anterior; sem nova inspeção ou publicação."
+  },
+  "appsScriptVersion": 164,
+  "patientMessagesSent": 0,
+  "externalWritesPerformed": true,
+  "operationalDataWrites": false,
+  "rollback": {
+    "commit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
+    "deployId": "6ad120701654730b8c969605",
+    "constraint": "Novo commit/build restrito; preservar dados, filas, flags e Apps Script; sem replay."
+  },
+  "preservation": {
+    "archivedHead": "458c99d78747f79dbc8f028d799f7c310f19fe1b",
+    "branch": "codex/bruna-preservada-458c99d-20261015",
+    "readbackVerified": true,
+    "blockedConsumptionPackageNotDeployed": true,
+    "parallelDesktopNotice": "Daniel informou alterações paralelas no desktop após a publicação. Fechamento isolado; nenhuma nova atualização forçada. Integrar apenas se HEAD remoto compatível, com lease."
+  },
+  "documentation": {
+    "status": "pending_projection",
+    "existingFilesPreserved": true,
+    "manualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+    "executivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
+  },
+  "monitoring": {
+    "integrityDate": "2026-10-16",
+    "cohortReviewDate": "2026-10-22",
+    "timezone": "America/Sao_Paulo",
+    "newAutomationCreated": false
+  },
+  "limits": [
+    "Linhas individuais do gate hospedado não acessíveis pelo conector; aprovação total deduzida do build de produção e do contrato imutável da versão.",
+    "Nenhuma prova de conversa natural posterior, ganho causal de conversão ou economia financeira.",
+    "Desktop não inspecionado; não sobrescrever trabalho paralelo.",
+    "Último recibo Apps Script v164 herdado; nenhum teste real em paciente."
+  ]
+}

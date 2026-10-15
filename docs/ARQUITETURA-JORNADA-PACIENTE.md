@@ -1,8 +1,8 @@
 # Arquitetura da jornada da paciente
 
-## Candidato 2026-10-15.4 — referência global e composição transparente
+## Publicado 2026-10-15.4 — referência global e composição transparente
 
-Ainda não publicado. `surgical-price-policy.mjs` é o único proprietário da ressalva de valor global; `surgical-price-review.mjs` a compõe e `conversation-guidelines.mjs` a importa literalmente. `semantic-reply-policy.mjs` impede que uma redação contextual troque a ressalva atual pela histórica sem composição. `outbound-reply-gate.mjs` exige a composição atual também fora desse seletor, inclusive em perguntas conjuntas. A versão antiga continua reconhecida para históricos/revisões atrasadas, sem autorizar omissão no novo envio. Os dois cenários de preço do gate hospedado exigem a ressalva global, sem novas chamadas. Valores e permissão por procedimento, uso único, negociação, revisão humana, agenda, efeitos e Apps Script não mudam.
+Publicado em `2fae17f1e0c0903a7d282d93ac7467a786a1fb58`, Netlify `6ad140400f41025d3ef0a3f7`, 2026-10-15T21:09:42.941Z. `surgical-price-policy.mjs` é o único proprietário da ressalva de valor global; `surgical-price-review.mjs` a compõe e `conversation-guidelines.mjs` a importa literalmente. `semantic-reply-policy.mjs` impede que uma redação contextual troque a ressalva atual pela histórica sem composição. `outbound-reply-gate.mjs` exige a composição atual também fora desse seletor, inclusive em perguntas conjuntas. A versão antiga continua reconhecida para históricos/revisões atrasadas, sem autorizar omissão no novo envio. Os dois cenários de preço do gate hospedado exigem a ressalva global, sem novas chamadas. Valores e permissão por procedimento, uso único, negociação, revisão humana, agenda, efeitos e Apps Script não mudam.
 
 Baseline vivo observado em 15/10: produção `6c9cb7ee0129260dd0f9394b1d74c0bd49a05228`, deploy `6ad120701654730b8c969605`, pacote `.2`. O candidato de consumo `.3` permanece bloqueado e não integra esta branch isolada. Referência executiva: Plano Executivo; evidência deste candidato em `auditorias/bruna-referencia-global-2026-10-15/RELATORIO.md`.
 

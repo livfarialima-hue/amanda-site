@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "changeId": "BRUNA-REFERENCIA-GLOBAL-2026-10-15",
+  "approvedCommit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
+  "approvedTree": "a0eaaf18ae72b4923001111c32435cc668cc602b",
+  "approvedBy": "Daniel",
+  "approvedAt": "2026-10-15T21:02:15Z",
+  "approvalReference": "Confirmação Sim nesta conversa à solicitação explícita de publicar o commit 2fae17f1e0c0903a7d282d93ac7467a786a1fb58.",
+  "checkedAt": "2026-10-15T21:04:56Z",
+  "baseline": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6ad120701654730b8c969605",
+    "commit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
+    "state": "ready",
+    "context": "production",
+    "branch": "reestruturacao-site",
+    "publishedAt": "2026-10-15T18:54:29.938Z",
+    "functions": [
+      {
+        "name": "appointment-reminder",
+        "digest": "e0137c4c5210e2cc42a607b33056bbccaf7380efde2fb4fb5bcd483b0b9f920c"
+      },
+      {
+        "name": "appointment-review",
+        "digest": "2579e235b9966086b210fc4f54bc5f3788e4a06d749a37aab30757699369034a"
+      },
+      {
+        "name": "attribution-journey",
+        "digest": "0be1f25a28c31c92089ea1bea986b6f4c97b572dbb4800c58786674b506ae25a"
+      },
+      {
+        "name": "attribution-journey-purge",
+        "digest": "481a6d2b73e4371b573a2e8a005a8e9489eea15bb1cc20cea9a77ecb48839825"
+      },
+      {
+        "name": "classify-leads",
+        "digest": "15b44fa5ae1558be95d2b1e2a61d23152de83e6f78fa791b0fc8857a1e41597e"
+      },
+      {
+        "name": "classify-leads-background",
+        "digest": "5856c9a680f66f1ff4f891948522147ff31503fdf4e52a054548fd79db26f027"
+      },
+      {
+        "name": "conversation-archive",
+        "digest": "b6fd5fd103cef907eb4b1ae6c9e4e74a5b0fbffab3bdbc649ec1a23cfe345ad1"
+      },
+      {
+        "name": "human-resume",
+        "digest": "747e54e9ef696c749534f917bc2b02fa389cacd136535f56c18e7b8448ac4e13"
+      },
+      {
+        "name": "human-resume-background",
+        "digest": "88d24d93229bb2829b2fbbdf496610e841eb015eb663550f254ec91255611a47"
+      },
+      {
+        "name": "post-consult-followup",
+        "digest": "e995a9a24a2a6f3fb3cb9011d45c77e608da5c8e54c3a0f5332f730668892630"
+      },
+      {
+        "name": "scheduled-followup",
+        "digest": "adfac3012a33e98c0ab5f7f5926058283b3c7ee70f2468a9b1a0671b6e2a6cf0"
+      },
+      {
+        "name": "synthetic-integration-health",
+        "digest": "4134c3a43787c1286eb8ec1dd0711c9f7c7632cdb0319c2d050268e8431707e7"
+      },
+      {
+        "name": "ycloud-recovery",
+        "digest": "3329a54461cc284cfd5692fc57032f417412fbbdce8898e542d5ed56b9d5d012"
+      },
+      {
+        "name": "ycloud-recovery-background",
+        "digest": "60925e0c46eea6538a6a63a6f3c8112ceea1fe937d61cb36323e5292b2dea5aa"
+      },
+      {
+        "name": "ycloud-webhook",
+        "digest": "e52018685f59f917f1df031b466e201ff6715cd9ccf7189947d0cabcf5076fbc"
+      }
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "conversation-archive"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ],
+    "manualDeploy": false
+  },
+  "operationalHead": "458c99d78747f79dbc8f028d799f7c310f19fe1b",
+  "preservationBranch": "codex/bruna-preservada-458c99d-20261015",
+  "publicationPlan": "Preservar HEAD operacional em branch verificável; mover somente a ref operacional com lease exato para o SHA autorizado, sem levar código .3 bloqueado. Git CD e gate de produção permanecem obrigatórios. Após a verificação, reintegrar a documentação/evidência preservada sem código .3. Nenhum descarte de dados ou replay.",
+  "localValidation": {
+    "fullSuite": 2260,
+    "failed": 0,
+    "hostedHarnessSimulated": 19,
+    "treeMatchesRemote": true,
+    "worktreeClean": true
+  },
+  "paidInference": "Somente o gate hospedado obrigatório do novo candidato autorizado; não repetir o gate antigo para diagnóstico.",
+  "patientMessagesSentAsTest": 0,
+  "appsScript": {
+    "versionFromPreviousReceipt": 164,
+    "editorInspected": false,
+    "changed": false
+  }
+}

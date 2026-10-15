@@ -8,16 +8,22 @@
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel solicitou fazer e publicar esta estratégia; pelo contrato, autorização externa deve identificar o SHA testado. Nenhum SHA futuro é considerado aprovado e nenhum release foi executado."
+    "note": "Daniel aprovou o SHA 2fae17f1e0c0903a7d282d93ac7467a786a1fb58 em 15/10/2026 às 18:02:15 BRT. Exatamente esse SHA foi publicado. Registros de fechamento não autorizam novo comportamento ou publicação funcional."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "note": "Comunicação de preço com valores existentes; componente numérico, inclusões individuais e orçamento fechado continuam vedados. Produção não alterada."
+    "externalWritesPerformed": true,
+    "note": "Publicação funcional concluída; fechamento exclusivamente documental, isolado do desktop. Nenhuma escrita em dados operacionais ou mensagem real."
   },
   "scope": {
     "files": [
+      "auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md",
+      "auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json",
+      "auditorias/bruna-consumo-categorias-2026-10-15/RELATORIO.md",
+      "auditorias/bruna-consumo-categorias-2026-10-15/TENTATIVA-PUBLICACAO.json",
+      "auditorias/bruna-referencia-global-2026-10-15/PREFLIGHT.json",
+      "auditorias/bruna-referencia-global-2026-10-15/PUBLICACAO.json",
       "auditorias/bruna-referencia-global-2026-10-15/RELATORIO.md",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
@@ -47,7 +53,7 @@
       "bruna-regression-governance",
       "bruna-global-price-reference"
     ],
-    "note": "Somente comunicação global e proteção da composição na redação, testes e documentação. Branch isolada da produção .2; código do candidato .3 bloqueado não foi incluído. O gate final exige a ressalva global também em respostas conjuntas que não passam pelo seletor de prévia confirmada. Três cenários travados mantêm IDs/resultados e passam a usar a redação atual."
+    "note": "Preço publicado no SHA exato autorizado. Este fechamento preserva os recibos anteriores .2/.3 e restaura sua ancestralidade por merge documental; nenhum módulo, teste funcional, flag ou schema muda em relação ao commit publicado. Trabalho paralelo será preservado por releitura do remoto e avanço compatível, sem nova atualização forçada."
   },
   "impact": {
     "consumers": [
@@ -179,11 +185,21 @@
       "changeCheck": "OK: escopo exato; confirmar após última atualização documental",
       "architectureCheck": "OK",
       "diffCheck": "OK",
-      "opsCheck": "SYNC_PENDING: candidato não publicado, branch isolada e projeção Drive anterior; não é fechamento",
+      "opsCheck": "SYNC_PENDING até releitura das projeções Drive; código já publicado, ainda sem fechamento documental.",
       "environmentNote": "Primeira suíte sob TZ herdado America/New_York mostrou cinco divergências temporais. Com fuso canônico America/Sao_Paulo, 2260/2260 passaram sem alterar código de agenda/retomadas. Status preliminar draft também foi corrigido para implementing_local exigido pelo contrato antes da execução final.",
-      "liveModel": "not_run_pending_exact_commit_authorization",
-      "liveAudio": "not_run_pending_exact_commit_authorization",
-      "overlap": "Suítes sobrepostas; não somar contagens."
+      "liveModel": "passed_by_mandatory_production_build:21/21,2histories; directLogRead=false; ver PUBLICACAO.json",
+      "liveAudio": "passed_by_mandatory_production_build:3/3; directLogRead=false",
+      "overlap": "Suítes sobrepostas; não somar contagens.",
+      "publication": {
+        "commit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
+        "deploy": "6ad140400f41025d3ef0a3f7",
+        "publishedAt": "2026-10-15T21:09:42.941Z",
+        "verifiedAt": "2026-10-15T21:26:20.633269Z",
+        "health": 200,
+        "unsignedWebhook": 401,
+        "functions": 15,
+        "schedules": 6
+      }
     }
   },
   "rollback": {
@@ -214,5 +230,11 @@
       "netlify/functions/lib/patient-turn-context.mjs",
       "netlify/functions/lib/patient-turn-context.test.mjs"
     ]
+  },
+  "documentationCloseout": {
+    "status": "pending_projection",
+    "codeEqualsApprovedCommit": true,
+    "desktopInspected": false,
+    "noForcedIntegration": true
   }
 }

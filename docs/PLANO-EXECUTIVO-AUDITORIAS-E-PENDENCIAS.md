@@ -1,12 +1,18 @@
 # Plano executivo — auditorias, pendências e prazos
 
-## Candidato isolado — referência global, 15/10/2026
+## Publicado — referência global, 15/10/2026
 
-Daniel solicitou fazer e publicar a estratégia de valor global com componentes explicados. O pacote `2026-10-15.4` é preparado em branch isolada a partir da produção `6c9cb7ee0129260dd0f9394b1d74c0bd49a05228`, deploy `6ad120701654730b8c969605` (`.2`). A publicação deste candidato exige os gates e a autorização do SHA testado previstos no Contrato de Alteração Segura; pedido de implementação não é recibo de publicação. Validação e escopo em `auditorias/bruna-referencia-global-2026-10-15/RELATORIO.md`.
+Daniel aprovou explicitamente `2fae17f1e0c0903a7d282d93ac7467a786a1fb58`; o pacote `2026-10-15.4` foi publicado pelo Git/Netlify em `6ad140400f41025d3ef0a3f7`, ready em 2026-10-15T21:09:42.941Z (18h09 BRT). Baseline/rollback por novo commit/build restrito: `6c9cb7ee0129260dd0f9394b1d74c0bd49a05228`, deploy `6ad120701654730b8c969605` (`.2`), preservando dados, filas, flags e Apps Script, sem replay. Código e números correspondem ao commit aprovado; nenhuma alteração funcional integra este fechamento documental. Validação, evidência e limites em `auditorias/bruna-referencia-global-2026-10-15/PUBLICACAO.json`.
 
-Preservar o candidato independente `.3`, commit `a599aea842545c666b3b2cee780dfc22d7c52f55`, cujo deploy `6ad12b0ac06af392d0dda00a` foi bloqueado por timeout. Não incorporá-lo à publicação de preço nem contornar seu gate. Ao integrar a branch de preço à operacional, preservar documentação e evidências posteriores de `.2/.3`, sem levar o código `.3` como efeito colateral. Revalidar produção e divergências antes da integração e repetir os testes do commit final se o SHA mudar.
+O estado operacional anterior `458c99d78747f79dbc8f028d799f7c310f19fe1b` foi preservado e relido na branch `codex/bruna-preservada-458c99d-20261015` antes de promover o SHA exato autorizado, com lease. Os recibos de `.2/.3` foram preservados; o código `.3` ficou fora do runtime. Daniel avisou sobre alterações paralelas no desktop: este fechamento usa branch isolada, releitura do HEAD e integração somente por avanço compatível, sem substituir trabalho novo. O desktop não foi inspecionado.
 
-Ordem: fechar testes locais e SHA → autorização exata → preflight somente leitura e integração segura → gates hospedados existentes (21 cenários, dois históricos e 3 áudios) → publicação/verificação → reconciliação das mesmas projeções Drive. Até o fechamento, manter `SYNC_PENDING`. Nenhuma mensagem, valor, campanha, agenda ou Apps Script será alterado como teste. Integridade após publicação em 24h; transparência/continuidade em D+7, com n/N e coortes compatíveis; resultado atual N/D.
+Passaram 2260/2260 testes locais, 19/19 do harness simulado, escopo, arquitetura e build/check. O sucesso do build de produção confirma o gate obrigatório desta versão; os totais de 21 cenários, dois históricos e três áudios são deduzidos do contrato executado, sem leitura direta das linhas do log. Nenhuma chamada adicional foi feita para recuperar essa evidência. Saúde 200 e assinatura 401 verificadas no domínio e URL imutável em 21:26:20Z; 15 funções/seis programações preservadas. Nenhuma mensagem real ou escrita em LEADS/Calendar/Apps Script. Igualdade das mesmas projeções Drive e fechamento final seguem o recibo, sem presumir sincronização antecipada.
+
+Próximas revisões: integridade em 16/10 (24h) e clareza/continuidade em 22/10 (D+7), por n/N e coortes/procedimentos/maturação compatíveis. Resultado de conversas naturais, ganho causal de conversão e economia financeira atuais: N/D. Nenhuma nova automação.
+
+## Publicação bloqueada preservada — medição por categoria, 15/10/2026
+
+O candidato `.3` continua bloqueado: commit `a599aea842545c666b3b2cee780dfc22d7c52f55`, deploy `6ad12b0ac06af392d0dda00a`, timeout em `approved_price_with_photo_request` (20.011 ms para limite de 20.000 ms). Passaram 12/13 cenários executados; oito não foram executados, os dois históricos não foram alcançados; áudio 3/3. Causa da lentidão N/D. Sem retry pago, bypass, remoção de cenário ou aumento de prazo. O sucesso do novo pacote de preço não comprova a resolução do incidente anterior. Evidência integral preservada em `auditorias/bruna-consumo-categorias-2026-10-15/TENTATIVA-PUBLICACAO.json`; investigar recibos/simulações antes de outra tentativa autorizada.
 
 ## Estado anterior reconciliado — Bruna coerente e integração pela conta, 15/10/2026
 

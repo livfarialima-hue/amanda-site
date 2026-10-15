@@ -1,10 +1,14 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
-## Candidato 2026-10-15.4 — referência global, 15/10/2026
+## Publicado — referência global 2026-10-15.4, 15/10/2026
 
-Ainda não publicado. Por instrução de Daniel, o novo texto apresenta o valor global de planejamento e explica os componentes sem inventar preços separados ou inclusões. A ressalva de `surgical-price-policy.mjs` é importada pelo prompt e preservada na redação contextual. O exemplo de preço abaixo descreve esse candidato. Faixas e fatos aprovados permanecem; orçamento individual e conflitos de composição exigem conferência humana. Não há prova de ganho de conversão.
+Publicado após aprovação explícita de Daniel para o commit `2fae17f1e0c0903a7d282d93ac7467a786a1fb58`. Netlify `6ad140400f41025d3ef0a3f7`, produção ready em 2026-10-15T21:09:42.941Z (18h09 BRT). O novo texto apresenta o valor global de planejamento e explica os componentes sem inventar preços separados ou inclusões. A ressalva de `surgical-price-policy.mjs` é importada pelo prompt, preservada na redação contextual e exigida no gate final. Faixas e fatos aprovados permanecem; orçamento individual e conflitos de composição exigem conferência humana. Não há prova de ganho de conversão.
 
-Produção observada continua `.2`, commit `6c9cb7ee0129260dd0f9394b1d74c0bd49a05228`, deploy `6ad120701654730b8c969605`, publicado em 15/10 às 18:54:29.938Z. O candidato `.3` de consumo está bloqueado pelo gate e não integra esta branch; não publicar os dois por associação. Detalhe e rollback em `auditorias/bruna-referencia-global-2026-10-15/RELATORIO.md`; ordem e pendências somente no Plano Executivo.
+Saúde HTTP 200 e rejeição sem assinatura HTTP 401 conferidas no domínio e URL imutável às 21:26:20Z; 15 funções e seis programações preservadas. Apps Script v164 é referência herdada e não mudou. O candidato `.3` de consumo continua bloqueado, preservado integralmente na branch `codex/bruna-preservada-458c99d-20261015`; não entrou no runtime. Trabalho paralelo do desktop não foi inspecionado. Fechamento em branch própria, com releitura e lease do remoto antes de integrar. Recibo e limite da verificação dos gates em `auditorias/bruna-referencia-global-2026-10-15/PUBLICACAO.json`; ordem somente no Plano Executivo.
+
+## Candidato com publicação bloqueada — consumo por categoria, 15/10/2026
+
+BRUNA-CONSUMO-CATEGORIAS-2026-10-15, pacote `.3`, commit `a599aea842545c666b3b2cee780dfc22d7c52f55`, continua sem publicação: timeout do gate no deploy `6ad12b0ac06af392d0dda00a`. Código, testes e documentação foram preservados na branch acima e no histórico Git; os recibos originais foram reintegrados sem suas alterações funcionais. O sucesso do novo pacote de preço não resolve nem autoriza repetir o gate antigo. Detalhe em `auditorias/bruna-consumo-categorias-2026-10-15/TENTATIVA-PUBLICACAO.json`.
 
 ## Candidato local — coerência e processamento pela conta, 15/10/2026
 

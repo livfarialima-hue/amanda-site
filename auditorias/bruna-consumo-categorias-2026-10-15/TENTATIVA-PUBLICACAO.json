@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "changeId": "BRUNA-CONSUMO-CATEGORIAS-2026-10-15",
+  "status": "blocked_not_published",
+  "bundleVersion": "2026-10-15.3",
+  "approvedCommit": "a599aea842545c666b3b2cee780dfc22d7c52f55",
+  "attemptedDeployId": "6ad12b0ac06af392d0dda00a",
+  "publishedAt": null,
+  "verifiedAt": "2026-10-15T19:39:35.6603950Z",
+  "approval": {
+    "approvedCommit": "a599aea842545c666b3b2cee780dfc22d7c52f55",
+    "approvedBy": "Daniel",
+    "approvedAt": "2026-10-15T19:35:11.1505575Z",
+    "approvalReference": "chat:user:Pode publicar: pacote de medicao a599aea; timestamp records validation, not exact message time",
+    "livePreflightAt": "2026-10-15T19:35:11.1505575Z",
+    "preflightStatus": "CHANGE_SAFETY_STATUS=OK",
+    "declaredFiles": 11
+  },
+  "liveModel": {
+    "status": "failed",
+    "checkedAt": "2026-10-15T19:38:01.896Z",
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "maxOutputTokens": 4096,
+    "verbosity": "low",
+    "billingMode": "api_paid_authorized",
+    "syntheticOnly": true,
+    "patientMessagesSent": 0,
+    "passed": 12,
+    "total": 13,
+    "plannedTotal": 21,
+    "notExecuted": 8,
+    "fullHistoryPassed": 0,
+    "fullHistoryStatus": "not_reached",
+    "failedScenario": {
+      "name": "approved_price_with_photo_request",
+      "elapsedMs": 20011,
+      "timeoutMs": 20000,
+      "errorCode": "timeout",
+      "recordedResponses": 0,
+      "actualAttempts": 1,
+      "usageCoverage": "unknown",
+      "knownUsage": null
+    },
+    "evidence": "Official authenticated Netlify build log BRUNA_MODEL_SCENARIO, BRUNA_MODEL_FAILURE_CHUNK and BRUNA_MODEL_PREFLIGHT; request array is completed responses, not attempted request count."
+  },
+  "liveAudio": {
+    "status": "passed",
+    "model": "whisper-1",
+    "passed": 3,
+    "total": 3,
+    "checkedAt": "2026-10-15T19:38:01.896Z"
+  },
+  "currentProduction": {
+    "functionalCommit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
+    "deployId": "6ad120701654730b8c969605",
+    "state": "ready",
+    "bundleVersion": "2026-10-15.2",
+    "source": "Netlify get-project and get-deploy; previous PUBLICACAO.json",
+    "changed": false
+  },
+  "health": {
+    "checkedAt": "2026-10-15T19:39:35.6603950Z",
+    "checks": [
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled",
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        }
+      },
+      {
+        "origin": "https://6ad120701654730b8c969605--inspiring-sprite-b35ca4.netlify.app",
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled",
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        }
+      }
+    ]
+  },
+  "appsScript": {
+    "version": 164,
+    "changed": false,
+    "source": "Prior receipt only; editor not reinspected"
+  },
+  "syntheticOnly": true,
+  "patientMessagesSent": 0,
+  "paidRetryPerformed": false,
+  "guardsWeakened": false,
+  "localVerification": {
+    "checkedAt": "2026-10-15T19:04:34Z",
+    "fullSuite": {
+      "passed": 2287,
+      "total": 2287,
+      "failed": 0
+    },
+    "focused": {
+      "passed": 106,
+      "failed": 0
+    },
+    "independentReview": {
+      "passed": 73,
+      "failed": 0,
+      "blockers": 0
+    },
+    "offlineGateHarness": {
+      "passed": 19,
+      "failed": 0
+    },
+    "siteBuild": {
+      "files": 193,
+      "sitemapUrls": 54,
+      "auditFiles": 0,
+      "errors": 0
+    },
+    "siteCheck": {
+      "ok": true,
+      "urls": 54
+    },
+    "architectureCheck": "OK",
+    "changeCheck": "OK:11 files",
+    "diffCheck": "OK",
+    "liveModel": "not_run_this_candidate",
+    "liveAudio": "not_run_this_candidate",
+    "overlapNote": "Focados/revisão se sobrepõem à suíte integral; não somar. Harness19 é simulado, não gate pago de publicação."
+  },
+  "postFailureOfflineChecks": {
+    "passed": 7,
+    "failed": 0,
+    "apiCalls": 0,
+    "note": "Timeout/deadline/hosted-gate subset; counts overlap earlier suites."
+  },
+  "diagnosis": {
+    "observed": "Adapter timed out after its existing 20-second deadline; usage and response unavailable.",
+    "codeComparison": "No diff in openai-shadow.mjs, bruna-model-config.mjs or check-bruna-model-live.mjs between the live functional commit and approved candidate.",
+    "cause": "N/D: provider/network or other latency origin not established by the receipt.",
+    "causality": "No evidence that this telemetry patch caused the timeout; no claim of independence proof for all runtime variation."
+  },
+  "documentation": {
+    "status": "written_verified",
+    "sourceCommit": "cecfbd59cf6a63c307ac4c70af2d04b01a20d99a",
+    "verifiedAt": "2026-10-15T19:42:08.9094845Z",
+    "existingFilesPreserved": true,
+    "equalityVerified": true,
+    "method": "Authenticated raw Drive readback; SHA-256 and byte length compared to local files and git show of source commit.",
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "c026fa9c6afe61dd9098628aa577d0220c0168ba237e6a6d294674780a007cae",
+      "bytes": 85042,
+      "localEqualsReadback": true,
+      "readbackAt": "2026-10-15T19:42:08.2252844Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "sourceCommitEqualsReadback": true
+    },
+    "executivePlan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "9158bfe3c50ee59ccf75b92b889175587ff5652aa56c8462a9fd5a41a14275b5",
+      "bytes": 31514,
+      "localEqualsReadback": true,
+      "readbackAt": "2026-10-15T19:42:08.9094845Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "sourceCommitEqualsReadback": true
+    }
+  },
+  "nextStep": "Investigate latency with existing receipts and local simulations; any functional correction requires a separate candidate and approval. Do not repeat unchanged paid gate, extend deadline, remove scenario or bypass production gate.",
+  "scopeBoundary": "No new functional change, plugin bridge, Apps Script, operational data, flag, schedule, campaign or patient message.",
+  "attemptState": "error",
+  "independentReview": {
+    "status": "no_causality_established",
+    "changedPathNotExercised": true,
+    "detail": "Failed scenario uses unchanged runOpenAIShadow; knowledge candidate is not called and followup-review scenario was not reached."
+  },
+  "finalGovernanceChecks": {
+    "passed": 11,
+    "failed": 0,
+    "changeCheck": "OK:13 files",
+    "architectureCheck": "OK",
+    "diffCheck": "OK",
+    "opsExpected": "SYNC_PENDING: only CHANGE_PUBLICATION_PENDING remains after clean documentation closeout."
+  }
+}

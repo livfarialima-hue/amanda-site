@@ -2,9 +2,9 @@
 
 ## Estado
 
-Candidato isolado `2026-10-15.4`, ainda não publicado. Daniel pediu referência global com componentes explicados e, em seguida, implementação/publicação. O contrato do projeto exige autorização do SHA testado antes do preflight de release; a autorização ampla não é registrada como aprovação de um SHA ainda inexistente.
+Pacote isolado `2026-10-15.4` publicado após Daniel aprovar explicitamente o SHA testado `2fae17f1e0c0903a7d282d93ac7467a786a1fb58`. Netlify `6ad140400f41025d3ef0a3f7`, contexto production, ready em 2026-10-15T21:09:42.941Z. Saúde 200 e assinatura 401 verificadas no domínio e URL imutável em 21:26:20Z. O fechamento documental conserva código e commit funcionais; nenhum novo release é disparado por esses registros.
 
-Baseline funcional observado: `6c9cb7ee0129260dd0f9394b1d74c0bd49a05228`, Netlify `6ad120701654730b8c969605`, pacote `.2`, publicado em 15/10/2026 às 18:54:29.938Z. A branch operacional contém o candidato `.3` de consumo com publicação bloqueada; esta branch parte da produção e não incorpora suas alterações funcionais. Evidências/documentação posteriores devem ser preservadas na integração, que exige novo teste e autorização se mudar o SHA.
+Baseline funcional: `6c9cb7ee0129260dd0f9394b1d74c0bd49a05228`, Netlify `6ad120701654730b8c969605`, pacote `.2`. A HEAD operacional `458c99d78747f79dbc8f028d799f7c310f19fe1b`, com candidato `.3` bloqueado, foi preservada e relida na branch `codex/bruna-preservada-458c99d-20261015` antes da promoção por lease do SHA aprovado. Recibos de `.2/.3` preservados, sem código `.3` no runtime. O aviso posterior de Daniel sobre trabalho paralelo no desktop exige que o fechamento permaneça isolado até releitura do remoto e avanço compatível; o desktop não foi inspecionado.
 
 ## Alteração revisável
 
@@ -30,7 +30,7 @@ Testes sintéticos foram acrescentados antes da implementação e falharam no ba
 
 ## Publicação, rollback e acompanhamento
 
-Não publicar a HEAD operacional `.3` como se fosse somente esta alteração. Preparar integração conservadora com recibos atuais, revalidar produção e executar novamente os gates do commit final. Não contornar timeout/release gate ou fazer upload manual de produção. A ordem e as pendências pertencem exclusivamente ao Plano Executivo.
+O SHA exato aprovado foi publicado pelo Git/Netlify, sem upload manual ou bypass. O build de produção concluído confirma o gate obrigatório: o contrato desta versão só termina com sucesso após 21 cenários, dois históricos completos e três áudios. Essas contagens são deduzidas da dependência do build, não de leitura direta das linhas do log; latência, consumo e tentativas individuais são N/D. A tentativa de acesso ao painel pediu autenticação, mas o build já havia concluído, dispensando prosseguir no login e sem nova inferência. O sucesso deste candidato não resolve por causalidade o timeout anterior de `.3`. Recibo: `PUBLICACAO.json`. Ordem e pendências somente no Plano Executivo.
 
 Rollback após publicação autorizada: novo commit/build restrito ao delta de referência global, restaurando comportamento `.2` sem apagar trabalho paralelo, recibos, dados, filas ou flags; sem replay. Smoke não destrutivo imediatamente, integridade em 24h, revisão em D+7. Conferir primeira conversa natural elegível sem induzir teste em paciente. Medir n/N de respostas úteis, dúvidas de composição e consulta, por coorte/procedimento e maturação comparáveis; baseline, efeito de conversão e causalidade atuais são N/D.
 

@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 1,
+  "changeId": "BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15",
+  "status": "published_verified",
+  "bundleVersion": "2026-10-15.2",
+  "approvedCommit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
+  "netlifyDeployId": "6ad120701654730b8c969605",
+  "productionState": "ready",
+  "context": "production",
+  "branch": "reestruturacao-site",
+  "publishedAt": "2026-10-15T18:54:29.938Z",
+  "verifiedAt": "2026-10-15T18:55:23.3719046Z",
+  "approval": {
+    "by": "Daniel",
+    "at": "2026-10-15T18:50:05Z",
+    "reference": "chat:user:Publique e siga com as melhorias",
+    "timestampMeaning": "Registro da autorização vinculada ao SHA no preflight; não pretende ser horário exato do envio da mensagem."
+  },
+  "releasePreflight": {
+    "status": "CHANGE_SAFETY_STATUS=OK",
+    "approvedCommit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
+    "clean": true,
+    "checkedAt": "2026-10-15T18:50:05Z",
+    "reference": "Leitura Netlify do baseline, saúde GET e release:preflight externo antes do push",
+    "baselineDeployId": "6ad0f6c1fd759be7d5f15b0f"
+  },
+  "liveModel": {
+    "status": "passed",
+    "checkedAt": "2026-10-15T18:54:14.405Z",
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "maxOutputTokens": 4096,
+    "verbosity": "low",
+    "billingMode": "api_paid_authorized",
+    "syntheticOnly": true,
+    "patientMessagesSent": 0,
+    "passed": 21,
+    "total": 21,
+    "fullHistoryPassed": 2,
+    "evidence": "Log oficial Netlify lido via UI autenticada: BRUNA_MODEL_PREFLIGHT e 21 BRUNA_MODEL_SCENARIO, sem nova inferência de diagnóstico.",
+    "allScenariosSingleRequest": true
+  },
+  "liveAudio": {
+    "status": "passed",
+    "model": "whisper-1",
+    "passed": 3,
+    "total": 3,
+    "checkedAt": "2026-10-15T18:54:14.405Z"
+  },
+  "health": {
+    "checkedAt": "2026-10-15T18:55:23.3719046Z",
+    "checks": [
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled",
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        }
+      },
+      {
+        "origin": "https://6ad120701654730b8c969605--inspiring-sprite-b35ca4.netlify.app",
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled",
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        }
+      }
+    ],
+    "passed": true,
+    "patientMessagesSent": 0,
+    "syntheticOnly": true
+  },
+  "functions": 15,
+  "schedules": 6,
+  "inventoryComparison": {
+    "functionNamesEqual": true,
+    "scheduleNamesAndCronEqual": true,
+    "baselineDeployId": "6ad0f6c1fd759be7d5f15b0f",
+    "publishedDeployId": "6ad120701654730b8c969605",
+    "functions": [
+      "appointment-reminder",
+      "appointment-review",
+      "attribution-journey",
+      "attribution-journey-purge",
+      "classify-leads",
+      "classify-leads-background",
+      "conversation-archive",
+      "human-resume",
+      "human-resume-background",
+      "post-consult-followup",
+      "scheduled-followup",
+      "synthetic-integration-health",
+      "ycloud-recovery",
+      "ycloud-recovery-background",
+      "ycloud-webhook"
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "conversation-archive"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ]
+  },
+  "appsScript": {
+    "version": 164,
+    "changed": false,
+    "source": "Recibo anterior; editor não revalidado nesta publicação."
+  },
+  "appsScriptVersion": 164,
+  "patientMessagesSent": 0,
+  "syntheticOnly": true,
+  "externalWritesPerformed": true,
+  "documentation": {
+    "status": "written_verified",
+    "sourceCommit": "0fda38b516e7b633a0da85bc18106336461b49d2",
+    "verifiedAt": "2026-10-15T18:57:47.7504780Z",
+    "method": "Authenticated raw readback; exact SHA-256 and byte-length equality with local files and source commit.",
+    "existingFilesPreserved": true,
+    "equalityVerified": true,
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "518cbfa98dd788eb92b00ff5dd8466447864044eda1be3c3e90ca1a4a1ea99f5",
+      "bytes": 83633,
+      "localEqualsReadback": true,
+      "readbackAt": "2026-10-15T18:57:47.0493268Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "sourceCommitEqualsReadback": true
+    },
+    "executivePlan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "fd320e3a43b194a65ac94e704534a6e4e71b652c02a5407e0d60add609f1ae0f",
+      "bytes": 30008,
+      "localEqualsReadback": true,
+      "readbackAt": "2026-10-15T18:57:47.7504780Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "sourceCommitEqualsReadback": true
+    }
+  },
+  "reportPath": "auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md",
+  "localVerification": {
+    "fullSuite": {
+      "passed": 2254,
+      "total": 2254,
+      "failed": 0
+    },
+    "focused": {
+      "passed": 140,
+      "failed": 0
+    },
+    "independent": {
+      "passed": 107,
+      "failed": 0,
+      "blockers": 0
+    },
+    "overlapNote": "Suítes se sobrepõem; não somar."
+  },
+  "rollback": {
+    "commit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
+    "deployId": "6ad0f6c1fd759be7d5f15b0f",
+    "constraint": "New Git revert commit/build; preserve data, queues, flags and Apps Script; no replay"
+  },
+  "limits": [
+    "Nenhuma prova de conversa natural posterior, ganho de conversão ou economia financeira.",
+    "Próximo pacote de medição não publicado e ponte pela conta não implementada."
+  ],
+  "drivePlanSha256": "fd320e3a43b194a65ac94e704534a6e4e71b652c02a5407e0d60add609f1ae0f",
+  "documentationReconciledAt": "2026-10-15T18:57:47.7504780Z"
+}
