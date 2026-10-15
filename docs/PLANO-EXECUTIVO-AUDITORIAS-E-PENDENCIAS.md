@@ -2,6 +2,14 @@
 
 Versão pública revisada em 14/10/2026 com autorização do responsável. O conteúdo integral anterior foi preservado como histórico fechado em área restrita. Esta edição remove contatos, gastos, identificadores de contas/campanhas e registros operacionais detalhados; não cancela decisões ou pendências anteriores. Não altera permissões de arquivos nem apaga o histórico Git já existente.
 
+## Execução autorizada pendente
+
+### Google Ads — comunicação e destinos, 15/10/2026
+
+**Testado localmente; publicação autorizada pelo usuário, preflight vivo concluído e aplicação pendente.** Lote limitado a três destinos de sitelinks, 13 campos de três anúncios e duas URLs de palavras existentes de preço de blefaroplastia. Sem mudança de orçamento, lance, meta, segmentação, palavras novas/negativas, site ou atendimento. Recibos e escopo exato: `auditorias/google-ads-comunicacao-2026-10-15/`. Identidade, campos anteriores, consumidores dos recursos e estado das campanhas foram relidos; destinos públicos conferidos e 13 campos de RSA comparados independentemente. Os limites constam no recibo de preflight. Não há escrita externa nem equivalência de produção declarada.
+
+Próxima ação: concluir commit/gate para o escopo validado, aplicar somente o delta e reler, preservando o baseline vivo; interromper o objeto se surgir alteração concorrente. Depois substituir a mesma projeção deste Plano no Drive, com igualdade comprovada. Essa sincronização continua pendente. Daniel/equipe: integridade imediatamente/D+2 e contatos válidos, qualificados e consultas em D+14/D+28 da aplicação real, com maturação comparável. Reversão restrita ao before vivo do campo afetado; nenhuma automação nova. Publicações anteriores abaixo ficam preservadas.
+
 ## Publicação verificada
 
 ### Site — continuidade e guia de preço, 14/10/2026
@@ -40,7 +48,7 @@ Os identificadores abaixo são referências de releases públicos de software, j
 | Modalidade de consulta | Publicado e verificado | Observar primeira confirmação natural e revisar as 48 horas após a publicação |
 | Integridade da agenda | Contrato preservado | Exigir identidade, consentimento e modalidade inequívocos antes de qualquer efeito |
 | Outras pendências operacionais | Fora deste registro público | Consultar as fontes restritas antes de definir qualquer ação |
-| Campanhas e orçamento | Fora deste release | Consultar decisões vigentes e obter autorização própria para qualquer mudança |
+| Comunicação e destinos no Google Ads | Lote específico testado e autorizado; preflight concluído | Commit/gate, aplicação dos campos declarados e readback; preservar orçamentos e lances |
 | Conteúdos e imagens | Revisão conforme fonte | Preservar consentimento e revisão clínica, sem supor aprovação |
 | Histórico anterior | Arquivo restrito fechado | Revalidar pendências nas fontes atuais antes de retomar a execução |
 

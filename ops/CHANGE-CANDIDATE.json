@@ -1,261 +1,102 @@
 {
   "schemaVersion": 1,
-  "changeId": "SITE-CONTINUIDADE-2026-10-14",
-  "title": "Alinhar botões e mensagens do WhatsApp, corrigir navegação e esclarecer a abertura do guia de lifting",
-  "status": "published_verified",
-  "baseCommit": "a2dc468942a74639bebb3f12489db79007ea4863",
+  "changeId": "GOOGLE-ADS-COMUNICACAO-2026-10-15",
+  "title": "Corrigir destinos e comunicação do lote prioritário aprovado no Google Ads",
+  "status": "tested_local",
+  "baseCommit": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "O usuário autorizou corrigir os botões e mensagens do WhatsApp, links, navegação duplicada e abertura do guia de preço de lifting e publicar ao terminar. Vincular essa autorização antecipada ao HEAD exato testado no preflight externo, preservando o escopo somente site."
+    "note": "O usuário autorizou publicar ao fim o lote prioritário apresentado e pediu continuar. Vincular esta autorização antecipada ao HEAD exato testado no preflight externo; não ampliar para propostas em reserva."
   },
   "risk": {
-    "level": "high",
-    "patientEffects": true,
-    "externalWritesPerformed": true,
-    "patientEffectsNote": "Mensagem inicial preenchida pelo navegador após iniciativa da pessoa; nenhuma alteração do envio automatizado, do classificador ou da agenda."
+    "level": "medium",
+    "patientEffects": false,
+    "externalWritesPerformed": false,
+    "note": "Comunicação pública de aquisição e roteamento; sem efeito em dados, mensagens, preço, agenda ou classificação."
   },
   "scope": {
     "files": [
-      "abdominoplastia/index.html",
-      "apps-script/clinica-liv-leads/site-contrast.test.mjs",
-      "auditorias/site-continuidade-2026-10-14/PREFLIGHT.json",
-      "auditorias/site-continuidade-2026-10-14/PUBLICACAO.json",
-      "auditorias/site-continuidade-2026-10-14/RELATORIO.md",
-      "auditorias/site-continuidade-2026-10-14/REVISAO.json",
-      "avaliacao-facial/index.html",
-      "blefaroplastia/index.html",
-      "braquioplastia/index.html",
-      "campanhas/article-conversion.js",
-      "campanhas/conversion-tracking.js",
-      "campanhas/conversion-tracking.test.mjs",
-      "campanhas/cost-guides.test.mjs",
-      "campanhas/cta-runtime.test.mjs",
+      "auditorias/google-ads-comunicacao-2026-10-15/PLANO.json",
+      "auditorias/google-ads-comunicacao-2026-10-15/PREFLIGHT.json",
+      "auditorias/google-ads-comunicacao-2026-10-15/RELATORIO.md",
+      "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
-      "campanhas/landing-behavior.js",
-      "campanhas/lifting-price-page.test.mjs",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "campanhas/procedure-terra-fixes.js",
-      "campanhas/secondary-conversion.js",
-      "campanhas/seo-discovery.test.mjs",
-      "campanhas/site-communication.test.mjs",
-      "campanhas/site-enhancements.js",
-      "campanhas/site-technical-regression.test.mjs",
-      "conteudos/blefaroplastia-quando-faz-sentido/index.html",
-      "conteudos/botox-preenchimento-bioestimulador/index.html",
-      "conteudos/cicatrizes-cirurgia-de-mama/index.html",
-      "conteudos/cirurgia-plastica-apos-emagrecimento/index.html",
-      "conteudos/como-escolher-cirurgiao-plastico/index.html",
-      "conteudos/como-escolher-protese-de-mama/index.html",
-      "conteudos/como-se-preparar-cirurgia-plastica/index.html",
-      "conteudos/consulta-cirurgia-plastica/index.html",
-      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
-      "conteudos/index.html",
-      "conteudos/lifting-facial-ou-injetaveis/index.html",
-      "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
-      "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
-      "conteudos/lipoenxertia-facial/index.html",
-      "conteudos/mastopexia-com-ou-sem-protese/index.html",
-      "conteudos/minilifting-lifting-facial-deep-plane/index.html",
-      "conteudos/naturalidade-envelhecimento/index.html",
-      "conteudos/otomodelacao-ou-otoplastia/index.html",
-      "conteudos/papada-contorno-cervical/index.html",
-      "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
-      "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
-      "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
-      "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
-      "conteudos/recuperacao-blefaroplastia/index.html",
-      "conteudos/recuperacao-lifting-cervical/index.html",
-      "conteudos/recuperacao-lifting-facial/index.html",
-      "conteudos/seguranca-cirurgia-plastica/index.html",
-      "contorno-corporal/index.html",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "dra-amanda-schroeder/index.html",
-      "index.html",
-      "injetaveis/index.html",
-      "lifting-cervical/index.html",
-      "lifting-facial/index.html",
-      "lip-lifting/index.html",
-      "lipo-de-papada/index.html",
-      "lipoaspiracao/index.html",
-      "mama/index.html",
-      "mama/mama.js",
-      "mamoplastia-redutora/index.html",
-      "mastopexia-com-protese/index.html",
-      "mastopexia/index.html",
-      "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "ninfoplastia/index.html",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "otoplastia-adulto/index.html",
-      "otoplastia-infantil/index.html",
-      "otoplastia/index.html",
-      "pos-bariatrica/index.html",
-      "privacidade/index.html",
-      "procedimentos/index.html",
-      "protese-de-mama/index.html"
+      "ops/IMPACT-REGISTRY.json"
     ],
     "contracts": [
-      "bruna-regression-governance",
       "change-governance",
-      "google-ads-acquisition-conversion",
-      "site-editorial-copy",
-      "site-publication"
+      "google-ads-acquisition-conversion"
     ],
-    "planningNote": "Escopo ampliado pela revisão independente: scripts auxiliares ainda reescreviam rótulos; correção somente copy/aria/cache e regressão de governança para candidato site. Igualdade exata com o diff efetivo continua obrigatória; nenhum arquivo efetivamente alterado foi omitido."
+    "externalDelta": {
+      "sitelinkDestinations": 3,
+      "rsaFields": 13,
+      "rsaObjects": 3,
+      "keywordFinalUrls": 2
+    },
+    "planningNote": "Todos os nove arquivos alterados estão declarados e os preflights vivos concluídos com limites explícitos. Nenhuma escrita externa; avançar somente após commit intencional limpo e release:preflight para o HEAD exato autorizado."
   },
   "impact": {
     "consumers": [
       "AGENTS.md",
-      "abdominoplastia/index.html",
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
-      "apps-script/clinica-liv-leads/Retomadas.gs",
-      "avaliacao-facial/index.html",
       "blefaroplastia/index.html",
-      "braquioplastia/index.html",
-      "campanhas/article-conversion.js",
-      "campanhas/assets/conteudos/videos/medo-de-resultados-exagerados-poster.webp",
-      "campanhas/assets/conteudos/videos/olhar-envelhecido-blefaroplastia-poster.webp",
-      "campanhas/assets/conteudos/videos/queixa-e-solucao-face-poster.webp",
-      "campanhas/assets/otoplastia-infantil/otoplastia-em-crianca-poster.webp",
-      "campanhas/assets/video-apresentacao-clinica-liv-poster.webp",
-      "campanhas/content-library.css",
-      "campanhas/content-library.js",
-      "campanhas/conversion-pages-body.css",
-      "campanhas/conversion-pages-classic-visual.css",
       "campanhas/cost-guides.test.mjs",
-      "campanhas/cta-runtime.test.mjs",
-      "campanhas/footer-consistency.test.mjs",
-      "campanhas/landing-behavior.js",
       "campanhas/lifting-price-page.test.mjs",
-      "campanhas/otoplasty-pages.test.mjs",
-      "campanhas/procedure-terra-fixes.js",
-      "campanhas/secondary-conversion.css",
-      "campanhas/secondary-conversion.js",
-      "campanhas/seo-discovery.test.mjs",
-      "campanhas/site-enhancements.css",
-      "campanhas/site-enhancements.js",
-      "conteudos/blefaroplastia-quando-faz-sentido/index.html",
-      "conteudos/botox-preenchimento-bioestimulador/index.html",
-      "conteudos/cicatrizes-cirurgia-de-mama/index.html",
-      "conteudos/cirurgia-plastica-apos-emagrecimento/index.html",
-      "conteudos/como-escolher-cirurgiao-plastico/index.html",
-      "conteudos/como-escolher-protese-de-mama/index.html",
-      "conteudos/como-se-preparar-cirurgia-plastica/index.html",
-      "conteudos/consulta-cirurgia-plastica/index.html",
-      "conteudos/cuidados-cicatrizacao-cirurgia/index.html",
       "conteudos/index.html",
-      "conteudos/lifting-facial-ou-injetaveis/index.html",
       "conteudos/lip-lifting-ou-preenchimento-labial/index.html",
-      "conteudos/lipoaspiracao-ou-abdominoplastia/index.html",
-      "conteudos/lipoenxertia-facial/index.html",
-      "conteudos/mastopexia-com-ou-sem-protese/index.html",
-      "conteudos/minilifting-lifting-facial-deep-plane/index.html",
-      "conteudos/naturalidade-envelhecimento/index.html",
-      "conteudos/otomodelacao-ou-otoplastia/index.html",
-      "conteudos/papada-contorno-cervical/index.html",
       "conteudos/quanto-custa-blefaroplastia-sao-paulo/index.html",
       "conteudos/quanto-custa-cirurgia-plastica-corporal-sao-paulo/index.html",
       "conteudos/quanto-custa-cirurgia-plastica-facial-sao-paulo/index.html",
       "conteudos/quanto-custa-cirurgia-plastica-mama-sao-paulo/index.html",
       "conteudos/quanto-custa-lifting-cervical-sao-paulo/index.html",
       "conteudos/quanto-custa-lifting-facial-sao-paulo/index.html",
-      "conteudos/recuperacao-blefaroplastia/index.html",
-      "conteudos/recuperacao-lifting-cervical/index.html",
-      "conteudos/recuperacao-lifting-facial/index.html",
-      "conteudos/seguranca-cirurgia-plastica/index.html",
-      "contorno-corporal/index.html",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
-      "dra-amanda-schroeder/index.html",
       "google-ads-scripts/google-ads-search-review-email.js",
-      "index.html",
-      "injetaveis/index.html",
       "lifting-cervical/index.html",
       "lifting-facial/index.html",
-      "lip-lifting/index.html",
       "lipo-de-papada/index.html",
-      "lipoaspiracao/index.html",
-      "mama/index.html",
-      "mama/mama.js",
-      "mamoplastia-redutora/index.html",
-      "mastopexia-com-protese/index.html",
-      "mastopexia/index.html",
-      "netlify/functions/lib/attribution-journey-store.mjs",
-      "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-      "netlify/functions/lib/bruna-policy/rules.jsonl",
-      "netlify/functions/lib/inbound-message-kind.mjs",
-      "netlify/functions/lib/lead-classifier.mjs",
-      "netlify/functions/lib/marketing-prefill.mjs",
       "netlify/functions/lib/patient-replies.mjs",
-      "netlify/functions/lib/procedure-context.mjs",
-      "netlify/functions/lib/site-content.mjs",
-      "netlify/functions/lib/whatsapp-automation.mjs",
-      "ninfoplastia/index.html",
       "otoplastia-adulto/index.html",
-      "otoplastia-infantil/index.html",
-      "otoplastia/index.html",
-      "pos-bariatrica/index.html",
-      "procedimentos/index.html",
-      "protese-de-mama/index.html"
+      "otoplastia-infantil/index.html"
+    ],
+    "externalConsumers": [
+      "Google Ads: anúncios de blefaroplastia, cervicoplastia e lipo de papada existentes.",
+      "Google Ads: quatro associações existentes dos três recursos conferidos ao vivo.",
+      "Google Ads: duas palavras exatas existentes de preço de blefaroplastia e herança de rastreamento.",
+      "Destinos públicos de consulta, segurança, consulta cervical e preço de blefaroplastia.",
+      "Projeção existente do Plano executivo no Google Drive."
     ],
     "preservedInvariants": [
-      "Escopo funcional limitado ao site: botões, prefill, links, breadcrumb visual e abertura do guia de preço de lifting.",
-      "Preservar contratos de atribuição, consentimento, click IDs, templates reconhecidos, profissional e procedimento; clique ou prefill isolado não qualifica contato nem agenda consulta.",
-      "Preservar funções de atendimento, manifesto e manual da Bruna, Apps Script v164, agendas, dados, filas, flags e rotinas agendadas.",
-      "Nenhuma alteração de campanha, anúncio, orçamento, lance, meta ou configuração de plataforma de mídia.",
-      "Nenhum envio real, reprocessamento, paciente, conversão ou compromisso artificial criado pelos testes.",
-      "Guia público sem faixa cirúrgica, orçamento individual ou promessa clínica; CTA não presume que a pessoa já leu outro conteúdo.",
-      "Preservar documentação pública sanitizada; novos recibos contêm somente escopo técnico, fontes públicas e testes sintéticos, sem dados de contatos ou métricas comerciais privadas.",
-      "Publicar somente artefato restrito tmp/netlify-deploy; auditorias permanecem excluídas do site.",
-      "Preservar neutralPrefill, price_range_reference, referências e atributos data-*; mesma origem, caminho e telefone dos links; query de cache do proprietário atualizada nas páginas consumidoras.",
-      "Aliases de âncora nos headings existentes sem remover IDs válidos; retirar somente breadcrumb visual duplicada dos sete guias; conteúdo clínico, FAQ, credenciais e datas de revisão preservados.",
-      "Rótulos e aria-labels produzidos após JavaScript seguem a mesma intenção dos fallbacks; scripts auxiliares mudam somente copy, com versões de cache em todos os consumidores. O teste de governança conserva o recibo publicado da última Bruna separado do candidato site, sem alteração do manifesto."
+      "Preservar orçamento e lances vivos; a divergência com registros históricos deve ser documentada, não corrigida por suposição.",
+      "Preservar metas, conversões, geografia, redes, públicos, horários, status, fixações e identificação médica.",
+      "Alterar somente os 13 campos de RSA, três destinos de sitelink e duas URLs finais aprovados; preservar demais URLs, sufixos e parâmetros.",
+      "Nenhuma nova palavra, negativa, campanha, grupo ou associação; nenhuma reativação ou exclusão.",
+      "Não alterar site, Netlify, Apps Script, LEADS, CRM, WhatsApp, Calendar ou Meta; sem mensagem, conversão ou contato artificial.",
+      "Preço é planejamento legítimo; não prometer orçamento individual remoto ou faixa automática de blefaroplastia.",
+      "Novo material público sem IDs privados, gastos ou PII; evidências operacionais permanecem privadas."
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "site-editorial-copy",
-        "system": "Site público e Netlify; contexto de aquisição consultado somente em leitura",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/site-continuidade-2026-10-14/PREFLIGHT.json",
-        "note": "Produção e configurações técnicas relidas pelo coordenador. Nenhuma reconciliação nova de pacientes, conversões ou sistemas privados é afirmada neste release.",
-        "checkedAt": "2026-10-14T21:30:36.947Z"
-      },
-      {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Site público, transporte first-party e consumidores de atribuição existentes",
+        "system": "Google Ads, consumidores compartilhados e destinos públicos",
         "status": "verified_baseline_with_limits",
-        "reference": "auditorias/site-continuidade-2026-10-14/PREFLIGHT.json",
-        "note": "O pacote preserva esquema e decisões de atribuição. Leitura comercial anterior não substitui preflight técnico; cobertura de consentimento, template e origem deve ser comprovada localmente e no artefato antes de publicar.",
-        "checkedAt": "2026-10-14T21:30:36.947Z"
-      },
-      {
-        "contract": "site-publication",
-        "system": "Netlify e site público",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/site-continuidade-2026-10-14/PREFLIGHT.json",
-        "note": "Revalidar produção imediatamente antes do push autorizado; preservar o gate hospedado da Bruna e funções/agendamentos.",
-        "checkedAt": "2026-10-14T21:30:36.947Z"
+        "reference": "auditorias/google-ads-comunicacao-2026-10-15/PREFLIGHT.json",
+        "note": "Conta e todos os objetos do lote relidos pelo coordenador; consumidores dos três sitelinks cobertos (quatro associações), before dos três RSAs comparado independentemente, duas palavras exatas e baseline de campanhas conferidos. Destinos públicos e âncora aprovados. Tracking e fixações preservados; sem auditoria nova de mensuração ou dados de pacientes.",
+        "checkedAt": "2026-10-15T10:00:27.977056+00:00"
       },
       {
         "contract": "change-governance",
-        "system": "Git baseline, current public technical plan and existing document projection",
+        "system": "Git e projeção existente do Plano no Google Drive",
         "status": "verified_baseline_with_limits",
-        "reference": "auditorias/site-continuidade-2026-10-14/PREFLIGHT.json",
-        "note": "Canonical baseline and same plan projection checked; release receipts remain pending for this candidate.",
-        "checkedAt": "2026-10-14T21:30:36.947Z"
-      },
-      {
-        "contract": "bruna-regression-governance",
-        "system": "Git, manifesto preservado, recibo histórico e identidade Netlify já lida",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/site-continuidade-2026-10-14/PREFLIGHT.json",
-        "checkedAt": "2026-10-14T21:30:36.947Z",
-        "note": "Mudança somente no teste que resolve o recibo da Bruna já publicado. Manifesto, bundle e código de atendimento permanecem iguais ao baseline; não afirma nova execução viva de OpenAI. O build hospedado mantém os gates de modelo, áudio e histórico."
+        "reference": "auditorias/google-ads-comunicacao-2026-10-15/PREFLIGHT.json",
+        "note": "Baseline Git local identificado; mesmo arquivo do Plano no Drive relido por metadata e download, com SHA-256 igual ao baseline b77b1d6. Nenhuma escrita; projeção posterior deste candidato continua pendente.",
+        "checkedAt": "2026-10-15T10:00:27.977056+00:00"
       }
     ]
   },
@@ -263,34 +104,21 @@
     "status": "passed_local",
     "commands": [
       "git diff --check",
-      "node --check campanhas/content-library.js",
-      "node --check campanhas/conversion-tracking.js",
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "node --test campanhas/conversion-tracking.test.mjs campanhas/site-communication.test.mjs campanhas/cost-guides.test.mjs campanhas/lifting-price-page.test.mjs campanhas/seo-discovery.test.mjs",
       "node --test campanhas/google-ads-ad-strength-20260913.test.mjs",
       "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
       "node --test campanhas/google-ads-settings.test.mjs",
-      "node --test campanhas/site-communication.test.mjs",
-      "node --test netlify/functions/lib/marketing-prefill.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/site-content.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs",
       "npm.cmd run architecture:check",
       "npm.cmd run change:check",
       "npm.cmd run ops:check",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
       "npm.cmd test",
-      "node --test campanhas/cta-runtime.test.mjs",
-      "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "node --check campanhas/article-conversion.js",
-      "node --check campanhas/landing-behavior.js",
-      "node --check campanhas/procedure-terra-fixes.js",
-      "node --check campanhas/site-enhancements.js",
-      "node --check campanhas/secondary-conversion.js",
-      "node --check mama/mama.js",
-      "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "node --test apps-script/clinica-liv-leads/site-contrast.test.mjs"
+      "node --test scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
+      "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
     ],
-    "baseline": "a2dc468942a74639bebb3f12489db79007ea4863",
-    "evidence": "auditorias/site-continuidade-2026-10-14/REVISAO.json",
+    "baseline": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
+    "evidence": "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json",
     "executed": [
       {
         "command": "npm.cmd test",
@@ -299,49 +127,28 @@
         "failed": 0
       },
       {
-        "command": "node --test campanhas/cta-runtime.test.mjs",
+        "command": "focused_contract_union",
         "status": "passed",
-        "passed": 4,
+        "passed": 192,
         "failed": 0,
-        "additionalToFullSuite": true
+        "includedInFullSuite": true,
+        "note": "União dos testes focados de aquisição, configurações, piloto LIFT, qualidade RSA, governança e recibo da Bruna."
       },
       {
-        "command": "independent_focused_contract_tests",
+        "command": "npm.cmd run change:check",
         "status": "passed",
-        "passed": 95,
-        "overlapsFullSuite": true
-      },
-      {
-        "command": "acquisition_contract_tests",
-        "status": "passed",
-        "passed": 163,
-        "overlapsFullSuite": true
-      },
-      {
-        "command": "governance_consumer_tests",
-        "status": "passed",
-        "passed": 90,
-        "overlapsFullSuite": true
-      },
-      {
-        "command": "declared node --check commands",
-        "status": "passed"
+        "exactFiles": 9
       },
       {
         "command": "npm.cmd run architecture:check",
         "status": "passed"
       },
       {
-        "command": "npm.cmd run change:check",
-        "status": "passed",
-        "files": 80
-      },
-      {
         "command": "npm.cmd run site:build",
         "status": "passed",
         "files": 193,
-        "urls": 54,
-        "auditFiles": 0
+        "sitemapUrls": 54,
+        "auditFilesInArtifact": 0
       },
       {
         "command": "npm.cmd run site:check",
@@ -354,37 +161,44 @@
       {
         "command": "npm.cmd run ops:check",
         "status": "SYNC_PENDING",
-        "expectedBeforePublication": true
+        "reasons": [
+          "CHANGE_PUBLICATION_PENDING",
+          "WRONG_BRANCH",
+          "DIRTY_WORKTREE"
+        ],
+        "note": "Candidato planejado em worktree de desenvolvimento; fechamento ainda não permitido."
       }
-    ]
+    ],
+    "checkedAt": "2026-10-15T09:45:41.145831+00:00",
+    "livePreflightCompletedAt": "2026-10-15T10:00:27.977056+00:00"
   },
   "rollback": {
-    "local": "Reverter somente o diff declarado deste pacote, preservando alterações paralelas.",
-    "production": "Novo commit de reversão somente do pacote pela integração Git, equivalente ao baseline funcional 4869b38a51d55b76176cf2b1cf8021c4f2ea46be; preservar Apps Script v164, atendimento, dados, filas, flags e recibos; sem replay."
+    "local": "Reverter somente os nove arquivos deste candidato ao baseline, preservando publicações anteriores.",
+    "production": "Restaurar somente cada campo alterado ao before vivo guardado, incluindo URL final vazia. Não excluir objetos/histórico nem reverter mudanças paralelas. Sem escrita externa, não há rollback operacional a executar."
   },
   "monitoring": {
-    "owner": "Responsável pelo site / equipe LIV",
-    "window": "Primeiro ciclo público, 48 horas e revisão de continuidade em sete dias após publicar",
+    "owner": "Daniel / equipe LIV",
+    "window": "Após aplicação real: integridade imediata e D+2; leitura de coortes D+14 e D+28, sem nova automação.",
     "signals": [
-      "Destino, rótulo e mensagem inicial coerentes com a intenção do botão.",
-      "Um breadcrumb visual por página, links válidos e layout mobile sem sobreposição.",
-      "Atribuição e consentimento preservados nos cenários sintéticos e nas verificações públicas sem envio.",
-      "Conter diante de destino errado, mensagem que muda intenção/procedimento ou profissional, falha de consentimento ou regressão de navegação."
+      "Campos salvos/readback iguais ao payload aprovado; URLs, âncoras, parâmetros e associações coerentes.",
+      "Política, elegibilidade e veiculação verificadas como estados distintos.",
+      "Contatos válidos, qualificados e consultas agendadas/realizadas com cobertura e maturação equivalentes; baixa amostra inconclusiva.",
+      "Conter diante de destino ou procedimento incorreto, perda de atribuição, promessa indevida ou regressão consistente."
     ]
   },
   "release": {
-    "status": "published_verified",
-    "externalWritesPerformed": true,
-    "approvedCommit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
-    "netlifyDeployId": "6acff7b9dc7d30f39ad66b31",
-    "publishedAt": "2026-10-14T21:47:42.198Z",
-    "verifiedAt": "2026-10-14T21:59:41.048Z",
-    "appsScriptVersion": 164,
+    "status": "pending_publication",
+    "externalWritesPerformed": false,
+    "approvedCommit": null,
+    "receipt": "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json",
+    "externalSystemsToWrite": [
+      "Google Ads",
+      "Google Drive: mesma projeção do Plano"
+    ],
+    "siteDeploymentRequired": false,
     "appsScriptChanged": false,
     "functionsChanged": false,
     "brunaManifestChanged": false,
-    "drivePlanSha256": "9d5a502f5cdec68750246c20ca198dec400d1a9536b204ea213ce3cb5b58414a",
-    "drivePlanReadbackVerifiedAt": "2026-10-14T21:59:41.048Z",
-    "receipt": "auditorias/site-continuidade-2026-10-14/PUBLICACAO.json"
+    "note": "Nenhum novo deploy faz parte deste pacote; código e destinos de Netlify/Apps Script preservados no diff; recibos históricos mantidos, sem alegar nova auditoria. O escopo de escrita externa é Google Ads e a mesma projeção do Plano no Drive, com recibos reais em REVISAO.json."
   }
 }

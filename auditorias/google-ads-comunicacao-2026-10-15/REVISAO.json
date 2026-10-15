@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-COMUNICACAO-2026-10-15",
+  "status": "passed_local",
+  "counts": {
+    "sitelinkDestinations": 3,
+    "rsaFields": 13,
+    "rsaContexts": 3,
+    "keywordDestinations": 2
+  },
+  "textLimits": "13 textos novos recontados por caracteres Unicode; todos dentro do limite aplicável.",
+  "externalWritesPerformed": false,
+  "publication": {
+    "status": "pending",
+    "approvedCommit": null,
+    "externalSystems": [
+      "Google Ads",
+      "Google Drive: mesma projeção do Plano"
+    ],
+    "actionsApplied": [],
+    "readback": "pending",
+    "driveProjectionEquality": "pending",
+    "note": "Este mesmo arquivo receberá os recibos reais após aplicação e releitura; não há publicação antecipada. Netlify/Apps Script não são destinos de escrita deste pacote."
+  },
+  "executed": [
+    {
+      "command": "npm.cmd test",
+      "status": "passed",
+      "passed": 2175,
+      "failed": 0
+    },
+    {
+      "command": "focused_contract_union",
+      "status": "passed",
+      "passed": 192,
+      "failed": 0,
+      "includedInFullSuite": true,
+      "note": "União dos testes focados de aquisição, configurações, piloto LIFT, qualidade RSA, governança e recibo da Bruna."
+    },
+    {
+      "command": "npm.cmd run change:check",
+      "status": "passed",
+      "exactFiles": 9
+    },
+    {
+      "command": "npm.cmd run architecture:check",
+      "status": "passed"
+    },
+    {
+      "command": "npm.cmd run site:build",
+      "status": "passed",
+      "files": 193,
+      "sitemapUrls": 54,
+      "auditFilesInArtifact": 0
+    },
+    {
+      "command": "npm.cmd run site:check",
+      "status": "passed"
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed"
+    },
+    {
+      "command": "npm.cmd run ops:check",
+      "status": "SYNC_PENDING",
+      "reasons": [
+        "CHANGE_PUBLICATION_PENDING",
+        "WRONG_BRANCH",
+        "DIRTY_WORKTREE"
+      ],
+      "note": "Candidato planejado em worktree de desenvolvimento; fechamento ainda não permitido."
+    }
+  ],
+  "pending": [
+    "Commit e gate de publicação",
+    "Escritas aprovadas e readback",
+    "Projeção existente do Plano no Drive e igualdade",
+    "Monitoramento após publicação"
+  ],
+  "checkedAt": "2026-10-15T09:45:41.145831+00:00",
+  "liveRsaBaselineReview": {
+    "status": "passed",
+    "checkedAt": "2026-10-15T09:47:38.243220+00:00",
+    "objects": 3,
+    "textboxValues": 90,
+    "textSlots": 57,
+    "pins": 57,
+    "exactDeltas": 13,
+    "externalWritesPerformed": false,
+    "limit": "Campo de rastreamento vazio preservado literalmente; herança superior não inferida."
+  },
+  "publicDestinations": {
+    "status": "passed",
+    "checkedAt": "2026-10-15T09:43:13.807376+00:00",
+    "method": "HTTP GET público e inspeção do HTML; sem clique, execução de JavaScript, envio de mensagem ou escrita externa.",
+    "sources": "Duas conferências independentes em 15/10/2026, por volta de 09:39 e 09:43 UTC; corpos e hashes privados concordam.",
+    "destinations": [
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "checked_at_utc": "2026-10-15T09:43:13.819379+00:00",
+        "status": 200,
+        "effective_url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "sha256": "33e3f29a588cb2f293279ea57d2d0bb38b21148e8cd8ee99442f944e018bfd8f",
+        "anchor_count": null,
+        "whatsapp_intents": [],
+        "passed": true
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+        "checked_at_utc": "2026-10-15T09:43:13.902334+00:00",
+        "status": 200,
+        "effective_url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-blefaroplastia-sao-paulo/",
+        "sha256": "e96bd2c75636bd0be66d72b7b6a368819a85ded06054382884dd682201228cbf",
+        "anchor_count": null,
+        "whatsapp_intents": [
+          "price_planning"
+        ],
+        "passed": true
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/",
+        "checked_at_utc": "2026-10-15T09:43:14.078612+00:00",
+        "status": 200,
+        "effective_url": "https://draamandaschroeder.com.br/conteudos/seguranca-cirurgia-plastica/",
+        "sha256": "d5c8a986299cb79924901096937d9fb462fb9c630628d47159f1074f80982f49",
+        "anchor_count": null,
+        "whatsapp_intents": [],
+        "passed": true
+      },
+      {
+        "url": "https://draamandaschroeder.com.br/lifting-cervical/#consulta",
+        "checked_at_utc": "2026-10-15T09:43:14.119397+00:00",
+        "status": 200,
+        "effective_url": "https://draamandaschroeder.com.br/lifting-cervical/#consulta",
+        "sha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033",
+        "anchor_count": 1,
+        "whatsapp_intents": [],
+        "passed": true
+      }
+    ],
+    "limitations": "Disponibilidade e conteúdo do HTML não comprovam entrega de clique, execução de JavaScript, envio ou resultado comercial.",
+    "intent": "Guia BLEF mantém price_planning: composição do orçamento e avaliação; não promete faixa privada automática."
+  },
+  "proposalReview": {
+    "status": "passed",
+    "checkedAt": "2026-10-15T09:43:13.807376+00:00",
+    "exactScope": true,
+    "sourceHashesMatch": true,
+    "rsaFieldsCompared": 57,
+    "sitelinkCopyUnchanged": true,
+    "keywordUniqueExportMatches": 2,
+    "note": "Validação da proposta/export separada do preflight autenticado; não é prova de salvamento."
+  },
+  "livePreflightStatus": "verified_baseline_with_limits"
+}

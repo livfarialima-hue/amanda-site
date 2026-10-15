@@ -1,5 +1,15 @@
 # Norte estratégico de aquisição e conversão
 
+## 42. Comunicação e destinos no Google Ads — lote autorizado em 15/10/2026
+
+**Estado: testado localmente; publicação autorizada nesta conversa, preflight vivo concluído e nenhuma escrita externa.** Aplicar somente três correções de destino de sitelinks, 13 campos nos anúncios de blefaroplastia/cervicoplastia/lipo de papada e a URL final de duas palavras exatas existentes de preço de blefaroplastia. Antes/depois no plano sanitizado `auditorias/google-ads-comunicacao-2026-10-15/PLANO.json`. A autorização não inclui as sugestões de reserva para lifting facial, otoplastia ou destaques.
+
+**Motivo e hipótese:** alinhar promessa, conteúdo e próximo passo, com linguagem específica de cada procedimento. Busca de preço é planejamento legítimo; o guia de blefaroplastia explica composição e avaliação sem prometer faixa privada automática. Hipótese de menos atrito até contato útil, sem ganho comercial demonstrado. Exports são snapshots; before, identidade e consumidores compartilhados foram relidos ao vivo para este lote, com limites no recibo de preflight.
+
+**Invariantes:** preservar todos os orçamentos e lances vivos confirmados, metas, conversões, segmentação, redes, horários, status, fixações, identificação médica, URLs de RSA e atribuição. Não criar palavras, negativas, grupos ou campanhas, nem reativar associações pausadas. Os registros históricos de orçamento não substituem a configuração atual: seis campanhas ativas e duas finalizadas foram conferidas, sem restaurar valores por suposição. Site, atendimento, Apps Script, dados e demais plataformas não mudam.
+
+**Revisão e regra de manutenção:** integridade imediatamente e D+2 da aplicação; avaliação em D+14/D+28 por contatos válidos, qualificados e consultas com maturação/cobertura comparáveis, não por CTR ou nota. Daniel/equipe acompanha, sem automação nova. Manter se texto/destino forem verdadeiros e íntegros; diante de erro, reprovação ou regressão consistente, restaurar somente o delta responsável ao before vivo, preservando histórico. Commit, gate, aplicação/readback e projeção posterior no Drive ainda pendentes; não afirmar publicação ou reconciliação completa.
+
 ## 41. Continuidade do site — decisão autorizada em 14/10/2026
 
 **Decisão:** corrigir convites e mensagens de entrada do WhatsApp, destinos de navegação e breadcrumbs duplicados; simplificar a abertura do guia de preço de lifting facial com resposta breve e pedido de referência antes dos detalhes. O convite de consulta deve dizer “Conversar sobre a consulta”, sem simular disponibilidade. Pedido de preço mantém sua intenção própria. A mensagem preparada não afirma leitura, indicação, qualificação nem reserva.

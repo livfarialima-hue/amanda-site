@@ -957,7 +957,11 @@
         "auditorias/google-ads-revisao-2026-09-27/RELATORIO.md",
         "auditorias/google-ads-revisao-2026-09-27/analise.ipynb",
         "auditorias/google-ads-revisao-2026-09-27/analyze_exports.py",
-        "auditorias/google-ads-revisao-2026-09-27/artifact.json"
+        "auditorias/google-ads-revisao-2026-09-27/artifact.json",
+        "auditorias/google-ads-comunicacao-2026-10-15/PLANO.json",
+        "auditorias/google-ads-comunicacao-2026-10-15/PREFLIGHT.json",
+        "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json",
+        "auditorias/google-ads-comunicacao-2026-10-15/RELATORIO.md"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
