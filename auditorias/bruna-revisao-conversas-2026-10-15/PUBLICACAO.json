@@ -1,0 +1,501 @@
+{
+  "schemaVersion": 1,
+  "changeId": "BRUNA-REVISAO-CONVERSAS-2026-10-15",
+  "status": "published_runtime_documentation_pending",
+  "bundleVersion": "2026-10-15.5",
+  "approvedCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
+  "netlifyDeployId": "6ad15ebcc63792b19f648797",
+  "productionState": "ready",
+  "context": "production",
+  "branch": "reestruturacao-site",
+  "publishedAt": "2026-10-15T23:19:41.688Z",
+  "verifiedAt": "2026-10-15T23:23:36.9828665Z",
+  "approval": {
+    "by": "Daniel",
+    "observedAt": "2026-10-15T23:11:45Z",
+    "reference": "Mensagem do usuario nesta conversa: Pode publicar tudo. Aplicada ao pacote 4a21792 previamente preparado e revisado.",
+    "scope": "Publicacao coordenada do pacote desta revisao e seus registros/projecoes existentes; nao inclui outras branches."
+  },
+  "releasePreflight": {
+    "status": "CHANGE_SAFETY_STATUS=OK",
+    "approvedCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
+    "clean": true,
+    "checkedAt": "2026-10-15T23:11:45Z",
+    "reference": "PREFLIGHT.json",
+    "performedBeforeFirstExternalCodeWrite": true
+  },
+  "liveModel": {
+    "status": "passed",
+    "checkedAt": "2026-10-15T23:19:25.770Z",
+    "model": "gpt-6.1-sol",
+    "effort": "medium",
+    "maxOutputTokens": 4096,
+    "verbosity": "low",
+    "billingMode": "api_paid_authorized",
+    "syntheticOnly": true,
+    "patientMessagesSent": 0,
+    "passed": 21,
+    "total": 21,
+    "fullHistoryPassed": 2
+  },
+  "liveAudio": {
+    "status": "passed",
+    "model": "whisper-1",
+    "passed": 3,
+    "total": 3
+  },
+  "hostedEvidence": {
+    "method": "Direct authenticated Netlify UI deploy log read",
+    "directLogRead": true,
+    "logSha256": "b433c0639a3a4f1f31fc5498edde98debe4a3c720d5aeebc80375a93b32145f3",
+    "scenarios": [
+      {
+        "name": "remote_assessment_after_price_audio_context",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 12901,
+        "timeoutMs": 20000,
+        "replyCode": "",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "pure_appointment_request",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 4506,
+        "timeoutMs": 20000,
+        "replyCode": "",
+        "modelRequests": 1
+      },
+      {
+        "name": "consultation_contextual",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 9341,
+        "timeoutMs": 20000,
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "lifting_information",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 6716,
+        "timeoutMs": 20000,
+        "replyCode": "LIFTING-FACIAL-INFORMATION-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "personal_question_with_reference",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 9518,
+        "timeoutMs": 20000,
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "accepted_information_offer",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 10648,
+        "timeoutMs": 20000,
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "corrected_procedure",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 9757,
+        "timeoutMs": 20000,
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "unknown_clinic_fact",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 9991,
+        "timeoutMs": 20000,
+        "replyCode": "UNKNOWN-REVIEW-01",
+        "modelRequests": 1
+      },
+      {
+        "name": "semantic_approved_knowledge",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 6467,
+        "timeoutMs": 20000,
+        "replyCode": "KB:SYNTHETIC-INVOICE",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "human_clinical_task_administrative_question",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 4858,
+        "timeoutMs": 20000,
+        "replyCode": "ADMIN-SIDE-LOCATION-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "consultation_preparation",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 8192,
+        "timeoutMs": 20000,
+        "replyCode": "",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "clinical_urgency",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 4305,
+        "timeoutMs": 20000,
+        "replyCode": "ALERT-URG-01",
+        "modelRequests": 1
+      },
+      {
+        "name": "approved_price_with_photo_request",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 13992,
+        "timeoutMs": 20000,
+        "replyCode": "LIFTING-PRICE-RANGE-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "full_history_name_correction",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 9479,
+        "timeoutMs": 20000,
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "full_history_resolved_human_task",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 3950,
+        "timeoutMs": 20000,
+        "replyCode": "",
+        "modelRequests": 1
+      },
+      {
+        "name": "remote_consultation_price_continuation_1",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 8576,
+        "timeoutMs": 20000,
+        "replyCode": "",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "remote_consultation_price_continuation_2",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 8915,
+        "timeoutMs": 20000,
+        "replyCode": "",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "lipo_papada_complete_requested_answer",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 12264,
+        "timeoutMs": 20000,
+        "replyCode": "LIPO-PAPADA-PRICE-RANGE-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "lipo_papada_association_not_isolated_range",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 8682,
+        "timeoutMs": 20000,
+        "replyCode": "UNKNOWN-REVIEW-01",
+        "modelRequests": 1
+      },
+      {
+        "name": "classification",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 4444,
+        "timeoutMs": 15000,
+        "modelRequests": 1
+      },
+      {
+        "name": "followup_declined",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 1903,
+        "timeoutMs": 12000,
+        "modelRequests": 1
+      }
+    ],
+    "manualDeploy": false,
+    "gateBypassed": false
+  },
+  "health": {
+    "checkedAt": "2026-10-15T23:23:36.9828665Z",
+    "checks": [
+      {
+        "origin": "https://draamandaschroeder.com.br",
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled",
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        }
+      },
+      {
+        "origin": "https://6ad15ebcc63792b19f648797--inspiring-sprite-b35ca4.netlify.app",
+        "homepageHttpStatus": 200,
+        "webhookHealthHttpStatus": 200,
+        "unsignedWebhookHttpStatus": 401,
+        "health": {
+          "ok": true,
+          "service": "ycloud-webhook",
+          "apiKeyConfigured": true,
+          "signatureProtection": "active",
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "openAIConfigured": true,
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled",
+          "reviewAlertConfigured": true,
+          "appointmentReviewEnabled": true,
+          "automationMode": "active",
+          "conversionExperience": "bruna-conversion-v1",
+          "processingMode": "durable_background_intake",
+          "contactPreferencesGuard": "active",
+          "internalPhoneExclusionConfigured": true,
+          "leadDeliveryRetry": "single_idempotent_transient",
+          "leadDeliveryFallback": "acquisition_only",
+          "leadFailureEmailAlert": "required_after_retries",
+          "messageCostObservability": "delivered_event_idempotent"
+        }
+      }
+    ]
+  },
+  "functions": {
+    "count": 15,
+    "names": [
+      "appointment-reminder",
+      "appointment-review",
+      "attribution-journey",
+      "attribution-journey-purge",
+      "classify-leads",
+      "classify-leads-background",
+      "conversation-archive",
+      "human-resume",
+      "human-resume-background",
+      "post-consult-followup",
+      "scheduled-followup",
+      "synthetic-integration-health",
+      "ycloud-recovery",
+      "ycloud-recovery-background",
+      "ycloud-webhook"
+    ],
+    "schedules": [
+      {
+        "cron": "17 6 * * *",
+        "name": "attribution-journey-purge"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "classify-leads"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "conversation-archive"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "human-resume"
+      },
+      {
+        "cron": "17 12 * * *",
+        "name": "synthetic-integration-health"
+      },
+      {
+        "cron": "*/5 * * * *",
+        "name": "ycloud-recovery"
+      }
+    ]
+  },
+  "appsScript": {
+    "version": 165,
+    "previousVersion": 164,
+    "changed": true,
+    "editorInspected": true,
+    "sameCanonicalDeployment": true,
+    "executionIdentityAndAccessPreserved": true,
+    "publishedMinuteBrt": "2026-10-15 20:15",
+    "verifiedAt": "2026-10-15T23:16:04.1644112Z",
+    "sourceComparison": "Approved committed source equals authenticated editor clipboard readback after reload, CRLF normalized to LF only.",
+    "files": [
+      {
+        "file": "Code.gs",
+        "exact": true,
+        "sha256Lf": "dc02c93c90337de73091c68e607aaf6b1b174c9b2485988fa03248257c6bd4f6",
+        "characters": 86176,
+        "verifiedAt": "2026-10-15T23:15:00.7421683Z"
+      },
+      {
+        "file": "LeadClassification.gs",
+        "exact": true,
+        "sha256Lf": "51e51753ab58773ad2e847eafbdd406f88eafbb56284bb8828952c2d0f2aef3d",
+        "characters": 141994,
+        "verifiedAt": "2026-10-15T23:15:00.7645725Z"
+      },
+      {
+        "file": "BusinessMilestones.gs",
+        "exact": true,
+        "sha256Lf": "b5d213665b34954ef53b4247fcbef64ed516602df2e54e894d6f496be8dc833b",
+        "characters": 5716,
+        "verifiedAt": "2026-10-15T23:15:00.7669716Z"
+      },
+      {
+        "file": "DataQualityRepair.gs",
+        "exact": true,
+        "sha256Lf": "ece003e7c32e657d7a805666ea12939efe2c289f64454478152934024f4f7d20",
+        "characters": 95004,
+        "verifiedAt": "2026-10-15T23:15:00.7717329Z"
+      }
+    ],
+    "health": {
+      "ok": true,
+      "service": "clinica-liv-leads",
+      "deduplication": "one_open_opportunity_per_contact_and_professional"
+    },
+    "healthHttpStatus": 200,
+    "invalidCancelReadOnlyProbeSafe": true,
+    "administrativeOperatorConfigured": false,
+    "administrativeRepairExecuted": false
+  },
+  "appsScriptVersion": 165,
+  "adsImportSource": {
+    "beforeAt": "2026-10-15T23:06:56.771Z",
+    "afterAt": "2026-10-15 23:24:14 UTC",
+    "rowsBefore": 12,
+    "rowsAfter": 12,
+    "exact": true
+  },
+  "patientMessagesSentDuringPublication": 0,
+  "externalWritesPerformed": true,
+  "operationalDataWritesDuringPublication": false,
+  "rollback": {
+    "commit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
+    "deployId": "6ad140400f41025d3ef0a3f7",
+    "appsScriptVersion": 164,
+    "constraint": "Novo commit/build restrito para reverter o delta Netlify; Apps Script no deployment canonico com fonte equivalente ao baseline. Preservar dados, filas, flags, historico e trabalho paralelo; sem replay."
+  },
+  "preservation": {
+    "baselineCloseoutCommit": "723a43bae79faca529e2a53cc39996df62a16107",
+    "remoteRecheckedBeforePush": true,
+    "fastForwardOnly": true,
+    "parallelCloudChangesIntegrated": true,
+    "unrelatedBranchesPreserved": true
+  },
+  "documentation": {
+    "status": "pending_same_file_projection",
+    "existingFileIds": {
+      "manual": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "executivePlan": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
+    },
+    "beforeWriteReadback": {
+      "manualSha256": "98e54e8b4955ee26970736910b890de651519287ed144920c037cbfc5aa96cc9",
+      "executivePlanSha256": "2acab551e100b7a629cb41f92140d8075302df7f3f45b13ef80a0ef28deb9678"
+    }
+  },
+  "localVerification": {
+    "fullSuite": {
+      "passed": 2298,
+      "total": 2298,
+      "failed": 0
+    },
+    "releaseReview": {
+      "focused": 175,
+      "appsScriptFocused": 118,
+      "independentAdversarialScenarios": 30
+    },
+    "architecture": "passed",
+    "build": {
+      "files": 193,
+      "sitemapUrls": 54,
+      "errors": 0
+    },
+    "siteCheck": {
+      "urls": 54,
+      "errors": 0
+    },
+    "functionalScopeFiles": 23,
+    "overlapNote": "Suites sobrepostas; nao somar."
+  },
+  "monitoring": {
+    "firstNaturalClassification": "pending_observation",
+    "integrityReview": "2026-10-17",
+    "cohortReview": "2026-10-22",
+    "timezone": "America/Sao_Paulo",
+    "periodicPlugin": "bruna-gestao-conversao 1.0.2; rotina cloud existente dias uteis 09h/17h",
+    "followupContinuation": "Tarefa unica existente 2026-10-16 09:30 BRT; condicional ao canal e preflight vivo."
+  },
+  "limits": [
+    "Publicar a ponte nao executa a recuperacao de oito eventos nem invalida o marco accepted; operador e preflight de aplicacao continuam pendentes.",
+    "78 retomadas revisadas continuam sem novos envios nesta segunda rodada; canal YCloud trial exige regularizacao e novo preflight individual.",
+    "Testes sinteticos e saude nao comprovam conversa natural posterior, conversao ou economia.",
+    "Igualdade Drive e fechamento operacional aguardam recibo proprio; este estado intermediario nao e conclusao."
+  ]
+}

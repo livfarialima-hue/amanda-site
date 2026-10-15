@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "changeId": "BRUNA-REVISAO-CONVERSAS-2026-10-15",
+  "status": "release_preflight_recorded_with_apps_script_postflight",
+  "approvedCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
+  "timezone": "America/Sao_Paulo",
+  "timestampConvention": "Todos os horarios com sufixo Z sao UTC. O horario do preflight nao e reutilizado como horario de publicacao.",
+  "privacy": {
+    "patientDataIncluded": false,
+    "credentialsIncluded": false,
+    "privateEvidencePolicy": "Somente nomes de recibos, resultados agregados, hashes de codigo e identificadores de release. Sem contatos, transcricoes, IDs individuais de oportunidade/evento ou payloads operacionais."
+  },
+  "beforeExternalCodeWrites": {
+    "observedAt": "2026-10-15T23:11:45Z",
+    "observedAtMeaning": "Corte do recibo privado de autorizacao e estado vivo, anterior a primeira escrita externa de codigo deste pacote.",
+    "sourceReceipt": "release-authorization-preflight.json",
+    "authorization": {
+      "explicit": true,
+      "userInstruction": "Pode publicar tudo",
+      "scope": "Pacote preparado nesta conversa, vinculado ao approvedCommit deste recibo.",
+      "reference": "thread:01a14165-eac6-7853-b74d-4aa1ea358f2a/user-publication-authorization"
+    },
+    "gateEvidence": {
+      "noExternalCodeWritesYet": true,
+      "appsScriptCanonicalIdsVerified": true,
+      "fullTestsPassed": 2298,
+      "reviewVerdict": "no_blockers",
+      "approvedCommitAndCleanTreeConfirmedByReview": true,
+      "declaredDiffFiles": 23,
+      "diffCheck": "passed"
+    },
+    "baseline": {
+      "productionCommit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
+      "remoteBranchCommit": "723a43bae79faca529e2a53cc39996df62a16107",
+      "netlifyDeployId": "6ad140400f41025d3ef0a3f7",
+      "appsScriptVersion": 164
+    },
+    "privateLiveOperationalEvidence": {
+      "receipt": "release-live-preflight-data.json",
+      "includedHere": false,
+      "note": "Dados operacionais identificaveis permanecem no recibo privado; sua referencia nao publica o conteudo nem autoriza replay ou contato."
+    },
+    "sourceBaselineComparison": {
+      "receipt": "release-source-baseline-comparison.json",
+      "matchedFiles": 4,
+      "totalFiles": 4,
+      "hashesRecheckedAgainstProductionCommit": true,
+      "files": [
+        {
+          "file": "Code.gs",
+          "match": true,
+          "characters": 84192,
+          "sha256Lf": "7b0cc937eaa145b36023d4341b05b23b49ecc240b2f424ac0b4cd07f65ab1a94"
+        },
+        {
+          "file": "LeadClassification.gs",
+          "match": true,
+          "characters": 139728,
+          "sha256Lf": "c30604b88b41e2ddb92d4a82aecb963ae662519ceb75a6dc9a9a5b40fb6398cd"
+        },
+        {
+          "file": "BusinessMilestones.gs",
+          "match": true,
+          "characters": 2433,
+          "sha256Lf": "e4250350616aa4a0296da1fa1b539ee39dd8bc543bb7de09eb59cf064f01f50c"
+        },
+        {
+          "file": "DataQualityRepair.gs",
+          "match": true,
+          "characters": 78833,
+          "sha256Lf": "ec3ce38c0c8dc12acb4b05985220c4f9781bcad51f997598d13c1ba8a8ab3fe1"
+        }
+      ]
+    }
+  },
+  "localValidationEvidence": {
+    "fullSuite": {
+      "receipt": "release-full-suite.log",
+      "passed": 2298,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "durationMs": 26406.4983,
+      "earlierMatchingReceipt": "full-suite-context-professional-final.log"
+    },
+    "googleAdsContract": {
+      "receipt": "classification-ads-contract-tests.log",
+      "passed": 172,
+      "failed": 0
+    },
+    "approvedCommitFocusedRerun": {
+      "evidence": "Resultado de ferramenta nesta conversa, revisao do SHA aprovado antes da publicacao.",
+      "passed": 175,
+      "failed": 0,
+      "command": "node --test apps-script/clinica-liv-leads/Code.schema.test.mjs apps-script/clinica-liv-leads/DataQualityRepair.test.mjs apps-script/clinica-liv-leads/BusinessMilestones.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs netlify/functions/lib/appointment-suggestions.test.mjs",
+      "environment": "TZ=America/Sao_Paulo"
+    },
+    "independentAdversarialReviews": [
+      {
+        "receipt": "administrative-independent-review-receipt.json",
+        "reviewedAt": "2026-10-15T22:24:07.733809Z",
+        "groupsPassed": 14,
+        "groupsFailed": 0,
+        "verdict": "no_open_concrete_findings"
+      },
+      {
+        "receipt": "adversarial-acceptance-review-receipt.json",
+        "reviewedAt": "2026-10-15T22:36:06.025Z",
+        "scenariosPassed": 30,
+        "scenariosFailed": 0,
+        "synthetic": true,
+        "externalCalls": 0
+      }
+    ],
+    "reviewIndependence": "O revisor final da ponte nao a implementou. O mesmo revisor participou do classificador/helper e dos dois testes Ads; essa parcela foi revisao de autor, complementada pela matriz independente de 30 cenarios.",
+    "testLimit": "Testes locais e fakes nao demonstram entrega a pacientes, importacao nova de conversoes nem execucao administrativa em producao."
+  },
+  "afterExternalCodeWrites": {
+    "sourcePersistence": {
+      "receipt": "release-source-persisted-comparison.json",
+      "matchedFiles": 4,
+      "totalFiles": 4,
+      "hashesRecheckedAgainstApprovedCommit": true,
+      "comparison": "Conteudo persistido relido e comparado ao commit aprovado; SHA-256 de UTF-8 com finais de linha LF.",
+      "files": [
+        {
+          "file": "Code.gs",
+          "exact": true,
+          "characters": 86176,
+          "sha256Lf": "dc02c93c90337de73091c68e607aaf6b1b174c9b2485988fa03248257c6bd4f6",
+          "verifiedAt": "2026-10-15T23:15:00.7421683Z"
+        },
+        {
+          "file": "LeadClassification.gs",
+          "exact": true,
+          "characters": 141994,
+          "sha256Lf": "51e51753ab58773ad2e847eafbdd406f88eafbb56284bb8828952c2d0f2aef3d",
+          "verifiedAt": "2026-10-15T23:15:00.7645725Z"
+        },
+        {
+          "file": "BusinessMilestones.gs",
+          "exact": true,
+          "characters": 5716,
+          "sha256Lf": "b5d213665b34954ef53b4247fcbef64ed516602df2e54e894d6f496be8dc833b",
+          "verifiedAt": "2026-10-15T23:15:00.7669716Z"
+        },
+        {
+          "file": "DataQualityRepair.gs",
+          "exact": true,
+          "characters": 95004,
+          "sha256Lf": "ece003e7c32e657d7a805666ea12939efe2c289f64454478152934024f4f7d20",
+          "verifiedAt": "2026-10-15T23:15:00.7717329Z"
+        }
+      ]
+    },
+    "appsScriptPostflight": {
+      "receipt": "release-apps-script-v165.json",
+      "version": 165,
+      "verifiedAt": "2026-10-15T23:16:04.1644112Z",
+      "deploymentPreserved": true,
+      "healthStatus": 200,
+      "health": {
+        "ok": true,
+        "service": "clinica-liv-leads",
+        "deduplication": "one_open_opportunity_per_contact_and_professional"
+      },
+      "invalidCancelStatus": 200,
+      "invalidCancelSafe": true,
+      "limit": "Saude e rejeicao segura de entrada invalida nao equivalem a execucao de reparos reais nem a entrega de mensagens."
+    },
+    "netlifyAndCloseout": {
+      "verifiedByThisReceipt": false,
+      "reference": "PUBLICACAO.md",
+      "note": "A publicacao Netlify e a reconciliacao final das projecoes externas devem constar do recibo de publicacao. Este preflight nao antecipa seu resultado."
+    }
+  },
+  "preservedOperationalLimits": [
+    "Qualificacao, consulta, aceite de procedimento e pagamento permanecem fatos separados; prefill e pergunta isolada de preco nao qualificam.",
+    "Divergencia explicita Amanda/Daniel encerra a reserva com revisao humana, sem mudar fase, marco ou conversao.",
+    "A ponte administrativa exige operador ativo permitido, no maximo dois itens, preflight integral e identidade/estado originais; nao cria replay, fila de IA ou envio.",
+    "accepted pode ser anulado como voided sem apagar evidencia. A fase e a qualificacao legitima exigem tratamento separado pelo owner canonico.",
+    "prepared/needs_review bloqueiam repeticao depois de interrupcao parcial; nao ha retomada transacional automatica.",
+    "Publicacao de codigo nao comprova aplicacao da reconciliacao, importacao Ads ou contato com pacientes."
+  ]
+}

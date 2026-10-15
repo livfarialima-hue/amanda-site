@@ -1,8 +1,10 @@
 # Arquitetura da jornada da paciente
 
-## Candidato 2026-10-15.5 — classificação e reconciliação administrativa auditada
+## Publicação coordenada 2026-10-15.5 — classificação e reconciliação administrativa auditada
 
-Ainda local, sem autorização de publicação. `lead-classifier.mjs` preserva qualificação por interesse pessoal compatível sob o Norte, com vetos próprios para pesquisa financeira e negação de tratamento. Qualificação não cria agenda, aceite, pagamento ou permissão de contato.
+Commit aprovado `4a21792bc311c8220eb9908204e6fa80d6098847`: Apps Script v165 publicado em 15/10/2026 às 20:15 BRT no deployment canônico preservado; os quatro arquivos alterados foram recarregados e comparados ao commit com normalização LF. Saúde e rejeição segura de token inválido verificadas em `2026-10-15T23:16:04.1644112Z`. Netlify de produção `6ad15ebcc63792b19f648797`, READY no mesmo SHA, publicado em `2026-10-15T23:19:41.688Z`. O log real confirmou 21/21 cenários de modelo, dois históricos completos e 3/3 áudios; API com 15 funções e seis programações. Página/saúde 200 e rejeição de POST sem assinatura 401 conferidas no domínio e URL imutável em `2026-10-15T23:23:36.9828665Z`. A igualdade das mesmas projeções no Drive e o estado final seguem `auditorias/bruna-revisao-conversas-2026-10-15/PUBLICACAO.json`; publicação técnica não substitui o readback autenticado.
+
+`lead-classifier.mjs` preserva qualificação por interesse pessoal compatível sob o Norte, com vetos próprios para pesquisa financeira e negação de tratamento. Qualificação não cria agenda, aceite, pagamento ou permissão de contato.
 
 O mesmo proprietário importa `isAppointmentOfferAcceptance` de `appointment-suggestions.mjs` para interpretar a resposta curta à oferta imediatamente anterior. Esse sinal apenas impede rebaixamento indevido do resultado semântico; não promove fase nem agenda por si só. `LeadClassification.gs` interrompe conclusão com profissional explicitamente divergente entre Amanda e Daniel antes de sincronizar fase, marcos, consultas ou conversões: registra revisão humana, preserva a oportunidade e encerra o lease. Falha ao persistir a revisão não é tratada como conclusão bem-sucedida.
 
@@ -14,7 +16,7 @@ A supervisão periódica pelo plugin lê fontes privadas, aplica o Norte e recon
 
 `BusinessMilestones.gs` é proprietário da invalidação estrita de `accepted`: exige evento, oportunidade, tipo, estado anterior e hash exatos; conserva todas as colunas, exceto Estado→`voided`, e registra a transição pelo ledger administrativo. Google/Meta já excluem `voided` ao contar fechamento; a fase atual e a qualificação permanecem dimensões separadas. Os consumidores não ganham novas regras concorrentes.
 
-A trava protege o lote de código, não cria transação entre abas nem bloqueia edição manual. O recibo `prepared` é persistido antes dos efeitos; `applied` torna a repetição do mesmo pedido/hash idempotente. Interrupção com `prepared`/`needs_review` bloqueia e exige conferência manual, sem recomposição automática de estado parcial ou exclusão da trilha. O contato sem evento original não é admitido pela capacidade. A propriedade de operador e a versão publicada serão conferidas no preflight do SHA aprovado; Apps Script precede Netlify e o pacote mantém `SYNC_PENDING` até os recibos externos.
+A trava protege o lote de código, não cria transação entre abas nem bloqueia edição manual. O recibo `prepared` é persistido antes dos efeitos; `applied` torna a repetição do mesmo pedido/hash idempotente. Interrupção com `prepared`/`needs_review` bloqueia e exige conferência manual, sem recomposição automática de estado parcial ou exclusão da trilha. O contato sem evento original não é admitido pela capacidade. A versão publicada é v165; a propriedade `ADMIN_RECONCILIATION_OPERATOR_EMAIL`, os dados de entrada e os efeitos administrativos exigem preflight e recibo próprios antes da execução. A publicação da capacidade não comprova sua configuração nem aplicação. Apps Script foi publicado antes do Netlify; a igualdade documental e o estado final seguem o recibo de publicação citado acima.
 
 Contrato e regressão: `patient-journey-funnel-followups` em `ops/IMPACT-REGISTRY.json`, com testes do adaptador, do proprietário administrativo, do marco e dos consumidores Google/Meta. Procedimento operacional: README canônico do Apps Script.
 
