@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "BRUNA-REFERENCIA-GLOBAL-2026-10-15",
-  "status": "published_pending_documentation",
+  "status": "published_verified",
   "bundleVersion": "2026-10-15.4",
   "approvedCommit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
   "netlifyDeployId": "6ad140400f41025d3ef0a3f7",
@@ -188,13 +188,41 @@
     "branch": "codex/bruna-preservada-458c99d-20261015",
     "readbackVerified": true,
     "blockedConsumptionPackageNotDeployed": true,
-    "parallelDesktopNotice": "Daniel informou alterações paralelas no desktop após a publicação. Fechamento isolado; nenhuma nova atualização forçada. Integrar apenas se HEAD remoto compatível, com lease."
+    "parallelDesktopNotice": "Daniel informou alterações paralelas no desktop após a publicação. Fechamento isolado; nenhuma nova atualização forçada. Integrar apenas se HEAD remoto compatível, com lease.",
+    "documentSourceCommit": "a2b2c08f2f217d8b387c1373a50258e451d567ed",
+    "previousHeadRetainedAsAncestor": true
   },
   "documentation": {
-    "status": "pending_projection",
+    "status": "written_verified",
+    "sourceCommit": "a2b2c08f2f217d8b387c1373a50258e451d567ed",
+    "verifiedAt": "2026-10-15T21:52:38.305Z",
+    "method": "Authenticated readable-text readback exactly equals committed UTF-8 source; file metadata byte lengths match. Raw download was not used.",
     "existingFilesPreserved": true,
-    "manualFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-    "executivePlanFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
+    "equalityVerified": true,
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "98e54e8b4955ee26970736910b890de651519287ed144920c037cbfc5aa96cc9",
+      "bytes": 84557,
+      "modifiedAt": "2026-10-15T21:52:08.514Z",
+      "localEqualsReadback": true,
+      "readbackAt": "2026-10-15T21:52:38.305Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "sourceCommitEqualsReadback": true
+    },
+    "executivePlan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "c0b24ef084fb469750a0302f21b034afd17fa0fa8a59d0ff61bccfbebe51cbad",
+      "bytes": 31412,
+      "modifiedAt": "2026-10-15T21:52:20.226Z",
+      "localEqualsReadback": true,
+      "readbackAt": "2026-10-15T21:52:38.305Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "sourceCommitEqualsReadback": true
+    }
   },
   "monitoring": {
     "integrityDate": "2026-10-16",
@@ -207,5 +235,26 @@
     "Nenhuma prova de conversa natural posterior, ganho causal de conversão ou economia financeira.",
     "Desktop não inspecionado; não sobrescrever trabalho paralelo.",
     "Último recibo Apps Script v164 herdado; nenhum teste real em paciente."
-  ]
+  ],
+  "documentationApproval": {
+    "by": "Daniel",
+    "at": "2026-10-15T21:45:00Z",
+    "reference": "Sim nesta conversa após solicitação explícita de publicar os registros de fechamento no GitHub público e sincronizar os dois arquivos existentes do Drive.",
+    "scope": "Documentation/receipts and same-file Drive projections; no additional functional release."
+  },
+  "documentationReconciledAt": "2026-10-15T21:52:38.305Z",
+  "drivePlanSha256": "c0b24ef084fb469750a0302f21b034afd17fa0fa8a59d0ff61bccfbebe51cbad",
+  "localVerification": {
+    "fullSuite": {
+      "passed": 2260,
+      "total": 2260,
+      "failed": 0
+    },
+    "hostedGateHarness": {
+      "passed": 19,
+      "failed": 0,
+      "transport": "simulated"
+    },
+    "overlapNote": "Suítes se sobrepõem; não somar."
+  }
 }

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-REFERENCIA-GLOBAL-2026-10-15",
   "title": "Apresentar referência global e componentes sem inventar preços ou inclusões",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "6c9cb7ee0129260dd0f9394b1d74c0bd49a05228",
   "authorization": {
     "required": true,
@@ -98,7 +98,7 @@
       "Nenhum preço inventado por componente, pacote fechado, teto, inclusão não confirmada ou pressão.",
       "Modelo, esforço, histórico completo, timeout, áudio, cuidado, pausa, opt-out, takeover, agenda e idempotência preservados.",
       "Nenhum envio real, alteração de Sheet/Calendar/Apps Script/campanha/flag; nenhum replay.",
-      "Produção .2 e candidato .3 bloqueado permanecem distintos; não publicar a HEAD operacional como se fosse este delta."
+      "Histórico .2 e candidato .3 bloqueado preservados; .4 corresponde ao SHA funcional autorizado, sem publicar .3 incidentalmente."
     ],
     "liveReadOnlyPreflight": [
       {
@@ -157,7 +157,7 @@
       "npm.cmd run ops:check"
     ],
     "status": "passed_local",
-    "note": "Gates locais passaram; npm.cmd do contrato foi executado como npm no Linux com TZ=America/Sao_Paulo, correspondente ao projeto. A matriz de comandos cobre os mesmos arquivos executados na suíte integral; o harness hospedado foi executado separadamente com fetch simulado, sem API paga. Nenhum gate hospedado real, envio ou publicação.",
+    "note": "Gates locais concluídos com TZ=America/Sao_Paulo. Harness separado com fetch simulado, sem inferência paga local. Publicação funcional exata e projeções documentais verificadas; detalhes do gate hospedado e limites no recibo permanente.",
     "results": {
       "fullSuite": {
         "command": "TZ=America/Sao_Paulo npm test",
@@ -182,10 +182,10 @@
         "errors": 0
       },
       "siteCheck": "OK: 54 URLs, nenhum erro",
-      "changeCheck": "OK: escopo exato; confirmar após última atualização documental",
+      "changeCheck": "OK: 27 arquivos coincidem com o escopo declarado.",
       "architectureCheck": "OK",
       "diffCheck": "OK",
-      "opsCheck": "SYNC_PENDING até releitura das projeções Drive; código já publicado, ainda sem fechamento documental.",
+      "opsCheck": "OK: validado em worktree isolado limpo, branch reestruturacao-site, commit a1fef1366d6d272a38931ee635f435e19b1d6b53; checagem repetida após recibo final.",
       "environmentNote": "Primeira suíte sob TZ herdado America/New_York mostrou cinco divergências temporais. Com fuso canônico America/Sao_Paulo, 2260/2260 passaram sem alterar código de agenda/retomadas. Status preliminar draft também foi corrigido para implementing_local exigido pelo contrato antes da execução final.",
       "liveModel": "passed_by_mandatory_production_build:21/21,2histories; directLogRead=false; ver PUBLICACAO.json",
       "liveAudio": "passed_by_mandatory_production_build:3/3; directLogRead=false",
@@ -232,9 +232,62 @@
     ]
   },
   "documentationCloseout": {
-    "status": "pending_projection",
+    "status": "written_verified",
     "codeEqualsApprovedCommit": true,
     "desktopInspected": false,
-    "noForcedIntegration": true
+    "noForcedIntegration": true,
+    "sourceCommit": "a2b2c08f2f217d8b387c1373a50258e451d567ed",
+    "verifiedAt": "2026-10-15T21:52:38.305Z",
+    "approvalAt": "2026-10-15T21:45:00Z",
+    "manualSha256": "98e54e8b4955ee26970736910b890de651519287ed144920c037cbfc5aa96cc9",
+    "executivePlanSha256": "c0b24ef084fb469750a0302f21b034afd17fa0fa8a59d0ff61bccfbebe51cbad",
+    "runtimeComparison": "Executáveis, testes, flags, contratos de build e Apps Script iguais ao SHA funcional; somente recibos do manifesto diferem.",
+    "checks": {
+      "scope": "OK: 27 files",
+      "architecture": "OK",
+      "operationalConsistency": "OK",
+      "fullSuite": {
+        "passed": 2260,
+        "failed": 0,
+        "durationMs": 26092.792703
+      },
+      "runtimeExecutableUnchanged": true,
+      "checkedAt": "2026-10-15T21:54:43.627632+00:00"
+    }
+  },
+  "release": {
+    "approvedCommit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
+    "netlifyDeployId": "6ad140400f41025d3ef0a3f7",
+    "appsScriptVersion": 164,
+    "appsScriptEvidence": "Recibo herdado; editor não revalidado e Apps Script não alterado.",
+    "verifiedAt": "2026-10-15T21:52:38.305Z",
+    "drivePlanSha256": "c0b24ef084fb469750a0302f21b034afd17fa0fa8a59d0ff61bccfbebe51cbad",
+    "liveModel": {
+      "status": "passed",
+      "passed": 21,
+      "total": 21,
+      "fullHistoryPassed": 2,
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "evidenceMethod": "inferred_from_successful_mandatory_production_build",
+      "directLogRead": false,
+      "evidence": "Deploy de produção ready do SHA exato, manual_deploy false. netlify.toml executa check-bruna-model-live.mjs antes do build; manifest mantém liveModelCheckRequired, fullHistoryCheckRequired e 21 cenários. O script falha fechado se algum cenário falhar. Totais deduzidos do contrato, sem inventar linhas de log.",
+      "requestsObserved": null,
+      "usageObserved": null,
+      "individualLatencies": null,
+      "syntheticOnly": true,
+      "patientMessagesSent": 0
+    },
+    "liveAudio": {
+      "status": "passed",
+      "passed": 3,
+      "total": 3,
+      "model": "whisper-1",
+      "evidenceMethod": "inferred_from_successful_mandatory_production_build",
+      "directLogRead": false,
+      "evidence": "audioTranscriptionCheckRequired true; o gate de áudio da versão requer três fixtures aprovadas e é dependência do gate principal.",
+      "syntheticOnly": true
+    },
+    "receiptPath": "auditorias/bruna-referencia-global-2026-10-15/PUBLICACAO.json"
   }
 }
