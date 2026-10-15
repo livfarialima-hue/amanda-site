@@ -971,7 +971,11 @@
         "auditorias/google-ads-comunicacao-2026-10-15/PLANO.json",
         "auditorias/google-ads-comunicacao-2026-10-15/PREFLIGHT.json",
         "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json",
-        "auditorias/google-ads-comunicacao-2026-10-15/RELATORIO.md"
+        "auditorias/google-ads-comunicacao-2026-10-15/RELATORIO.md",
+        "auditorias/google-ads-complementos-2026-10-15/PLANO.json",
+        "auditorias/google-ads-complementos-2026-10-15/PREFLIGHT.json",
+        "auditorias/google-ads-complementos-2026-10-15/RELATORIO.md",
+        "auditorias/google-ads-complementos-2026-10-15/REVISAO.json"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",

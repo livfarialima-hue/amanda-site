@@ -21,6 +21,10 @@
       "auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md",
       "auditorias/bruna-respostas-retomadas-2026-10-14/REVISAO.json",
       "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
+      "auditorias/google-ads-complementos-2026-10-15/PLANO.json",
+      "auditorias/google-ads-complementos-2026-10-15/PREFLIGHT.json",
+      "auditorias/google-ads-complementos-2026-10-15/RELATORIO.md",
+      "auditorias/google-ads-complementos-2026-10-15/REVISAO.json",
       "auditorias/google-ads-comunicacao-2026-10-15/PLANO.json",
       "auditorias/google-ads-comunicacao-2026-10-15/PREFLIGHT.json",
       "auditorias/google-ads-comunicacao-2026-10-15/RELATORIO.md",
@@ -67,7 +71,7 @@
       "patient-journey-funnel-followups",
       "followup-message-copy"
     ],
-    "planningNote": "O escopo funcional inicial foi integralmente implementado. As novas regressões de proprietário/gate foram concentradas na integração bruna-procedimento-preco-recuperacao e nos dois consumidores webhook/human-resume, mantendo a execução das suítes anteriores sem modificar expectativas. initialPlannedFiles preserva o planejamento; files descreve integralmente o diff real, sem omitir mudanças. Integração documental em 15/10: preservados quatro arquivos de auditoria e recibos do Google Ads já publicados no ramo remoto 20d4b5be. Escopo integral de 40 arquivos desde o baseline; nenhum código, teste, manifesto ou regra Bruna alterado em relação ao commit autorizado 51e57c69.",
+    "planningNote": "O escopo funcional inicial foi integralmente implementado. As novas regressões de proprietário/gate foram concentradas na integração bruna-procedimento-preco-recuperacao e nos dois consumidores webhook/human-resume, mantendo a execução das suítes anteriores sem modificar expectativas. initialPlannedFiles preserva o planejamento; files descreve integralmente o diff real, sem omitir mudanças. Integração documental em 15/10: preservados quatro arquivos de auditoria e recibos do Google Ads já publicados no ramo remoto 20d4b5be. Escopo integral de 40 arquivos desde o baseline; nenhum código, teste, manifesto ou regra Bruna alterado em relação ao commit autorizado 51e57c69. Segundo componente Ads preparado a partir de 20d4b5b e integrado com 3be4621f após detectar a projeção Drive mais recente. União real de 44 arquivos desde b77b1d6; nove documentos do novo componente diferem de 3be. Código, testes, manifesto e bloqueio Bruna preservados, sem nova autorização ou publicação dessa correção.",
     "initialPlannedFiles": [
       "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
       "auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md",
@@ -187,7 +191,8 @@
       "Estado published_verified e recibos anteriores preservados como baseline; este pacote continua candidato.",
       "Dados pessoais e evidência de conversas ficam nas fontes privadas, nunca neste repositório público.",
       "Componente Ads aplicado e relido: somente 13 textos de três RSAs, três destinos de sitelinks em quatro associações e duas URLs finais; orçamento, lances, estados, rastreamento e demais campos preservados.",
-      "A reconciliação documental do componente Ads não encerra a pendência global Bruna; ops:check continua SYNC_PENDING enquanto esse candidato não tiver publicação própria autorizada e verificada."
+      "A reconciliação documental do componente Ads não encerra a pendência global Bruna; ops:check continua SYNC_PENDING enquanto esse candidato não tiver publicação própria autorizada e verificada.",
+      "Segundo lote Ads: preservar integralmente o primeiro componente publicado; somente 11 textos, SL04/SL05 e três textos de destaques existentes de Conta. CO04 excluído, zero alterações de status ou associações, sem ampliar campanha, verba, lance ou autorizações Bruna."
     ],
     "liveReadOnlyPreflight": [
       {
@@ -261,6 +266,20 @@
         "reference": "auditorias/google-ads-comunicacao-2026-10-15/PREFLIGHT.json",
         "note": "Baseline Git local identificado; mesmo arquivo do Plano no Drive relido por metadata e download, com SHA-256 igual ao baseline b77b1d6. Nenhuma escrita; projeção posterior deste candidato continua pendente.",
         "checkedAt": "2026-10-15T10:00:27.977056+00:00"
+      },
+      {
+        "contract": "google-ads-acquisition-conversion",
+        "system": "Objetos e consumidores do segundo lote Google Ads",
+        "status": "verified_baseline_with_limits",
+        "reference": "auditorias/google-ads-complementos-2026-10-15/PREFLIGHT.json",
+        "note": "Objetos, associações, destinos, agenda e baseline de campanhas conferidos; mesma projeção Drive igual ao commit 3be4621f, integrado após detectar deriva. Testes locais concluídos; commit exato e gate anteriores à escrita permanecem obrigatórios."
+      },
+      {
+        "contract": "change-governance",
+        "system": "Git e mesma projeção atual do Plano no Drive",
+        "status": "verified_baseline_with_limits",
+        "reference": "auditorias/google-ads-complementos-2026-10-15/PREFLIGHT.json",
+        "note": "Objetos, associações, destinos, agenda e baseline de campanhas conferidos; mesma projeção Drive igual ao commit 3be4621f, integrado após detectar deriva. Testes locais concluídos; commit exato e gate anteriores à escrita permanecem obrigatórios."
       }
     ],
     "externalConsumers": [
@@ -268,9 +287,10 @@
       "Google Ads: quatro associações existentes dos três recursos conferidos ao vivo.",
       "Google Ads: duas palavras exatas existentes de preço de blefaroplastia e herança de rastreamento.",
       "Destinos públicos de consulta, segurança, consulta cervical e preço de blefaroplastia.",
-      "Projeção existente do Plano executivo no Google Drive."
+      "Projeção existente do Plano executivo no Google Drive.",
+      "Segundo lote Ads: três RSAs existentes de lifting geral, lifting preço e otoplastia adulta; SL04/SL05 com uma associação cada e três destaques existentes de Conta, preservando herança e recursos de níveis específicos."
     ],
-    "componentBoundary": "Os invariantes originais descrevem o candidato Bruna. As escritas Google Ads pertencem exclusivamente ao componente externo já aprovado e documentado em auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json; a autorização Ads não autoriza a publicação Bruna."
+    "componentBoundary": "Os invariantes originais descrevem o candidato Bruna. As escritas Google Ads pertencem exclusivamente ao componente externo já aprovado e documentado em auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json; a autorização Ads não autoriza a publicação Bruna. O segundo componente, GOOGLE-ADS-COMPLEMENTOS-2026-10-15, tem autorização limitada a seu payload e à mesma projeção Drive; seus testes locais e preflight foram concluídos, mas a publicação só poderá ocorrer após commit exato e gate. Nenhum desses componentes autoriza Bruna."
   },
   "verification": {
     "status": "passed_local",
@@ -555,6 +575,13 @@
       "verifiedAt": "2026-10-15T10:34:43.126Z",
       "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
       "bytes": 12768
+    },
+    "nextProjection": {
+      "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
+      "status": "pending",
+      "note": "Projeções anteriores continuam históricas e verificadas; novo Plano só será declarado igual após substituição no mesmo arquivo e download real.",
+      "sha256": null,
+      "verifiedAt": null
     }
   },
   "integratedExternalComponents": [
@@ -665,6 +692,157 @@
       },
       "verifiedAt": "2026-10-15T10:34:43.126Z",
       "note": "Somente o componente Ads foi publicado e reconciliado; preservar o estado pendente e a autorização própria do candidato Bruna."
+    },
+    {
+      "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
+      "status": "tested_local",
+      "baseCommit": "3be4621fd2f82fd032301f74aba565e648567413",
+      "receipt": "auditorias/google-ads-complementos-2026-10-15/REVISAO.json",
+      "plan": "auditorias/google-ads-complementos-2026-10-15/PLANO.json",
+      "preflight": "auditorias/google-ads-complementos-2026-10-15/PREFLIGHT.json",
+      "externalWritesPerformed": false,
+      "doesNotAuthorizeBrunaPublication": true,
+      "authorizationScope": "Somente Google Ads e a mesma projeção do Plano no Drive; autorização anterior de publicar ao fim e novo pedido de fazer o restante.",
+      "verification": {
+        "status": "passed_local",
+        "checkedAt": "2026-10-15T11:13:55Z",
+        "integratedBaseline": "3be4621fd2f82fd032301f74aba565e648567413",
+        "executed": [
+          {
+            "command": "npm.cmd test",
+            "status": "passed",
+            "passed": 2207,
+            "failed": 0
+          },
+          {
+            "command": "node --test <union of requiredTestFiles for the seven declared contracts>",
+            "status": "passed",
+            "files": 74,
+            "passed": 1533,
+            "failed": 0,
+            "overlapsFullSuite": true
+          },
+          {
+            "command": "npm.cmd run change:check",
+            "status": "passed",
+            "exactFiles": 44
+          },
+          {
+            "command": "npm.cmd run architecture:check",
+            "status": "passed"
+          },
+          {
+            "command": "npm.cmd run site:build",
+            "status": "passed",
+            "files": 193,
+            "sitemapUrls": 54,
+            "auditFilesInArtifact": 0
+          },
+          {
+            "command": "npm.cmd run site:check",
+            "status": "passed"
+          },
+          {
+            "command": "npm.cmd run ops:check",
+            "status": "SYNC_PENDING",
+            "reasons": [
+              "CHANGE_PUBLICATION_PENDING",
+              "WRONG_BRANCH",
+              "DIRTY_WORKTREE"
+            ],
+            "note": "Bruna permanece committed e bloqueada, com autorização própria; nenhum fechamento global declarado."
+          },
+          {
+            "command": "git diff --check && git diff --cached --check",
+            "status": "passed",
+            "note": "Nove documentos contra 3be4621f; nenhum delta em código, testes ou manifesto Bruna."
+          }
+        ],
+        "limitations": "Suítes locais e sintéticas; nenhum teste hospedado, deploy, mensagem, importação ou publicação executado por esta validação. Commit exato e release:preflight exclusivos Ads+Drive permanecem anteriores à escrita."
+      },
+      "rollback": {
+        "local": "Reverter somente os arquivos deste componente, preservando recibos Ads anteriores e candidato Bruna.",
+        "production": "Restaurar apenas o campo alterado ao before vivo guardado; nenhuma associação foi selecionada para mudança. Preservar objetos, histórico, orçamento, lances e alterações paralelas."
+      },
+      "monitoring": {
+        "owner": "Daniel / equipe LIV",
+        "window": "Integridade e política em D+1/D+2; progressão D+7/D+14; decisão comercial D+28 da publicação efetiva. Nenhuma automação nova.",
+        "signals": [
+          "Campos e associações iguais ao payload aprovado; identidade, tracking e destinos preservados.",
+          "Política, elegibilidade, força do anúncio e exibição tratados como estados diferentes.",
+          "Contatos válidos, qualificados e consultas por coortes com cobertura e maturação comparáveis; baixa amostra permanece inconclusiva.",
+          "Corrigir destino, procedimento, promessa ou atribuição incorretos; reverter só o campo responsável diante de regressão consistente."
+        ]
+      },
+      "initialPreparationBase": "20d4b5be99c15b24a26cded8b6c9a0a33dafbf93",
+      "verificationHistory": [
+        {
+          "status": "passed_local_checks_pending_live_preflight",
+          "checkedAt": "2026-10-15T10:59:32Z",
+          "executed": [
+            {
+              "command": "npm.cmd test",
+              "status": "passed",
+              "passed": 2205,
+              "failed": 0,
+              "log": "Evidência local privada do componente; testes sintéticos, sem mensagens reais."
+            },
+            {
+              "command": "npm.cmd run change:check",
+              "status": "passed",
+              "exactFiles": 42,
+              "note": "Gate estrutural; não equivale à conclusão do preflight vivo nem à autorização de Bruna."
+            },
+            {
+              "command": "npm.cmd run architecture:check",
+              "status": "passed"
+            },
+            {
+              "command": "npm.cmd run site:build",
+              "status": "passed",
+              "files": 193,
+              "sitemapUrls": 54,
+              "auditFilesInArtifact": 0
+            },
+            {
+              "command": "npm.cmd run site:check",
+              "status": "passed"
+            },
+            {
+              "command": "git diff --check",
+              "status": "passed"
+            },
+            {
+              "command": "npm.cmd run ops:check",
+              "status": "SYNC_PENDING",
+              "reasons": [
+                "CHANGE_PUBLICATION_PENDING",
+                "WRONG_BRANCH",
+                "DIRTY_WORKTREE"
+              ],
+              "note": "Candidato Bruna committed e componente complementar planned; nenhum fechamento global."
+            },
+            {
+              "command": "node --test <union of requiredTestFiles for the seven declared contracts>",
+              "status": "passed",
+              "files": 74,
+              "passed": 1531,
+              "failed": 0,
+              "overlapsFullSuite": true,
+              "checkedAt": "2026-10-15T11:01:41Z",
+              "note": "Resumo íntegro do log Node conferido; o wrapper Python teve apenas erro de encoding ao imprimir o resumo, depois do término dos testes."
+            }
+          ]
+        }
+      ],
+      "externalDelta": {
+        "rsaObjects": 3,
+        "rsaFields": 11,
+        "sitelinkFields": 2,
+        "selectedCallouts": 3,
+        "conditionalCallouts": 0,
+        "excludedCallouts": 1
+      }
     }
   ]
 }

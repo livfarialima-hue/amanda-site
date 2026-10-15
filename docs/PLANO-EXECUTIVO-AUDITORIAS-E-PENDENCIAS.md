@@ -19,6 +19,14 @@ Versão pública revisada em 14/10/2026 com autorização do responsável. O con
 
 ## Google Ads — configuração publicada e acompanhamento
 
+### Complementos de comunicação — testados localmente, 15/10/2026
+
+Pedido para fazer o restante das sugestões, com publicação ao fim: 11 campos em três anúncios de lifting geral/preço e otoplastia adulta, descrição do link de preço lifting e destino adulto de proporção das orelhas. Entram três textos de destaques existentes de Conta, preservando todos os status e associações; CO04 fica excluído porque a associação OTO inclui infantil. Recursos de MARCA permanecem íntegros, sem inferir dupla exibição entre níveis. O preflight vivo confirmou os objetos, destinos e baseline; a projeção mais recente do Drive foi integrada sem sobrescrever o bloqueio e a correção Bruna. Preflight e testes locais concluídos na integração mais recente: 2.207 integrais, 1.533 de contratos com sobreposição, contrato de 44 arquivos, arquitetura e build. Nenhuma mudança deste componente foi salva; commit exato e gate vêm antes da escrita. Plano e recibo: `auditorias/google-ads-complementos-2026-10-15/`.
+
+Preservar o primeiro lote publicado, orçamento, lances, metas, segmentação, palavras/negativas e estados. Escala, CPA desejado, novas palavras e reativação de campanhas finalizadas aguardam evidência própria. Nenhum deploy de site, Apps Script ou Bruna integra esta autorização; a tentativa Bruna bloqueada e sua correção pendente continuam acima. Após publicação efetiva, Daniel/equipe conferem D+1/D+2, D+7/D+14 e D+28 por contatos válidos, qualificados e consultas, sem automação nova. Reverter só o campo responsável diante de erro ou regressão consistente. Sincronizar este mesmo arquivo no Drive com readback, mantendo a pendência global Bruna visível.
+
+A leitura anônima do funil confirmou a mesma coorte de 14/09 a 13/10: 17 contatos, cinco classificados/qualificados, três agendados e um realizado; 12 seguem sem classificação. O qualificado de MAMA sem identificador de clique não foi preparado, sem evidência de falha de upload. O Google confirmou a execução programada de 15/10 às 05:05 (GMT-03), com 12 linhas importadas e zero erros; isso não representa 12 conversões novas nem reconciliação por ID de transação. Classificação individual e continuidade cervical seguem abertas; P0 permanece parcial, sem mudança de mensuração ou importação manual. Recibo anônimo no componente complementar.
+
 ### Comunicação e destinos, 15/10/2026
 
 **Publicado e conferido no Google Ads em 15/10/2026.** Três destinos de sitelinks corrigidos em quatro associações existentes, 13 campos de três anúncios e duas URLs de palavras existentes de preço de blefaroplastia. Todos os campos foram salvos, reabertos e comparados ao lote aprovado; QA independente aprovada. Commit autorizado `2f5adbecb3712e99786cbf91acfa32510103b975`, com gate do HEAD exato antes das escritas. Recibos: `auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json`.

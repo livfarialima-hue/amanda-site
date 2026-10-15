@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
+  "status": "tested_local",
+  "baseCommit": "3be4621fd2f82fd032301f74aba565e648567413",
+  "counts": {
+    "rsaObjects": 3,
+    "rsaFields": 11,
+    "sitelinkFields": 2,
+    "selectedCallouts": 3,
+    "conditionalCallouts": 0,
+    "excludedCallouts": 1
+  },
+  "externalWritesPerformed": false,
+  "proposalValidation": {
+    "status": "passed_exact_live_before_and_limits",
+    "rsaFields": 11,
+    "allWithinLimits": true,
+    "sourceDeltasSha256": "c353f40b1ab29500575dd1de751f2a59f6ff117cc611f80a12cf9c481252b154",
+    "note": "Todos os before selecionados, textos, identidade, fixações, rastreamento e agenda conferidos. CO04 excluído pela associação de campanha que inclui infantil.",
+    "rsaTextSlotsCompared": 57,
+    "pinsCompared": 57,
+    "sitelinkResources": 2,
+    "sitelinkFieldsCompared": 16,
+    "independentReview": "passed_three_rsas_two_sitelinks_three_account_callouts",
+    "selectedCallouts": 3
+  },
+  "verification": {
+    "status": "passed_local",
+    "checkedAt": "2026-10-15T11:13:55Z",
+    "integratedBaseline": "3be4621fd2f82fd032301f74aba565e648567413",
+    "executed": [
+      {
+        "command": "npm.cmd test",
+        "status": "passed",
+        "passed": 2207,
+        "failed": 0
+      },
+      {
+        "command": "node --test <union of requiredTestFiles for the seven declared contracts>",
+        "status": "passed",
+        "files": 74,
+        "passed": 1533,
+        "failed": 0,
+        "overlapsFullSuite": true
+      },
+      {
+        "command": "npm.cmd run change:check",
+        "status": "passed",
+        "exactFiles": 44
+      },
+      {
+        "command": "npm.cmd run architecture:check",
+        "status": "passed"
+      },
+      {
+        "command": "npm.cmd run site:build",
+        "status": "passed",
+        "files": 193,
+        "sitemapUrls": 54,
+        "auditFilesInArtifact": 0
+      },
+      {
+        "command": "npm.cmd run site:check",
+        "status": "passed"
+      },
+      {
+        "command": "npm.cmd run ops:check",
+        "status": "SYNC_PENDING",
+        "reasons": [
+          "CHANGE_PUBLICATION_PENDING",
+          "WRONG_BRANCH",
+          "DIRTY_WORKTREE"
+        ],
+        "note": "Bruna permanece committed e bloqueada, com autorização própria; nenhum fechamento global declarado."
+      },
+      {
+        "command": "git diff --check && git diff --cached --check",
+        "status": "passed",
+        "note": "Nove documentos contra 3be4621f; nenhum delta em código, testes ou manifesto Bruna."
+      }
+    ],
+    "limitations": "Suítes locais e sintéticas; nenhum teste hospedado, deploy, mensagem, importação ou publicação executado por esta validação. Commit exato e release:preflight exclusivos Ads+Drive permanecem anteriores à escrita."
+  },
+  "publication": {
+    "status": "not_started",
+    "approvedCommit": null,
+    "googleAds": {
+      "status": "not_started",
+      "actionsApplied": []
+    },
+    "driveProjectionEquality": "pending",
+    "drivePlanSha256": null,
+    "drivePlanReadbackVerifiedAt": null
+  },
+  "parallelCandidate": {
+    "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
+    "status": "committed",
+    "release": "blocked_live_gate",
+    "correctedCandidate": "pending_authorization",
+    "codeAndManifestUnchangedByThisComponent": true,
+    "globalOpsExpected": "SYNC_PENDING",
+    "preservedCommit": "3be4621fd2f82fd032301f74aba565e648567413"
+  },
+  "pending": [
+    "Commit exato e gate antes das escritas",
+    "Salvamento/readback Ads",
+    "Mesma projeção Drive e igualdade",
+    "Registro e monitoramento"
+  ],
+  "publicDestinations": {
+    "status": "passed_http_html_only",
+    "checkedAt": "2026-10-15T10:54:15.171221+00:00",
+    "method": "HTTP GET e inspeção do HTML público; sem execução de JavaScript, clique ou mensagem.",
+    "pages": [
+      {
+        "requested_url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+        "http_status": 200,
+        "final_url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+        "requested_fragment": null,
+        "fragment_found": null,
+        "sha256": "fc906104b029bf871138fc05816fec9ae72ab16946d5c0d2d7757771ab09ff37"
+      },
+      {
+        "requested_url": "https://draamandaschroeder.com.br/lifting-facial/",
+        "http_status": 200,
+        "final_url": "https://draamandaschroeder.com.br/lifting-facial/",
+        "requested_fragment": null,
+        "fragment_found": null,
+        "sha256": "396e094ce801f87572bc17c73e5acd083eb56b3f953d2d6640f9b9072a116f85"
+      },
+      {
+        "requested_url": "https://draamandaschroeder.com.br/otoplastia-adulto/#anatomia",
+        "http_status": 200,
+        "final_url": "https://draamandaschroeder.com.br/otoplastia-adulto/#anatomia",
+        "requested_fragment": "anatomia",
+        "fragment_found": true,
+        "sha256": "bdfe545e4fe36f174acc777ef4b3ec86b682598ac458b9318002407ad2a4fe6b"
+      },
+      {
+        "requested_url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "http_status": 200,
+        "final_url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "requested_fragment": null,
+        "fragment_found": null,
+        "sha256": "33e3f29a588cb2f293279ea57d2d0bb38b21148e8cd8ee99442f944e018bfd8f"
+      }
+    ],
+    "intent": "Guia lifting mantém price_range_reference e pedido de faixa geral informativa; anatomia adulta encontrada.",
+    "limitations": "Disponibilidade/HTML não comprovam entrega de clique, atendimento ou efeito comercial."
+  },
+  "initialPreparationBase": "20d4b5be99c15b24a26cded8b6c9a0a33dafbf93",
+  "verificationHistory": [
+    {
+      "status": "passed_local_checks_pending_live_preflight",
+      "checkedAt": "2026-10-15T10:59:32Z",
+      "executed": [
+        {
+          "command": "npm.cmd test",
+          "status": "passed",
+          "passed": 2205,
+          "failed": 0,
+          "log": "Evidência local privada do componente; testes sintéticos, sem mensagens reais."
+        },
+        {
+          "command": "npm.cmd run change:check",
+          "status": "passed",
+          "exactFiles": 42,
+          "note": "Gate estrutural; não equivale à conclusão do preflight vivo nem à autorização de Bruna."
+        },
+        {
+          "command": "npm.cmd run architecture:check",
+          "status": "passed"
+        },
+        {
+          "command": "npm.cmd run site:build",
+          "status": "passed",
+          "files": 193,
+          "sitemapUrls": 54,
+          "auditFilesInArtifact": 0
+        },
+        {
+          "command": "npm.cmd run site:check",
+          "status": "passed"
+        },
+        {
+          "command": "git diff --check",
+          "status": "passed"
+        },
+        {
+          "command": "npm.cmd run ops:check",
+          "status": "SYNC_PENDING",
+          "reasons": [
+            "CHANGE_PUBLICATION_PENDING",
+            "WRONG_BRANCH",
+            "DIRTY_WORKTREE"
+          ],
+          "note": "Candidato Bruna committed e componente complementar planned; nenhum fechamento global."
+        },
+        {
+          "command": "node --test <union of requiredTestFiles for the seven declared contracts>",
+          "status": "passed",
+          "files": 74,
+          "passed": 1531,
+          "failed": 0,
+          "overlapsFullSuite": true,
+          "checkedAt": "2026-10-15T11:01:41Z",
+          "note": "Resumo íntegro do log Node conferido; o wrapper Python teve apenas erro de encoding ao imprimir o resumo, depois do término dos testes."
+        }
+      ]
+    }
+  ],
+  "calloutInheritance": {
+    "rule": "Destaques em nível mais específico impedem servir os de nível superior; editar Conta não comprova elegibilidade em campanhas/grupos com destaques próprios.",
+    "source": "https://support.google.com/google-ads/answer/6079510?hl=en",
+    "decision": "CO02/CO03 de MARCA permanecem íntegros. Não inferir dupla exibição por terem texto igual no before. Nenhuma pausa, exclusão, criação ou reassociação."
+  },
+  "funnelReadOnlyAnnex": {
+    "status": "partial_evidence_resolved_no_mutations",
+    "evidenceSha256": "2808daca90707130515bfc2dfb9d2d2a0ca19092a6d11684b6d7a57fd7172229",
+    "cohort": {
+      "start": "2026-09-14",
+      "end": "2026-10-13",
+      "contacts": 17,
+      "classified": 5,
+      "qualifiedOrLater": 5,
+      "scheduledOrLater": 3,
+      "completedOrLater": 1,
+      "unclassified": 12
+    },
+    "preparation": "Fila com 12 prontos e 12 linhas de importação; igualdade de ação+data, sem comparar IDs de transação. O qualificado MAMA da coorte não tinha identificador de clique e não foi preparado, sem demonstrar falha de upload. Há quatro eventos preparados com data de conversão na janela; essa seleção difere da coorte por data de contato e não constitui reconciliação individual.",
+    "googleImportReceipt": {
+      "readbackAt": "2026-10-15T11:09:35.482Z",
+      "latestRunLocal": "2026-10-15 05:05 GMT-03:00",
+      "status": "Concluído",
+      "executedBy": "Programado",
+      "importedRows": 12,
+      "errorRows": 0,
+      "mappedFields": 7,
+      "previousRunLocal": "2026-10-14 05:05 GMT-03:00",
+      "previousImportedRows": 11,
+      "previousErrorRows": 0,
+      "nextScheduledRunLocal": "2026-10-16 05:05 GMT-03:00",
+      "manualRunsTriggered": 0
+    },
+    "limitations": [
+      "12 linhas importadas não significam 12 conversões novas; aceite agregado não reconcilia cada transação, atribuição ou relatório de conversões.",
+      "Recontagem anônima de fases armazenadas; não houve revisão de conversas ou evidência clínica individual.",
+      "12 contatos da mesma coorte continuam sem classificação; ausência de classificação não é desqualificação.",
+      "Continuidade cervical permanece aberta; zero contato recente não localiza a causa da perda."
+    ],
+    "decision": "Nenhuma evidência nova autoriza mudança de orçamento, lance, meta, negativas ou reativação de pilotos. P0 permanece parcial.",
+    "externalWrites": 0
+  }
+}
