@@ -39,8 +39,8 @@
     "driveProjectionSha256": "518cbfa98dd788eb92b00ff5dd8466447864044eda1be3c3e90ca1a4a1ea99f5",
     "driveProjectionVerifiedAt": "2026-10-15T18:57:47.0493268Z",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
-    "status": "written_verified",
-    "sourceCommit": "0fda38b516e7b633a0da85bc18106336461b49d2"
+    "status": "pending_readback",
+    "sourceCommit": null
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -57,7 +57,7 @@
     "bundleVersion": "2026-10-15.3",
     "baselineDeployId": "6ad120701654730b8c969605",
     "baselineAppsScriptVersion": 164,
-    "sourceCommit": "",
-    "note": "Somente telemetria numérica nos adaptadores de conhecimento/revisão. Versões identificam o pacote; prompt e fatos efetivos não mudam. Sem publicação, novas inferências, modelo novo ou ponte pela conta."
+    "sourceCommit": "a599aea842545c666b3b2cee780dfc22d7c52f55",
+    "note": "Publicação autorizada tentada e bloqueada no gate vivo em 15/10: timeout em approved_price_with_photo_request. Produção permanece2026-10-15.2; recibo em auditorias/bruna-consumo-categorias-2026-10-15/TENTATIVA-PUBLICACAO.json. Não repetir gate pago sem causa corrigida ou necessidade demonstrada. Nenhuma ponte pela conta."
   }
 }

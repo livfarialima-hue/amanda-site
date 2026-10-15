@@ -1,8 +1,8 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
-## Candidato local — consumo por categoria, 15/10/2026
+## Candidato com publicação bloqueada — consumo por categoria, 15/10/2026
 
-BRUNA-CONSUMO-CATEGORIAS-2026-10-15, pacote 2026-10-15.3, testado (2287/2287) e revisado, ainda não publicado. A versão publicada continua 2026-10-15.2, commit 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228. O candidato acrescenta recibos numéricos no log existente para extração de conhecimento e revisão de retomada; não altera prompts, fatos, modelos, respostas, decisões, prazos, aprovação humana ou quantidade de inferências. Falha do log não bloqueia nem provoca retry.
+BRUNA-CONSUMO-CATEGORIAS-2026-10-15, pacote 2026-10-15.3, testado (2287/2287), revisado e autorizado no SHA a599aea842545c666b3b2cee780dfc22d7c52f55, mas não publicado: deploy 6ad12b0ac06af392d0dda00a bloqueado por timeout no gate vivo. Foram 12/13 cenários executados de 21 previstos e 3/3 áudios; não houve retry pago ou flexibilização. Detalhes no Plano Executivo e no recibo TENTATIVA-PUBLICACAO.json deste pacote. A versão publicada continua 2026-10-15.2, commit 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228. O candidato acrescenta recibos numéricos no log existente para extração de conhecimento e revisão de retomada; não altera prompts, fatos, modelos, respostas, decisões, prazos, aprovação humana ou quantidade de inferências. Falha do log não bloqueia nem provoca retry.
 
 O plugin poderá analisar os recibos disponíveis pela conta, mas coleta automática, retenção e migração do processamento não estão comprovadas. Sem nomes, mensagens, procedimento, telefone, oportunidade ou ID do provedor. Uso ausente é desconhecido; inferência concluída não significa conhecimento aprovado ou WhatsApp enviado. Não somar knownUsage com attempts nem misturar testes de build com atendimento real. Resultado e próximos gates: [relatório](../auditorias/bruna-consumo-categorias-2026-10-15/RELATORIO.md).
 

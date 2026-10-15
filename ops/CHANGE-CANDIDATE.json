@@ -8,20 +8,22 @@
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Pedido 'Publique e siga com as melhorias' autorizou publicar o pacote anterior e desenvolver este próximo; este pacote requer aprovação posterior do SHA para publicação."
+    "note": "Daniel aprovou expressamente o SHA a599aea nesta conversa. Preflight externo passou antes do push; tentativa falhou no gate hospedado. Não constitui aprovação de correção funcional posterior."
   },
   "risk": {
     "level": "medium",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "note": "Somente recibos numéricos no log existente, sem mudar inferência, texto, decisão, agenda, persistência operacional ou IA executora."
+    "externalWritesPerformed": true,
+    "note": "Somente recibos numéricos no log existente, sem mudar inferência, texto, decisão, agenda, persistência operacional ou IA executora. Push e tentativa autorizados; nenhuma promoção de produção ocorreu. Fechamento documental somente."
   },
   "scope": {
     "files": [
       "auditorias/bruna-consumo-categorias-2026-10-15/RELATORIO.md",
+      "auditorias/bruna-consumo-categorias-2026-10-15/TENTATIVA-PUBLICACAO.json",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/knowledge-candidate.mjs",
       "netlify/functions/lib/knowledge-candidate.test.mjs",
@@ -121,21 +123,21 @@
         "status": "verified",
         "source": "Netlify API + health público + readback Drive + Git canônico",
         "observedAt": "2026-10-15T18:57:47.7504780Z",
-        "evidence": "Baseline publicado 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228, deploy ready 6ad120701654730b8c969605, saúde HTTP200/assinatura401, 15 funções/6 programações; fechamento 426ea798. Apps Script164 e demais sistemas não mudam e não foram reinspecionados; sem execução de conversa/retomada real."
+        "evidence": "Baseline publicado 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228, deploy ready 6ad120701654730b8c969605, saúde HTTP200/assinatura HTTP 401, 15 funções/6 programações; fechamento 426ea798. Apps Script164 e demais sistemas não mudam e não foram reinspecionados; sem execução de conversa/retomada real."
       },
       {
         "contract": "bot-decision-observability",
         "status": "verified",
         "source": "Netlify API + health público + readback Drive + Git canônico",
         "observedAt": "2026-10-15T18:57:47.7504780Z",
-        "evidence": "Baseline publicado 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228, deploy ready 6ad120701654730b8c969605, saúde HTTP200/assinatura401, 15 funções/6 programações; fechamento 426ea798. Apps Script164 e demais sistemas não mudam e não foram reinspecionados; sem execução de conversa/retomada real."
+        "evidence": "Baseline publicado 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228, deploy ready 6ad120701654730b8c969605, saúde HTTP200/assinatura HTTP 401, 15 funções/6 programações; fechamento 426ea798. Apps Script164 e demais sistemas não mudam e não foram reinspecionados; sem execução de conversa/retomada real."
       },
       {
         "contract": "bruna-regression-governance",
         "status": "verified",
         "source": "Netlify API + health público + readback Drive + Git canônico",
         "observedAt": "2026-10-15T18:57:47.7504780Z",
-        "evidence": "Baseline publicado 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228, deploy ready 6ad120701654730b8c969605, saúde HTTP200/assinatura401, 15 funções/6 programações; fechamento 426ea798. Apps Script164 e demais sistemas não mudam e não foram reinspecionados; sem execução de conversa/retomada real."
+        "evidence": "Baseline publicado 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228, deploy ready 6ad120701654730b8c969605, saúde HTTP200/assinatura HTTP 401, 15 funções/6 programações; fechamento 426ea798. Apps Script164 e demais sistemas não mudam e não foram reinspecionados; sem execução de conversa/retomada real."
       }
     ]
   },
@@ -180,7 +182,7 @@
       "npm.cmd run site:check",
       "npm.cmd test"
     ],
-    "note": "Testes simulados; proibida inferência paga de diagnóstico. Gate hospedado somente na futura publicação autorizada.",
+    "note": "Testes locais simulados aprovados; gate real executado uma vez apenas na tentativa autorizada. Sem retry pago, redução de cobertura ou ampliação de prazo.",
     "results": {
       "checkedAt": "2026-10-15T19:04:34Z",
       "fullSuite": {
@@ -214,18 +216,18 @@
       "architectureCheck": "OK",
       "changeCheck": "OK:11 files",
       "diffCheck": "OK",
-      "liveModel": "not_run_this_candidate",
-      "liveAudio": "not_run_this_candidate",
+      "liveModel": "failed:12/13 executed;21 planned;timeout",
+      "liveAudio": "passed:3/3",
       "overlapNote": "Focados/revisão se sobrepõem à suíte integral; não somar. Harness19 é simulado, não gate pago de publicação."
     }
   },
   "rollback": {
     "local": "Reverter apenas o futuro commit deste pacote; baseline 426ea798, preservando trabalho paralelo.",
-    "production": "Se futuramente publicado, novo revert/build restrito; manter filas, estados, conhecimento e Apps Script. Sem replay e sem remover proteções."
+    "production": "Produção anterior preservada automaticamente: 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228 / 6ad120701654730b8c969605. Não restaurar deploy nem reprocessar fila. Correção futura via novo candidato e build aprovado."
   },
   "monitoring": {
     "owner": "Daniel/equipe Clínica LIV",
-    "window": "Após futura publicação: 24h e 7 dias; baseline de custo ainda N/D.",
+    "window": "Publicação bloqueada em 15/10. Investigar antes de nova tentativa; janela de24h/7 dias de telemetria só começa após futura publicação verificada.",
     "signals": [
       "Cobertura completa/parcial/desconhecida por source.",
       "Contagem de tentativas sem duplicar knownUsage e attempts.",
@@ -240,6 +242,16 @@
   },
   "modelUsage": {
     "newPaidInferenceCalls": 0,
-    "accountBridgeActivated": false
+    "accountBridgeActivated": false,
+    "newPaidInferenceCallsMeaning": "Zero inferências adicionais no runtime causadas pelo patch; teste obrigatório de release usou API autorizada e registrou uma tentativa de timeout de consumo desconhecido."
+  },
+  "releaseAttempt": {
+    "status": "blocked_not_published",
+    "approvedCommit": "a599aea842545c666b3b2cee780dfc22d7c52f55",
+    "netlifyDeployId": "6ad12b0ac06af392d0dda00a",
+    "receipt": "auditorias/bruna-consumo-categorias-2026-10-15/TENTATIVA-PUBLICACAO.json",
+    "failedAt": "2026-10-15T19:38:01.896Z",
+    "reason": "live_model_timeout",
+    "productionUnchanged": true
   }
 }

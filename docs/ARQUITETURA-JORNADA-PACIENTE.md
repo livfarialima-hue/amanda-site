@@ -1,10 +1,12 @@
 # Arquitetura da jornada da paciente
 
-## Candidato local — recibos de consumo por categoria, 15/10/2026
+Tentativa autorizada do pacote 2026-10-15.3 em 15/10 bloqueada por timeout no gate vivo. Produção segue 2026-10-15.2; os recibos adicionais não estão ativos. Nenhuma alteração de proprietários, timeout ou permissão foi feita para contornar a falha. Ver auditorias/bruna-consumo-categorias-2026-10-15/TENTATIVA-PUBLICACAO.json.
+
+## Candidato com publicação bloqueada — recibos de consumo por categoria, 15/10/2026
 
 knowledge-candidate.mjs e scheduled-followup-context-review.mjs emitem um recibo por chamada realmente tentada. ai-usage.mjs continua proprietário do schema v1; operational-log.mjs continua proprietário de sanitização/correlação. source distingue knowledge_inference de followup_review_inference; sourceId é UUID aleatório, não dado da paciente. Emissão no finally, sem aguardar logger, com proteção contra lançamento síncrono/rejeição assíncrona. Não muda protocolo, payload, retorno, decisão, retry ou timeout.
 
-Uso é capturado antes de validar conteúdo. completed descreve inferência terminada, não aprovação, aprendizado aplicado ou envio. Recibos parciais/desconhecidos preservam lacunas. Pré-condições sem chamada não geram recibo; não há medição completa dos casos dispensados. Classificador e áudio ficam fora desta fatia; áudio precisa de unidade/contrato próprios. Não há novo persistidor, endpoint, fila, automação ou ponte. Publicação ainda depende de autorização do SHA. Referência: auditorias/bruna-consumo-categorias-2026-10-15/RELATORIO.md.
+Uso é capturado antes de validar conteúdo. completed descreve inferência terminada, não aprovação, aprendizado aplicado ou envio. Recibos parciais/desconhecidos preservam lacunas. Pré-condições sem chamada não geram recibo; não há medição completa dos casos dispensados. Classificador e áudio ficam fora desta fatia; áudio precisa de unidade/contrato próprios. Não há novo persistidor, endpoint, fila, automação ou ponte. Autorização do SHA foi concedida; a tentativa falhou e a publicação permanece bloqueada pelo gate vivo. Referência: auditorias/bruna-consumo-categorias-2026-10-15/RELATORIO.md.
 
 ## Publicado 15/10/2026 — continuidade sem vetos de estilo redundantes
 

@@ -1,5 +1,15 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+## Publicação bloqueada — medição por categoria, 15/10/2026
+
+Daniel autorizou o commit a599aea842545c666b3b2cee780dfc22d7c52f55. O deploy 6ad12b0ac06af392d0dda00a não foi publicado: o gate hospedado falhou por timeout no cenário sintético approved_price_with_photo_request (20.011 ms para limite de 20.000 ms). Passaram 12 dos 13 cenários executados; 21 eram previstos, oito não foram executados e os dois históricos completos não foram alcançados. Áudio 3/3 aprovado. O recibo registra uma tentativa de IA com consumo desconhecido; requests vazio não significa ausência de chamada ou custo zero.
+
+Produção continua no pacote 2026-10-15.2, commit 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228, deploy 6ad120701654730b8c969605. Saúde HTTP 200 e assinatura HTTP 401 conferidas no domínio e URL imutável em 2026-10-15T19:39:35.6603950Z. Nenhum dado, flag, rotina, paciente ou Apps Script foi alterado; v164 permanece referência do recibo anterior, sem inspeção do editor.
+
+O adaptador de conversa, configuração do modelo e script do gate são idênticos ao baseline publicado. A origem da lentidão permanece N/D; não atribuir o timeout à telemetria apenas por coincidência temporal. Sete testes locais de timeout/deadline/gate passaram sem API paga. Não houve retry pago, bypass, redução de cobertura ou aumento de prazo. O estado deve continuar SYNC_PENDING, não published_verified.
+
+Próximo passo: investigar latência nos recibos existentes e com simulações; eventual correção funcional requer candidato e autorização próprios. Janela de medição de 24h/7 dias só começa depois da publicação verificada. Recibo: auditorias/bruna-consumo-categorias-2026-10-15/TENTATIVA-PUBLICACAO.json. A equivalência documental no mesmo Drive fica nesse recibo; nenhum planejamento concorrente.
+
 ## Publicado e verificado — coerência contextual, 15/10/2026
 
 Commit autorizado 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228; deploy 6ad120701654730b8c969605; publicado em 2026-10-15T18:54:29.938Z e verificado em 2026-10-15T18:55:23.3719046Z.

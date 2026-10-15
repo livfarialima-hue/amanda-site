@@ -1,6 +1,16 @@
 # Plano executivo — auditorias, pendências e prazos
 
-## Estado atual — Bruna coerente publicada; próxima etapa de medição, 15/10/2026
+## Publicação bloqueada — medição por categoria, 15/10/2026
+
+Daniel autorizou o commit a599aea842545c666b3b2cee780dfc22d7c52f55. O deploy 6ad12b0ac06af392d0dda00a não foi publicado: o gate hospedado falhou por timeout no cenário sintético approved_price_with_photo_request (20.011 ms para limite de 20.000 ms). Passaram 12 dos 13 cenários executados; 21 eram previstos, oito não foram executados e os dois históricos completos não foram alcançados. Áudio 3/3 aprovado. O recibo registra uma tentativa de IA com consumo desconhecido; requests vazio não significa ausência de chamada ou custo zero.
+
+Produção continua no pacote 2026-10-15.2, commit 6c9cb7ee0129260dd0f9394b1d74c0bd49a05228, deploy 6ad120701654730b8c969605. Saúde HTTP 200 e assinatura HTTP 401 conferidas no domínio e URL imutável em 2026-10-15T19:39:35.6603950Z. Nenhum dado, flag, rotina, paciente ou Apps Script foi alterado; v164 permanece referência do recibo anterior, sem inspeção do editor.
+
+O adaptador de conversa, configuração do modelo e script do gate são idênticos ao baseline publicado. A origem da lentidão permanece N/D; não atribuir o timeout à telemetria apenas por coincidência temporal. Sete testes locais de timeout/deadline/gate passaram sem API paga. Não houve retry pago, bypass, redução de cobertura ou aumento de prazo. O estado deve continuar SYNC_PENDING, não published_verified.
+
+Próximo passo: investigar latência nos recibos existentes e com simulações; eventual correção funcional requer candidato e autorização próprios. Janela de medição de 24h/7 dias só começa depois da publicação verificada. Recibo: auditorias/bruna-consumo-categorias-2026-10-15/TENTATIVA-PUBLICACAO.json. A equivalência documental no mesmo Drive fica nesse recibo; nenhum planejamento concorrente.
+
+## Produção preservada — Bruna coerente, 15/10/2026
 
 Fonte de detalhe: [relatório técnico](../auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md). Este painel continua sendo o único planejamento executivo. Publicação técnica concluída; próximas etapas continuam separadas. Não houve edição de plugin, rotina ou dado operacional.
 
@@ -14,7 +24,7 @@ Modelo, esforço, fatos, preços e Apps Script v164 permanecem inalterados; a ve
 | --- | --- | --- | --- |
 | 1 | Dois falsos bloqueios de continuidade corrigidos no candidato 2026-10-15.2 | Publicado e verificado: 2254/2254 locais, 21/21 hospedados e 3/3 áudios; recibo acima. Apps Script não muda. | Revisar 16/10 e 22/10; amostras naturais ainda não comprovadas. |
 | 2 | Usar plugin 1.0.1 para revisões, resumos e propostas pela conta | Política já existente confirmada; não equivale a ponte do bot. Agendamento cloud 9h/17h não confirmado pelas ferramentas disponíveis. Não duplicar rotinas. | Próxima rodada solicitada; validar estado vivo da rotina antes de agendar. |
-| 3 | Medição por categoria e piloto assíncrono pela conta | Próxima fatia local autorizada por “siga com as melhorias”: recibos numéricos de knowledge-candidate e revisão de retomada, sem novas inferências. Testado localmente e revisado: BRUNA-CONSUMO-CATEGORIAS-2026-10-15, 2287/2287; [escopo e verificação](../auditorias/bruna-consumo-categorias-2026-10-15/RELATORIO.md). Publicação dessa fatia depende de novo SHA testado e aprovação. Piloto pela conta continua proposto/default-off; separar captura durável de resposta humana da extração por IA; comprovar elegibilidade, autenticação e retorno estruturado. Revisão histórica de classificação em leitura primeiro, sem substituir worker de cinco minutos por rodada 9h/17h. | Após autorização de pacote específico; amostra sintética antes de dados reais. |
+| 3 | Medição por categoria e piloto assíncrono pela conta | Candidato 2026-10-15.3 testado 2287/2287 e autorizado; publicação bloqueada pelo timeout descrito acima. Código não está em produção. Piloto pela conta continua proposto/default-off e exige contrato próprio. | Investigar antes de nova tentativa; medição de 24h/7 dias somente após publicação verificada. |
 | 4 | Ativar substituição limitada, sem processamento duplo | Exige zero efeito com resultado obsoleto/duplicado, trilha e comparação de qualidade/custo. Sem fallback pago silencioso; falta de quota vira pendência visível. | Pelo menos 7 dias de piloto e amostra suficiente por tipo; estender se insuficiente. |
 | 5 | Considerar atendimento imediato pela conta | Observar, não executar agora. Só após provar latência, disponibilidade, quota, privacidade e entrega ponta a ponta. | Depois do piloto, sem data artificial. |
 | 6 | Reavaliar vetos lexicais de CTA por contrato de atos conversacionais | Adiado. Protótipo de “se quiser” revertido antes do commit por escapes de convite e falso bloqueio de negação. Não ampliar lista de regex como solução geral. | Desenho e testes próprios antes de nova autorização de publicação. |
