@@ -1346,6 +1346,167 @@ test("completion and failure mutate the reserved row while preserving a later du
   }
 });
 
+function professionalCompletionFixture(professional = "amanda", currentStatus = "Novo") {
+  const job = { phone: "+5511900000090", professional, opportunityId: `synthetic-${professional}-review`,
+    leaseToken: "synthetic-review-lease", throughMessageId: "synthetic-review-message", claimedVersion: 3 };
+  const lead = ["", "", job.phone, "", currentStatus, "", "Sim", job.opportunityId, "engaged_lead", "human_team", "3"];
+  const reserved = Array(20).fill("");
+  reserved[0] = job.phone; reserved[4] = "running"; reserved[8] = job.throughMessageId;
+  reserved[14] = 2; reserved[15] = job.leaseToken; reserved[16] = job.opportunityId; reserved[17] = professional;
+  const historical = [...reserved]; historical[4] = "done"; historical[15] = "";
+  const rows = [Array(20).fill(""), reserved, historical];
+  const queueWrites = [], leadWrites = [], reviews = [], effects = [];
+  const queue = { getRange(row, column, height = 1, width = 1) { return {
+    getValue: () => rows[row - 1][column - 1],
+    getDisplayValue: () => String(rows[row - 1][column - 1] || ""),
+    setValue(value) { queueWrites.push([row, column]); rows[row - 1][column - 1] = value; },
+    setValues(values) {
+      queueWrites.push([row, column]);
+      values.forEach((value, index) => rows[row - 1 + index].splice(column - 1, width, ...value));
+    },
+  }; } };
+  const leads = { getLastColumn: () => lead.length, getRange() { return {
+    getDisplayValues: () => [[...lead]], getDisplayValue: () => "Sim",
+    setValue: value => leadWrites.push(value), setValues: values => leadWrites.push(values),
+  }; } };
+  const spreadsheet = { getSheetByName: () => leads };
+  const sandbox = { Date, console, SpreadsheetApp: { openById: () => spreadsheet, flush() {} } };
+  vm.runInNewContext(codeSource + "\n" + classificationSource + "\n" +
+    readFileSync(new URL("./OpportunityStore.gs", import.meta.url), "utf8"), sandbox);
+  Object.assign(sandbox, {
+    getOrCreateLeadAuxiliarySheet_: () => queue,
+    findClassificationQueueRow_: (_sheet, opportunityId, phone, owner, leaseToken) => {
+      assert.deepEqual([opportunityId, phone, owner, leaseToken], [job.opportunityId, job.phone, job.professional, job.leaseToken]);
+      return 2;
+    },
+    localizarLeadPorOportunidadeOuTelefone_: () => 2,
+    mapaCabecalhosOportunidade_: () => ({ "Situação do lead": 5, "Opportunity ID": 8, "Relacionamento": 9,
+      "Responsável atual": 10, "Versão da oportunidade": 11 }),
+    collectLeadMessagesForOpportunity_: () => [],
+    classificationOperationalContext_: () => ({ operationalContextVerified: true, pendingCommitments: [],
+      patientRelationship: { hasPendingHumanTask: false } }),
+    safeAdministrativeClassification_: () => null,
+    lastMessageIsHumanResumeReceipt_: () => false,
+    ownerFromClassificationContext_: () => "human_team",
+    expectedPartyFromClassification_: () => "clinic",
+    registrarRevisaoClassificacaoBot_: input => { reviews.push(input); return { ok: true, created: true, row: 8 }; },
+    sincronizarFaseOportunidadeELead_: (_sheet, input) => { effects.push(["phase", input]); throw new Error("canonical_phase_boundary"); },
+  });
+  for (const name of ["registrarMarcoAdministrativoClassificado_", "registrarMarcoOportunidade_", "recordLeadStageEvent_",
+    "arquivarContatoNaoLead_", "sendReviewAlertEmail_"]) {
+    sandbox[name] = () => { effects.push([name]); throw new Error(`unexpected_effect:${name}`); };
+  }
+  const classification = { professional: professional === "amanda" ? "daniel" : "amanda", confidence: "high",
+    recommendedStatus: "Paciente convertido", appointmentOutcome: "attended", procedureMilestone: "accepted",
+    summary: "Tratamento aceito com outro profissional.", evidence: "Aceitou o tratamento com o outro profissional.",
+    nextAction: "Conferir o próximo passo.", expectedParty: "clinic", commercialReason: "Em andamento" };
+  return { sandbox, job, classification, rows, lead, queueWrites, leadWrites, reviews, effects };
+}
+
+test("explicit professional disagreement creates human review and ends only its lease without journey effects", () => {
+  for (const professional of ["amanda", "daniel"]) {
+    for (const confidence of ["low", "medium", "high"]) {
+      for (const currentStatus of ["Novo", "Qualificado"]) {
+        const f = professionalCompletionFixture(professional, currentStatus);
+        const beforeLead = [...f.lead], beforeHistorical = [...f.rows[2]];
+        const result = f.sandbox.completeLeadClassification_(f.job, { ...f.classification, confidence });
+        assert.equal(result.status, "completed");
+        assert.equal(result.reason, "professional_mismatch");
+        assert.equal(result.reviewRequired, true);
+        assert.equal(result.appliedStatus, currentStatus);
+        assert.equal(result.professional, professional);
+        assert.equal(result.classifiedProfessional, f.classification.professional);
+        assert.equal(result.googleConversionReady, false);
+        assert.equal(result.appointmentUpdated, false);
+        assert.equal(result.businessMilestoneRecorded, false);
+        assert.equal(f.reviews.length, 1);
+        assert.equal(f.reviews[0].key, `${f.job.opportunityId}:${f.job.throughMessageId}:professional_mismatch`);
+        assert.match(f.reviews[0].context, new RegExp(`Profissional da oportunidade: ${professional}`));
+        assert.match(f.reviews[0].suggestion, /Fase sugerida, não aplicada: Paciente convertido/);
+        assert.equal(f.rows[1][4], "done");
+        assert.equal(f.rows[1][15], "");
+        assert.equal(f.rows[1][13], "professional_mismatch_review_required");
+        assert.deepEqual(f.rows[2], beforeHistorical);
+        assert.deepEqual(f.lead, beforeLead);
+        assert.deepEqual(f.leadWrites, []);
+        assert.deepEqual(f.effects, []);
+        // A completion retry cannot create another review after releasing the lease.
+        assert.equal(f.sandbox.completeLeadClassification_(f.job, f.classification).error, "stale_lease");
+        assert.equal(f.reviews.length, 1);
+      }
+    }
+  }
+});
+
+test("professional disagreement obeys lease, row-version and conversation guards before review", () => {
+  for (const kind of ["lease", "version", "revision", "latest_message"]) {
+    const f = professionalCompletionFixture();
+    if (kind === "lease") f.rows[1][15] = "another-lease";
+    if (kind === "version") f.lead[10] = "4";
+    if (kind === "revision") {
+      f.job.conversationRevision = "old-revision";
+      f.sandbox.revisaoHistoricoClassificacao_ = () => "new-revision";
+    }
+    if (kind === "latest_message") f.rows[1][8] = "newer-message";
+    const result = f.sandbox.completeLeadClassification_(f.job, f.classification);
+    assert.equal(result.status, "ignored");
+    assert.equal(result.error, kind === "lease" ? "stale_lease" : kind === "version" ? "stale_row_version" : "stale_conversation_revision");
+    assert.deepEqual(f.reviews, []);
+    assert.deepEqual(f.leadWrites, []);
+    assert.deepEqual(f.effects, []);
+  }
+});
+
+test("a missing or unsuccessful human review cannot silently complete a conflicting professional", () => {
+  for (const failure of ["missing", "rejected", "exception"]) {
+    const f = professionalCompletionFixture();
+    if (failure === "missing") delete f.sandbox.registrarRevisaoClassificacaoBot_;
+    if (failure === "rejected") f.sandbox.registrarRevisaoClassificacaoBot_ = () => ({ ok: false });
+    if (failure === "exception") f.sandbox.registrarRevisaoClassificacaoBot_ = () => { throw new Error("synthetic_review_failure"); };
+    assert.throws(() => f.sandbox.completeLeadClassification_(f.job, f.classification),
+      /professional_mismatch_review_(?:unavailable|failed)|synthetic_review_failure/);
+    assert.deepEqual(f.queueWrites, []);
+    assert.deepEqual(f.leadWrites, []);
+    assert.deepEqual(f.effects, []);
+    // The existing worker failure path can still release this exact lease.
+    const released = f.sandbox.failLeadClassification_({ ...f.job, errorCode: "complete_review_failed" });
+    assert.equal(released.status, "failed");
+    assert.equal(f.rows[1][15], "");
+  }
+});
+
+test("same and unknown professionals retain the existing canonical classification path", () => {
+  for (const professional of ["amanda", "daniel", "unknown"]) {
+    for (const classifiedProfessional of [professional, "unknown"]) {
+      const f = professionalCompletionFixture(professional);
+      assert.throws(() => f.sandbox.completeLeadClassification_(f.job,
+        { ...f.classification, professional: classifiedProfessional }), /canonical_phase_boundary/);
+      assert.deepEqual(f.reviews, []);
+      assert.equal(f.effects.length, 1);
+      assert.equal(f.effects[0][0], "phase");
+      assert.equal(f.effects[0][1].professional, professional);
+    }
+  }
+});
+
+test("explicit external and nonpatient classifications keep the existing exact-opportunity exclusion", () => {
+  for (const professional of ["external", "nonpatient"]) {
+    const f = professionalCompletionFixture();
+    f.sandbox.recordLeadStageEvent_ = (_sheet, input) => f.effects.push(["stage_event", input]);
+    f.sandbox.arquivarContatoNaoLead_ = (_sheet, input) => { f.effects.push(["archive", input]); return { archivedLeadRows: 1 }; };
+    const result = f.sandbox.completeLeadClassification_(f.job, { ...f.classification, professional });
+    assert.equal(result.status, "completed");
+    assert.equal(result.excluded, true);
+    assert.equal(result.archivedLeadRows, 1);
+    assert.equal(result.googleConversionReady, false);
+    assert.deepEqual(f.reviews, []);
+    assert.deepEqual(f.effects.map(effect => effect[0]), ["stage_event", "archive"]);
+    assert.equal(f.effects[1][1].opportunityId, f.job.opportunityId);
+    assert.equal(f.rows[1][4], "excluded");
+    assert.equal(f.rows[1][15], "");
+  }
+});
+
 test("bounded recovery selects only the dated technical failures with one exact open opportunity",()=>{
   const {classificationRecoveryCandidates20260918_:select}=loadFunctions();
   const q=Array(20).fill(""); q[0]="+5511900000000";q[2]="2026-09-15T12:00:00Z";q[4]="dead_letter";q[6]="2026-09-14T12:00:00Z";

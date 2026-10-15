@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { normalizeMarketingPrefillTemplateId } from "./marketing-prefill.mjs";
 import { isAutomatedBusinessReply, isPersonalAppearanceConcern } from "./patient-turn-context.mjs";
+import { isAppointmentOfferAcceptance } from "./appointment-suggestions.mjs";
 
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 import {
@@ -416,24 +417,37 @@ export function enforceCommercialEvidenceGuard({ currentStatus = "Novo", message
     else if (barrierIndex >= 0) financialBarrier = true;
   }
   if (result.commercialReason === "Preço" && !financialBarrier) result.commercialReason = "Em andamento";
-  const practicalIntent = /\b(?:quero|gostaria de|pretendo|vou|preciso)\s+(?:mesmo\s+)?(?:marcar|agendar|fazer (?:a|uma) (?:consulta|avalia[cç][aã]o))|\b(?:quais? (?:os )?(?:dias|hor[aá]rios|datas)|como (?:fa[cç]o para )?(?:agendar|marcar)|pode (?:ver|verificar|marcar|agendar))\b/i.test(personalText);
+  const lastInboundIndex = meaningful.findLastIndex(message => message.direction === "IN");
+  const lastInbound = meaningful[lastInboundIndex];
+  // A short answer belongs to the immediately preceding clinic turn. Reuse
+  // the scheduling owner's interpretation; an old offer is not fresh consent.
+  // This only preserves the semantic result, never promotes or books a lead.
+  const acceptedCurrentOffer = lastInboundIndex > 0 &&
+    !lastInbound.marketingPrefill && !lastInbound.contentUnavailable &&
+    meaningful[lastInboundIndex - 1].direction === "OUT" &&
+    isAppointmentOfferAcceptance(lastInbound.text, meaningful.slice(0, lastInboundIndex).map(message => ({
+      ...message,
+      role: message.direction === "OUT" ? "assistant" : "user",
+    })));
+  const practicalIntent = acceptedCurrentOffer || /\b(?:quero|gostaria de|pretendo|vou|preciso)\s+(?:mesmo\s+)?(?:marcar|agendar|fazer (?:a|uma) (?:consulta|avalia[cç][aã]o))|\b(?:quais? (?:os )?(?:dias|hor[aá]rios|datas)|como (?:fa[cç]o para )?(?:agendar|marcar)|pode (?:ver|verificar|marcar|agendar))\b/i.test(personalText);
   // The shared linguistic signal only prevents a mixed personal/price message
   // from being treated as research alone. It never promotes a lead or authorizes
   // scheduling: the semantic classification and the independent owners still decide.
   const hasPersonalConcern = inbound.some(message => !message.contentUnavailable &&
     isPersonalAppearanceConcern(message.text));
   const explicitIntent = explicitTreatmentIntent(inbound);
+  const researchOnly = explicitIntent.researchOnly && !acceptedCurrentOffer;
   const researchLikeMessages = inbound.length > 0 && inbound.every(message => message.contentUnavailable ||
     /^(?:t[aá] certo|entendi|ok|obrigad[oa]|certo|sim)[.!\s]*$/i.test(String(message.text || "")) ||
     /(?:qual|quanto|onde|como).*(?:valor|custa|pre[cç]o|fica|funciona|avalia[cç][aã]o)|avalia[cç][aã]o.*(?:saber|melhor procedimento)|^(?:voc[eê]s? |a cl[ií]nica )?(?:parcelam|parcela|tem parcelamento|aceitam cart[aã]o|aceita cart[aã]o|quais (?:as )?formas de pagamento)[?!.\s]*$/i.test(String(message.text || "")));
-  const hasPersonalEvidence = !explicitIntent.researchOnly && (hasPersonalConcern || explicitIntent.hasTreatmentRequest);
+  const hasPersonalEvidence = !researchOnly && (hasPersonalConcern || explicitIntent.hasTreatmentRequest);
   const onlyResearch = !hasPersonalEvidence && researchLikeMessages;
   if (currentStatus === "Novo" && result.recommendedStatus === "Qualificado" &&
-      (explicitIntent.researchOnly || (onlyResearch && !practicalIntent))) {
+      (researchOnly || (onlyResearch && !practicalIntent))) {
     result.recommendedStatus = "Novo";
     result.evidence = "Pesquisa ou ciência da informação, sem pedido pessoal de avanço confirmado.";
   }
-  if ((explicitIntent.researchOnly || (!practicalIntent && (researchLikeMessages || hasPersonalEvidence))) &&
+  if ((researchOnly || (!practicalIntent && (researchLikeMessages || hasPersonalEvidence))) &&
       /(?:oferecer|enviar|apresentar|verificar).*(?:datas|hor[aá]rios|agenda)/i.test(result.nextAction)) {
     const last = meaningful.at(-1);
     const lastText = String(last?.text || "");

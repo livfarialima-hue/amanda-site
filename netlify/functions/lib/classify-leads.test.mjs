@@ -44,6 +44,72 @@ test("personal qualification reaches the canonical writer without becoming sched
   assert.equal(calls[0].payload.job.opportunityId, job.opportunityId);
 });
 
+test("the worker preserves short-acceptance context and exact opportunity identifiers at the canonical writer", async () => {
+  for (const [offer, expectedStatus] of [
+    ["Você gostaria de verificar os próximos horários disponíveis?", "Qualificado"],
+    ["Posso explicar como funciona a avaliação?", "Novo"],
+  ]) {
+    const calls = [];
+    const classification = {
+      recommendedStatus: "Qualificado", confidence: "high", professional: "amanda", procedure: "avaliação",
+      summary: "A pessoa respondeu à última oferta da clínica.", nextAction: "Verificar horários disponíveis.",
+      expectedParty: "clinic", commercialReason: "Em andamento", evidence: "Resposta curta no contexto da oferta.",
+      appointmentOutcome: "none", procedureMilestone: "none",
+    };
+    const job = {
+      phone: "+551100000091", leaseToken: "lease-offer", opportunityId: "opp-offer", professional: "amanda",
+      throughMessageId: "message-offer", claimedVersion: 7, currentStatus: "Novo", conversationRevision: "revision-offer",
+      messages: [
+        { direction: "OUT", source: "bruna", text: "Você gostaria de verificar os próximos horários disponíveis?" },
+        { direction: "OUT", source: "equipe_humana", text: offer },
+        { direction: "IN", text: "Sim", messageType: "text" },
+      ],
+    };
+    await processClaimedJobs([job], {
+      classifier: input => runLeadClassifier(input, {
+        env: { OPENAI_API_KEY: "test-key" },
+        fetchImpl: async () => new Response(JSON.stringify({ status: "completed", output_text: JSON.stringify(classification) }),
+          { status: 200, headers: { "content-type": "application/json" } }),
+      }),
+      callSheets: async (action, payload) => { calls.push({ action, payload }); return { status: "completed" }; },
+      waitImpl: async () => {},
+    });
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].action, "complete_classification");
+    for (const key of ["opportunityId", "professional", "leaseToken", "claimedVersion", "conversationRevision", "throughMessageId"]) {
+      assert.equal(calls[0].payload.job[key], job[key], key);
+    }
+    const persisted = calls[0].payload.classification;
+    assert.equal(persisted.recommendedStatus, expectedStatus);
+    assert.equal(persisted.expectedParty, expectedStatus === "Qualificado" ? "clinic" : "patient");
+    assert.equal(persisted.appointmentOutcome, "none");
+    assert.equal(persisted.procedureMilestone, "none");
+  }
+});
+
+test("the worker keeps conflicting professionals separate for the canonical human review", async () => {
+  const calls = [];
+  const classification = { ...completedClassification().classification, professional: "daniel" };
+  const results = await processClaimedJobs([{
+    phone: "+551100000092", leaseToken: "lease-conflict", opportunityId: "opp-amanda-conflict",
+    professional: "amanda", throughMessageId: "message-conflict", claimedVersion: 4, conversationRevision: "revision-conflict",
+  }], {
+    classifier: async () => ({ ...completedClassification(), classification }),
+    callSheets: async (action, payload) => {
+      calls.push({ action, payload });
+      return { status: "completed", reviewRequired: true, reason: "professional_mismatch", appliedStatus: "Novo" };
+    },
+    waitImpl: async () => {},
+  });
+  assert.equal(results[0].status, "completed");
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].action, "complete_classification");
+  assert.equal(calls[0].payload.job.professional, "amanda");
+  assert.equal(calls[0].payload.classification.professional, "daniel");
+  assert.equal(calls[0].payload.job.opportunityId, "opp-amanda-conflict");
+  assert.equal(calls[0].payload.job.leaseToken, "lease-conflict");
+});
+
 test("an unresponsive classifier releases its exact lease instead of waiting for lease expiry", { timeout: 250 }, async () => {
   const writes = [];
   const result = await processClaimedJobs([{ phone: "+551100000099", leaseToken: "lease-deadline", opportunityId: "opp-deadline", professional: "amanda" }], {

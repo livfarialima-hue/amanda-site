@@ -1,5 +1,5 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
-import { classifyBrunaCta, BRUNA_CTA_TYPES } from "./bruna-conversion-experience.mjs";
+import { assessBrunaReplyExperience, classifyBrunaCta, BRUNA_CTA_TYPES } from "./bruna-conversion-experience.mjs";
 
 const MAX_ALERT_TEXT_LENGTH = 650;
 const SCHEDULING_CONTEXT_PATTERN =
@@ -180,9 +180,32 @@ export function isAppointmentOfferAcceptance(
   if (history.slice(lastClinic + 1).some(turn =>
     /\b(?:nao quero|nao vou|prefiro nao|vou pensar|so estou pesquisando)\b/.test(normalize(turn?.text)))) return false;
   const lastOffer = String(history[lastClinic]?.text || "");
-  return classifyBrunaCta(lastOffer) === BRUNA_CTA_TYPES.AVAILABILITY ||
-    (APPOINTMENT_OFFER_PATTERN.test(lastOffer) &&
-      /\b(?:horarios?|agenda|agendar|marcar|disponibilidade|duas? opcoes)\b/.test(normalize(lastOffer)));
+  // A short yes cannot select among different offers or answer two questions.
+  // Keep CTA detection conservative for the outbound gate, and use that same
+  // owner to distinguish the objects of coordinated clauses here.
+  if (assessBrunaReplyExperience({ body: lastOffer }).questionCount > 1) return false;
+  const isAvailabilityOffer = offer => {
+    const type = classifyBrunaCta(offer);
+    const appointmentOffer = offer.match(APPOINTMENT_OFFER_PATTERN);
+    return type === BRUNA_CTA_TYPES.AVAILABILITY || Boolean(appointmentOffer &&
+      /\b(?:horarios?|agenda|agendar|marcar|disponibilidade|duas? opcoes)\b/.test(normalize(offer)) &&
+      (!type || classifyBrunaCta(appointmentOffer[0]) === type));
+  };
+  // Bind the answer to the complete final question, not an earlier mention
+  // or only the last fragment of a choice. Keep short title abbreviations.
+  const segmentedOffer = lastOffer.replace(/(?<!\p{L})(\p{L}{1,3})\.(?=\s+\p{L})/gu, "$1");
+  const questionEnd = segmentedOffer.indexOf("?");
+  const question = questionEnd >= 0 ? segmentedOffer.slice(0, questionEnd) : segmentedOffer;
+  const lastSentence = question.split(/[.!\n]+/).map(clause => clause.trim()).filter(Boolean).at(-1) || "";
+  const offerQuestion = lastSentence.replace(/^(?:se|caso)\b[^,;.!?\n]+,\s*/i, "");
+  if (!isAvailabilityOffer(offerQuestion)) return false;
+  const isPreferenceObject = clause => Object.values(PERIODS).some(names => names.includes(normalize(clause))) ||
+    WEEKDAYS.some(day => day.names.includes(normalize(clause)));
+  const objects = offerQuestion.split(/[,;]|\b(?:e|ou)\b/i).map(clause => clause.trim()).filter(Boolean);
+  // Unknown coordinated objects require clarification, in either order.
+  // Descriptions separated only by a comma also remain conservative here.
+  return objects.every(clause => isAvailabilityOffer(clause) ||
+    isAvailabilityOffer("Posso " + clause) || isPreferenceObject(clause));
 }
 
 export function selectAppointmentSlots(slots, preferenceText = "") {

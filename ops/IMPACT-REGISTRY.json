@@ -1075,6 +1075,7 @@
         "netlify/functions/lib/appointment-suggestions.mjs"
       ],
       "consumerFiles": [
+        "netlify/functions/lib/lead-classifier.mjs",
         "netlify/functions/human-resume.mjs",
         "netlify/functions/lib/openai-shadow.mjs",
         "netlify/functions/lib/outbound-reply-gate.mjs",
@@ -1114,7 +1115,11 @@
         "auditorias/bruna-ponte-consulta-2026-09-29/PREFLIGHT.json",
         "auditorias/bruna-ponte-consulta-2026-09-29/PUBLICACAO.json",
         "auditorias/bruna-ponte-consulta-2026-09-29/RELATORIO.md",
-        "netlify/functions/lib/appointment-suggestions.mjs"
+        "netlify/functions/lib/appointment-suggestions.mjs",
+        "netlify/functions/lib/appointment-suggestions.test.mjs",
+        "netlify/functions/lib/lead-classifier.mjs",
+        "netlify/functions/lib/lead-classifier.test.mjs",
+        "netlify/functions/lib/classify-leads.test.mjs"
       ],
       "requiredTestFiles": [
         "netlify/functions/lib/bruna-conversation-evals.test.mjs",
@@ -1131,7 +1136,9 @@
         "netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs",
         "netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
         "netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
-        "netlify/functions/lib/appointment-suggestions.test.mjs"
+        "netlify/functions/lib/appointment-suggestions.test.mjs",
+        "netlify/functions/lib/lead-classifier.test.mjs",
+        "netlify/functions/lib/classify-leads.test.mjs"
       ],
       "requiredCommands": [
         "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",

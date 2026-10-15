@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "BRUNA-REVISAO-CONVERSAS-2026-10-15",
-  "title": "Qualificacao pessoal e reconciliacao administrativa auditada sem contato automatico",
+  "title": "Qualificacao contextual com identidade profissional e reconciliacao administrativa auditada",
   "status": "tested_local",
   "baseCommit": "723a43bae79faca529e2a53cc39996df62a16107",
   "authorization": {
@@ -26,12 +26,16 @@
       "apps-script/clinica-liv-leads/DataQualityRepair.test.mjs",
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs",
       "apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
+      "apps-script/clinica-liv-leads/LeadClassification.gs",
+      "apps-script/clinica-liv-leads/LeadClassification.test.mjs",
       "apps-script/clinica-liv-leads/README.md",
       "auditorias/bruna-revisao-conversas-2026-10-15/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
+      "netlify/functions/lib/appointment-suggestions.mjs",
+      "netlify/functions/lib/appointment-suggestions.test.mjs",
       "netlify/functions/lib/classify-leads.test.mjs",
       "netlify/functions/lib/lead-classifier.mjs",
       "netlify/functions/lib/lead-classifier.test.mjs",
@@ -40,10 +44,12 @@
     ],
     "contracts": [
       "bruna-regression-governance",
+      "bruna-conversion-experience",
       "change-governance",
+      "google-ads-acquisition-conversion",
       "patient-journey-funnel-followups"
     ],
-    "note": "Alinhamento ao Norte e ponte administrativa interna: recuperar somente eventos route_pending existentes e invalidar accepted auditado. Sem nova rota HTTP, IA paga, replay, envio ou cadencia. Publicacao coordenada Apps Script primeiro, Netlify depois, somente apos aprovacao do SHA exato."
+    "note": "Alinhamento ao Norte, aceite contextual pelo helper canonico e bloqueio de classificacao de profissional divergente. Ponte administrativa interna: recuperar somente eventos route_pending existentes e invalidar accepted auditado. Sem nova rota HTTP, IA paga, replay ou envio. Supervisao periodica pelo plugin e evidencia do arquivo sao documentadas separadamente do runtime. Publicacao coordenada Apps Script primeiro, Netlify depois, somente apos aprovacao do SHA exato."
   },
   "impact": {
     "consumers": [
@@ -67,11 +73,16 @@
       "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
       "netlify/functions/lib/bruna-policy/rules.jsonl",
       "netlify/functions/lib/human-resume-dispatch.mjs",
+      "netlify/functions/lib/appointment-suggestions.mjs",
+      "netlify/functions/lib/openai-shadow.mjs",
+      "netlify/functions/lib/outbound-reply-gate.mjs",
       "netlify/functions/scheduled-followup.mjs",
       "netlify/functions/ycloud-webhook.mjs"
     ],
     "preservedInvariants": [
       "Prefill, pergunta isolada de preco/localizacao e midia indisponivel nao qualificam.",
+      "Aceite curto da oferta imediata de horarios usa o helper canonico e apenas evita rebaixamento; nao agenda, nao inventa aceite de cirurgia nem promove por si so.",
+      "Divergencia explicita de profissional entre classificacao e oportunidade bloqueia fase, marcos e exportacoes; encerra o lease e exige revisao humana sem envio.",
       "Qualificacao nao confirma consulta, procedimento ou pagamento e nao libera contato.",
       "Preservar owner humano, compromissos, cuidado, opt-out, identidade, origem e idempotencia.",
       "Sem mudanca de campanhas, valores, lances ou gatilhos.",
@@ -83,6 +94,20 @@
       "Conversas reais e dados identificaveis ficam fora do repositorio."
     ],
     "liveReadOnlyPreflight": [
+      {
+        "contract": "bruna-conversion-experience",
+        "status": "verified",
+        "source": "224 conversas exportadas e baseline publicado observado2fae17f1",
+        "observedAt": "2026-10-15T21:25:00Z",
+        "evidence": "Rubrica revisada por objeto do aceite; reproducao sintetica local identificou oferta composta aceita como agenda. Helper canonico de aceite passa a recusar ambiguidade, sem alterar prioridade conservadora de CTA no gate. Sem nova oferta, agenda ou mensagem em producao. Revalidar no release."
+      },
+      {
+        "contract": "google-ads-acquisition-conversion",
+        "status": "verified",
+        "source": "Reconciliacao viva LEADS/CRM/IMPORT_GOOGLE_ADS e recibo da conexao LEADS",
+        "observedAt": "2026-10-15T21:25:00Z",
+        "evidence": "RELATORIO desta revisao:12 eventos ready/12 transacoes unicas, importacao15/10 05:05BRT 12/0. Dois vinculos em profissional errado corrigidos por owner. Novo guard local bloqueia divergencia Amanda/Daniel antes de fase/marcos/Ads. Sem alteracao de atribuicao, campanha ou reenvio. Revalidar antes da publicacao."
+      },
       {
         "contract": "patient-journey-funnel-followups",
         "status": "verified",
@@ -108,6 +133,17 @@
   },
   "verification": {
     "commands": [
+      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+      "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
+      "node --test netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
+      "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
+      "node --test netlify/functions/lib/appointment-suggestions.test.mjs",
+      "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+      "node --test campanhas/google-ads-settings.test.mjs",
+      "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
+      "node --test campanhas/google-ads-ad-strength-20260913.test.mjs",
       "node --test apps-script/clinica-liv-leads/Code.schema.test.mjs apps-script/clinica-liv-leads/DataQualityRepair.test.mjs apps-script/clinica-liv-leads/BusinessMilestones.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
       "git diff --check",
       "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
@@ -128,7 +164,7 @@
       "node --test scripts/check-bruna-model-live.test.mjs"
     ],
     "status": "passed_local",
-    "note": "Sobre baseline documental 723a43b com runtime 2fae: 2280/2280 testes integrais (TZ America/Sao_Paulo), 49 testes administrativos e 20 Google/Meta, 14 grupos adversariais independentes e 10 cenarios anteriores de qualificacao. Build de 193 arquivos/54 URLs; site:check 54/54; change:check com 19 arquivos; architecture:check e diff aprovados. Os seis hashes de runtime/testes foram preservados na integracao da base. Log privado full-suite-after-bridge-and-723.log. ops:check SYNC_PENDING esperado: publicacao, projecao Drive, branch de integracao e worktree ainda pendentes. Sem IA paga, replay ou publicacao nesta etapa."
+    "note": "Sobre baseline723a43b/runtime2fae:2298/2298 testes integrais finais (TZ America/Sao_Paulo),250 focados/consumidores do novo delta,172 do contrato Ads e30 cenarios adversariais independentes. Preservados14 grupos administrativos e10 cenarios anteriores. Build193arquivos/54URLs; site:check54/54; change:check23arquivos; architecture:check e diff aprovados. Referencia global.4, cenarios hospedados e production-target permanecem iguais. Log privado full-suite-context-professional-final.log. Pluginprivado1.0.2 salvo e relido12/12; rotinaexistente9h/17h ativa; arquivo125/125integros e50/50mensagensdeledger, caught_up19:20BRT. Estes recibos nao publicam runtime. ops:check SYNC_PENDING por publicacao/projecao do manual/branch; semIApaga,replayouenvio nesta extensao."
   },
   "rollback": {
     "local": "Reverter somente delta deste candidato, preservando trabalho paralelo e recibos.",
@@ -136,11 +172,13 @@
   },
   "monitoring": {
     "owner": "Daniel/equipe Clinica LIV",
-    "window": "Primeira classificacao natural, integridade48h e revisaoD+7 apos publicacao.",
+    "window": "Plugin1.0.2: primeira rodada natural16/10 09h pela rotina cloud existente. Runtime: primeira classificacao natural, integridade48h e revisaoD+7 apos publicacao autorizada.",
     "signals": [
       "Nenhum preco isolado qualificado; nenhuma agenda inferida.",
       "Conferir separadamente eventos preparados, importados e atribuidos.",
-      "Sem retransmissao duplicada e sem recontato por correcao de fase."
+      "Sem retransmissao duplicada e sem recontato por correcao de fase.",
+      "Divergencia profissional gera revisao humana sem atualizar fase/marcos/Ads; aceite composto permanece ambiguo.",
+      "Nas rodadas9h/17h conferir cobertura, lacunas historicas e drenagem do arquivo;125/50 verificados em15/10 nao provam futuras mensagens nem binarios."
     ]
   },
   "baselineCandidateReference": {

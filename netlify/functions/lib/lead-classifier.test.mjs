@@ -85,6 +85,87 @@ test("explicit request to schedule and explicit financial barriers remain distin
   assert.equal(refused.recommendedStatus, "Não qualificado");
 });
 
+test("a short acceptance of the immediately preceding availability offer preserves the semantic result", () => {
+  for (const source of ["bruna", "equipe_humana", "unknown"]) {
+    for (const recommendedStatus of ["Novo", "Qualificado"]) {
+      const classification = validClassification({ recommendedStatus, nextAction: "Verificar horários disponíveis." });
+      const messages = [
+        { direction: "OUT", source, text: "Você gostaria de verificar os próximos horários disponíveis?" },
+        { direction: "IN", text: "Sim", messageType: "text" },
+      ];
+      assert.deepEqual(enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages, classification }), classification);
+      // The clinic's receipt does not change which offer the last patient answer accepted.
+      messages.push({ direction: "OUT", source, text: "Vou conferir e retorno com as opções." });
+      assert.deepEqual(enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages, classification }), classification);
+    }
+  }
+});
+
+for (const [name, intervening, answer = { direction: "IN", text: "Sim" }] of [
+  ["newer informational offer", [{ direction: "OUT", source: "bruna", text: "Posso explicar como funciona a avaliação?" }]],
+  ["intervening patient question even with a misleading source", [{ direction: "IN", source: "equipe_humana", text: "Como funciona a avaliação?" }]],
+  ["unavailable patient audio", [{ direction: "IN", messageType: "audio", contentUnavailable: true, text: "" }]],
+  ["reaction instead of an answer", [], { direction: "IN", messageType: "reaction", text: "Sim" }],
+  ["marketing prefill instead of an answer", [], { direction: "IN", marketingPrefill: true, text: "Sim" }],
+]) {
+  test(`an old availability offer cannot qualify through a ${name}`, () => {
+    const result = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages: [
+      { direction: "IN", text: "Como funciona a avaliação?" },
+      { direction: "OUT", source: "equipe_humana", text: "Você gostaria de verificar os próximos horários disponíveis?" },
+      ...intervening, answer,
+    ], classification: validClassification() });
+    assert.equal(result.recommendedStatus, "Novo");
+    assert.doesNotMatch(result.nextAction, /Oferecer datas/);
+    assert.equal(result.appointmentOutcome, "none");
+    assert.equal(result.procedureMilestone, "none");
+  });
+}
+
+test("later research or a pause still overrides an earlier contextual acceptance", () => {
+  for (const text of ["Só estou pesquisando, não procuro tratamento.", "Eu volto quando puder."]) {
+    const result = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages: [
+      { direction: "OUT", source: "bruna", text: "Você gostaria de verificar os próximos horários disponíveis?" },
+      { direction: "IN", text: "Sim" },
+      { direction: "IN", text },
+    ], classification: validClassification() });
+    assert.equal(result.recommendedStatus, "Novo");
+    assert.equal(result.expectedParty, "patient");
+    assert.doesNotMatch(result.nextAction, /Oferecer datas/);
+    assert.equal(result.appointmentOutcome, "none");
+    assert.equal(result.procedureMilestone, "none");
+  }
+});
+
+test("a new unambiguous acceptance can supersede earlier research without promoting the semantic classification", () => {
+  for (const recommendedStatus of ["Novo", "Qualificado"]) {
+    const classification = validClassification({ recommendedStatus, nextAction: "Verificar horários disponíveis." });
+    const result = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages: [
+      { direction: "IN", text: "Só estou pesquisando, não procuro tratamento." },
+      { direction: "OUT", source: "equipe_humana", text: "Você gostaria de verificar os próximos horários disponíveis?" },
+      { direction: "IN", text: "Sim" },
+    ], classification });
+    assert.deepEqual(result, classification);
+  }
+});
+
+test("a short answer to compound offers cannot supersede research or become scheduling intent", () => {
+  for (const offer of [
+    "Posso explicar a consulta ou verificar horários?",
+    "Posso verificar horários e explicar a consulta?",
+    "Posso verificar horários? Posso explicar a consulta?",
+    "Posso verificar horários ou enviar o endereço?",
+  ]) {
+    const result = enforceCommercialEvidenceGuard({ currentStatus: "Novo", messages: [
+      { direction: "IN", text: "Só estou pesquisando, não procuro tratamento." },
+      { direction: "OUT", source: "equipe_humana", text: offer },
+      { direction: "IN", text: "Sim" },
+    ], classification: validClassification() });
+    assert.equal(result.recommendedStatus, "Novo", offer);
+    assert.equal(result.expectedParty, "patient", offer);
+    assert.doesNotMatch(result.nextAction, /Oferecer datas/, offer);
+  }
+});
+
 test("personal treatment interest remains qualified when the same message asks about price", () => {
   for (const text of [
     "Tenho flacidez no pescoço e quero entender o tratamento. Qual o valor da consulta?",

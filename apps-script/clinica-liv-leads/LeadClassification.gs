@@ -3428,6 +3428,62 @@ function completeLeadClassification_(job, classification) {
       : String(classification.professional || "unknown");
 
   if (
+    ["amanda", "daniel"].includes(professional) &&
+    ["amanda", "daniel"].includes(classifiedProfessional) &&
+    professional !== classifiedProfessional
+  ) {
+    // A classifier cannot move evidence between professionals. Record the
+    // human decision before ending this lease, without entering any owner
+    // that changes the opportunity, milestones, appointments or conversions.
+    const reviewAction = "Equipe: conferir o profissional e a oportunidade antes de aplicar a classificação.";
+    if (typeof registrarRevisaoClassificacaoBot_ !== "function") {
+      throw new Error("professional_mismatch_review_unavailable");
+    }
+    const review = registrarRevisaoClassificacaoBot_({
+      phone,
+      key: [canonicalOpportunityId, job.throughMessageId || "", "professional_mismatch"].join(":"),
+      confidence,
+      context: [
+        "Oportunidade: " + canonicalOpportunityId,
+        "Profissional da oportunidade: " + professional,
+        "Profissional indicado pela classificação: " + classifiedProfessional,
+        "Mensagem de referência: " + String(job.throughMessageId || ""),
+        "Evidência: " + String(classification.evidence || ""),
+      ].join("\n"),
+      suggestion: [
+        reviewAction,
+        "Fase preservada: " + currentStatus,
+        "Fase sugerida, não aplicada: " + rawProposedStatus,
+        "Nenhum marco, agenda ou conversão foi alterado por esta classificação.",
+      ].join("\n"),
+    });
+    if (!review || review.ok !== true) {
+      throw new Error("professional_mismatch_review_failed");
+    }
+    queueSheet.getRange(queueRow, 5, 1, 4).setValues([[
+      "done", "", now, String(job.throughMessageId || ""),
+    ]]);
+    queueSheet.getRange(queueRow, 11, 1, 6).setValues([[
+      currentStatus, safeText_(classification.summary, 600), reviewAction,
+      "professional_mismatch_review_required", 0, "",
+    ]]);
+    SpreadsheetApp.flush();
+    return {
+      status: "completed",
+      leadRow,
+      appliedStatus: currentStatus,
+      reviewRequired: true,
+      reason: "professional_mismatch",
+      professional,
+      classifiedProfessional,
+      reviewRow: review.row,
+      appointmentUpdated: false,
+      businessMilestoneRecorded: false,
+      googleConversionReady: false,
+    };
+  }
+
+  if (
     confidence === "high" &&
     (classifiedProfessional === "external" ||
       classifiedProfessional === "nonpatient")
