@@ -218,7 +218,34 @@
         "ok": true,
         "automationMode": "active",
         "signatureProtection": "active"
-      }
+      },
+      "resolutionStatus": "integrated_tested_and_documented_awaiting_exact_commit_authorization",
+      "integrationSourceCommit": "e9f584b93e9cbbcbcb2bd2f48ae2599244e060d3"
     }
-  ]
+  ],
+  "integrationDocumentation": {
+    "status": "written_verified",
+    "sourceCommit": "e9f584b93e9cbbcbcb2bd2f48ae2599244e060d3",
+    "verifiedAt": "2026-10-15T10:55:08.069Z",
+    "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "eca9862b22e0f8240597701d8fe5de9e3a563d353cc11663ca650932f0efca2d",
+      "bytes": 73379
+    },
+    "executivePlan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "f26b242b6d68d47f84a83f27748f33a235035dc59a4726ae908d17e034425bd8",
+      "bytes": 13459
+    },
+    "existingFilesPreserved": true,
+    "previousParallelProjection": {
+      "status": "written_verified",
+      "note": "Os recibos anteriores acima permanecem históricos. A mesma projeção do Plano integrado foi atualizada e relida com igualdade; mantém a tentativa Bruna bloqueada, a correção pendente e Ads publicado. Manual e manifesto preservados.",
+      "executivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
+      "verifiedAt": "2026-10-15T10:34:43.126Z",
+      "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
+      "bytes": 12768
+    }
+  }
 }

@@ -486,7 +486,8 @@
       "architecture": "passed",
       "siteCheck": "passed",
       "diff": "passed",
-      "independentReview": "passed"
+      "independentReview": "passed",
+      "documentationReconciled": true
     }
   },
   "rollback": {
@@ -532,9 +533,9 @@
     "rebuildNotTriggered": true
   },
   "documentation": {
-    "status": "update_pending",
-    "sourceCommit": "58c098b909416a38527e1617ecbeb979ccd356b2",
-    "verifiedAt": "2026-10-15T10:43:42.507Z",
+    "status": "written_verified",
+    "sourceCommit": "e9f584b93e9cbbcbcb2bd2f48ae2599244e060d3",
+    "verifiedAt": "2026-10-15T10:55:08.069Z",
     "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
     "manual": {
       "path": "docs/estrategia-abordagem-bruna.md",
@@ -543,8 +544,8 @@
     },
     "executivePlan": {
       "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "sha256": "f8cebe2920fe7bd596732d35e904d0edfdd6832676d52baa95f2f13231e57d77",
-      "bytes": 10893
+      "sha256": "f26b242b6d68d47f84a83f27748f33a235035dc59a4726ae908d17e034425bd8",
+      "bytes": 13459
     },
     "existingFilesPreserved": true,
     "previousParallelProjection": {
