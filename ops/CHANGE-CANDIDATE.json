@@ -176,7 +176,7 @@
   },
   "monitoring": {
     "owner": "Daniel/equipe Clinica LIV",
-    "window": "Primeira classificacao natural; integridade48h em17/10, coorteD+7 em22/10. Plugin1.0.2 na rotina cloud existente9h/17h; continuidade de retomadas16/10 09h30 condicional, sem pagamento ou envio novo neste fechamento.",
+    "window": "Primeira classificacao natural; integridade48h em17/10, coorteD+7 em22/10. Plugin1.0.2 na rotina cloud existente9h/17h. Retomadas: continuidade16/10 09h30 PAUSADA em15/10 apos Daniel informar que pedira a execucao; aguardar pedido nesta conversa.",
     "signals": [
       "Nenhum preco isolado qualificado; nenhuma agenda inferida.",
       "Conferir separadamente eventos preparados, importados e atribuidos.",
@@ -195,7 +195,7 @@
     "netlifyDeployId": "6ad15ebcc63792b19f648797",
     "appsScriptVersion": 165,
     "verifiedAt": "2026-10-15T23:23:36.9828665Z",
-    "drivePlanSha256": "917afd119e7cf2486e411f800c08b1606f8e13e25a6287b662c69cc45d13d3f0",
+    "drivePlanSha256": "9c85431605daa1309a04bf04daecba191db0e1e7bb00dae223bb7ea0ca88c11e",
     "receiptPath": "auditorias/bruna-revisao-conversas-2026-10-15/PUBLICACAO.json",
     "liveModel": {
       "status": "passed",
@@ -217,14 +217,15 @@
       "passed": 3,
       "total": 3
     },
-    "documentationSourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
-    "documentationVerifiedAt": "2026-10-15T23:35:06.840081Z"
+    "documentationSourceCommit": "6263eeb7be8285753727c97352eebcab2cfc2a22",
+    "documentationVerifiedAt": "2026-10-15T23:42:59.800469Z"
   },
   "documentationCloseout": {
-    "sourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
+    "sourceCommit": "6263eeb7be8285753727c97352eebcab2cfc2a22",
     "sameFileDriveReadback": true,
-    "manualSha256": "0bba820114ae89572921639086642b5fc53e9f42c57adc19e76b69f19bc1b57b",
-    "executivePlanSha256": "917afd119e7cf2486e411f800c08b1606f8e13e25a6287b662c69cc45d13d3f0",
-    "runtimeUnchangedFromApprovedCommit": true
+    "manualSha256": "dc450be42b637704108575ce304758582d3ac00bf5a37cf9306c2d34d8aa672f",
+    "executivePlanSha256": "9c85431605daa1309a04bf04daecba191db0e1e7bb00dae223bb7ea0ca88c11e",
+    "runtimeUnchangedFromApprovedCommit": true,
+    "followupPreparation": "78 rascunhos privados prontos; atualizacao documental da instrucao de aguardar Daniel, sem alteracao funcional ou envio."
   }
 }

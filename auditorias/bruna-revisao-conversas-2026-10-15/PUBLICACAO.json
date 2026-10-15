@@ -451,20 +451,20 @@
   },
   "documentation": {
     "status": "written_verified",
-    "sourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
-    "verifiedAt": "2026-10-15T23:35:06.840081Z",
+    "sourceCommit": "6263eeb7be8285753727c97352eebcab2cfc2a22",
+    "verifiedAt": "2026-10-15T23:42:59.800469Z",
     "method": "Authenticated raw base64 readback, decoded bytes exactly equal committed UTF-8 source and current canonical local files.",
     "existingFilesPreserved": true,
     "equalityVerified": true,
     "manual": {
       "path": "docs/estrategia-abordagem-bruna.md",
-      "sha256": "0bba820114ae89572921639086642b5fc53e9f42c57adc19e76b69f19bc1b57b",
-      "bytes": 89354,
-      "sourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
+      "sha256": "dc450be42b637704108575ce304758582d3ac00bf5a37cf9306c2d34d8aa672f",
+      "bytes": 89599,
+      "sourceCommit": "6263eeb7be8285753727c97352eebcab2cfc2a22",
       "fileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-      "modifiedAt": "2026-10-15T23:34:29.187Z",
+      "modifiedAt": "2026-10-15T23:42:26.034Z",
       "exact": true,
-      "readbackAt": "2026-10-15T23:35:06.840081Z",
+      "readbackAt": "2026-10-15T23:42:59.800469Z",
       "authenticated": true,
       "sameExistingFile": true,
       "sourceCommitEqualsReadback": true,
@@ -472,13 +472,13 @@
     },
     "executivePlan": {
       "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "sha256": "917afd119e7cf2486e411f800c08b1606f8e13e25a6287b662c69cc45d13d3f0",
-      "bytes": 39942,
-      "sourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
+      "sha256": "9c85431605daa1309a04bf04daecba191db0e1e7bb00dae223bb7ea0ca88c11e",
+      "bytes": 40019,
+      "sourceCommit": "6263eeb7be8285753727c97352eebcab2cfc2a22",
       "fileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "modifiedAt": "2026-10-15T23:34:32.022Z",
+      "modifiedAt": "2026-10-15T23:42:29.010Z",
       "exact": true,
-      "readbackAt": "2026-10-15T23:35:06.840081Z",
+      "readbackAt": "2026-10-15T23:42:59.800469Z",
       "authenticated": true,
       "sameExistingFile": true,
       "sourceCommitEqualsReadback": true,
@@ -515,17 +515,17 @@
     "cohortReview": "2026-10-22",
     "timezone": "America/Sao_Paulo",
     "periodicPlugin": "bruna-gestao-conversao 1.0.2; rotina cloud existente dias uteis 09h/17h",
-    "followupContinuation": "Tarefa unica existente 2026-10-16 09:30 BRT; condicional ao canal e preflight vivo."
+    "followupContinuation": "PAUSADA em 15/10; aguarda novo pedido de Daniel em 16/10 pela manha. Nenhum disparo autonomo as 09h30."
   },
   "limits": [
     "Publicar a ponte nao executa a recuperacao de oito eventos nem invalida o marco accepted; operador e preflight de aplicacao continuam pendentes.",
     "78 retomadas revisadas continuam sem novos envios nesta segunda rodada. A criacao de planos na Central tem bloqueio tecnico separado do pagamento; cada contato exige novo preflight e rota aplicavel. Restricao trial observada apenas no Bulk; a API individual ja entregou.",
     "Testes sinteticos e saude nao comprovam conversa natural posterior, conversao ou economia."
   ],
-  "documentationReconciledAt": "2026-10-15T23:35:06.840081Z",
-  "drivePlanSha256": "917afd119e7cf2486e411f800c08b1606f8e13e25a6287b662c69cc45d13d3f0",
+  "documentationReconciledAt": "2026-10-15T23:42:59.800469Z",
+  "drivePlanSha256": "9c85431605daa1309a04bf04daecba191db0e1e7bb00dae223bb7ea0ca88c11e",
   "documentationCloseout": {
-    "sourceCommit": "63b22f0c60820d4b8f5f2d93570903023c35af13",
+    "sourceCommit": "6263eeb7be8285753727c97352eebcab2cfc2a22",
     "functionalSourceCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
     "runtimeChangedAfterApprovedCommit": false,
     "sameFileDriveReadback": true,
@@ -541,5 +541,22 @@
     "manualListPrepared": true,
     "newMessagesSent": 0,
     "newPaymentPerformed": false
+  },
+  "followupExecution": {
+    "status": "waiting_for_user_start",
+    "userInstruction": "Daniel informou que pedira a execucao amanha de manha e solicitou todas as mensagens prontas.",
+    "recordedAt": "2026-10-15T23:42:59.800469Z",
+    "automationId": "executar-retomadas-revisadas-da-cl-nica-liv",
+    "automationStatus": "PAUSED",
+    "automationReadbackVerified": true,
+    "preparedContacts": 78,
+    "priorityCounts": [
+      27,
+      28,
+      23
+    ],
+    "newMessagesSent": 0,
+    "plannedTransport": "WhatsApp interface after fresh conversation and recipient verification",
+    "modelRecommendation": "GPT-6.1 Sol high; recommendation only, no model switch or paid API call"
   }
 }
