@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
-  "status": "tested_local",
+  "status": "applied_verified_pending_drive",
   "baseCommit": "3be4621fd2f82fd032301f74aba565e648567413",
   "authorizedScope": "Pedido para fazer o restante das sugestões, com autorização anterior de publicar ao fim:11 campos em três RSAs, SL04/SL05 e três textos de destaques existentes de conta. CO04 excluído pela associação incompatível. Nenhum status ou associação muda; nenhuma autorização Bruna.",
   "source": "Proposta original apresentada em 14/10/2026; export não comprova estado vivo. Primeiro lote já publicado e verificado permanece fora desta alteração.",
@@ -24,10 +24,13 @@
       "characters": 24,
       "limit": 30,
       "pin": "Preservar fixação viva; descrição médica 1 permanece fixada e fora do delta.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "beforeLive": "Cardiologia na Própria Clínica",
       "beforeLiveCheckedAt": "2026-10-15T10:53:21.940Z",
-      "beforeEvidenceSha256": "079fa7e692e70349aa7d09edb514f7c41aab384d45c83fb11bb94be1746150a5"
+      "beforeEvidenceSha256": "079fa7e692e70349aa7d09edb514f7c41aab384d45c83fb11bb94be1746150a5",
+      "afterLive": "Cicatrizes e Recuperação",
+      "afterLiveCheckedAt": "2026-10-15T11:18:04.778Z",
+      "afterEvidenceSha256": "6bb54bc7a8d6cf927c11db95c834d2560e0ab3843f0b1feec5652ebe9c07caa0"
     },
     {
       "action": "B02",
@@ -38,10 +41,13 @@
       "characters": 79,
       "limit": 90,
       "pin": "Preservar fixação viva; descrição médica 1 permanece fixada e fora do delta.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "beforeLive": "Equipe anestésica selecionada com critério e comunicação próxima com a cirurgiã.",
       "beforeLiveCheckedAt": "2026-10-15T10:53:21.940Z",
-      "beforeEvidenceSha256": "079fa7e692e70349aa7d09edb514f7c41aab384d45c83fb11bb94be1746150a5"
+      "beforeEvidenceSha256": "079fa7e692e70349aa7d09edb514f7c41aab384d45c83fb11bb94be1746150a5",
+      "afterLive": "Cicatrizes, preparo e recuperação explicados na consulta, com plano individual.",
+      "afterLiveCheckedAt": "2026-10-15T11:18:04.778Z",
+      "afterEvidenceSha256": "6bb54bc7a8d6cf927c11db95c834d2560e0ab3843f0b1feec5652ebe9c07caa0"
     },
     {
       "action": "B03",
@@ -52,10 +58,13 @@
       "characters": 18,
       "limit": 30,
       "pin": "Preservar fixação viva; descrição médica 1 permanece fixada e fora do delta.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "beforeLive": "Preparo e Pós-Operatório",
       "beforeLiveCheckedAt": "2026-10-15T10:53:53.416Z",
-      "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9"
+      "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9",
+      "afterLive": "O Que Muda o Valor",
+      "afterLiveCheckedAt": "2026-10-15T11:18:53.243Z",
+      "afterEvidenceSha256": "71180a0a1bce00f60e53cb2fdee8da01b477f183846fcccb59b5cb6b72296540"
     },
     {
       "action": "B04",
@@ -66,10 +75,13 @@
       "characters": 22,
       "limit": 30,
       "pin": "Preservar fixação viva; descrição médica 1 permanece fixada e fora do delta.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "beforeLive": "Segurança em Primeiro Lugar",
       "beforeLiveCheckedAt": "2026-10-15T10:53:53.416Z",
-      "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9"
+      "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9",
+      "afterLive": "Valores e Planejamento",
+      "afterLiveCheckedAt": "2026-10-15T11:18:53.243Z",
+      "afterEvidenceSha256": "71180a0a1bce00f60e53cb2fdee8da01b477f183846fcccb59b5cb6b72296540"
     },
     {
       "action": "B05",
@@ -80,10 +92,13 @@
       "characters": 24,
       "limit": 30,
       "pin": "Preservar fixação viva; descrição médica 1 permanece fixada e fora do delta.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "beforeLive": "Cardiologia na Própria Clínica",
       "beforeLiveCheckedAt": "2026-10-15T10:53:53.416Z",
-      "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9"
+      "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9",
+      "afterLive": "Referência pelo WhatsApp",
+      "afterLiveCheckedAt": "2026-10-15T11:18:53.243Z",
+      "afterEvidenceSha256": "71180a0a1bce00f60e53cb2fdee8da01b477f183846fcccb59b5cb6b72296540"
     },
     {
       "action": "B06",
@@ -94,10 +109,13 @@
       "characters": 84,
       "limit": 90,
       "pin": "Preservar fixação viva; descrição médica 1 permanece fixada e fora do delta.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "beforeLive": "Lifting facial: preço reúne equipe, anestesia e hospital. Entenda o investimento.",
       "beforeLiveCheckedAt": "2026-10-15T10:53:53.416Z",
-      "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9"
+      "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9",
+      "afterLive": "O valor reúne equipe, anestesia e hospital. Veja o que muda no orçamento do lifting.",
+      "afterLiveCheckedAt": "2026-10-15T11:18:53.243Z",
+      "afterEvidenceSha256": "71180a0a1bce00f60e53cb2fdee8da01b477f183846fcccb59b5cb6b72296540"
     },
     {
       "action": "B07",
@@ -108,10 +126,13 @@
       "characters": 85,
       "limit": 90,
       "pin": "Preservar fixação viva; descrição médica 1 permanece fixada e fora do delta.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "beforeLive": "Quanto custa um lifting facial? O valor depende da técnica e da avaliação médica.",
       "beforeLiveCheckedAt": "2026-10-15T10:53:53.416Z",
-      "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9"
+      "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9",
+      "afterLive": "Peça uma referência geral pelo WhatsApp. O orçamento individual depende da avaliação.",
+      "afterLiveCheckedAt": "2026-10-15T11:18:53.243Z",
+      "afterEvidenceSha256": "71180a0a1bce00f60e53cb2fdee8da01b477f183846fcccb59b5cb6b72296540"
     },
     {
       "action": "B08",
@@ -122,10 +143,13 @@
       "characters": 79,
       "limit": 90,
       "pin": "Preservar fixação viva; descrição médica 1 permanece fixada e fora do delta.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "beforeLive": "Avaliação cardiológica na clínica, quando indicada, com médico formado pela USP.",
       "beforeLiveCheckedAt": "2026-10-15T10:53:53.416Z",
-      "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9"
+      "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9",
+      "afterLive": "Entenda técnica, preparo e recuperação antes de decidir sobre o lifting facial.",
+      "afterLiveCheckedAt": "2026-10-15T11:18:53.243Z",
+      "afterEvidenceSha256": "71180a0a1bce00f60e53cb2fdee8da01b477f183846fcccb59b5cb6b72296540"
     },
     {
       "action": "B09",
@@ -136,10 +160,13 @@
       "characters": 28,
       "limit": 30,
       "pin": "Preservar fixação viva; descrição médica 1 permanece fixada e fora do delta.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "beforeLive": "Cirurgia de Orelha: Valor",
       "beforeLiveCheckedAt": "2026-10-15T10:54:15.564Z",
-      "beforeEvidenceSha256": "1f5f0b08a5d369dcb8576771e1bb9cf6b1ce0c9b3def07a355a3307b183cb3c6"
+      "beforeEvidenceSha256": "1f5f0b08a5d369dcb8576771e1bb9cf6b1ce0c9b3def07a355a3307b183cb3c6",
+      "afterLive": "Projeção, Dobras e Proporção",
+      "afterLiveCheckedAt": "2026-10-15T11:19:36.883Z",
+      "afterEvidenceSha256": "bba500be5ac293cd65a503916982adffe8af1f7258e90a5c3005953329e61ce5"
     },
     {
       "action": "B10",
@@ -150,10 +177,13 @@
       "characters": 27,
       "limit": 30,
       "pin": "Preservar fixação viva; descrição médica 1 permanece fixada e fora do delta.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "beforeLive": "Cirurgia Plástica da Orelha",
       "beforeLiveCheckedAt": "2026-10-15T10:54:15.564Z",
-      "beforeEvidenceSha256": "1f5f0b08a5d369dcb8576771e1bb9cf6b1ce0c9b3def07a355a3307b183cb3c6"
+      "beforeEvidenceSha256": "1f5f0b08a5d369dcb8576771e1bb9cf6b1ce0c9b3def07a355a3307b183cb3c6",
+      "afterLive": "Planejamento de Cada Orelha",
+      "afterLiveCheckedAt": "2026-10-15T11:19:36.883Z",
+      "afterEvidenceSha256": "bba500be5ac293cd65a503916982adffe8af1f7258e90a5c3005953329e61ce5"
     },
     {
       "action": "B11",
@@ -164,10 +194,13 @@
       "characters": 77,
       "limit": 90,
       "pin": "Preservar fixação viva; descrição médica 1 permanece fixada e fora do delta.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "beforeLive": "Otoplastia: preço e plano definidos após avaliação das orelhas com a Dra. Amanda.",
       "beforeLiveCheckedAt": "2026-10-15T10:54:15.564Z",
-      "beforeEvidenceSha256": "1f5f0b08a5d369dcb8576771e1bb9cf6b1ce0c9b3def07a355a3307b183cb3c6"
+      "beforeEvidenceSha256": "1f5f0b08a5d369dcb8576771e1bb9cf6b1ce0c9b3def07a355a3307b183cb3c6",
+      "afterLive": "Cirurgia de orelha de abano: avalie formato, dobras, proporção e recuperação.",
+      "afterLiveCheckedAt": "2026-10-15T11:19:36.883Z",
+      "afterEvidenceSha256": "bba500be5ac293cd65a503916982adffe8af1f7258e90a5c3005953329e61ce5"
     }
   ],
   "sitelinks": [
@@ -179,8 +212,8 @@
       "after": "Peça uma referência pelo WhatsApp",
       "description2Preserved": "Orçamento após avaliação",
       "finalUrlPreserved": "https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
-      "scope": "Somente associação existente no contexto de lifting facial; confirmar consumidores vivos.",
-      "status": "planned_before_verified",
+      "scope": "Recurso existente com uma associação à campanha de lifting facial, conferida antes e depois; somente descrição 1 alterada.",
+      "status": "applied_verified",
       "beforeLive": "Entenda o que compõe o valor",
       "beforeLiveCheckedAt": "2026-10-15T10:56:19.112Z",
       "beforeEvidenceSha256": "dafb42ac4aeffa0b0aa94282b59abab8b8dbbc4b9d26562331ed1bf6a75b9749",
@@ -192,7 +225,11 @@
       "earlierAdvancedOptionsLimitation": "Opções avançadas colapsadas no snapshot; agenda e datas não foram relidas nesta inspeção. Nenhum delta desses campos é proposto.",
       "scheduleBefore": "Conferência adicional: início Nenhuma, término Nenhuma, todos os dias00:00–00:00; preservar.",
       "scheduleEvidenceSha256": "3ab30cfd561ff4674375be9867dd6335516e99e6f9b4e096013a9f36c8272f60",
-      "scheduleCheckedAt": "2026-10-15T11:07:15.355Z"
+      "scheduleCheckedAt": "2026-10-15T11:07:15.355Z",
+      "afterLive": "Peça uma referência pelo WhatsApp",
+      "afterLiveCheckedAt": "2026-10-15T11:20:25.308Z",
+      "afterEvidenceSha256": "704343380d512b27ff4ecb8703b145b7added1329378f184bbbe61279902057e",
+      "scheduleAfter": "Início Nenhuma, término Nenhuma, todos os dias 00:00–00:00; preservados no editor reaberto."
     },
     {
       "action": "SL05",
@@ -203,7 +240,7 @@
       "description1Preserved": "Projeção e curvas de cada orelha",
       "description2Preserved": "Planejamento com a Dra. Amanda",
       "scope": "Somente otoplastia adulta; não aplicar ao contexto infantil. Alias antigo já funciona; refinamento de pertinência.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "beforeLive": "https://draamandaschroeder.com.br/otoplastia/#naturalidade",
       "beforeLiveCheckedAt": "2026-10-15T10:57:45.069Z",
       "beforeEvidenceSha256": "c8c548bbf0be3f37ef1650af49b56589368e527005741fcf96d3312a5f81ac13",
@@ -215,7 +252,11 @@
       "earlierAdvancedOptionsLimitation": "Opções avançadas colapsadas no snapshot; agenda e datas não foram relidas nesta inspeção. Nenhum delta desses campos é proposto.",
       "scheduleBefore": "Conferência adicional: início Nenhuma, término Nenhuma, todos os dias00:00–00:00; preservar.",
       "scheduleEvidenceSha256": "a3bc85b83b0dac06e9bc210e7b588996273b63cb9f03e880dcbfceb3288f40df",
-      "scheduleCheckedAt": "2026-10-15T11:07:30.148Z"
+      "scheduleCheckedAt": "2026-10-15T11:07:30.148Z",
+      "afterLive": "https://draamandaschroeder.com.br/otoplastia-adulto/#anatomia",
+      "afterLiveCheckedAt": "2026-10-15T11:21:01.862Z",
+      "afterEvidenceSha256": "53300b35fd405da7a2c1bdcbceb9e2ec2ba0d90677fbec307e4dfd0fccdc4c78",
+      "scheduleAfter": "Início Nenhuma, término Nenhuma, todos os dias 00:00–00:00; preservados no editor reaberto."
     }
   ],
   "invariants": [
@@ -236,11 +277,11 @@
   ],
   "rollback": {
     "local": "Reverter somente os arquivos deste componente, preservando recibos Ads anteriores e candidato Bruna.",
-    "production": "Restaurar apenas o campo ou associação alterado ao before vivo guardado; preservar objetos, histórico, orçamento, lances e mudanças paralelas."
+    "production": "Restaurar somente o campo alterado ao before vivo guardado; nenhuma associação ou status foi alterado. Preservar objetos, histórico, orçamento, lances e alterações paralelas."
   },
   "monitoring": {
     "owner": "Daniel / equipe LIV",
-    "window": "Integridade e política em D+1/D+2; progressão D+7/D+14; decisão comercial D+28 da publicação efetiva. Nenhuma automação nova.",
+    "window": "Integridade e política em 16 e 17/10/2026; progressão em 22 e 29/10/2026; decisão comercial em 12/11/2026, com coortes e maturação comparáveis. Nenhuma automação nova.",
     "signals": [
       "Campos e associações iguais ao payload aprovado; identidade, tracking e destinos preservados.",
       "Política, elegibilidade, força do anúncio e exibição tratados como estados diferentes.",
@@ -248,47 +289,59 @@
       "Corrigir destino, procedimento, promessa ou atribuição incorretos; reverter só o campo responsável diante de regressão consistente."
     ]
   },
-  "externalWritesPerformed": false,
+  "externalWritesPerformed": true,
   "initialPreparationBase": "20d4b5be99c15b24a26cded8b6c9a0a33dafbf93",
   "callouts": [
     {
       "action": "CO01",
       "beforeExport": "Residência na Unicamp",
       "scope": "Recurso existente associado somente à conta; preservar a associação e o status.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "after": "Opções e limites claros",
       "characters": 23,
       "limit": 25,
       "beforeLive": "Residência na Unicamp",
       "beforeLiveCheckedAt": "2026-10-15T10:59:55.732Z",
       "beforeEvidenceSha256": "179612ef4a85f9b2dcf7f567737237496959ec31deefb0af60043b21d8a31df0",
-      "scheduleBefore": "Início Nenhuma, término Nenhuma, todos os dias00:00–00:00; preservar."
+      "scheduleBefore": "Início Nenhuma, término Nenhuma, todos os dias00:00–00:00; preservar.",
+      "afterLive": "Opções e limites claros",
+      "afterLiveCheckedAt": "2026-10-15T11:21:30.328Z",
+      "afterEvidenceSha256": "179855f28b91deeebb1d493891aa478b7b8185ba5fe956a918073f7de7bc87e7",
+      "scheduleAfter": "Início Nenhuma, término Nenhuma, todos os dias 00:00–00:00; preservados no editor reaberto."
     },
     {
       "action": "CO02",
       "beforeExport": "Consulta com a cirurgiã",
       "scope": "Recurso existente associado somente à conta; preservar a associação e o status.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "after": "Dúvidas sobre recuperação",
       "characters": 25,
       "limit": 25,
       "beforeLive": "Consulta com a cirurgiã",
       "beforeLiveCheckedAt": "2026-10-15T11:01:35.137Z",
       "beforeEvidenceSha256": "2d788c0fe085c7ae81e82a7e5cb272c8ab006f59c8ad1a14475b043b0335ef8f",
-      "scheduleBefore": "Início Nenhuma, término Nenhuma, todos os dias00:00–00:00; preservar."
+      "scheduleBefore": "Início Nenhuma, término Nenhuma, todos os dias00:00–00:00; preservar.",
+      "afterLive": "Dúvidas sobre recuperação",
+      "afterLiveCheckedAt": "2026-10-15T11:21:50.253Z",
+      "afterEvidenceSha256": "45ca4ec8d1968b07a110e73f3b035cf3a1843cb3684b844240f9068986f0445a",
+      "scheduleAfter": "Início Nenhuma, término Nenhuma, todos os dias 00:00–00:00; preservados no editor reaberto."
     },
     {
       "action": "CO03",
       "beforeExport": "Preparo e pós-operatório",
       "scope": "Recurso existente associado somente à conta; preservar a associação e o status.",
-      "status": "planned_before_verified",
+      "status": "applied_verified",
       "after": "Cuidados com cicatrizes",
       "characters": 23,
       "limit": 25,
       "beforeLive": "Preparo e pós-operatório",
       "beforeLiveCheckedAt": "2026-10-15T11:03:28.760Z",
       "beforeEvidenceSha256": "8f7184d39bbf8897bbca40708b33dc183b0b2704cdb8117f3fcd195f54a39a94",
-      "scheduleBefore": "Início Nenhuma, término Nenhuma, todos os dias00:00–00:00; preservar."
+      "scheduleBefore": "Início Nenhuma, término Nenhuma, todos os dias00:00–00:00; preservar.",
+      "afterLive": "Cuidados com cicatrizes",
+      "afterLiveCheckedAt": "2026-10-15T11:22:14.744Z",
+      "afterEvidenceSha256": "54e731c890b0846e4181a2e99b555fa5eb1f7f37f3ee37f9470ef9f7c93dffc3",
+      "scheduleAfter": "Início Nenhuma, término Nenhuma, todos os dias 00:00–00:00; preservados no editor reaberto."
     }
   ],
   "excludedCallouts": [
@@ -305,5 +358,7 @@
     "rule": "Destaques em nível mais específico impedem servir os de nível superior; editar Conta não comprova elegibilidade em campanhas/grupos com destaques próprios.",
     "source": "https://support.google.com/google-ads/answer/6079510?hl=en",
     "decision": "CO02/CO03 de MARCA permanecem íntegros. Não inferir dupla exibição por terem texto igual no before. Nenhuma pausa, exclusão, criação ou reassociação."
-  }
+  },
+  "approvedCommit": "66b881e46234d7d8b4a6936a8144dfd9edc90dd7",
+  "closingIntegratedBaseline": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788"
 }

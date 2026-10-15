@@ -135,5 +135,16 @@
     "status": "passed",
     "reference": "auditorias/google-ads-complementos-2026-10-15/REVISAO.json",
     "checkedAt": "2026-10-15T11:13:55Z"
+  },
+  "postPublicationParallelIntegration": {
+    "status": "integrated_pending_document_sync",
+    "sourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+    "driveBeforeModifiedAt": "2026-10-15T11:14:05.591Z",
+    "driveBeforeBytes": 13075,
+    "driveBeforeSha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
+    "driveEqualsSourceCommit": true,
+    "brunaCodeTestsManifestAndReceiptsPreserved": true,
+    "approvedAdsCommitUnchanged": true,
+    "note": "Nova deriva Drive detectada antes da substituição. Terceira tentativa Bruna bloqueada e correção financeira literal preservadas, sem publicação ou autorização própria inferida."
   }
 }
