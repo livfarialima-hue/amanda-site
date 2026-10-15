@@ -380,12 +380,23 @@
   },
   "documentationReconciledAt": "2026-10-15T11:36:35.552Z",
   "operationalClosure": {
-    "status": "pending_final_git_checks",
+    "status": "passed",
+    "checkedAt": "2026-10-15T11:37:49.603Z",
+    "checkedCommit": "25870cb6d4d28e12bbf214dc90632d5411d2b454",
+    "canonicalBranch": "reestruturacao-site",
+    "canonicalCheckoutClean": true,
+    "changeSafety": "OK",
+    "scopeFiles": 45,
+    "architecture": "OK",
+    "opsCheck": "OK",
     "documentationReconciled": true,
-    "pending": [
-      "Commit these JSON receipts",
-      "Reconcile canonical checkout and confirm it is clean",
-      "Run change:check, architecture:check and ops:check on canonical branch"
-    ]
+    "productionDeployId": "6ad0b88d46ff84caa6a749e7",
+    "productionPointerReverifiedAt": "2026-10-15T11:37:33Z",
+    "approvedFunctionalCodeUnchanged": true,
+    "metadataTests": {
+      "passed": 15,
+      "total": 15
+    },
+    "pending": []
   }
 }

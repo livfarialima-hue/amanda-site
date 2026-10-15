@@ -89,13 +89,24 @@
     "drivePlanSha256": "345d750247179229b48dd4ca135990951b9d3d6c7625e413d30a11151d4a7aca"
   },
   "operationalConsistency": {
-    "status": "SYNC_PENDING",
-    "checkedAt": "2026-10-15T11:36:35.552Z",
+    "status": "OK",
+    "checkedAt": "2026-10-15T11:37:49.603Z",
+    "checkedCommit": "25870cb6d4d28e12bbf214dc90632d5411d2b454",
+    "canonicalBranch": "reestruturacao-site",
+    "canonicalCheckoutClean": true,
+    "changeSafety": "OK",
+    "scopeFiles": 45,
+    "architecture": "OK",
+    "opsCheck": "OK",
     "documentationReconciled": true,
-    "pending": [
-      "Commit these JSON receipts",
-      "Reconcile canonical checkout and run final Git/operational gates"
-    ]
+    "productionDeployId": "6ad0b88d46ff84caa6a749e7",
+    "productionPointerReverifiedAt": "2026-10-15T11:37:33Z",
+    "approvedFunctionalCodeUnchanged": true,
+    "metadataTests": {
+      "passed": 15,
+      "total": 15
+    },
+    "pending": []
   },
   "documentation": {
     "status": "written_verified",
@@ -366,5 +377,12 @@
     "scheduleCount": 6,
     "functionNamesEqual": true,
     "scheduleNamesAndCronEqual": true
+  },
+  "finalIndependentReview": {
+    "status": "passed",
+    "reviewedCommit": "f28a7a51c0cd1a71687478dfc0842c1595065de3",
+    "scopeFiles": 45,
+    "approvedRuntimePreserved": true,
+    "parallelAdsComponentsPreserved": true
   }
 }
