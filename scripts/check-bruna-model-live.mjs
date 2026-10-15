@@ -233,9 +233,52 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     billingMode: 'api_paid_authorized', syntheticOnly: true, patientMessagesSent: 0, results, audioCheck };
 }
 
+// Keep every hosted log line bounded. A single serialized run can exceed the
+// host's line limit and hide the failing scenario precisely when it is needed.
+export function writeBrunaModelPreflightLog(result, { log = console.log, secret = '' } = {}) {
+  const shortText = value => {
+    if (value == null) return undefined;
+    const text = String(value);
+    return (secret ? text.replaceAll(secret, '[redacted]') : text).slice(0, 200);
+  };
+  const emit = (marker, value) => {
+    const serialized = JSON.stringify(value);
+    log(`${marker}=${secret ? serialized.replaceAll(secret, '[redacted]') : serialized}`);
+  };
+  const results = result.results || [];
+  const audio = result.audioCheck;
+  const emitFailure = (name, value) => {
+    let serialized = JSON.stringify(value);
+    if (secret) serialized = serialized.replaceAll(secret, '[redacted]');
+    const chunks = serialized.match(/[\s\S]{1,1200}/g) || [''];
+    chunks.forEach((data, index) => emit('BRUNA_MODEL_FAILURE_CHUNK', { name, index, total: chunks.length, data }));
+  };
+  for (const scenario of results) {
+    emit('BRUNA_MODEL_SCENARIO', {
+      name: shortText(scenario.name), passed: scenario.passed, status: shortText(scenario.status),
+      elapsedMs: scenario.elapsedMs, timeoutMs: scenario.timeoutMs,
+      errorCode: shortText(scenario.errorCode), replyCode: shortText(scenario.replyCode),
+      gateAllowed: scenario.gate?.allowed, gateReason: shortText(scenario.gate?.reason),
+      modelRequests: scenario.requests?.length,
+    });
+    if (!scenario.passed) emitFailure(scenario.name, scenario);
+  }
+  if (audio?.status === 'failed') emitFailure('audio', audio);
+  emit('BRUNA_MODEL_PREFLIGHT', {
+    status: shortText(result.status), reason: shortText(result.reason), checkedAt: result.checkedAt,
+    model: result.model, effort: result.effort, maxOutputTokens: result.maxOutputTokens,
+    verbosity: result.verbosity, billingMode: result.billingMode,
+    syntheticOnly: result.syntheticOnly, patientMessagesSent: result.patientMessagesSent,
+    passed: results.filter(scenario => scenario.passed).length, total: results.length,
+    fullHistoryPassed: results.filter(scenario => scenario.passed && scenario.name.startsWith('full_history_')).length,
+    audioCheck: audio && { status: audio.status, model: audio.model,
+      passed: audio.checks?.filter(check => check.passed).length, total: audio.checks?.length },
+  });
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const manifest = JSON.parse(fs.readFileSync(new URL('../netlify/functions/lib/bruna-policy/manifest.json', import.meta.url), 'utf8'));
   const result = await checkBrunaModelLive({ manifest });
-  console.log(`BRUNA_MODEL_PREFLIGHT=${JSON.stringify(result)}`);
+  writeBrunaModelPreflightLog(result, { secret: process.env.OPENAI_API_KEY });
   if (result.status === 'failed') process.exitCode = 1;
 }

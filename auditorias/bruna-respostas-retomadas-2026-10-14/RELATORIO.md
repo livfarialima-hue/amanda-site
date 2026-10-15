@@ -1,6 +1,8 @@
 # Bruna — respostas completas e retomadas devidas
 
-Estado: implementação testada localmente em 15/10/2026; sem publicação ou mensagens reais.
+Estado: publicação autorizada bloqueada pelo gate vivo em 15/10/2026, sem troca de produção ou mensagens reais.
+
+A tentativa autorizada do commit 30b01f4 foi bloqueada pelo gate hospedado em 15/10/2026 às 07:15:32 (America/Sao_Paulo), deploy 6ad0a6f33904b3954a95aec5, antes de publicar. Produção permanece no deploy 6acff7b9dc7d30f39ad66b31 / commit cbda0cf. A revisão encontrou instruções antigas incompatíveis com a faixa já autorizada de papada isolada; foram alinhadas sem ampliar o escopo de preço. O registro final do gate não apareceu no log, portanto não se atribui a falha a um cenário específico. O diagnóstico passa a usar linhas limitadas por cenário, preservando todos os critérios. Recibo: auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json. A correção local passou em 2.205 testes integrais, 1.531 testes de contratos (74 arquivos, com sobreposição), 18 testes simulados do gate e verificações de arquitetura/build/site. Aguarda autorização do novo commit exato antes de repetir a publicação.
 
 ## Problema e mudança
 
@@ -18,7 +20,7 @@ Preflight Netlify/projeto/deploy e webhook público atuais, baseline Git b77b1d6
 
 ## Validação e publicação
 
-Passaram 2.204 testes integrais e 1.635 da união de 83 arquivos de contratos, com sobreposição; 17 testes do gate hospedado são simulados. Build de 193 arquivos/54 URLs, arquitetura, contrato de mudança, diff e revisão independente passaram. Foram acrescentados 28 casos comportamentais e ampliadas as verificações de recibo e repetição contextual. A nova holding de papada exige recibo explícito do compromisso e alerta entregue; falha ou resposta ambígua conserva recuperação, sem promessa. Testes e recibos em REVISAO.json; estado local continua SYNC_PENDING. Publicação requer autorização do commit, preflight atualizado e gates vivos de modelo, áudio e histórico preservados. Não usar teste sintético como comprovação de resposta natural.
+A implementação inicial passou em 2.204 testes integrais e 1.635 da união de 83 arquivos de contratos, com sobreposição; 17 testes do gate hospedado eram simulados. Após o bloqueio, a correção passou na nova suíte de 2.205 testes integrais, 1.531 testes dos 74 arquivos obrigatórios de contratos e 18 testes simulados do gate. O novo teste de consistência do prompt falhou antes do reparo e passou depois. Build de 193 arquivos/54 URLs, arquitetura, contrato de mudança, diff e revisão independente passaram. Foram acrescentados 28 casos comportamentais e ampliadas as verificações de recibo e repetição contextual. A nova holding de papada exige recibo explícito do compromisso e alerta entregue; falha ou resposta ambígua conserva recuperação, sem promessa. Testes e recibos em REVISAO.json; estado local continua SYNC_PENDING. Publicação requer autorização do commit, preflight atualizado e gates vivos de modelo, áudio e histórico preservados. Não usar teste sintético como comprovação de resposta natural.
 
 ## Rollback e acompanhamento
 

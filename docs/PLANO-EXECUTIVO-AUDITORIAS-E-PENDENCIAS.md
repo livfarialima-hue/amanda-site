@@ -1,6 +1,8 @@
 # Plano executivo — auditorias, pendências e prazos
 
-## Candidato testado localmente — respostas e retomadas de 15/10
+## Publicação bloqueada — respostas e retomadas de 15/10
+
+A tentativa autorizada do commit 30b01f4 foi bloqueada pelo gate hospedado em 15/10/2026 às 07:15:32 (America/Sao_Paulo), deploy 6ad0a6f33904b3954a95aec5, antes de publicar. Produção permanece no deploy 6acff7b9dc7d30f39ad66b31 / commit cbda0cf. A revisão encontrou instruções antigas incompatíveis com a faixa já autorizada de papada isolada; foram alinhadas sem ampliar o escopo de preço. O registro final do gate não apareceu no log, portanto não se atribui a falha a um cenário específico. O diagnóstico passa a usar linhas limitadas por cenário, preservando todos os critérios. Recibo: auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json. A correção local passou em 2.205 testes integrais, 1.531 testes de contratos (74 arquivos, com sobreposição), 18 testes simulados do gate e verificações de arquitetura/build/site. Aguarda autorização do novo commit exato antes de repetir a publicação.
 
 Pacote 2026-10-14.5, ainda sem publicação. Corrigir perguntas conjuntas de procedimento/recuperação/preço e incorporar exclusivamente a faixa de lipo de papada isolada autorizada pelo responsável. Preservar oferta de informações úteis, revisão clínica, confirmação semântica e envio único. Baseline local b77b1d6 e deploy vigente 6acff7b9dc7d30f39ad66b31; Apps Script v164 preservado.
 
