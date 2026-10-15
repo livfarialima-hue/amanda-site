@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
-  "status": "applied_verified_pending_drive",
+  "status": "published_verified",
   "baseCommit": "3be4621fd2f82fd032301f74aba565e648567413",
   "authorizedScope": "Pedido para fazer o restante das sugestões, com autorização anterior de publicar ao fim:11 campos em três RSAs, SL04/SL05 e três textos de destaques existentes de conta. CO04 excluído pela associação incompatível. Nenhum status ou associação muda; nenhuma autorização Bruna.",
   "source": "Proposta original apresentada em 14/10/2026; export não comprova estado vivo. Primeiro lote já publicado e verificado permanece fora desta alteração.",

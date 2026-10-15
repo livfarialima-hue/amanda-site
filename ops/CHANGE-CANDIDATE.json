@@ -588,10 +588,15 @@
     },
     "nextProjection": {
       "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
-      "status": "pending",
-      "note": "Projeções anteriores continuam históricas e verificadas; novo Plano só será declarado igual após substituição no mesmo arquivo e download real.",
-      "sha256": null,
-      "verifiedAt": null
+      "status": "written_verified",
+      "sameExistingFile": true,
+      "sha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
+      "bytes": 16274,
+      "verifiedAt": "2026-10-15T11:31:14.1519180Z",
+      "sourceCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
+      "modifiedAt": "2026-10-15T11:30:50.929Z",
+      "method": "Authenticated raw download equal to local bytes and committed Git blob dfb9b2eb74eda8a484d9395a79a717c646b0e5af",
+      "note": "Mesma projeção do Plano atualizada e relida com igualdade; recibos anteriores permanecem históricos e a pendência Bruna preservada."
     }
   },
   "integratedExternalComponents": [
@@ -705,7 +710,7 @@
     },
     {
       "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
-      "status": "applied_verified_pending_drive",
+      "status": "published_verified",
       "baseCommit": "3be4621fd2f82fd032301f74aba565e648567413",
       "receipt": "auditorias/google-ads-complementos-2026-10-15/REVISAO.json",
       "plan": "auditorias/google-ads-complementos-2026-10-15/PLANO.json",
@@ -1090,12 +1095,16 @@
         }
       },
       "drive": {
-        "status": "pending",
+        "status": "written_verified",
         "sameExistingFile": true,
-        "sha256": null,
-        "verifiedAt": null
+        "sha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
+        "bytes": 16274,
+        "verifiedAt": "2026-10-15T11:31:14.1519180Z",
+        "sourceCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
+        "modifiedAt": "2026-10-15T11:30:50.929Z",
+        "method": "Authenticated raw download equal to local bytes and committed Git blob dfb9b2eb74eda8a484d9395a79a717c646b0e5af"
       },
-      "note": "Somente Google Ads foi aplicado e relido; a igualdade da projeção Drive ainda é pendente. Não encerra nem autoriza a publicação Bruna.",
+      "note": "Componente Ads publicado, relido e reconciliado com a mesma projeção do Plano no Drive. Não encerra nem autoriza a publicação Bruna.",
       "releaseGate": {
         "status": "passed_before_first_write",
         "checkedAt": "2026-10-15T11:17:28.9829022Z",
@@ -1104,7 +1113,7 @@
         "evidenceType": "Recibo derivado do output real do comando; não é log integral."
       },
       "postPublicationParallelIntegration": {
-        "status": "integrated_pending_document_sync",
+        "status": "integrated_document_sync_verified",
         "sourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
         "driveBeforeModifiedAt": "2026-10-15T11:14:05.591Z",
         "driveBeforeBytes": 13075,
@@ -1164,7 +1173,8 @@
           }
         ],
         "limitations": "Nova revisão somente local; não altera o commit aprovado que precedeu as escritas Ads e não autoriza publicação Bruna."
-      }
+      },
+      "verifiedAt": "2026-10-15T11:31:14.1519180Z"
     }
   ]
 }

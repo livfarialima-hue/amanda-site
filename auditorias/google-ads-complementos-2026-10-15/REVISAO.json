@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
-  "status": "applied_verified_pending_drive",
+  "status": "published_verified",
   "baseCommit": "3be4621fd2f82fd032301f74aba565e648567413",
   "counts": {
     "rsaObjects": 3,
@@ -83,7 +83,7 @@
     "limitations": "Suítes locais e sintéticas; nenhum teste hospedado, deploy, mensagem, importação ou publicação executado por esta validação. Commit exato e release:preflight exclusivos Ads+Drive permanecem anteriores à escrita."
   },
   "publication": {
-    "status": "applied_verified_pending_drive",
+    "status": "published_verified",
     "approvedCommit": "66b881e46234d7d8b4a6936a8144dfd9edc90dd7",
     "releaseGate": {
       "status": "passed_before_first_write",
@@ -327,9 +327,25 @@
         "note": "Mesmo deploy público anterior confirmado pelo operador; nenhum deploy de site ou Bruna foi publicado por este componente. IDs permanecem privados."
       }
     },
-    "driveProjectionEquality": "pending",
-    "drivePlanSha256": null,
-    "drivePlanReadbackVerifiedAt": null
+    "driveProjectionEquality": "verified_equal",
+    "drivePlanSha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
+    "drivePlanReadbackVerifiedAt": "2026-10-15T11:31:14.1519180Z",
+    "drive": {
+      "status": "written_verified",
+      "sameExistingFile": true,
+      "sha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
+      "bytes": 16274,
+      "verifiedAt": "2026-10-15T11:31:14.1519180Z",
+      "sourceCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
+      "modifiedAt": "2026-10-15T11:30:50.929Z",
+      "method": "Authenticated raw download equal to local bytes and committed Git blob dfb9b2eb74eda8a484d9395a79a717c646b0e5af"
+    },
+    "documentationGate": {
+      "status": "passed",
+      "checkedAt": "2026-10-15T11:30:40.5648952Z",
+      "approvedCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
+      "scope": "Somente fechamento Ads e mesma projeção Drive; nenhuma autorização Bruna."
+    }
   },
   "parallelCandidate": {
     "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
@@ -341,9 +357,7 @@
     "preservedCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788"
   },
   "pending": [
-    "Substituir a mesma projeção Drive após confirmar ausência de deriva e igualdade de bytes do commit",
-    "Registrar recibo Drive e commit final",
-    "Monitoramento nas datas de revisão; pendência global Bruna permanece separada"
+    "Acompanhamento nas datas registradas; classificação individual e continuidade cervical permanecem abertas. Pendência global Bruna separada."
   ],
   "publicDestinations": {
     "status": "passed_http_html_only",
@@ -490,7 +504,7 @@
     "externalWrites": 0
   },
   "postPublicationParallelIntegration": {
-    "status": "integrated_pending_document_sync",
+    "status": "integrated_document_sync_verified",
     "sourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
     "driveBeforeModifiedAt": "2026-10-15T11:14:05.591Z",
     "driveBeforeBytes": 13075,
