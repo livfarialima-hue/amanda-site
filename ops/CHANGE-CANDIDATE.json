@@ -2,24 +2,25 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15",
   "title": "Permitir redação contextual confirmada com fatos preservados e contrato semântico antes do estilo",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "e8b11e4136d0bef328a34680b3aaf9c94baddf48",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Pedido atual autoriza preparar e publicar a mudança. Vincular ao SHA concreto após gates e revisão no release:preflight; nenhuma aprovação de release anterior autoriza este candidato."
+    "note": "Autorização do SHA exato 74c53a17555e95cb81915c33eea8a6053a23a8b4 e publicação comprovadas em auditorias/bruna-autonomia-contextual-2026-10-15/PUBLICACAO.json; readback documental pendente."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "note": "Seleção contextual influencia resposta ao paciente; equivalência de fatos e fronteiras materiais devem permanecer obrigatórias.",
-    "componentBoundary": "Somente o delta Bruna; três componentes Ads e baselines históricos preservados, sem nova escrita externa nesta preparação."
+    "componentBoundary": "Somente o release Bruna evidenciado; três componentes Ads e baselines históricos preservados."
   },
   "scope": {
     "files": [
       "auditorias/bruna-autonomia-contextual-2026-10-15/PREFLIGHT.json",
+      "auditorias/bruna-autonomia-contextual-2026-10-15/PUBLICACAO.json",
       "auditorias/bruna-autonomia-contextual-2026-10-15/RELATORIO.md",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
@@ -55,7 +56,7 @@
       "reply-continuity"
     ],
     "note": "Seleção contextual sem whitelist somente quando confirmada e escolhida contextual; approved_exact mantém cópia. Comparação de fatos protegidos limitada a literais/classes explícitas, com equivalência BRL conservadora; ressalvas preservadas, contrato antes de estilo e CTA de agenda não disfarçado de informação. Pacote/prompt/snapshot 2026-10-15.1 com mesmo conhecimento.",
-    "integrationNote": "Escopo exato de 24 arquivos desde e8b11e4136d0bef328a34680b3aaf9c94baddf48; gates locais aprovados, publicação e reconciliação pendentes."
+    "integrationNote": "Escopo exato de 25 arquivos desde e8b11e4136d0bef328a34680b3aaf9c94baddf48; runtime equivalente ao SHA aprovado 74c53a17555e95cb81915c33eea8a6053a23a8b4. Baselines e três componentes Ads preservados."
   },
   "impact": {
     "consumers": [
@@ -125,54 +126,64 @@
       {
         "contract": "bruna-model-runtime",
         "system": "LEADS autenticada, Netlify current/deploy e GET de saúde, metadados das projeções Drive",
-        "status": "read_only_passed_with_limits",
+        "status": "passed_for_approved_release_with_config_limit",
         "checkedAt": "2026-10-15T15:44:30Z",
         "reference": "auditorias/bruna-autonomia-contextual-2026-10-15/PREFLIGHT.json",
-        "limitation": "Recorte operacional limitado, sem prova de veto regex/style; metadados de remetente e Apps Script v164 herdados do baseline anterior, sem revalidação nesta rodada; novo release exige preflight fresco.",
-        "operationalCutoff": "2026-10-15T15:35:19Z"
+        "limitation": "Sender metadata remains inherited from baseline verified at 12:13Z; no sender/template change, existing fail-closed checks preserved. Apps Script v164 is unchanged and derives from the previous verified receipt.",
+        "operationalCutoff": "2026-10-15T15:35:19Z",
+        "releaseReference": "auditorias/bruna-autonomia-contextual-2026-10-15/PUBLICACAO.json",
+        "releaseCheckedAt": "2026-10-15T15:44:30Z"
       },
       {
         "contract": "bruna-regression-governance",
         "system": "LEADS autenticada, Netlify current/deploy e GET de saúde, metadados das projeções Drive",
-        "status": "read_only_passed_with_limits",
+        "status": "passed_for_approved_release_with_config_limit",
         "checkedAt": "2026-10-15T15:44:30Z",
         "reference": "auditorias/bruna-autonomia-contextual-2026-10-15/PREFLIGHT.json",
-        "limitation": "Recorte operacional limitado, sem prova de veto regex/style; metadados de remetente e Apps Script v164 herdados do baseline anterior, sem revalidação nesta rodada; novo release exige preflight fresco.",
-        "operationalCutoff": "2026-10-15T15:35:19Z"
+        "limitation": "Sender metadata remains inherited from baseline verified at 12:13Z; no sender/template change, existing fail-closed checks preserved. Apps Script v164 is unchanged and derives from the previous verified receipt.",
+        "operationalCutoff": "2026-10-15T15:35:19Z",
+        "releaseReference": "auditorias/bruna-autonomia-contextual-2026-10-15/PUBLICACAO.json",
+        "releaseCheckedAt": "2026-10-15T15:44:30Z"
       },
       {
         "contract": "conversation-full-history",
         "system": "LEADS autenticada, Netlify current/deploy e GET de saúde, metadados das projeções Drive",
-        "status": "read_only_passed_with_limits",
+        "status": "passed_for_approved_release_with_config_limit",
         "checkedAt": "2026-10-15T15:44:30Z",
         "reference": "auditorias/bruna-autonomia-contextual-2026-10-15/PREFLIGHT.json",
-        "limitation": "Recorte operacional limitado, sem prova de veto regex/style; metadados de remetente e Apps Script v164 herdados do baseline anterior, sem revalidação nesta rodada; novo release exige preflight fresco.",
-        "operationalCutoff": "2026-10-15T15:35:19Z"
+        "limitation": "Sender metadata remains inherited from baseline verified at 12:13Z; no sender/template change, existing fail-closed checks preserved. Apps Script v164 is unchanged and derives from the previous verified receipt.",
+        "operationalCutoff": "2026-10-15T15:35:19Z",
+        "releaseReference": "auditorias/bruna-autonomia-contextual-2026-10-15/PUBLICACAO.json",
+        "releaseCheckedAt": "2026-10-15T15:44:30Z"
       },
       {
         "contract": "patient-journey-funnel-followups",
         "system": "LEADS autenticada, Netlify current/deploy e GET de saúde, metadados das projeções Drive",
-        "status": "read_only_passed_with_limits",
+        "status": "passed_for_approved_release_with_config_limit",
         "checkedAt": "2026-10-15T15:44:30Z",
         "reference": "auditorias/bruna-autonomia-contextual-2026-10-15/PREFLIGHT.json",
-        "limitation": "Recorte operacional limitado, sem prova de veto regex/style; metadados de remetente e Apps Script v164 herdados do baseline anterior, sem revalidação nesta rodada; novo release exige preflight fresco.",
-        "operationalCutoff": "2026-10-15T15:35:19Z"
+        "limitation": "Sender metadata remains inherited from baseline verified at 12:13Z; no sender/template change, existing fail-closed checks preserved. Apps Script v164 is unchanged and derives from the previous verified receipt.",
+        "operationalCutoff": "2026-10-15T15:35:19Z",
+        "releaseReference": "auditorias/bruna-autonomia-contextual-2026-10-15/PUBLICACAO.json",
+        "releaseCheckedAt": "2026-10-15T15:44:30Z"
       },
       {
         "contract": "reply-continuity",
         "system": "LEADS autenticada, Netlify current/deploy e GET de saúde, metadados das projeções Drive",
-        "status": "read_only_passed_with_limits",
+        "status": "passed_for_approved_release_with_config_limit",
         "checkedAt": "2026-10-15T15:44:30Z",
         "reference": "auditorias/bruna-autonomia-contextual-2026-10-15/PREFLIGHT.json",
-        "limitation": "Recorte operacional limitado, sem prova de veto regex/style; metadados de remetente e Apps Script v164 herdados do baseline anterior, sem revalidação nesta rodada; novo release exige preflight fresco.",
-        "operationalCutoff": "2026-10-15T15:35:19Z"
+        "limitation": "Sender metadata remains inherited from baseline verified at 12:13Z; no sender/template change, existing fail-closed checks preserved. Apps Script v164 is unchanged and derives from the previous verified receipt.",
+        "operationalCutoff": "2026-10-15T15:35:19Z",
+        "releaseReference": "auditorias/bruna-autonomia-contextual-2026-10-15/PUBLICACAO.json",
+        "releaseCheckedAt": "2026-10-15T15:44:30Z"
       }
     ],
     "externalSystems": [
-      "Netlify (produção anterior observada; novo delta ainda local)",
+      "Apps Script v164 (referência publicada anterior; inalterado)",
+      "Google Drive (readback documental pendente)",
       "LEADS/CRM (somente leitura delimitada)",
-      "Google Drive (metadados das mesmas projeções; sem nova escrita/readback)",
-      "Apps Script v164 (referência publicada anterior; inalterado)"
+      "Netlify (publicação verificada)"
     ],
     "componentBoundary": "Sistemas externos apenas consultados; pacote Bruna separado dos componentes Ads já publicados."
   },
@@ -340,13 +351,28 @@
       "opsCheckExpected": "SYNC_PENDING"
     },
     "liveModel": {
-      "status": "pending_authorized_build",
-      "requiredScenarios": 21,
-      "fullHistoryRequired": 2
+      "status": "passed",
+      "passed": 21,
+      "total": 21,
+      "fullHistoryPassed": 2,
+      "model": "gpt-6.1-sol",
+      "checkedAt": "2026-10-15T15:55:43.144Z",
+      "evidence": "BRUNA_MODEL_PREFLIGHT e 21 BRUNA_MODEL_SCENARIO extraídos do log oficial Netlify do deploy de produção 6ad0f6c1fd759be7d5f15b0f; leitura sem nova inferência.",
+      "allScenariosSingleRequest": true,
+      "lipoContextScenario": {
+        "name": "lipo_papada_complete_requested_answer",
+        "passed": true,
+        "gateAllowed": true,
+        "modelRequests": 1,
+        "replyCode": "LIPO-PAPADA-PRICE-RANGE-01"
+      }
     },
     "liveAudio": {
-      "status": "pending_authorized_build",
-      "requiredScenarios": 3
+      "status": "passed",
+      "passed": 3,
+      "total": 3,
+      "model": "whisper-1",
+      "checkedAt": "2026-10-15T15:55:43.144Z"
     },
     "focusedResults": {
       "ownerAndConsumers": {
@@ -374,7 +400,15 @@
       ],
       "remainingBlockingFindings": 0
     },
-    "overlapNote": "Suítes focadas se sobrepõem à suíte integral; contagens não são aditivas."
+    "overlapNote": "Suítes focadas se sobrepõem à suíte integral; contagens não são aditivas.",
+    "closeout": {
+      "stage": "publish",
+      "status": "production_verified_documentation_pending",
+      "approvedCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
+      "preparationCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
+      "scopeFiles": 25,
+      "note": "Helper sem rede, inferência, testes, commit ou push. Gates documentais e ops:check no checkout canônico limpo seguem obrigatórios."
+    }
   },
   "rollback": {
     "local": "Reverter somente este delta, preservando o baseline e trabalho paralelo.",
@@ -1805,14 +1839,18 @@
     "note": "O responsável desta tarefa confirmou atualização e readback do plugin privado Bruna — Gestão e Conversão 1.0.1. Revisões, propostas e cálculos usam a conta e conectores existentes sem fallback pago. Recibo privado mantido fora do repositório; esse componente não publica as funções Netlify nem migra o atendimento."
   },
   "documentation": {
-    "status": "pending_new_publication_and_drive_readback",
+    "status": "awaiting_drive_readback",
+    "sourceCommit": null,
+    "existingFilesRequired": true,
+    "localHashes": {
+      "docs/estrategia-abordagem-bruna.md": "a925333c90c41834bf60c85458b112439b402672306f81d4014caea0096207f5",
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md": "2da4441489017287159364cbe3fc4ffaf7e1fcc8bf6cd3c13d386e59856665f5"
+    },
     "paths": [
       "docs/estrategia-abordagem-bruna.md",
-      "docs/whatsapp-clinica-liv-operacao.md",
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md"
+      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md"
     ],
-    "note": "Documentação local candidata. Preservar as mesmas projeções e exigir igualdade local/commit/download real após a publicação autorizada."
+    "note": "Download autenticado e igualdade real das mesmas projeções ainda obrigatórios."
   },
   "baselineContextualRelease": {
     "schemaVersion": 1,
@@ -2204,5 +2242,399 @@
       "overlapNote": "Focused suites overlap the full suite; counts are not additive."
     },
     "documentationReconciledAt": "2026-10-15T12:50:54.519Z"
+  },
+  "closeoutPreparation": {
+    "sourceCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
+    "approvedFunctionalCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
+    "priorStatus": "tested_local",
+    "priorAuthorization": {
+      "required": true,
+      "recording": "external_release_preflight",
+      "publicationAuthorizedInCommit": false,
+      "note": "Pedido atual autoriza preparar e publicar a mudança. Vincular ao SHA concreto após gates e revisão no release:preflight; nenhuma aprovação de release anterior autoriza este candidato."
+    },
+    "priorDocumentation": {
+      "status": "pending_new_publication_and_drive_readback",
+      "paths": [
+        "docs/estrategia-abordagem-bruna.md",
+        "docs/whatsapp-clinica-liv-operacao.md",
+        "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "docs/ARQUITETURA-JORNADA-PACIENTE.md"
+      ],
+      "note": "Documentação local candidata. Preservar as mesmas projeções e exigir igualdade local/commit/download real após a publicação autorizada."
+    }
+  },
+  "release": {
+    "schemaVersion": 1,
+    "changeId": "BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15",
+    "status": "production_verified_documentation_pending",
+    "bundleVersion": "2026-10-15.1",
+    "approvedCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
+    "netlifyDeployId": "6ad0f6c1fd759be7d5f15b0f",
+    "productionState": "ready",
+    "context": "production",
+    "branch": "reestruturacao-site",
+    "publishedAt": "2026-10-15T15:55:58.973Z",
+    "verifiedAt": "2026-10-15T15:56:44Z",
+    "approval": {
+      "by": "Daniel",
+      "at": "2026-10-15T15:51:55Z",
+      "reference": "Pedido atual nesta conversa: A bruna segue com muitas regras que limitam a IA de enxergar o contexto e fazer a resposta. Arrume e publique. Aplicado ao commit final 74c53a17555e95cb81915c33eea8a6053a23a8b4, revisado e testado nesta execução."
+    },
+    "releasePreflight": {
+      "status": "CHANGE_SAFETY_STATUS=OK",
+      "approvedCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
+      "clean": true,
+      "checkedAt": "2026-10-15T15:44:30Z",
+      "reference": "release:preflight executado entre 15:51:55Z e 15:52:11Z no checkout limpo para este SHA, com aprovação atual e tmp/bruna-api-release/autonomy-preflight-live.json",
+      "configEvidence": {
+        "checkedAt": "2026-10-15T15:44:30Z",
+        "productionEnvironmentPresent": [
+          "GOOGLE_SHEETS_WEBHOOK_SECRET",
+          "OPENAI_API_KEY",
+          "WHATSAPP_AUTOMATION_MODE",
+          "WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED",
+          "YCLOUD_API_KEY",
+          "YCLOUD_FOLLOWUP_TEMPLATE_NAME"
+        ],
+        "scope": "No sender/template configuration change in this runtime delta",
+        "senderRegistryRevalidated": false,
+        "senderEvidence": {
+          "source": "baselineRuntimeRelease",
+          "approvedCommit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
+          "deployId": "6ad0c377e0be1096575458ca",
+          "checkedAt": "2026-10-15T12:13:32Z",
+          "metadata": {
+            "checkedAt": "2026-10-15T12:13:32Z",
+            "productionEnvironmentPresent": [
+              "GOOGLE_SHEETS_WEBHOOK_SECRET",
+              "OPENAI_API_KEY",
+              "YCLOUD_API_KEY",
+              "YCLOUD_FOLLOWUP_TEMPLATE_NAME"
+            ],
+            "senderEnvironmentPresent": false,
+            "senderRegistry": {
+              "store": "liv-whatsapp-business-number-v1",
+              "object": "current",
+              "present": true,
+              "bytes": 65
+            },
+            "senderValueRead": false,
+            "senderValueValidated": false,
+            "limitation": "Valor do remetente não baixado/validado; fallback canônico permanece fail-closed"
+          }
+        },
+        "senderValueRead": false,
+        "senderValueValidated": false,
+        "failClosedPreserved": true,
+        "limitation": "Sender metadata remains inherited from baseline verified at 12:13Z; no sender/template change, existing fail-closed checks preserved. Apps Script v164 is unchanged and derives from the previous verified receipt."
+      },
+      "checkedAtMeaning": "Timestamp of the live state supplied to release:preflight; command execution bounded by approval and actual deployment creation, without an invented exact second",
+      "executionWindow": {
+        "after": "2026-10-15T15:51:55Z",
+        "before": "2026-10-15T15:52:33.393Z",
+        "source": "Ordem observada: aprovação vinculada ao SHA; release:preflight OK às 15:52:11Z; git push; criação do deploy."
+      }
+    },
+    "liveModel": {
+      "status": "passed",
+      "passed": 21,
+      "total": 21,
+      "fullHistoryPassed": 2,
+      "model": "gpt-6.1-sol",
+      "checkedAt": "2026-10-15T15:55:43.144Z",
+      "evidence": "BRUNA_MODEL_PREFLIGHT e 21 BRUNA_MODEL_SCENARIO extraídos do log oficial Netlify do deploy de produção 6ad0f6c1fd759be7d5f15b0f; leitura sem nova inferência.",
+      "allScenariosSingleRequest": true,
+      "lipoContextScenario": {
+        "name": "lipo_papada_complete_requested_answer",
+        "passed": true,
+        "gateAllowed": true,
+        "modelRequests": 1,
+        "replyCode": "LIPO-PAPADA-PRICE-RANGE-01"
+      }
+    },
+    "liveAudio": {
+      "status": "passed",
+      "passed": 3,
+      "total": 3,
+      "model": "whisper-1",
+      "checkedAt": "2026-10-15T15:55:43.144Z"
+    },
+    "health": {
+      "checkedAt": "2026-10-15T15:56:27.526Z",
+      "deployId": "6ad0f6c1fd759be7d5f15b0f",
+      "passed": true,
+      "checks": [
+        {
+          "name": "production",
+          "passed": true,
+          "homepageHttpStatus": 200,
+          "webhookHealthHttpStatus": 200,
+          "unsignedWebhookHttpStatus": 401,
+          "signatureProtection": "active",
+          "automationMode": "active",
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled"
+        },
+        {
+          "name": "branch_alias",
+          "passed": true,
+          "homepageHttpStatus": 200,
+          "webhookHealthHttpStatus": 200,
+          "unsignedWebhookHttpStatus": 401,
+          "signatureProtection": "active",
+          "automationMode": "active",
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled"
+        },
+        {
+          "name": "immutable_deploy",
+          "passed": true,
+          "homepageHttpStatus": 200,
+          "webhookHealthHttpStatus": 200,
+          "unsignedWebhookHttpStatus": 401,
+          "signatureProtection": "active",
+          "automationMode": "active",
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled"
+        }
+      ],
+      "staticChecks": [
+        {
+          "path": "/",
+          "passed": true,
+          "statuses": [
+            200,
+            200
+          ],
+          "newSha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e",
+          "oldSha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e"
+        },
+        {
+          "path": "/lipo-de-papada/",
+          "passed": true,
+          "statuses": [
+            200,
+            200
+          ],
+          "newSha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92",
+          "oldSha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92"
+        },
+        {
+          "path": "/lifting-cervical/",
+          "passed": true,
+          "statuses": [
+            200,
+            200
+          ],
+          "newSha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033",
+          "oldSha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033"
+        },
+        {
+          "path": "/campanhas/site-enhancements.css",
+          "passed": true,
+          "statuses": [
+            200,
+            200
+          ],
+          "newSha256": "1a02819eb3508e747beffc4b14184578b3f3dc70c6281b1ab81438d074769d13",
+          "oldSha256": "1a02819eb3508e747beffc4b14184578b3f3dc70c6281b1ab81438d074769d13"
+        }
+      ],
+      "patientMessagesSent": 0,
+      "syntheticOnly": true
+    },
+    "functions": 15,
+    "schedules": 6,
+    "inventoryComparison": {
+      "checkedAt": "2026-10-15T15:56:44Z",
+      "baseline": {
+        "deployId": "6ad0ca6cd91f0138092c5d88",
+        "functions": [
+          "appointment-reminder",
+          "appointment-review",
+          "attribution-journey",
+          "attribution-journey-purge",
+          "classify-leads",
+          "classify-leads-background",
+          "conversation-archive",
+          "human-resume",
+          "human-resume-background",
+          "post-consult-followup",
+          "scheduled-followup",
+          "synthetic-integration-health",
+          "ycloud-recovery",
+          "ycloud-recovery-background",
+          "ycloud-webhook"
+        ],
+        "schedules": [
+          {
+            "name": "attribution-journey-purge",
+            "cron": "17 6 * * *"
+          },
+          {
+            "name": "classify-leads",
+            "cron": "*/5 * * * *"
+          },
+          {
+            "name": "conversation-archive",
+            "cron": "*/5 * * * *"
+          },
+          {
+            "name": "human-resume",
+            "cron": "*/5 * * * *"
+          },
+          {
+            "name": "synthetic-integration-health",
+            "cron": "17 12 * * *"
+          },
+          {
+            "name": "ycloud-recovery",
+            "cron": "*/5 * * * *"
+          }
+        ]
+      },
+      "published": {
+        "deployId": "6ad0f6c1fd759be7d5f15b0f",
+        "functions": [
+          "appointment-reminder",
+          "appointment-review",
+          "attribution-journey",
+          "attribution-journey-purge",
+          "classify-leads",
+          "classify-leads-background",
+          "conversation-archive",
+          "human-resume",
+          "human-resume-background",
+          "post-consult-followup",
+          "scheduled-followup",
+          "synthetic-integration-health",
+          "ycloud-recovery",
+          "ycloud-recovery-background",
+          "ycloud-webhook"
+        ],
+        "schedules": [
+          {
+            "name": "attribution-journey-purge",
+            "cron": "17 6 * * *"
+          },
+          {
+            "name": "classify-leads",
+            "cron": "*/5 * * * *"
+          },
+          {
+            "name": "conversation-archive",
+            "cron": "*/5 * * * *"
+          },
+          {
+            "name": "human-resume",
+            "cron": "*/5 * * * *"
+          },
+          {
+            "name": "synthetic-integration-health",
+            "cron": "17 12 * * *"
+          },
+          {
+            "name": "ycloud-recovery",
+            "cron": "*/5 * * * *"
+          }
+        ]
+      },
+      "functionNamesEqual": true,
+      "scheduleNamesAndCronEqual": true
+    },
+    "appsScript": {
+      "version": 164,
+      "changed": false
+    },
+    "appsScriptVersion": 164,
+    "patientMessagesSent": 0,
+    "syntheticOnly": true,
+    "externalWritesPerformed": true,
+    "drivePlanSha256": null,
+    "documentation": {
+      "status": "awaiting_drive_readback",
+      "sourceCommit": null,
+      "existingFilesRequired": true,
+      "localHashes": {
+        "docs/estrategia-abordagem-bruna.md": "a925333c90c41834bf60c85458b112439b402672306f81d4014caea0096207f5",
+        "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md": "2da4441489017287159364cbe3fc4ffaf7e1fcc8bf6cd3c13d386e59856665f5"
+      }
+    },
+    "rollback": {
+      "commit": "b7bad3c4e93f313993f8c9cb6b08b1a6ba7506f1",
+      "deployId": "6ad0ca6cd91f0138092c5d88",
+      "constraint": "New Git revert commit/build; preserve data, queues, flags, receipts and Apps Script; no replay"
+    },
+    "limits": [
+      "Synthetic validation does not prove a natural patient interaction or financial savings.",
+      "Operational closure requires the same existing Drive projections and exact local/source-commit/readback equality."
+    ],
+    "localVerification": {
+      "sourceCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
+      "checkedAt": "2026-10-15T15:51:55Z",
+      "checkedAtMeaning": "Registro do SHA aprovado após testes e revisão concluídos; os horários de cada suíte constam no registro local de verificação.",
+      "fullSuite": {
+        "passed": 2251,
+        "total": 2251,
+        "failed": 0
+      },
+      "focusedResults": {
+        "ownerAndConsumers": {
+          "passed": 200,
+          "total": 200,
+          "failed": 0
+        },
+        "styleAndSafety": {
+          "passed": 211,
+          "total": 211,
+          "failed": 0
+        },
+        "hostedGateHarness": {
+          "passed": 19,
+          "total": 19,
+          "failed": 0
+        }
+      },
+      "requiredContractFiles": 74,
+      "results": {
+        "status": "passed_local",
+        "checkedAt": "2026-10-15T15:49:34.247Z",
+        "fullSuite": {
+          "passed": 2251,
+          "total": 2251,
+          "failed": 0,
+          "command": "npm.cmd test"
+        },
+        "harness": {
+          "passed": 19,
+          "total": 19,
+          "failed": 0,
+          "command": "node --test scripts/check-bruna-model-live.test.mjs"
+        },
+        "requiredContractCoverage": {
+          "allCovered": true,
+          "requiredFiles": 74,
+          "method": "Suíte integral cobre Apps Script/Netlify e dois testes de governança em scripts; harness simulado cobre o arquivo restante."
+        },
+        "changeSafety": {
+          "status": "OK",
+          "exactFiles": 24
+        },
+        "architecture": "OK",
+        "siteBuild": {
+          "files": 193,
+          "urls": 54
+        },
+        "siteCheck": {
+          "ok": true,
+          "urls": 54,
+          "artifacts": 193
+        },
+        "diffCheck": "passed",
+        "opsCheckExpected": "SYNC_PENDING"
+      },
+      "overlapNote": "Focused suites overlap the full suite; counts are not additive."
+    }
   }
 }

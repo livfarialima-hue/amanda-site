@@ -1,185 +1,256 @@
 {
   "schemaVersion": 1,
   "changeId": "BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15",
-  "status": "read_only_preflight_passed_with_limits",
-  "checkedAt": "2026-10-15T15:44:30Z",
-  "checkedAtMeaning": "Presença de configuração e pointer Netlify revalidados neste horário; cobertura operacional mantém o corte próprio de 15:35:19Z.",
-  "consolidatedAt": "2026-10-15T15:44:30Z",
-  "timezone": "America/Sao_Paulo",
-  "baseline": {
-    "localCommit": "e8b11e4136d0bef328a34680b3aaf9c94baddf48",
-    "productionFunctionalCommit": "b7bad3c4e93f313993f8c9cb6b08b1a6ba7506f1",
-    "netlifyDeployId": "6ad0ca6cd91f0138092c5d88",
-    "productionState": "ready",
-    "context": "production",
-    "publishedAt": "2026-10-15T12:46:37.032Z",
-    "appsScriptVersion": 164,
-    "bundleVersion": "2026-10-14.5"
-  },
-  "candidate": {
-    "bundleVersion": "2026-10-15.1",
-    "promptVersion": "bruna-concierge-2026-10-15.1",
-    "knowledgeSnapshot": "kb-2026-10-15.1",
-    "knowledgeFactsChanged": false
-  },
-  "sources": [
-    {
-      "system": "LEADS canônica",
-      "access": "conector autenticado somente leitura",
-      "metadata": {
-        "locale": "pt_BR",
-        "timeZone": "America/Sao_Paulo",
-        "headersVerified": true
-      },
-      "scope": "Metadados e cabeçalhos; colunas de datas para localizar o intervalo; mensagens, eventos e CRM delimitados. Cinco casos históricos consultados para comparação; não é auditoria integral.",
-      "coverage": {
-        "cutoff": "2026-10-15T15:35:19Z",
-        "last24h": {
-          "messages": 20,
-          "opportunities": 5,
-          "inbound": 8,
-          "brunaOutbound": 3,
-          "humanOutbound": 9,
-          "operationalEvents": 22
+  "status": "release_preflight_recorded",
+  "initialReadOnlyPreparation": {
+    "schemaVersion": 1,
+    "changeId": "BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15",
+    "status": "read_only_preflight_passed_with_limits",
+    "checkedAt": "2026-10-15T15:44:30Z",
+    "checkedAtMeaning": "Presença de configuração e pointer Netlify revalidados neste horário; cobertura operacional mantém o corte próprio de 15:35:19Z.",
+    "consolidatedAt": "2026-10-15T15:44:30Z",
+    "timezone": "America/Sao_Paulo",
+    "baseline": {
+      "localCommit": "e8b11e4136d0bef328a34680b3aaf9c94baddf48",
+      "productionFunctionalCommit": "b7bad3c4e93f313993f8c9cb6b08b1a6ba7506f1",
+      "netlifyDeployId": "6ad0ca6cd91f0138092c5d88",
+      "productionState": "ready",
+      "context": "production",
+      "publishedAt": "2026-10-15T12:46:37.032Z",
+      "appsScriptVersion": 164,
+      "bundleVersion": "2026-10-14.5"
+    },
+    "candidate": {
+      "bundleVersion": "2026-10-15.1",
+      "promptVersion": "bruna-concierge-2026-10-15.1",
+      "knowledgeSnapshot": "kb-2026-10-15.1",
+      "knowledgeFactsChanged": false
+    },
+    "sources": [
+      {
+        "system": "LEADS canônica",
+        "access": "conector autenticado somente leitura",
+        "metadata": {
+          "locale": "pt_BR",
+          "timeZone": "America/Sao_Paulo",
+          "headersVerified": true
         },
-        "sincePublishedAt": {
-          "inbound": 2,
-          "brunaOutbound": 0,
-          "operationalHandoff": 1
+        "scope": "Metadados e cabeçalhos; colunas de datas para localizar o intervalo; mensagens, eventos e CRM delimitados. Cinco casos históricos consultados para comparação; não é auditoria integral.",
+        "coverage": {
+          "cutoff": "2026-10-15T15:35:19Z",
+          "last24h": {
+            "messages": 20,
+            "opportunities": 5,
+            "inbound": 8,
+            "brunaOutbound": 3,
+            "humanOutbound": 9,
+            "operationalEvents": 22
+          },
+          "sincePublishedAt": {
+            "inbound": 2,
+            "brunaOutbound": 0,
+            "operationalHandoff": 1
+          }
+        },
+        "finding": "As entradas posteriores foram confirmação curta em conversa humana e imagem em cuidado ativo. O único encaminhamento registrado foi known_patient_active_care. Não há prova de veto de estilo/regex nesse recorte.",
+        "privacy": "Sem nomes, contatos, linhas, IDs individuais ou transcrições no repositório."
+      },
+      {
+        "system": "Netlify",
+        "access": "conector autenticado somente leitura",
+        "currentPointerVerified": true,
+        "functions": 15,
+        "schedules": 6,
+        "health": {
+          "method": "GET",
+          "ok": true,
+          "signatureProtection": "active",
+          "automationMode": "active",
+          "audioTranscription": "enabled",
+          "conversationArchive": "enabled",
+          "contactPreferencesGuard": "active",
+          "apiKeyConfigured": true,
+          "openAIConfigured": true,
+          "sheetsWebhookConfigured": true,
+          "sheetsSecretConfigured": true,
+          "reviewAlertConfigured": true
         }
       },
-      "finding": "As entradas posteriores foram confirmação curta em conversa humana e imagem em cuidado ativo. O único encaminhamento registrado foi known_patient_active_care. Não há prova de veto de estilo/regex nesse recorte.",
-      "privacy": "Sem nomes, contatos, linhas, IDs individuais ou transcrições no repositório."
-    },
-    {
-      "system": "Netlify",
-      "access": "conector autenticado somente leitura",
-      "currentPointerVerified": true,
-      "functions": 15,
-      "schedules": 6,
-      "health": {
-        "method": "GET",
-        "ok": true,
-        "signatureProtection": "active",
-        "automationMode": "active",
-        "audioTranscription": "enabled",
-        "conversationArchive": "enabled",
-        "contactPreferencesGuard": "active",
-        "apiKeyConfigured": true,
-        "openAIConfigured": true,
-        "sheetsWebhookConfigured": true,
-        "sheetsSecretConfigured": true,
-        "reviewAlertConfigured": true
+      {
+        "system": "Google Drive",
+        "access": "metadados autenticados dos mesmos arquivos existentes",
+        "manual": {
+          "size": 77834,
+          "modifiedAt": "2026-10-15T12:50:12.360Z"
+        },
+        "executivePlan": {
+          "size": 22712,
+          "modifiedAt": "2026-10-15T12:50:15.693Z"
+        },
+        "downloadReadbackPerformed": false
+      }
+    ],
+    "observations": [
+      "Três situações históricas mostraram perda de assunto ou parte informativa quando havia pendência de preço/modalidade; não comprovam a causa exata nem falha posterior ao release atual.",
+      "Dois controles históricos indicam utilidade de prevenção de duplicação e encaminhamento de agenda; não justificam remover essas proteções.",
+      "Autoria humana e automática foi distinguida; texto humano não é promoção de conhecimento nem autorização de preço."
+    ],
+    "inheritedEvidence": {
+      "sender": {
+        "source": "recibo anterior do baseline de API essencial",
+        "checkedAt": "2026-10-15T12:13:32Z",
+        "registryRevalidatedThisRound": false,
+        "valueRead": false,
+        "valueValidated": false,
+        "limitation": "Metadados do objeto do remetente não foram revalidados nesta rodada. Nenhuma configuração de remetente/template integra o delta; fail-closed permanece."
+      },
+      "appsScript": {
+        "version": 164,
+        "revalidatedThisRound": false,
+        "source": "recibo publicado anterior",
+        "changed": false
       }
     },
-    {
-      "system": "Google Drive",
-      "access": "metadados autenticados dos mesmos arquivos existentes",
-      "manual": {
-        "size": 77834,
-        "modifiedAt": "2026-10-15T12:50:12.360Z"
+    "externalWritesPerformed": false,
+    "patientMessagesSent": 0,
+    "paidInferenceCalls": 0,
+    "limitations": [
+      "Este preflight de desenvolvimento não substitui o release:preflight fresco do SHA aprovado.",
+      "Saúde GET e metadados não provam entrega natural, resolução das pendências ou qualidade do novo candidato.",
+      "Os registros operacionais consultados não exibem veto explícito de estilo/regex; causalidade técnica exige reprodução sintética.",
+      "Nenhum download/hash novo das projeções Drive; igualdade será exigida após publicação/documentação.",
+      "Nenhum resultado de teste do novo candidato é declarado neste recibo."
+    ],
+    "operationalCutoff": "2026-10-15T15:35:19Z",
+    "runtimeReadback": {
+      "checkedAt": "2026-10-15T15:44:30Z",
+      "productionEnvironmentPresent": [
+        "GOOGLE_SHEETS_WEBHOOK_SECRET",
+        "OPENAI_API_KEY",
+        "WHATSAPP_AUTOMATION_MODE",
+        "WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED",
+        "YCLOUD_API_KEY",
+        "YCLOUD_FOLLOWUP_TEMPLATE_NAME"
+      ],
+      "productionBaseline": {
+        "commit": "b7bad3c4e93f313993f8c9cb6b08b1a6ba7506f1",
+        "deployId": "6ad0ca6cd91f0138092c5d88",
+        "state": "ready",
+        "functions": [
+          "appointment-reminder",
+          "appointment-review",
+          "attribution-journey",
+          "attribution-journey-purge",
+          "classify-leads",
+          "classify-leads-background",
+          "conversation-archive",
+          "human-resume",
+          "human-resume-background",
+          "post-consult-followup",
+          "scheduled-followup",
+          "synthetic-integration-health",
+          "ycloud-recovery",
+          "ycloud-recovery-background",
+          "ycloud-webhook"
+        ],
+        "schedules": [
+          {
+            "cron": "17 6 * * *",
+            "name": "attribution-journey-purge"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "classify-leads"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "conversation-archive"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "human-resume"
+          },
+          {
+            "cron": "17 12 * * *",
+            "name": "synthetic-integration-health"
+          },
+          {
+            "cron": "*/5 * * * *",
+            "name": "ycloud-recovery"
+          }
+        ]
       },
-      "executivePlan": {
-        "size": 22712,
-        "modifiedAt": "2026-10-15T12:50:15.693Z"
-      },
-      "downloadReadbackPerformed": false
-    }
-  ],
-  "observations": [
-    "Três situações históricas mostraram perda de assunto ou parte informativa quando havia pendência de preço/modalidade; não comprovam a causa exata nem falha posterior ao release atual.",
-    "Dois controles históricos indicam utilidade de prevenção de duplicação e encaminhamento de agenda; não justificam remover essas proteções.",
-    "Autoria humana e automática foi distinguida; texto humano não é promoção de conhecimento nem autorização de preço."
-  ],
-  "inheritedEvidence": {
-    "sender": {
-      "source": "recibo anterior do baseline de API essencial",
-      "checkedAt": "2026-10-15T12:13:32Z",
-      "registryRevalidatedThisRound": false,
-      "valueRead": false,
-      "valueValidated": false,
-      "limitation": "Metadados do objeto do remetente não foram revalidados nesta rodada. Nenhuma configuração de remetente/template integra o delta; fail-closed permanece."
-    },
-    "appsScript": {
-      "version": 164,
-      "revalidatedThisRound": false,
-      "source": "recibo publicado anterior",
-      "changed": false
+      "scope": "No sender/template configuration change in this runtime delta",
+      "senderRegistryRevalidated": false,
+      "senderValueRead": false,
+      "senderValueValidated": false,
+      "limitation": "Sender metadata remains inherited from baseline verified at 12:13Z; no sender/template change, existing fail-closed checks preserved. Apps Script v164 is unchanged and derives from the previous verified receipt."
     }
   },
-  "externalWritesPerformed": false,
-  "patientMessagesSent": 0,
-  "paidInferenceCalls": 0,
-  "limitations": [
-    "Este preflight de desenvolvimento não substitui o release:preflight fresco do SHA aprovado.",
-    "Saúde GET e metadados não provam entrega natural, resolução das pendências ou qualidade do novo candidato.",
-    "Os registros operacionais consultados não exibem veto explícito de estilo/regex; causalidade técnica exige reprodução sintética.",
-    "Nenhum download/hash novo das projeções Drive; igualdade será exigida após publicação/documentação.",
-    "Nenhum resultado de teste do novo candidato é declarado neste recibo."
-  ],
-  "operationalCutoff": "2026-10-15T15:35:19Z",
-  "runtimeReadback": {
+  "approvedCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
+  "approval": {
+    "by": "Daniel",
+    "at": "2026-10-15T15:51:55Z",
+    "reference": "Pedido atual nesta conversa: A bruna segue com muitas regras que limitam a IA de enxergar o contexto e fazer a resposta. Arrume e publique. Aplicado ao commit final 74c53a17555e95cb81915c33eea8a6053a23a8b4, revisado e testado nesta execução."
+  },
+  "releasePreflight": {
+    "status": "CHANGE_SAFETY_STATUS=OK",
+    "approvedCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
+    "clean": true,
     "checkedAt": "2026-10-15T15:44:30Z",
-    "productionEnvironmentPresent": [
-      "GOOGLE_SHEETS_WEBHOOK_SECRET",
-      "OPENAI_API_KEY",
-      "WHATSAPP_AUTOMATION_MODE",
-      "WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED",
-      "YCLOUD_API_KEY",
-      "YCLOUD_FOLLOWUP_TEMPLATE_NAME"
-    ],
-    "productionBaseline": {
-      "commit": "b7bad3c4e93f313993f8c9cb6b08b1a6ba7506f1",
-      "deployId": "6ad0ca6cd91f0138092c5d88",
-      "state": "ready",
-      "functions": [
-        "appointment-reminder",
-        "appointment-review",
-        "attribution-journey",
-        "attribution-journey-purge",
-        "classify-leads",
-        "classify-leads-background",
-        "conversation-archive",
-        "human-resume",
-        "human-resume-background",
-        "post-consult-followup",
-        "scheduled-followup",
-        "synthetic-integration-health",
-        "ycloud-recovery",
-        "ycloud-recovery-background",
-        "ycloud-webhook"
+    "reference": "release:preflight executado entre 15:51:55Z e 15:52:11Z no checkout limpo para este SHA, com aprovação atual e tmp/bruna-api-release/autonomy-preflight-live.json",
+    "configEvidence": {
+      "checkedAt": "2026-10-15T15:44:30Z",
+      "productionEnvironmentPresent": [
+        "GOOGLE_SHEETS_WEBHOOK_SECRET",
+        "OPENAI_API_KEY",
+        "WHATSAPP_AUTOMATION_MODE",
+        "WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED",
+        "YCLOUD_API_KEY",
+        "YCLOUD_FOLLOWUP_TEMPLATE_NAME"
       ],
-      "schedules": [
-        {
-          "cron": "17 6 * * *",
-          "name": "attribution-journey-purge"
-        },
-        {
-          "cron": "*/5 * * * *",
-          "name": "classify-leads"
-        },
-        {
-          "cron": "*/5 * * * *",
-          "name": "conversation-archive"
-        },
-        {
-          "cron": "*/5 * * * *",
-          "name": "human-resume"
-        },
-        {
-          "cron": "17 12 * * *",
-          "name": "synthetic-integration-health"
-        },
-        {
-          "cron": "*/5 * * * *",
-          "name": "ycloud-recovery"
+      "scope": "No sender/template configuration change in this runtime delta",
+      "senderRegistryRevalidated": false,
+      "senderEvidence": {
+        "source": "baselineRuntimeRelease",
+        "approvedCommit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
+        "deployId": "6ad0c377e0be1096575458ca",
+        "checkedAt": "2026-10-15T12:13:32Z",
+        "metadata": {
+          "checkedAt": "2026-10-15T12:13:32Z",
+          "productionEnvironmentPresent": [
+            "GOOGLE_SHEETS_WEBHOOK_SECRET",
+            "OPENAI_API_KEY",
+            "YCLOUD_API_KEY",
+            "YCLOUD_FOLLOWUP_TEMPLATE_NAME"
+          ],
+          "senderEnvironmentPresent": false,
+          "senderRegistry": {
+            "store": "liv-whatsapp-business-number-v1",
+            "object": "current",
+            "present": true,
+            "bytes": 65
+          },
+          "senderValueRead": false,
+          "senderValueValidated": false,
+          "limitation": "Valor do remetente não baixado/validado; fallback canônico permanece fail-closed"
         }
-      ]
+      },
+      "senderValueRead": false,
+      "senderValueValidated": false,
+      "failClosedPreserved": true,
+      "limitation": "Sender metadata remains inherited from baseline verified at 12:13Z; no sender/template change, existing fail-closed checks preserved. Apps Script v164 is unchanged and derives from the previous verified receipt."
     },
-    "scope": "No sender/template configuration change in this runtime delta",
-    "senderRegistryRevalidated": false,
-    "senderValueRead": false,
-    "senderValueValidated": false,
-    "limitation": "Sender metadata remains inherited from baseline verified at 12:13Z; no sender/template change, existing fail-closed checks preserved. Apps Script v164 is unchanged and derives from the previous verified receipt."
+    "checkedAtMeaning": "Timestamp of the live state supplied to release:preflight; command execution bounded by approval and actual deployment creation, without an invented exact second",
+    "executionWindow": {
+      "after": "2026-10-15T15:51:55Z",
+      "before": "2026-10-15T15:52:33.393Z",
+      "source": "Ordem observada: aprovação vinculada ao SHA; release:preflight OK às 15:52:11Z; git push; criação do deploy."
+    }
+  },
+  "productionVerification": {
+    "deployId": "6ad0f6c1fd759be7d5f15b0f",
+    "publishedAt": "2026-10-15T15:55:58.973Z",
+    "verifiedAt": "2026-10-15T15:56:44Z"
   }
 }
