@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15",
   "title": "Permitir redação contextual confirmada com fatos preservados e contrato semântico antes do estilo",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "e8b11e4136d0bef328a34680b3aaf9c94baddf48",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Autorização do SHA exato 74c53a17555e95cb81915c33eea8a6053a23a8b4 e publicação comprovadas em auditorias/bruna-autonomia-contextual-2026-10-15/PUBLICACAO.json; readback documental pendente."
+    "note": "Autorização do SHA exato 74c53a17555e95cb81915c33eea8a6053a23a8b4, publicação e igualdade das mesmas projeções comprovadas em auditorias/bruna-autonomia-contextual-2026-10-15/PUBLICACAO.json."
   },
   "risk": {
     "level": "high",
@@ -181,7 +181,7 @@
     ],
     "externalSystems": [
       "Apps Script v164 (referência publicada anterior; inalterado)",
-      "Google Drive (readback documental pendente)",
+      "Google Drive (mesmas projeções relidas e iguais ao commit fonte)",
       "LEADS/CRM (somente leitura delimitada)",
       "Netlify (publicação verificada)"
     ],
@@ -402,10 +402,10 @@
     },
     "overlapNote": "Suítes focadas se sobrepõem à suíte integral; contagens não são aditivas.",
     "closeout": {
-      "stage": "publish",
-      "status": "production_verified_documentation_pending",
+      "stage": "reconcile",
+      "status": "documentation_equality_verified",
       "approvedCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
-      "preparationCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
+      "preparationCommit": "1d54edbbfef92dd49c87278d5721b5f3d11154cb",
       "scopeFiles": 25,
       "note": "Helper sem rede, inferência, testes, commit ou push. Gates documentais e ops:check no checkout canônico limpo seguem obrigatórios."
     }
@@ -1839,18 +1839,38 @@
     "note": "O responsável desta tarefa confirmou atualização e readback do plugin privado Bruna — Gestão e Conversão 1.0.1. Revisões, propostas e cálculos usam a conta e conectores existentes sem fallback pago. Recibo privado mantido fora do repositório; esse componente não publica as funções Netlify nem migra o atendimento."
   },
   "documentation": {
-    "status": "awaiting_drive_readback",
-    "sourceCommit": null,
-    "existingFilesRequired": true,
-    "localHashes": {
-      "docs/estrategia-abordagem-bruna.md": "a925333c90c41834bf60c85458b112439b402672306f81d4014caea0096207f5",
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md": "2da4441489017287159364cbe3fc4ffaf7e1fcc8bf6cd3c13d386e59856665f5"
+    "status": "written_verified",
+    "sourceCommit": "1d54edbbfef92dd49c87278d5721b5f3d11154cb",
+    "verifiedAt": "2026-10-15T15:58:56.026Z",
+    "method": "Authenticated readback with exact local/source-commit/readback byte equality and SHA-256",
+    "existingFilesPreserved": true,
+    "equalityVerified": true,
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "a925333c90c41834bf60c85458b112439b402672306f81d4014caea0096207f5",
+      "bytes": 81031,
+      "readbackAt": "2026-10-15T15:58:55.893Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "localEqualsReadback": true,
+      "sourceCommitEqualsReadback": true,
+      "evidence": "Authenticated readback of the same existing manual projection; exact bytes checked locally"
+    },
+    "executivePlan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "2da4441489017287159364cbe3fc4ffaf7e1fcc8bf6cd3c13d386e59856665f5",
+      "bytes": 25707,
+      "readbackAt": "2026-10-15T15:58:56.026Z",
+      "authenticated": true,
+      "sameExistingFile": true,
+      "localEqualsReadback": true,
+      "sourceCommitEqualsReadback": true,
+      "evidence": "Authenticated readback of the same existing executivePlan projection; exact bytes checked locally"
     },
     "paths": [
       "docs/estrategia-abordagem-bruna.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md"
-    ],
-    "note": "Download autenticado e igualdade real das mesmas projeções ainda obrigatórios."
+    ]
   },
   "baselineContextualRelease": {
     "schemaVersion": 1,
@@ -2267,7 +2287,7 @@
   "release": {
     "schemaVersion": 1,
     "changeId": "BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15",
-    "status": "production_verified_documentation_pending",
+    "status": "published_verified",
     "bundleVersion": "2026-10-15.1",
     "approvedCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
     "netlifyDeployId": "6ad0f6c1fd759be7d5f15b0f",
@@ -2551,14 +2571,35 @@
     "patientMessagesSent": 0,
     "syntheticOnly": true,
     "externalWritesPerformed": true,
-    "drivePlanSha256": null,
+    "drivePlanSha256": "2da4441489017287159364cbe3fc4ffaf7e1fcc8bf6cd3c13d386e59856665f5",
     "documentation": {
-      "status": "awaiting_drive_readback",
-      "sourceCommit": null,
-      "existingFilesRequired": true,
-      "localHashes": {
-        "docs/estrategia-abordagem-bruna.md": "a925333c90c41834bf60c85458b112439b402672306f81d4014caea0096207f5",
-        "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md": "2da4441489017287159364cbe3fc4ffaf7e1fcc8bf6cd3c13d386e59856665f5"
+      "status": "written_verified",
+      "sourceCommit": "1d54edbbfef92dd49c87278d5721b5f3d11154cb",
+      "verifiedAt": "2026-10-15T15:58:56.026Z",
+      "method": "Authenticated readback with exact local/source-commit/readback byte equality and SHA-256",
+      "existingFilesPreserved": true,
+      "equalityVerified": true,
+      "manual": {
+        "path": "docs/estrategia-abordagem-bruna.md",
+        "sha256": "a925333c90c41834bf60c85458b112439b402672306f81d4014caea0096207f5",
+        "bytes": 81031,
+        "readbackAt": "2026-10-15T15:58:55.893Z",
+        "authenticated": true,
+        "sameExistingFile": true,
+        "localEqualsReadback": true,
+        "sourceCommitEqualsReadback": true,
+        "evidence": "Authenticated readback of the same existing manual projection; exact bytes checked locally"
+      },
+      "executivePlan": {
+        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+        "sha256": "2da4441489017287159364cbe3fc4ffaf7e1fcc8bf6cd3c13d386e59856665f5",
+        "bytes": 25707,
+        "readbackAt": "2026-10-15T15:58:56.026Z",
+        "authenticated": true,
+        "sameExistingFile": true,
+        "localEqualsReadback": true,
+        "sourceCommitEqualsReadback": true,
+        "evidence": "Authenticated readback of the same existing executivePlan projection; exact bytes checked locally"
       }
     },
     "rollback": {
@@ -2567,8 +2608,7 @@
       "constraint": "New Git revert commit/build; preserve data, queues, flags, receipts and Apps Script; no replay"
     },
     "limits": [
-      "Synthetic validation does not prove a natural patient interaction or financial savings.",
-      "Operational closure requires the same existing Drive projections and exact local/source-commit/readback equality."
+      "Synthetic checks do not prove natural patient interaction, conversion gain or financial savings."
     ],
     "localVerification": {
       "sourceCommit": "74c53a17555e95cb81915c33eea8a6053a23a8b4",
@@ -2635,6 +2675,7 @@
         "opsCheckExpected": "SYNC_PENDING"
       },
       "overlapNote": "Focused suites overlap the full suite; counts are not additive."
-    }
+    },
+    "documentationReconciledAt": "2026-10-15T15:58:56.026Z"
   }
 }
