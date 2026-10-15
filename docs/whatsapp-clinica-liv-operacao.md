@@ -1,5 +1,13 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+## Candidato local — API essencial, 15/10/2026
+
+A solicitação de reservar a API ao fundamental gerou duas correções locais: o gate hospedado registra o timeout observado sem repetir uma requisição paga apenas para diagnóstico; a retomada confere remetente, chave de transporte e template aplicável antes da revisão semântica. A falta de configuração continua bloqueando o envio. Com configuração válida, o veto semântico e os caminhos determinísticos estritos permanecem iguais.
+
+Modelo, histórico, áudio, políticas, mensagens, cadência e os 21 cenários hospedados com dois históricos e três áudios estão preservados. O plugin privado de revisão foi atualizado separadamente para usar o processamento da conta em análises, propostas e cálculos, sem fallback pago; isso não substitui o backend automático do WhatsApp. Não há redução financeira comprovada.
+
+Este código ainda não foi publicado. O baseline segue 7242d54 / 6ad0b88d46ff84caa6a749e7; Apps Script v164 permanece inalterado. Testes, limites do preflight, reversão e pendências estão em `auditorias/bruna-api-essencial-2026-10-15/RELATORIO.md` e `ops/CHANGE-CANDIDATE.json`. Publicação exige aprovação do novo SHA, novo preflight, gates hospedados, verificação e atualização das mesmas projeções do Drive com readback.
+
 ## Publicado e verificado — 2026-10-14.5
 
 Pacote 2026-10-14.5 publicado e verificado: commit 7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788; deploy 6ad0b88d46ff84caa6a749e7; publicação 2026-10-15T11:30:20.211Z; verificação 2026-10-15T11:30:58.679Z. Passaram 21/21 cenários hospedados de modelo, incluindo dois de histórico completo e os dois de papada, e 3/3 áudios sintéticos. Saúde pública HTTP 200 e rejeição sem assinatura HTTP 401 verificadas; 15 funções e seis programações preservadas. Apps Script v164 inalterado. Nenhuma mensagem real foi enviada como teste; conversa natural posterior e melhora de conversão ainda não foram comprovadas. Rollback: novo commit/build que reverta somente este pacote para o comportamento de cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d / 6acff7b9dc7d30f39ad66b31, preservando dados, filas, flags, recibos e Apps Script; sem replay.

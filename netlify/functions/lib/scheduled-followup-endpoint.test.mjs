@@ -298,6 +298,7 @@ test("scheduled follow-up stays disabled until explicitly enabled", async () => 
 test("scheduled follow-up sends and records the Bruna turn", async () => {
   const sent = [];
   const turns = [];
+  let semanticReviews = 0;
   const response = await handleScheduledFollowup(request(), {
     env: {
       GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
@@ -308,6 +309,7 @@ test("scheduled follow-up sends and records the Bruna turn", async () => {
     now: new Date("2026-08-03T10:30:00-03:00"),
     getBusinessNumberImpl: async () => "+5511961957144",
     reviewScheduledFollowupContextImpl: async (payload) => {
+      semanticReviews += 1;
       assert.equal(payload.body, PAYLOAD.body);
       assert.equal(payload.recentConversation.length, 2);
       return {
@@ -332,11 +334,45 @@ test("scheduled follow-up sends and records the Bruna turn", async () => {
 
   assert.equal(response.status, 200);
   assert.equal((await response.json()).sent, true);
+  assert.equal(semanticReviews, 1);
   assert.equal(sent.length, 1);
   assert.equal(sent[0].body, PAYLOAD.body);
   assert.equal(turns.length, 1);
   assert.equal(turns[0].role, "assistant");
   assert.equal(turns[0].source, "bruna");
+});
+
+test("missing sender or YCloud key blocks before paid semantic review", async () => {
+  for (const missing of ["sender", "api_key"]) {
+    let semanticReviews = 0;
+    let sends = 0;
+    let recordedTurns = 0;
+    const response = await handleScheduledFollowup(request(), {
+      env: {
+        GOOGLE_SHEETS_WEBHOOK_SECRET: SECRET,
+        YCLOUD_API_KEY: missing === "api_key" ? "" : "synthetic-key",
+        WHATSAPP_SCHEDULED_FOLLOWUPS_ENABLED: "true",
+        WHATSAPP_AUTOMATION_MODE: "active",
+      },
+      now: new Date("2026-08-03T10:30:00-03:00"),
+      getBusinessNumberImpl: async () => missing === "sender" ? "" : "+5511999990001",
+      reviewScheduledFollowupContextImpl: async () => {
+        semanticReviews += 1;
+        return { status: "completed", allowed: true, reasonCode: "context_aligned" };
+      },
+      sendYCloudPatientTextImpl: async () => {
+        sends += 1;
+        return { status: "completed" };
+      },
+      appendConversationTurnImpl: async () => { recordedTurns += 1; },
+    });
+
+    assert.equal(response.status, 503, missing);
+    assert.deepEqual(await response.json(), { ok: false, sent: false, error: "configuration_missing" }, missing);
+    assert.equal(semanticReviews, 0, missing);
+    assert.equal(sends, 0, missing);
+    assert.equal(recordedTurns, 0, missing);
+  }
 });
 
 test("simple unanswered procedure interest has a deterministic low-risk path", async () => {
@@ -563,6 +599,7 @@ test("an old conversation approved by the team uses the configured WhatsApp temp
 });
 
 test("an old approval fails closed until the follow-up template is configured", async () => {
+  let semanticReviews = 0;
   const payload = {
     ...PAYLOAD,
     planId: "old-plan-without-template",
@@ -581,11 +618,12 @@ test("an old approval fails closed until the follow-up template is configured", 
     },
     now: new Date("2026-08-03T10:30:00-03:00"),
     getBusinessNumberImpl: async () => "+5511961957144",
-    reviewScheduledFollowupContextImpl: async () => ({
-      status: "completed",
-      allowed: true,
-      reasonCode: "context_aligned",
-    }),
+    reviewScheduledFollowupContextImpl: async () => {
+      semanticReviews += 1;
+      return { status: "completed", allowed: true, reasonCode: "context_aligned" };
+    },
+    sendYCloudPatientFollowupTemplateImpl: async () => assert.fail("missing template must not send"),
+    appendConversationTurnImpl: async () => assert.fail("missing template must not record a sent turn"),
   });
 
   assert.equal(response.status, 503);
@@ -593,6 +631,7 @@ test("an old approval fails closed until the follow-up template is configured", 
     (await response.json()).error,
     "followup_template_missing",
   );
+  assert.equal(semanticReviews, 0);
 });
 
 test("approved second follow-up reuses the first review when nobody spoke later", async () => {
@@ -725,6 +764,7 @@ test("patient or human activity after the first follow-up requires a fresh revie
         WHATSAPP_AUTOMATION_MODE: "active",
       },
       now: new Date("2026-08-27T10:30:00-03:00"),
+      getBusinessNumberImpl: async () => "+5511999990001",
       reviewScheduledFollowupContextImpl: async () => {
         semanticReviews += 1;
         return {
@@ -779,7 +819,7 @@ test("scheduled follow-up is blocked when semantic review finds changed context"
     error: "semantic_context_review_required",
     semanticReason: "patient_paused",
   });
-  assert.equal(businessNumberReads, 0);
+  assert.equal(businessNumberReads, 1);
   assert.equal(sends, 0);
 });
 
@@ -793,6 +833,7 @@ test("scheduled follow-up fails closed when semantic review is unavailable", asy
       WHATSAPP_AUTOMATION_MODE: "active",
     },
     now: new Date("2026-08-03T10:30:00-03:00"),
+    getBusinessNumberImpl: async () => "+5511999990001",
     reviewScheduledFollowupContextImpl: async () => ({
       status: "failed",
       allowed: false,

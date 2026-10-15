@@ -143,5 +143,62 @@
     "status": "approved_by_coordinator",
     "scope": "O coordenador revisou os oito documentos e confirmou o payload de 14 pares, preservação de 57 associações e exclusão dos logos.",
     "note": "Nenhuma escrita externa foi executada pelo preparador."
+  },
+  "parallelIntegration": {
+    "status": "passed_local",
+    "independentReview": {"status": "passed", "reviewer": "cerv_pendencias", "scope": "17 arquivos exatos; nove arquivos próprios Bruna byte a byte iguais a 3b66195b; autorização, rollback e monitoramento Bruna preservados; Plano integrado e registro de impacto restrito aos quatro caminhos Ads."},
+    "sourceCommit": "3b66195b8b13a896ccdd63740e3f67398f7d7d4c",
+    "baseCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
+    "exactUnionFiles": 17,
+    "brunaCandidateStatus": "tested_local",
+    "preservedFiles": [
+      "auditorias/bruna-api-essencial-2026-10-15/PREFLIGHT.json",
+      "auditorias/bruna-api-essencial-2026-10-15/RELATORIO.md",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
+      "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "netlify/functions/scheduled-followup.mjs",
+      "scripts/check-bruna-model-live.mjs",
+      "scripts/check-bruna-model-live.test.mjs"
+    ],
+    "note": "Deriva detectada antes da projeção Drive. Preservados código, testes e documentos próprios de Bruna. A integração não autoriza nem publica Bruna; Ads mantém o commit aprovado que precedeu sua escrita.",
+    "preservedFileEquality": "9/9 files equal to canonical 3b66195b",
+    "checkedAt": "2026-10-15T12:17:30.236059+00:00",
+    "validation": {
+      "fullSuite": {
+        "passed": 2209,
+        "total": 2209,
+        "failed": 0
+      },
+      "contractUnion": {
+        "passed": 745,
+        "total": 745,
+        "failed": 0,
+        "testFiles": 39,
+        "overlapsFullSuite": true,
+        "selection": "Union of requiredTestFiles of the five selected contracts; all other command-listed tests are included in the full suite."
+      },
+      "changeSafety": {
+        "status": "OK",
+        "exactFiles": 17
+      },
+      "architecture": "OK",
+      "siteBuild": {
+        "files": 193,
+        "sitemapUrls": 54,
+        "auditFilesInArtifact": 0,
+        "errors": 0
+      },
+      "siteCheck": {
+        "errors": 0
+      },
+      "diff": "passed",
+      "opsCheck": {
+        "status": "SYNC_PENDING",
+        "expected": true,
+        "note": "Candidato Bruna não publicado, projeção de seu manual pendente e integração em worktree; Ads tem recibo próprio e não autoriza Bruna."
+      }
+    }
   }
 }
