@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-10-14.4",
-  "promptVersion": "bruna-concierge-2026-10-14.4",
+  "bundleVersion": "2026-10-14.5",
+  "promptVersion": "bruna-concierge-2026-10-14.5",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-10-14.4",
+  "knowledgeSnapshot": "kb-2026-10-14.5",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -45,18 +45,15 @@
   "replyContinuityContract": "reply-continuity",
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
-    "changeId": "BRUNA-CONFIRMACAO-MODALIDADE-2026-10-14",
-    "status": "published_verified",
+    "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
+    "status": "tested_local",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
-    "liveModelScenarioCount": 19,
-    "baselineCommit": "fa68974be6b7a0ca9c2c9944e23fd37887a91e20",
-    "bundleVersion": "2026-10-14.4",
-    "baselineDeployId": "6acf8f3d0c1fdf2d868cceb3",
-    "baselineAppsScriptVersion": 164,
-    "sourceCommit": "4869b38a51d55b76176cf2b1cf8021c4f2ea46be",
-    "netlifyDeployId": "6acfecf0d71ca630f8f9469a",
-    "verifiedAt": "2026-10-14T21:04:06Z"
+    "liveModelScenarioCount": 21,
+    "baselineCommit": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
+    "bundleVersion": "2026-10-14.5",
+    "baselineDeployId": "6acff7b9dc7d30f39ad66b31",
+    "baselineAppsScriptVersion": 164
   }
 }

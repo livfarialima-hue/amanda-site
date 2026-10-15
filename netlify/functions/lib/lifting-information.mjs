@@ -155,7 +155,7 @@ export function approvedProcedureInformationFacts({ text, procedure, recentConve
       topic: "neck_procedure_explanation",
       source: procedure === "lipo_papada" ? "lipo-de-papada/index.html" : "lifting-cervical/index.html",
       statement: procedure === "lipo_papada" && !platysmaQuestion
-        ? "A lipo de papada remove gordura localizada abaixo do queixo. Quando há flacidez de pele ou alterações do platisma, retirar apenas gordura pode não tratar todos os componentes do contorno. A avaliação distingue essas situações."
+        ? "A lipo de papada remove gordura localizada abaixo do queixo. Quando há flacidez de pele ou alterações do platisma, retirar apenas gordura pode não tratar todos os componentes do contorno. A Dra. Amanda avalia essas situações para definir se outra abordagem é necessária."
         : "A lipo de papada trata a gordura localizada abaixo do queixo. A cervicoplastia pode tratar também a flacidez da pele e o músculo platisma. Essas abordagens podem ser associadas no planejamento do pescoço, conforme o exame; a necessidade e a extensão de cada parte são definidas na avaliação.",
     });
     boundaries.push(

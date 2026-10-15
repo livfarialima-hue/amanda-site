@@ -1,0 +1,40 @@
+{
+  "checkedAt": "2026-10-15T00:09:33.280Z",
+  "baselineCommit": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
+  "production": {
+    "deploy": "6acff7b9dc7d30f39ad66b31",
+    "commit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
+    "state": "ready",
+    "currentProjectRead": true,
+    "webhook": {
+      "automationMode": "active",
+      "signatureProtection": "active",
+      "apiKeyConfigured": true,
+      "openAIConfigured": true
+    },
+    "functions": 15,
+    "schedules": 6,
+    "recheckedOn": "2026-10-15"
+  },
+  "appsScript": {
+    "versionFromCanonicalRegistry": 164,
+    "editorRead": false,
+    "changed": false,
+    "targetIdsVerifiedOn": "2026-10-15"
+  },
+  "sources": {
+    "cloudHandoffRead": true,
+    "liveOperationalSourcesRead": true,
+    "historicalWorkbookRead": true,
+    "historicalWorkbookHasSpecificPapadaPrice": false,
+    "rangeAuthorizedInCurrentConversation": true,
+    "operationalSourcesRecheckedOn": "2026-10-15",
+    "operationalPlanStorage": "Central existente, apenas observação da equipe; campos projetados, flags e envios preservados."
+  },
+  "limits": [
+    "Estado operacional será relido antes de contato; nenhum envio autorizado.",
+    "Editor Apps Script e flags privadas não inspecionados nesta tarefa; nenhuma mudança prevista nesses sistemas.",
+    "Gate real de modelo, áudio e histórico permanece obrigatório antes da publicação."
+  ],
+  "externalWritesPerformed": false
+}

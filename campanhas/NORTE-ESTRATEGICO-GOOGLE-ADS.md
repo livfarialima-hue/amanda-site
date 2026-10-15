@@ -1,5 +1,16 @@
 # Norte estratégico de aquisição e conversão
 
+## 42. Continuidade útil e obrigações da clínica — 14/10/2026
+
+**Decisão autorizada:** corrigir respostas conjuntas para entregar procedimento, recuperação e informação financeira aprovada no mesmo contexto; Daniel confirmou referência de R$12–18mil exclusivamente para lipo de papada isolada. Preservar ressalvas, solicitação explícita, envio único e revisão de qualquer associação ou orçamento individual. A tabela histórica não contém linha específica desse procedimento.
+
+**Retomadas de 15/10:** priorizar respostas prometidas e necessidades administrativas de consulta próxima. Obrigações da clínica não são nova captação. Só depois considerar continuidade individual de pedido pessoal de avaliação ou dúvida concreta, sem pressão. Pausa, recusa, iniciativa reservada à pessoa e cuidado ativo excluem marketing. Fila manual antiga não será reativada em lote por esta decisão.
+
+**Evidência e hipótese:** diagnóstico no Cloud reproduzido localmente mostrou perda de fatos seguros quando apenas preço dependia da equipe. Leitura operacional revelou promessas ainda pendentes e cartões antigos que exigem revalidação. Responder com completude e cumprir o combinado pode reduzir abandono; melhora de conversão não está demonstrada.
+
+**Métrica e revisão:** conferir em 15/10 os retornos devidos e em 22/10 a completude das respostas, duplicidade, contato após pausa/recusa, contatos válidos, qualificados e consultas reais com maturação compatível. Manter se houver continuidade sem invasão; conter diante de faixa de procedimento errado, repetição, indicação individual ou promessa sem encaminhamento. Nenhuma alteração de campanha, orçamento, lance, conversão ou site público integra este pacote. Implementação local; publicação e envios reais dependem das autorizações específicas.
+
+
 ## 41. Continuidade do site — decisão autorizada em 14/10/2026
 
 **Decisão:** corrigir convites e mensagens de entrada do WhatsApp, destinos de navegação e breadcrumbs duplicados; simplificar a abertura do guia de preço de lifting facial com resposta breve e pedido de referência antes dos detalhes. O convite de consulta deve dizer “Conversar sobre a consulta”, sem simular disponibilidade. Pedido de preço mantém sua intenção própria. A mensagem preparada não afirma leitura, indicação, qualificação nem reserva.

@@ -15,6 +15,7 @@ export const CONTEXTUAL_APPROVED_REPLY_CODES = Object.freeze([
   "LIFTING-SCOPE-COMPARISON-01",
   "LIFTING-PRICE-RANGE-01",
   "OTOPLASTY-PRICE-RANGE-01",
+  "LIPO-PAPADA-PRICE-RANGE-01",
 ]);
 
 // This selects wording only. The confirmed route and the final outbound gate
@@ -30,7 +31,7 @@ export function selectConfirmedReplyText(semanticResult, approvedResult) {
   }
   // Wording is flexible, not the approved commercial facts. The outbound
   // gate still checks procedure-specific amounts, clinical claims and effects.
-  if (["LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01"].includes(approvedResult.decision.replyCode) &&
+  if (["LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01"].includes(approvedResult.decision.replyCode) &&
       !hasApprovedSurgicalPriceDisclosure(draft)) return approved;
   return draft;
 }
@@ -126,7 +127,7 @@ export function prepareSemanticContextContinuationAction(
 ) {
   const currentContract = conversationAction?.replyContract || {};
   const approvedPricePath = Boolean(
-    ["price_initial_information", "lifting_price_range_direct", "otoplasty_price_range_direct"].includes(
+    ["price_initial_information", "lifting_price_range_direct", "otoplasty_price_range_direct", "lipo_papada_price_range_direct"].includes(
       currentContract.sourceReason,
     ),
   );
@@ -172,7 +173,7 @@ export function semanticDecisionConfirmsDeterministicReply(
 // the existing outbound gate still checks its amounts, ownership and safety.
 export function deterministicReplyCoversPatientQuestions(candidate, conversationAction) {
   const code = candidate?.decision?.replyCode;
-  if (!["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01"].includes(code)) return true;
+  if (!["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01"].includes(code)) return true;
   return (conversationAction?.replyContract?.unresolvedIntents || []).every(
     intent => ["price_surgery", "price_consultation"].includes(intent) || candidate?.coveredIntents?.includes(intent),
   );

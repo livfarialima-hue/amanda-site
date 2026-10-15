@@ -1,5 +1,12 @@
 ## 2026-10-14 — continuidade entre site e WhatsApp
 
+## 14/10/2026 — continuidade da Bruna e retomadas devidas
+
+Pedido do responsável: concluir correção iniciada em diagnóstico no Cloud e adequar retomadas para 15/10 com abordagem estratégica e não invasiva. Faixa de lipo de papada isolada confirmada nesta conversa: R$12–18mil; não extrapolar da tabela histórica de lipoaspiração nem misturar com cervicoplastia.
+
+Decisão, motivo, hipótese, métricas e revisão estão na seção 42 do Norte estratégico. Prioridade: responder dívida da clínica e cumprir promessa antes de nova abordagem; depois apenas continuidade contextual individual elegível. Preservados dados, cadência, flags, campanhas e consentimento. Estado: candidato em implementação; nenhum envio ou publicação deste pacote. Evidência técnica sanitizada: auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md.
+
+
 Correções do site e publicação autorizadas pelo usuário: convites de consulta sem promessa de horários, mensagens iniciais sem alegar leitura, destinos de seção compatíveis, remoção de breadcrumbs duplicados e abertura direta do guia de preço de lifting. Decisão canônica na seção 41 do Norte; recibos técnicos em auditorias/site-continuidade-2026-10-14/. Sem mudanças de mídia, preço, automação, qualificação ou agenda. Hipótese: reduzir atrito até conversa útil. Revisar integridade em 21/10 e etapas comerciais em 11/11 com maturação equivalente; não inferir causalidade de cada ajuste. Manter se coerente e íntegro; reverter somente o pacote diante de regressão comprovada.
 
 ## 2026-09-29 — próximo passo contextual até a consulta

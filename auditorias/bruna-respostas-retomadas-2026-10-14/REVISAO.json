@@ -1,0 +1,59 @@
+{
+  "status": "passed_local",
+  "checkedAt": "2026-10-15T10:01:05.041Z",
+  "baseline": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
+  "incidentReproducedBeforeFix": {
+    "failingCases": 5
+  },
+  "tests": {
+    "fullSuite": {
+      "passed": 2204,
+      "total": 2204
+    },
+    "contractUnion": {
+      "files": 83,
+      "passed": 1635,
+      "total": 1635,
+      "overlapsFullSuite": true
+    },
+    "liveGateHarness": {
+      "passed": 17,
+      "total": 17,
+      "mocked": true
+    },
+    "siteBuild": {
+      "files": 193,
+      "sitemapUrls": 54,
+      "auditFiles": 0
+    },
+    "architecture": "passed",
+    "changeSafety": "passed",
+    "diff": "passed",
+    "independentReview": "passed"
+  },
+  "independentReview": {
+    "status": "passed",
+    "scope": "Faixa isolada, associações, autoria, envio único, pergunta conjunta, preservação cervical, vetos clínicos/humanos, recibo explícito do compromisso e alerta antes da holding; saída monetária estrita."
+  },
+  "productionModelAudioHistory": {
+    "status": "not_run",
+    "reason": "Gate hospedado permanece obrigatório para publicação autorizada.",
+    "requiredModelScenarios": 21,
+    "requiredAudioScenarios": 3,
+    "syntheticOnly": true
+  },
+  "operationalPlanning": {
+    "status": "prepared",
+    "patientMessagesSent": 0
+  },
+  "externalWritesPerformed": false,
+  "publication": {
+    "status": "pending_authorization",
+    "baselineDeployId": "6acff7b9dc7d30f39ad66b31",
+    "appsScriptVersion": 164
+  },
+  "operationalConsistency": {
+    "expected": "SYNC_PENDING",
+    "reason": "Candidato local testado, ainda sem autorização/publicação."
+  }
+}

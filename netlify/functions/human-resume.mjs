@@ -81,6 +81,7 @@ const PRICE_REVIEW_REASONS = new Set([
   "surgical_price_range_review",
   "price_range_without_confirmed_procedure",
   "surgical_price_terms_review",
+  "lipo_papada_price_range_already_sent_review",
 ]);
 
 function timeMs(value) {
@@ -767,12 +768,16 @@ export async function processHumanResumeJob(
         : enrichedPlan.reason === "otoplasty_price_range_direct" &&
             enrichedPlan.procedure === "otoplastia"
           ? "otoplasty_range"
+        : enrichedPlan.reason === "lipo_papada_price_range_direct" && enrichedPlan.procedure === "lipo_papada"
+          ? "lipo_papada_range"
         : "";
   const approvedPriceReplyCode = consultationBundle?.candidate.decision.replyCode || (
     approvedPriceReplyKind === "lifting_range"
       ? "LIFTING-PRICE-RANGE-01"
       : approvedPriceReplyKind === "otoplasty_range"
         ? "OTOPLASTY-PRICE-RANGE-01"
+      : approvedPriceReplyKind === "lipo_papada_range"
+        ? "LIPO-PAPADA-PRICE-RANGE-01"
       : approvedPriceReplyKind === "initial_information"
         ? "SURGICAL-PRICE-INITIAL-01"
         : "");
@@ -785,7 +790,7 @@ export async function processHumanResumeJob(
           currentText: job.text,
           introduceBruna: false,
         })
-      : ["lifting_range", "otoplasty_range"].includes(
+      : ["lifting_range", "otoplasty_range", "lipo_papada_range"].includes(
           approvedPriceReplyKind,
         )
         ? buildSurgicalPriceSuggestedReply({
@@ -865,7 +870,7 @@ export async function processHumanResumeJob(
   const deterministicReplyContextMismatch = Boolean(
     approvedPriceReplyCandidate &&
       aiResult.status === "completed" &&
-      (consultationBundle && aiResult.decision?.route === 'standard_reply' || ["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01"].includes(
+      (consultationBundle && aiResult.decision?.route === 'standard_reply' || ["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01"].includes(
         aiResult.decision?.replyCode,
       )) &&
       !approvedPriceReplyConfirmed,

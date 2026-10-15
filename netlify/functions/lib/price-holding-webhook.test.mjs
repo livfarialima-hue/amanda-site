@@ -9,6 +9,74 @@ const SHEETS_URL = "https://sheets.example.test/webhook";
 const YCLOUD_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 
+for(const scenario of ['complete','price_only','semantic_veto','minor_veto','association','association_duplicate_commitment','association_alert_failed','association_commitment_failed','association_commitment_unconfirmed','association_commitment_ignored','association_commitment_string']) {
+  test(`isolated lipo webhook answers the requested topics and preserves human review: ${scenario}`,async t=>{
+    const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,
+      GOOGLE_SHEETS_WEBHOOK_SECRET:'synthetic',WHATSAPP_AUTOMATION_MODE:'active',WHATSAPP_INBOUND_BACKGROUND_ENABLED:'true',
+      WHATSAPP_HUMAN_REPLY_GUARD_MS:'0',WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS:'0',WHATSAPP_REPLY_DEBOUNCE_AI_MS:'0',
+      OPENAI_API_KEY:'synthetic',WHATSAPP_ALERT_NUMBER:'+5511900000002',YCLOUD_ALERT_TEMPLATE_NAME:'synthetic_review',YCLOUD_ALERT_TEMPLATE_LANGUAGE:'pt_BR'};
+    const previous=Object.fromEntries(Object.keys(settings).map(k=>[k,process.env[k]]));Object.assign(process.env,settings);
+    t.after(()=>{for(const[k,v]of Object.entries(previous)){if(v===undefined)delete process.env[k];else process.env[k]=v;}});
+    t.mock.method(console,'log',()=>{});
+    const association=scenario.startsWith('association'),failed=scenario.endsWith('alert_failed'),commitmentFailure=scenario.endsWith('commitment_failed'),veto=scenario.endsWith('veto');
+    const unconfirmed=scenario.endsWith('commitment_unconfirmed')||scenario.endsWith('commitment_ignored')||scenario.endsWith('commitment_string');
+    const scope=association?'lipo de papada com tratamento muscular':'lipo de papada';
+    const origin=scenario==='minor_veto'?`Estou pesquisando ${scope} para minha filha de 13 anos.`:`Estou pesquisando ${scope} para minha esposa.`;
+    const text=scenario==='price_only'?'Qual o valor da lipo de papada?':'Gostaria de saber sobre o procedimento, valor e recuperação';
+    const turns=[{role:'user',source:'patient',text:origin,at:'2026-10-14T14:00:00Z',eventId:`lipo-${scenario}-origin`},
+      {role:'assistant',source:'bruna',text:'Qual é a dúvida de vocês?',at:'2026-10-14T14:01:00Z',eventId:`lipo-${scenario}-intro`}];
+    const sent=[],actions=[],order=[];
+    t.mock.method(globalThis,'fetch',async(url,options)=>{
+      const data=JSON.parse(options.body);
+      if(url===SHEETS_URL){
+        actions.push(data);
+        if(data.action==='record_patient_commitment'){
+          order.push('commitment');return Response.json(scenario.endsWith('commitment_unconfirmed')?{ok:true}:
+            scenario.endsWith('commitment_ignored')?{ok:true,created:false,ignored:true}:
+            scenario.endsWith('commitment_string')?{ok:true,created:'true',duplicate:'false'}:
+            scenario.includes('duplicate_commitment')?{ok:true,duplicate:true}:
+            {ok:!commitmentFailure,created:!commitmentFailure},{status:commitmentFailure?500:200});
+        }
+        if(data.action==='send_review_alert_email'){order.push('alert');return Response.json({ok:!failed,sent:!failed},{status:failed?500:200});}
+        return Response.json(data.action==='get_conversation_context'?{ok:true,turns,professional:'amanda',opportunityId:`lipo-${scenario}`}:
+          {ok:true,sent:true,updated:true,duplicate:false,routed:true,routeStatus:'resolved',professional:'amanda',opportunityId:`lipo-${scenario}`,humanTakeoverToday:false,patientRelationship:{found:false}});
+      }
+      if(url==='https://api.openai.com/v1/responses'){
+        const input=JSON.parse(data.input),review=association||veto;
+        if(!review){assert.equal(input.policyHints.deterministicReplyCode,'LIPO-PAPADA-PRICE-RANGE-01');
+          if(scenario==='complete')assert.match(input.policyHints.deterministicReplyPreview,/gordura.*inchaço.*R\$ 12 mil e R\$ 18 mil/s);}
+        return Response.json({model:'synthetic',output_text:JSON.stringify({route:review?'human_review':'standard_reply',confidence:'high',automaticAllowed:!review,urgent:false,
+          professional:'amanda',procedure:'lipo_papada',replyCode:association?'UNKNOWN-REVIEW-01':veto?'':'LIPO-PAPADA-PRICE-RANGE-01',
+          suggestedReply:review?'A equipe precisa conferir o escopo solicitado.':input.policyHints.deterministicReplyPreview,
+          reviewReason:association?'unknown_digest:preco_associacao':veto?'clinical_detail_review':'',
+          conversationState:{activeTopic:'procedimento, valor e recuperação',patientAct:'question',refersToEventId:'',lastClinicQuestion:'',lastClinicOffer:'',unresolvedQuestions:['procedimento','valor','recuperação'],factsAlreadyProvided:[],owner:review?'human_team':'bruna',nextExpectedAction:review?'revisar escopo':'responder os três assuntos',ambiguity:'',contextConfidence:'high'}})});
+      }
+      assert.equal(url,YCLOUD_URL,'all effects mocked');
+      if(data.to==='+5511900000002'){order.push('alert');return Response.json({status:failed?'failed':'accepted'},{status:failed?500:200});}
+      order.push('patient');sent.push(data);return Response.json({status:'accepted'});
+    });
+    const response=await handleYCloudWebhook(requestFor({id:`lipo-${scenario}-final`,type:'whatsapp.inbound_message.received',createTime:'2026-10-14T14:02:00Z',
+      whatsappInboundMessage:{id:`lipo-${scenario}-message`,from:'+5511900000000',to:'+5511900000001',sendTime:'2026-10-14T14:02:00Z',type:'text',text:{body:text}}}),
+      {livInboundBackground:true},{registerInboundRecoveryImpl:async()=>({status:'completed'})});
+    const result=await response.json();
+    if(veto||failed||commitmentFailure||unconfirmed){assert.equal(sent.length,0,JSON.stringify(result));
+      if(failed||commitmentFailure||unconfirmed)assert.equal(result.automaticWorkFinished,false,'missing handoff receipt remains retryable');
+      if(commitmentFailure||unconfirmed){assert.ok(order.includes('alert'));assert.equal(result.priceHoldingQueued,false);assert.notEqual(result.commitmentSyncStatus,'completed');}
+      if(unconfirmed)assert.equal(result.commitmentSyncStatus,'receipt_unconfirmed');
+      return;}
+    assert.equal(sent.length,1,JSON.stringify(result));const body=sent[0].text.body;
+    if(association){
+      assert.ok(order.indexOf('alert')<order.indexOf('patient'));assert.match(body,/gordura.*inchaço.*confirmar.*valor/s);assert.doesNotMatch(body,/R\$/);
+      assert.ok(order.indexOf('commitment')<order.indexOf('patient'));
+      assert.ok(actions.some(action=>action.action==='record_patient_commitment'&&['procedure_price','human_review'].includes(action.commitment?.kind)));
+    }else{
+      assert.match(body,/lipo de papada isolada.*R\$ 12 mil e R\$ 18 mil/);assert.match(body,/não é um orçamento fechado/);
+      if(scenario==='complete')assert.match(body,/gordura.*flacidez.*Dra\. Amanda.*inchaço.*sensibilidade.*roxos/s);
+      assert.doesNotMatch(body,/cervicoplastia|Olá|sou a Bruna|confirmar.*equipe/);assert.equal(order.includes('alert'),false);
+    }
+  });
+}
+
 for (const scenario of ['remote_approved_text', 'remote_approved_audio', 'remote_text', 'remote_audio', 'remote_alert_failure', 'price_semantic_veto', 'price_semantic_without_code', 'price_ai_failure', 'price_alert_failure']) {
   test(`current question owns the holding reply: ${scenario}`, async t => {
     const settings = { YCLOUD_WEBHOOK_SECRET: WEBHOOK_SECRET, YCLOUD_API_KEY: 'synthetic', BRUNA_CONVERSION_EXPERIENCE_V1: 'enabled',

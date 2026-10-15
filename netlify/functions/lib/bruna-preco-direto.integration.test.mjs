@@ -22,6 +22,7 @@ for (const [text,procedure,range] of [
   ['Qual o preço do lifting cervical?','lifting_cervical',/18 mil e R\$ 26 mil/],
   ['Qual o valor do lifting facial?','lifting_facial',/26 mil e R\$ 42 mil/],
   ['Qual o valor do minilifting?','lifting_facial',/18 mil e R\$ 25 mil/],
+  ['Quanto custa lipo de papada?','lipo_papada',/12 mil e R\$ 18 mil/],
 ]) {
   test(`first explicit price request has the right protected range without an extra permission: ${procedure} ${text}`,()=>{
     const {plan,body,validation}=replyFor(text);
@@ -143,7 +144,9 @@ test('a requested cost article is optional and does not replace the price answer
 });
 
 test('other surgical procedures never receive another procedure range',()=>{
-  for(const text of ['Qual o preço da blefaroplastia inferior?','Quanto custa reduzir o tamanho da orelha?','Quanto custa lipo de papada?']) {
+  // Isolated lipo now has its own authorization; its scope, historical repeat
+  // detection and combination guards live in bruna-procedimento-preco-recuperacao.
+  for(const text of ['Qual o preço da blefaroplastia inferior?','Quanto custa reduzir o tamanho da orelha?','Quanto custa lipo de papada com tratamento muscular?','Quanto custa lipo de barriga?']) {
     const plan=planFor(text);
     assert.equal(plan.automaticAllowed,false,text);
   }
