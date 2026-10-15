@@ -1,136 +1,41 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
-  "title": "Responder perguntas conjuntas, reconhecer faixa autorizada de lipo de papada e priorizar retornos devidos",
-  "status": "published_verified",
-  "baseCommit": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
+  "changeId": "GOOGLE-ADS-RECURSOS-VISUAIS-2026-10-15",
+  "title": "Remover associações de Imagem reprovadas preservando cobertura aprovada",
+  "status": "tested_local",
+  "baseCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou publicar o commit exato 7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788; autorização e preflight no recibo auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json. Envios reais de teste não autorizados nem executados."
+    "note": "Autorização do usuário para ajustar e publicar o restante nesta conversa. Vincular o HEAD exato ao recibo externo de preflight; este arquivo não autoriza a publicação."
   },
   "risk": {
-    "level": "high",
-    "patientEffects": true,
-    "externalWritesPerformed": true
+    "level": "medium",
+    "patientEffects": false,
+    "externalWritesPerformed": false
   },
   "scope": {
     "files": [
-      "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
-      "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json",
-      "auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md",
-      "auditorias/bruna-respostas-retomadas-2026-10-14/REVISAO.json",
-      "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
-      "auditorias/google-ads-complementos-2026-10-15/PLANO.json",
-      "auditorias/google-ads-complementos-2026-10-15/PREFLIGHT.json",
-      "auditorias/google-ads-complementos-2026-10-15/RELATORIO.md",
-      "auditorias/google-ads-complementos-2026-10-15/REVISAO.json",
-      "auditorias/google-ads-comunicacao-2026-10-15/PLANO.json",
-      "auditorias/google-ads-comunicacao-2026-10-15/PREFLIGHT.json",
-      "auditorias/google-ads-comunicacao-2026-10-15/RELATORIO.md",
-      "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json",
+      "auditorias/google-ads-recursos-visuais-2026-10-15/PLANO.json",
+      "auditorias/google-ads-recursos-visuais-2026-10-15/PREFLIGHT.json",
+      "auditorias/google-ads-recursos-visuais-2026-10-15/RELATORIO.md",
+      "auditorias/google-ads-recursos-visuais-2026-10-15/REVISAO.json",
       "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
-      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/estrategia-abordagem-bruna.md",
-      "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "netlify/functions/lib/bruna-policy/rules.jsonl",
-      "netlify/functions/lib/bruna-preco-direto.integration.test.mjs",
-      "netlify/functions/lib/bruna-procedimento-preco-recuperacao.integration.test.mjs",
-      "netlify/functions/lib/conversation-action-controller.mjs",
-      "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/conversation-guidelines.test.mjs",
-      "netlify/functions/lib/human-resume-policy.mjs",
-      "netlify/functions/lib/human-resume-processor.test.mjs",
-      "netlify/functions/lib/lifting-information.mjs",
-      "netlify/functions/lib/openai-shadow.mjs",
-      "netlify/functions/lib/openai-shadow.test.mjs",
-      "netlify/functions/lib/outbound-reply-gate.mjs",
-      "netlify/functions/lib/patient-turn-context.mjs",
-      "netlify/functions/lib/price-holding-webhook.test.mjs",
-      "netlify/functions/lib/semantic-reply-policy.mjs",
-      "netlify/functions/lib/surgical-price-policy.mjs",
-      "netlify/functions/lib/surgical-price-review.mjs",
-      "netlify/functions/lib/whatsapp-automation.mjs",
-      "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "scripts/check-bruna-model-live.mjs",
-      "scripts/check-bruna-model-live.test.mjs"
+      "ops/IMPACT-REGISTRY.json"
     ],
     "contracts": [
       "change-governance",
-      "bruna-conversation-safety",
-      "bruna-conversion-experience",
-      "bruna-regression-governance",
-      "google-ads-acquisition-conversion",
-      "patient-journey-funnel-followups",
-      "followup-message-copy"
+      "google-ads-acquisition-conversion"
     ],
-    "planningNote": "O escopo funcional inicial foi integralmente implementado. As novas regressões de proprietário/gate foram concentradas na integração bruna-procedimento-preco-recuperacao e nos dois consumidores webhook/human-resume, mantendo a execução das suítes anteriores sem modificar expectativas. initialPlannedFiles preserva o planejamento; files descreve integralmente o diff real, sem omitir mudanças. Integração documental em 15/10: preservados quatro arquivos de auditoria e recibos do Google Ads já publicados no ramo remoto 20d4b5be. Escopo integral de 40 arquivos desde o baseline; nenhum código, teste, manifesto ou regra Bruna alterado em relação ao commit autorizado 51e57c69. Segundo componente Ads preparado a partir de 20d4b5b e integrado com 3be4621f após detectar a projeção Drive mais recente. União real de 44 arquivos desde b77b1d6; nove documentos do novo componente diferem de 3be. Código, testes, manifesto e bloqueio Bruna preservados, sem nova autorização ou publicação dessa correção. Após a publicação Ads autorizada em 66b881e4, foi integrada a revisão paralela 7242d54d para preservar a terceira tentativa Bruna bloqueada e sua correção financeira literal. Oito objetos Ads e 16 campos conferidos; união real continua em 44 arquivos, com nove documentos distintos do novo tip Bruna. O commit aprovado Ads e seus testes anteriores continuam históricos; a integração posterior tem nova validação local, sem autorização Bruna. Fechamento atual: Bruna publicada sob autorização própria em 7242d54 e deploy 6ad0b88d46ff84caa6a749e7. Integrados os recibos paralelos eb6bf961 sem alterar código publicado, testes ou política. União integral atual: 45 arquivos. Estados e contagens anteriores são históricos.",
-    "initialPlannedFiles": [
-      "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
-      "auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md",
-      "auditorias/bruna-respostas-retomadas-2026-10-14/REVISAO.json",
-      "campanhas/HISTORICO-ESTRATEGICO-AQUISICAO.md",
-      "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
-      "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/estrategia-abordagem-bruna.md",
-      "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/bruna-policy/rules.jsonl",
-      "netlify/functions/lib/bruna-procedimento-preco-recuperacao.integration.test.mjs",
-      "netlify/functions/lib/conversation-action-controller.mjs",
-      "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/human-resume-policy.mjs",
-      "netlify/functions/lib/human-resume-processor.test.mjs",
-      "netlify/functions/lib/lifting-information.mjs",
-      "netlify/functions/lib/outbound-reply-gate.mjs",
-      "netlify/functions/lib/outbound-reply-gate.test.mjs",
-      "netlify/functions/lib/patient-turn-context.mjs",
-      "netlify/functions/lib/patient-turn-context.test.mjs",
-      "netlify/functions/lib/price-holding-webhook.test.mjs",
-      "netlify/functions/lib/semantic-reply-policy.mjs",
-      "netlify/functions/lib/semantic-reply-policy.test.mjs",
-      "netlify/functions/lib/surgical-price-policy.mjs",
-      "netlify/functions/lib/surgical-price-policy.test.mjs",
-      "netlify/functions/lib/surgical-price-review.mjs",
-      "netlify/functions/lib/surgical-price-review.test.mjs",
-      "netlify/functions/lib/whatsapp-automation.mjs",
-      "netlify/functions/lib/whatsapp-automation.test.mjs",
-      "netlify/functions/ycloud-webhook.mjs",
-      "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "scripts/check-bruna-model-live.mjs",
-      "scripts/check-bruna-model-live.test.mjs"
-    ],
-    "unchangedRegressionSuites": [
-      "netlify/functions/lib/outbound-reply-gate.test.mjs",
-      "netlify/functions/lib/patient-turn-context.test.mjs",
-      "netlify/functions/lib/semantic-reply-policy.test.mjs",
-      "netlify/functions/lib/surgical-price-policy.test.mjs",
-      "netlify/functions/lib/surgical-price-review.test.mjs",
-      "netlify/functions/lib/whatsapp-automation.test.mjs"
-    ]
+    "planningNote": "Pacote novo, estritamente documental e de associações Google Ads. Nenhum código ou publicação anterior é alterado. Norte lido e preservado porque a estratégia não muda."
   },
   "impact": {
     "consumers": [
       "AGENTS.md",
-      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
-      "apps-script/clinica-liv-leads/Code.gs",
       "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
-      "apps-script/clinica-liv-leads/KnowledgeBase.gs",
-      "apps-script/clinica-liv-leads/LeadClassification.gs",
-      "apps-script/clinica-liv-leads/MetaAdsFunnelReview.gs",
-      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
-      "apps-script/clinica-liv-leads/Retomadas.gs",
       "blefaroplastia/index.html",
       "campanhas/cost-guides.test.mjs",
       "campanhas/lifting-price-page.test.mjs",
@@ -148,1546 +53,155 @@
       "lifting-cervical/index.html",
       "lifting-facial/index.html",
       "lipo-de-papada/index.html",
-      "netlify/functions/appointment-review.mjs",
-      "netlify/functions/classify-leads-background.mjs",
-      "netlify/functions/classify-leads.mjs",
-      "netlify/functions/human-resume-background.mjs",
-      "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/appointment-confirmation.mjs",
-      "netlify/functions/lib/appointment-suggestions.mjs",
-      "netlify/functions/lib/bruna-conversion-experience.mjs",
-      "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-      "netlify/functions/lib/bruna-policy/rules.jsonl",
-      "netlify/functions/lib/consultation-question-bundle.mjs",
-      "netlify/functions/lib/conversation-action-controller.mjs",
-      "netlify/functions/lib/extract-inbound-text.mjs",
-      "netlify/functions/lib/extreme-night-policy.mjs",
-      "netlify/functions/lib/human-resume-dispatch.mjs",
-      "netlify/functions/lib/inbound-message-kind.mjs",
-      "netlify/functions/lib/knowledge-learning.mjs",
-      "netlify/functions/lib/knowledge-wording.mjs",
-      "netlify/functions/lib/lead-classifier.mjs",
-      "netlify/functions/lib/lifting-information.mjs",
-      "netlify/functions/lib/openai-shadow.mjs",
-      "netlify/functions/lib/outbound-reply-gate.mjs",
       "netlify/functions/lib/patient-replies.mjs",
-      "netlify/functions/lib/professional-fact-review.mjs",
-      "netlify/functions/lib/scheduled-followup-context-review.mjs",
-      "netlify/functions/lib/semantic-reply-policy.mjs",
-      "netlify/functions/lib/surgical-price-review.mjs",
-      "netlify/functions/lib/whatsapp-automation.mjs",
-      "netlify/functions/scheduled-followup.mjs",
-      "netlify/functions/ycloud-webhook.mjs",
       "otoplastia-adulto/index.html",
       "otoplastia-infantil/index.html"
     ],
     "preservedInvariants": [
-      "Nenhum efeito externo, envio real ou reprocessamento durante implementação/testes.",
-      "Faixa R$12–18mil somente lipo de papada isolada, uma vez, quando solicitada e semanticamente autorizada; não abrange cervicoplastia, platisma ou combinação.",
-      "Partes seguras da pergunta respondidas com fatos canônicos; preço ou questão individual sem fonte segue à equipe.",
-      "Handoff real antes de promessa; nenhuma promessa nova artificial de horário.",
-      "Opt-out, pausa, urgência, risco clínico, posse humana, identidade, mensagem mais recente, janela e idempotência intactos.",
-      "Retornos prometidos são dívida da clínica; não reativar filas históricas nem disparar lote.",
-      "Apps Script v164, dados clínicos, agenda, flags, triggers, campanhas e orçamento preservados; somente observações manuais de planejamento na Central foram alteradas e relidas.",
-      "Estado published_verified e recibos anteriores preservados como baseline; este pacote continua candidato.",
-      "Dados pessoais e evidência de conversas ficam nas fontes privadas, nunca neste repositório público.",
-      "Componente Ads aplicado e relido: somente 13 textos de três RSAs, três destinos de sitelinks em quatro associações e duas URLs finais; orçamento, lances, estados, rastreamento e demais campos preservados.",
-      "A reconciliação documental do componente Ads não encerra a pendência global Bruna; ops:check continua SYNC_PENDING enquanto esse candidato não tiver publicação própria autorizada e verificada.",
-      "Segundo lote Ads aplicado e relido: 11 textos de três RSAs, descrição SL04, destino SL05 e três textos de destaques existentes de Conta. CO04 preservado; zero alterações de status, associações, orçamento ou lances. Nenhuma autorização Bruna."
+      "Remover somente as 14 associações de Imagem reprovadas por sobreposições, no nível campanha, identificadas na prova privada; preservar as 57 associações aprovadas.",
+      "Preservar os cinco recursos originais na biblioteca, arquivos, histórico e todas as associações fora do lote; não excluir recursos da biblioteca.",
+      "Preservar campanhas, grupos, orçamentos, lances, metas, redes, segmentação, palavras, negativas, anúncios, textos, URLs, rastreamento, sitelinks e destaques.",
+      "Sete associações de logotipos reprovadas ficam fora do lote; correção depende do original aprovado. Não alterar identidade visual nem reenviar imagem inelegível para contornar política.",
+      "Bruna, site, Netlify, Apps Script v164, LEADS, CRM e Calendar permanecem intactos; nenhuma mensagem, contato ou conversão de teste.",
+      "A mesma projeção do Plano no Drive é atualizada somente após commit, com download e igualdade de bytes; recibos de publicações anteriores preservados."
+    ],
+    "externalConsumers": [
+      "Google Ads: 14 associações de campanha de Imagem reprovadas; 57 aprovadas preservadas.",
+      "Google Drive: mesma projeção existente do Plano executivo."
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "change-governance",
-        "system": "Netlify vigente, endpoint público, Git e fontes canônicas",
-        "status": "verified_baseline_with_limits",
-        "checkedAt": "2026-10-15T00:09:33.184Z",
-        "reference": "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
-        "note": "Leitura técnica atual; nenhuma escrita externa. Revalidar antes de publicação e antes de cada eventual contato."
-      },
-      {
-        "contract": "bruna-conversation-safety",
-        "system": "Netlify vigente, endpoint público, Git e fontes canônicas",
-        "status": "verified_baseline_with_limits",
-        "checkedAt": "2026-10-15T00:09:33.269Z",
-        "reference": "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
-        "note": "Leitura técnica atual; nenhuma escrita externa. Revalidar antes de publicação e antes de cada eventual contato."
-      },
-      {
-        "contract": "bruna-conversion-experience",
-        "system": "Netlify vigente, endpoint público, Git e fontes canônicas",
-        "status": "verified_baseline_with_limits",
-        "checkedAt": "2026-10-15T00:09:33.269Z",
-        "reference": "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
-        "note": "Leitura técnica atual; nenhuma escrita externa. Revalidar antes de publicação e antes de cada eventual contato."
-      },
-      {
-        "contract": "bruna-regression-governance",
-        "system": "Netlify vigente, endpoint público, Git e fontes canônicas",
-        "status": "verified_baseline_with_limits",
-        "checkedAt": "2026-10-15T00:09:33.269Z",
-        "reference": "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
-        "note": "Leitura técnica atual; nenhuma escrita externa. Revalidar antes de publicação e antes de cada eventual contato."
-      },
-      {
         "contract": "google-ads-acquisition-conversion",
-        "system": "Netlify vigente, endpoint público, Git e fontes canônicas",
+        "system": "Google Ads: conta, imagens, níveis e cobertura por campanha",
         "status": "verified_baseline_with_limits",
-        "checkedAt": "2026-10-15T00:09:33.269Z",
-        "reference": "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
-        "note": "Leitura técnica atual; nenhuma escrita externa. Revalidar antes de publicação e antes de cada eventual contato."
-      },
-      {
-        "contract": "patient-journey-funnel-followups",
-        "system": "LEADS/CRM/Central/compromissos e Calendar canônicos",
-        "status": "verified_baseline_with_limits",
-        "checkedAt": "2026-10-15T00:09:33.269Z",
-        "reference": "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
-        "note": "Leitura técnica atual; nenhuma escrita externa. Revalidar antes de publicação e antes de cada eventual contato."
-      },
-      {
-        "contract": "followup-message-copy",
-        "system": "LEADS/CRM/Central/compromissos e Calendar canônicos",
-        "status": "verified_baseline_with_limits",
-        "checkedAt": "2026-10-15T00:09:33.269Z",
-        "reference": "auditorias/bruna-respostas-retomadas-2026-10-14/PREFLIGHT.json",
-        "note": "Leitura técnica atual; nenhuma escrita externa. Revalidar antes de publicação e antes de cada eventual contato."
-      },
-      {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "Google Ads, consumidores compartilhados e destinos públicos",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/google-ads-comunicacao-2026-10-15/PREFLIGHT.json",
-        "note": "Conta e todos os objetos do lote relidos pelo coordenador; consumidores dos três sitelinks cobertos (quatro associações), before dos três RSAs comparado independentemente, duas palavras exatas e baseline de campanhas conferidos. Destinos públicos e âncora aprovados. Tracking e fixações preservados; sem auditoria nova de mensuração ou dados de pacientes.",
-        "checkedAt": "2026-10-15T10:00:27.977056+00:00"
+        "checkedAt": "2026-10-15T12:05:21.054Z",
+        "reference": "auditorias/google-ads-recursos-visuais-2026-10-15/PREFLIGHT.json",
+        "note": "Inventário, seleção de 14 vínculos, cobertura de 57 aprovadas, conta e seis campanhas ativas afetadas confirmados; escrita ainda não realizada."
       },
       {
         "contract": "change-governance",
-        "system": "Git e projeção existente do Plano no Google Drive",
+        "system": "Git e mesma projeção do Plano no Drive",
         "status": "verified_baseline_with_limits",
-        "reference": "auditorias/google-ads-comunicacao-2026-10-15/PREFLIGHT.json",
-        "note": "Baseline Git local identificado; mesmo arquivo do Plano no Drive relido por metadata e download, com SHA-256 igual ao baseline b77b1d6. Nenhuma escrita; projeção posterior deste candidato continua pendente.",
-        "checkedAt": "2026-10-15T10:00:27.977056+00:00"
-      },
-      {
-        "contract": "google-ads-acquisition-conversion",
-        "system": "Objetos e consumidores do segundo lote Google Ads",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/google-ads-complementos-2026-10-15/PREFLIGHT.json",
-        "note": "Objetos, associações, destinos, agenda e baseline de campanhas conferidos; mesma projeção Drive igual ao commit 3be4621f, integrado após detectar deriva. Testes locais concluídos; commit exato e gate anteriores à escrita permanecem obrigatórios. Deriva posterior de Drive foi identificada antes da sincronização e integrada de 7242d54d; o histórico anterior permanece verdadeiro e a igualdade final ainda é pendente."
-      },
-      {
-        "contract": "change-governance",
-        "system": "Git e mesma projeção atual do Plano no Drive",
-        "status": "verified_baseline_with_limits",
-        "reference": "auditorias/google-ads-complementos-2026-10-15/PREFLIGHT.json",
-        "note": "Objetos, associações, destinos, agenda e baseline de campanhas conferidos; mesma projeção Drive igual ao commit 3be4621f, integrado após detectar deriva. Testes locais concluídos; commit exato e gate anteriores à escrita permanecem obrigatórios. Deriva posterior de Drive foi identificada antes da sincronização e integrada de 7242d54d; o histórico anterior permanece verdadeiro e a igualdade final ainda é pendente."
+        "reference": "auditorias/google-ads-recursos-visuais-2026-10-15/PREFLIGHT.json",
+        "note": "Git base e download autenticado do mesmo Plano confirmados; hash e bytes iguais ao baseline. A nova projeção continua pendente de commit e escrita.",
+        "checkedAt": "2026-10-15T12:03:01.091787+00:00"
       }
-    ],
-    "externalConsumers": [
-      "Google Ads: anúncios de blefaroplastia, cervicoplastia e lipo de papada existentes.",
-      "Google Ads: quatro associações existentes dos três recursos conferidos ao vivo.",
-      "Google Ads: duas palavras exatas existentes de preço de blefaroplastia e herança de rastreamento.",
-      "Destinos públicos de consulta, segurança, consulta cervical e preço de blefaroplastia.",
-      "Projeção existente do Plano executivo no Google Drive.",
-      "Segundo lote Ads: três RSAs existentes de lifting geral, lifting preço e otoplastia adulta; SL04/SL05 com uma associação cada e três destaques existentes de Conta, preservando herança e recursos de níveis específicos."
-    ],
-    "componentBoundary": "Os invariantes originais descrevem o candidato Bruna. As escritas Google Ads pertencem exclusivamente ao componente externo já aprovado e documentado em auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json; a autorização Ads não autoriza a publicação Bruna. O segundo componente, GOOGLE-ADS-COMPLEMENTOS-2026-10-15, tem autorização limitada a seu payload e à mesma projeção Drive; seus testes e preflight foram concluídos e o payload Ads foi aplicado após o commit exato aprovado e o gate. A projeção Drive permanece pendente. Nenhum desses componentes autoriza Bruna. Estado atual: os dois componentes Ads têm recibos próprios preservados; a publicação Bruna foi autorizada separadamente e comprovada. A projeção integrada exige novo readback."
+    ]
   },
   "verification": {
     "status": "passed_local",
     "commands": [
       "git diff --check",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",
       "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-      "node --test apps-script/clinica-liv-leads/Retomadas.test.mjs",
       "node --test campanhas/google-ads-ad-strength-20260913.test.mjs",
       "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
       "node --test campanhas/google-ads-settings.test.mjs",
-      "node --test netlify/functions/lib/appointment-suggestions.test.mjs",
-      "node --test netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
-      "node --test netlify/functions/lib/bruna-autonomia.integration.test.mjs apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
-      "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
-      "node --test netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
-      "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-preco-direto.integration.test.mjs netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/price-journey.integration.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
-      "node --test netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-procedimento-preco-recuperacao.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
-      "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
-      "node --test netlify/functions/lib/human-resume-runtime.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-ledger.test.mjs",
-      "node --test netlify/functions/lib/interaction-continuity.test.mjs",
-      "node --test netlify/functions/lib/knowledge-learning.test.mjs",
-      "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
-      "node --test netlify/functions/lib/overnight-webhook.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs",
-      "node --test netlify/functions/lib/patient-relationship.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
-      "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
-      "node --test netlify/functions/lib/protected-facts.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs",
-      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
       "npm.cmd run architecture:check",
       "npm.cmd run change:check",
       "npm.cmd run ops:check",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "npm.cmd test",
-      "node --test scripts/check-bruna-model-live.test.mjs"
+      "npm.cmd test"
     ],
-    "baseline": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
-    "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/REVISAO.json",
-    "checkedAt": "2026-10-15T11:13:41.327Z",
+    "evidence": "auditorias/google-ads-recursos-visuais-2026-10-15/REVISAO.json",
+    "checkedAt": "2026-10-15T12:07:07.488715+00:00",
     "localResults": {
+      "status": "passed",
+      "checkedAt": "2026-10-15T12:07:07.488715+00:00",
+      "contractUnion": {
+        "passed": 254,
+        "total": 254,
+        "testFiles": 16,
+        "overlapsFullSuite": true
+      },
       "fullSuite": {
         "passed": 2208,
         "total": 2208
       },
-      "contractUnion": {
-        "files": 74,
-        "passed": 1534,
-        "total": 1534,
-        "overlapsFullSuite": true,
-        "selection": "requiredTestFiles of all declared contracts"
-      },
-      "liveGateHarness": {
-        "passed": 19,
-        "total": 19,
-        "mocked": true
+      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
+      "changeSafety": {
+        "status": "CHANGE_SAFETY_STATUS=OK",
+        "exactScopeFiles": 8
       },
       "siteBuild": {
         "files": 193,
         "sitemapUrls": 54,
-        "auditFiles": 0
+        "auditFilesInArtifact": 0,
+        "errors": 0
       },
-      "architecture": "passed",
-      "changeSafety": "passed",
+      "siteCheck": {
+        "errors": 0
+      },
       "diff": "passed",
-      "independentReview": "passed"
-    },
-    "functionalCommit": "e5ac48e7b3636a61419f52e2822616073fe76c68",
-    "previousApprovedCommit": "3be4621fd2f82fd032301f74aba565e648567413",
-    "correctionAfterBlockedBuild": {
-      "promptContradictionReproduced": true,
-      "diagnosticLinesBounded": true,
-      "criteriaUnchanged": true,
-      "evidence": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json"
-    },
-    "initialFunctionalCommit": "8385b919a36e20749ea98c7ed975500658006f7d",
-    "classificationCorrection": {
-      "status": "passed_local",
-      "checkedAt": "2026-10-15T10:42:35.048Z",
-      "focusedTests": 125,
-      "regressionsFailedBeforeFix": 2,
-      "modelInstructionsAndSchemaAligned": true,
-      "parserAndFreeLabelsPreserved": true,
-      "gateCriteriaUnchanged": true,
-      "liveValidation": "passed",
-      "liveValidationDeployId": "6ad0b88d46ff84caa6a749e7",
-      "liveValidationEvidence": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json"
-    },
-    "integrationHistory": [
-      {
-        "status": "passed_local",
-        "checkedAt": "2026-10-15T10:28:15Z",
-        "remoteBaseline": "30b01f4267719effebd094edc2949a163ac1ed98",
-        "adsReadbackCommit": "9846d4840ab3bc1c1668d491c98215bc7200b7ab",
-        "exactScopeFiles": 36,
-        "adsFilesAgainstRemote": 9,
-        "brunaCodeTestsManifestEqualRemote": true,
-        "unmergedFiles": 0,
-        "commands": [
-          {
-            "command": "npm.cmd run change:check",
-            "result": "CHANGE_SAFETY_STATUS=OK",
-            "exactFiles": 36
-          },
-          {
-            "command": "npm.cmd run architecture:check",
-            "result": "JOURNEY_MODULE_BOUNDARIES=OK"
-          },
-          {
-            "command": "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
-            "passed": 15,
-            "failed": 0
-          },
-          {
-            "command": "git diff --check",
-            "result": "passed"
-          },
-          {
-            "command": "git diff --cached --check",
-            "result": "passed"
-          },
-          {
-            "command": "npm.cmd run ops:check",
-            "result": "SYNC_PENDING",
-            "reasons": [
-              "CHANGE_PUBLICATION_PENDING",
-              "WRONG_BRANCH",
-              "DIRTY_WORKTREE"
-            ],
-            "note": "Candidato Bruna committed, aguardando sua própria autorização/publicação; branch de integração e merge ainda sem commit."
-          }
-        ],
-        "note": "Resultados anteriores de 2.204 testes Bruna e 2.175 testes Ads são históricos das respectivas revisões. A integração documental não publica Bruna; sua pendência global permanece visível.",
-        "independentReview": {
-          "status": "passed",
-          "scopeFiles": 36,
-          "adsFilesAgainstRemote": 9,
-          "brunaCodeTestsManifestPreserved": true,
-          "noPrivateIdsAdded": true,
-          "executivePlanHashVerified": true
-        }
-      },
-      {
-        "status": "passed_local",
-        "localCommittedBaseline": "94f066e663fcd85f28f3e52ff15d8a2d5c75cedc",
-        "exactScopeFiles": 38,
-        "note": "Validações anteriores de 2.175 Ads, 2.204 Bruna e 2.205 Bruna corrigida pertencem às revisões indicadas; esta integração documental não publica o candidato bloqueado.",
-        "checkedAt": "2026-10-15T10:32:59Z",
-        "adsFilesAgainstLocalCommittedBaseline": 9,
-        "brunaCodeTestsManifestEqualBaseline": true,
-        "unmergedFiles": 0,
-        "commands": [
-          {
-            "command": "npm.cmd run change:check",
-            "result": "CHANGE_SAFETY_STATUS=OK",
-            "exactFiles": 38
-          },
-          {
-            "command": "npm.cmd run architecture:check",
-            "result": "JOURNEY_MODULE_BOUNDARIES=OK"
-          },
-          {
-            "command": "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs scripts/check-bruna-model-live.test.mjs",
-            "passed": 53,
-            "failed": 0,
-            "liveGateHarnessMocked": true
-          },
-          {
-            "command": "git diff --check",
-            "result": "passed"
-          },
-          {
-            "command": "git diff --cached --check",
-            "result": "passed"
-          },
-          {
-            "command": "npm.cmd run ops:check",
-            "result": "SYNC_PENDING",
-            "reasons": [
-              "CHANGE_PUBLICATION_PENDING",
-              "WRONG_BRANCH",
-              "DIRTY_WORKTREE"
-            ],
-            "note": "Bruna continua committed, tentativa anterior bloqueada e correção aguardando autorização; merge ainda sem commit na branch de integração."
-          }
+      "opsCheck": {
+        "status": "SYNC_PENDING",
+        "expected": true,
+        "reasons": [
+          "Novo pacote ainda não publicado.",
+          "Worktree isolado fora da branch canônica.",
+          "Documentos de recibo ainda não commitados no momento da checagem."
         ]
-      }
-    ],
-    "integrationValidation": {
-      "status": "passed_local",
-      "checkedAt": "2026-10-15T10:53:21.921Z",
-      "approvedFunctionalCandidate": "51e57c695d106263a42255cc9b0fa6139755b41b",
-      "remoteBaseline": "20d4b5be99c15b24a26cded8b6c9a0a33dafbf93",
-      "scopeFiles": 40,
-      "codeTestsAndManifestEqualApproved": true,
-      "publicationAttempted": false,
-      "fullSuite": {
-        "passed": 2207,
-        "total": 2207
       },
-      "changeSafety": "passed",
-      "architecture": "passed",
-      "siteCheck": "passed",
-      "diff": "passed",
-      "independentReview": "passed",
-      "documentationReconciled": true
-    },
-    "literalFinancialCorrection": {
-      "status": "passed_local",
-      "checkedAt": "2026-10-15T11:13:41.327Z",
-      "focusedTests": 105,
-      "newRegressionFailedBeforeFix": true,
-      "canonicalPolicyUnchanged": true,
-      "hostedAssertionsUnchanged": true,
-      "contextualCompletenessPreserved": true,
-      "liveValidation": "passed",
-      "liveValidationDeployId": "6ad0b88d46ff84caa6a749e7",
-      "liveValidationEvidence": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json"
-    },
-    "postPublicationParallelIntegration": {
-      "status": "integrated_document_sync_verified",
-      "remoteCommit": "eb6bf961e4283a2546ef369981cbf1da87d7b88b",
-      "brunaReceiptCommit": "db5a58bfff8d367c0e4e8b0b2cc34b100c420387",
-      "approvedFunctionalCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
-      "scopeFiles": 45,
-      "runtimeChanged": false,
-      "adsRecordsPreserved": true,
-      "checkedAt": "2026-10-15T11:35:51.961Z",
-      "planSourceCommit": "f28a7a51c0cd1a71687478dfc0842c1595065de3",
-      "planReadbackVerifiedAt": "2026-10-15T11:36:35.552Z",
-      "metadataTests": {
-        "passed": 15,
-        "total": 15
-      }
+      "initialEnvironmentAttempt": {
+        "status": "failed_missing_dependency",
+        "cause": "O novo worktree ainda não continha @netlify/blobs.",
+        "resolution": "npm ci --ignore-scripts --no-audit --no-fund usando o lock versionado; nenhuma alteração de dependência, código ou teste.",
+        "subsequentFullSuite": "2208/2208 passed"
+      },
+      "limitation": "Suíte local não comprova escrita, política ou exibição no Google. A falha de HTML de auditoria observada no checkout primário não ocorreu neste worktree isolado; nenhum teste foi alterado."
     }
   },
   "rollback": {
-    "local": "Reverter somente o diff declarado desta branch isolada.",
-    "production": "Rollback: novo commit/build que reverta somente este pacote para o comportamento de cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d / 6acff7b9dc7d30f39ad66b31, preservando dados, filas, flags, recibos e Apps Script; sem replay."
+    "local": "Reverter apenas os documentos deste pacote por novo commit, sem modificar código nem os recibos Bruna e dos lotes Ads anteriores.",
+    "production": "Reassociar somente os mesmos 14 pares recurso/campanha, no mesmo nível campanha, a partir do banco privado anterior. Preservar os cinco recursos originais e as 57 associações aprovadas. Antes de reverter, reler o estado para não duplicar nem sobrescrever mudança paralela; a reassociação não remove a reprovação."
   },
   "monitoring": {
-    "owner": "Daniel e equipe LIV",
-    "window": "Primeiro ciclo e 48 horas após a publicação; revisão de completude e retornos em 22/10/2026",
+    "owner": "Daniel / equipe LIV",
+    "window": "Readback imediato e conferência de integridade em 16/10/2026; revisão conjunta de política em 17/10/2026. Sem automação nova.",
     "signals": [
-      "Perguntas integralmente atendidas com fatos aprovados; preço do procedimento correto e envio único.",
-      "Promessas cumpridas antes de novos convites; zero contato após recusa/pausa e zero duplicidade.",
-      "Conter em qualquer indicação individual, mistura de valores, promessa sem encaminhamento ou invasão de atendimento humano."
+      "Exatamente 14 associações removidas e 57 aprovadas preservadas, sem campanha perder cobertura de Imagem.",
+      "Nenhuma alteração de orçamento, lance, identidade, anúncio, palavra, recurso elegível ou biblioteca.",
+      "Elegibilidade e exibição são distintas. Desempenho comercial segue o acompanhamento existente por contatos válidos, qualificados e consultas, sem alegar ganho pela limpeza."
     ]
   },
   "release": {
+    "status": "awaiting_commit_and_release_preflight",
+    "externalWritesPerformed": false,
+    "approvedCommit": null,
+    "reference": "auditorias/google-ads-recursos-visuais-2026-10-15/REVISAO.json"
+  },
+  "baselineProduction": {
     "status": "published_verified",
     "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
-    "externalWritesPerformed": true,
-    "bundleVersion": "2026-10-14.5",
     "approvedCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
     "netlifyDeployId": "6ad0b88d46ff84caa6a749e7",
-    "publishedAt": "2026-10-15T11:30:20.211Z",
-    "verifiedAt": "2026-10-15T11:30:58.679Z",
-    "context": "production",
-    "deployCreatedAt": "2026-10-15T11:27:09.456Z",
-    "branch": "reestruturacao-site",
-    "productionState": "ready",
-    "approval": {
-      "by": "Daniel",
-      "at": "2026-10-15T11:26:36.6683525Z",
-      "reference": "Sim nesta conversa para publicar 7242d54"
-    },
-    "releasePreflight": {
-      "status": "CHANGE_SAFETY_STATUS=OK",
-      "approvedCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
-      "clean": true,
-      "checkedAt": "2026-10-15T11:26:36.6683525Z",
-      "reference": "tmp/release-preflight-7242d54.json"
-    },
-    "liveModel": {
-      "status": "passed",
-      "passed": 21,
-      "total": 21,
-      "fullHistoryPassed": 2,
-      "model": "gpt-6.1-sol",
-      "checkedAt": "2026-10-15T11:30:04.173Z",
-      "evidence": "https://app.netlify.com/projects/inspiring-sprite-b35ca4/deploys/6ad0b88d46ff84caa6a749e7; BRUNA_MODEL_PREFLIGHT and 21 bounded scenario records"
-    },
-    "liveAudio": {
-      "status": "passed",
-      "passed": 3,
-      "total": 3,
-      "model": "whisper-1"
-    },
-    "syntheticOnly": true,
-    "patientMessagesSent": 0,
-    "health": {
-      "checkedAt": "2026-10-15T11:30:32.555Z",
-      "deployId": "6ad0b88d46ff84caa6a749e7",
-      "passed": true,
-      "checks": [
-        {
-          "name": "production",
-          "passed": true,
-          "homepageHttpStatus": 200,
-          "webhookHealthHttpStatus": 200,
-          "unsignedWebhookHttpStatus": 401,
-          "signatureProtection": "active",
-          "automationMode": "active",
-          "audioTranscription": "enabled",
-          "conversationArchive": "enabled"
-        },
-        {
-          "name": "branch_alias",
-          "passed": true,
-          "homepageHttpStatus": 200,
-          "webhookHealthHttpStatus": 200,
-          "unsignedWebhookHttpStatus": 401,
-          "signatureProtection": "active",
-          "automationMode": "active",
-          "audioTranscription": "enabled",
-          "conversationArchive": "enabled"
-        },
-        {
-          "name": "immutable_deploy",
-          "passed": true,
-          "homepageHttpStatus": 200,
-          "webhookHealthHttpStatus": 200,
-          "unsignedWebhookHttpStatus": 401,
-          "signatureProtection": "active",
-          "automationMode": "active",
-          "audioTranscription": "enabled",
-          "conversationArchive": "enabled"
-        }
-      ],
-      "staticChecks": [
-        {
-          "path": "/",
-          "passed": true,
-          "statuses": [
-            200,
-            200
-          ],
-          "newSha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e",
-          "oldSha256": "11f41d43ce3b45c2f9042ebd1b793797934cefbe4b9c3be96e23358a343c9c8e"
-        },
-        {
-          "path": "/lipo-de-papada/",
-          "passed": true,
-          "statuses": [
-            200,
-            200
-          ],
-          "newSha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92",
-          "oldSha256": "0e09ad4e56477beeb5b7b72459da31285ffd308774536b2da0d284008ac50d92"
-        },
-        {
-          "path": "/lifting-cervical/",
-          "passed": true,
-          "statuses": [
-            200,
-            200
-          ],
-          "newSha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033",
-          "oldSha256": "bdf0414b63bf1660ceae443eda09c364d4ec03a021f5f540913e4ba27775b033"
-        },
-        {
-          "path": "/campanhas/site-enhancements.css",
-          "passed": true,
-          "statuses": [
-            200,
-            200
-          ],
-          "newSha256": "1a02819eb3508e747beffc4b14184578b3f3dc70c6281b1ab81438d074769d13",
-          "oldSha256": "1a02819eb3508e747beffc4b14184578b3f3dc70c6281b1ab81438d074769d13"
-        }
-      ],
-      "patientMessagesSent": 0,
-      "syntheticOnly": true
-    },
-    "functions": 15,
-    "schedules": 6,
-    "appsScript": {
-      "version": 164,
-      "changed": false,
-      "runtimeInspected": false
-    },
     "appsScriptVersion": 164,
-    "documentation": {
-      "status": "written_verified",
-      "sourceCommit": "f28a7a51c0cd1a71687478dfc0842c1595065de3",
-      "verifiedAt": "2026-10-15T11:36:35.552Z",
-      "method": "Authenticated readback with exact byte equality to local and source-commit content and SHA-256",
-      "manual": {
-        "path": "docs/estrategia-abordagem-bruna.md",
-        "sha256": "4f234b291aab79540d9b82cf25bdcac3da6602059a552e0fa48f413ad1666c73",
-        "bytes": 74146,
-        "readbackAt": "2026-10-15T11:36:35.552Z",
-        "authenticated": true,
-        "sameExistingFile": true,
-        "localEqualsReadback": true,
-        "sourceCommitEqualsReadback": true,
-        "evidence": "Authenticated Drive fetch of existing manual file 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF"
-      },
-      "executivePlan": {
-        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-        "sha256": "345d750247179229b48dd4ca135990951b9d3d6c7625e413d30a11151d4a7aca",
-        "bytes": 16921,
-        "readbackAt": "2026-10-15T11:36:35.552Z",
-        "authenticated": true,
-        "sameExistingFile": true,
-        "localEqualsReadback": true,
-        "sourceCommitEqualsReadback": true,
-        "evidence": "Authenticated Drive fetch of existing plan file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
-      },
-      "existingFilesPreserved": true,
-      "equalityVerified": true,
-      "previousVerifiedProjection": {
-        "status": "written_verified",
-        "sourceCommit": "e5ac48e7b3636a61419f52e2822616073fe76c68",
-        "verifiedAt": "2026-10-15T11:14:56.252Z",
-        "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
-        "manual": {
-          "path": "docs/estrategia-abordagem-bruna.md",
-          "sha256": "2b0b4e1159e9ac788b1755c6bef4af28ab4f5ed75caaff2d77481d5626098ebc",
-          "bytes": 73293
-        },
-        "executivePlan": {
-          "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-          "sha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
-          "bytes": 13075
-        },
-        "existingFilesPreserved": true,
-        "previousParallelProjection": {
-          "status": "written_verified",
-          "note": "Os recibos anteriores acima permanecem históricos. A mesma projeção do Plano integrado foi atualizada e relida com igualdade; mantém a tentativa Bruna bloqueada, a correção pendente e Ads publicado. Manual e manifesto preservados.",
-          "executivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
-          "verifiedAt": "2026-10-15T10:34:43.126Z",
-          "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
-          "bytes": 12768
-        }
-      },
-      "previousParallelComplementProjection": {
-        "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
-        "status": "written_verified",
-        "sameExistingFile": true,
-        "sha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
-        "bytes": 16274,
-        "verifiedAt": "2026-10-15T11:31:14.1519180Z",
-        "sourceCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
-        "modifiedAt": "2026-10-15T11:30:50.929Z",
-        "method": "Authenticated raw download equal to local bytes and committed Git blob dfb9b2eb74eda8a484d9395a79a717c646b0e5af",
-        "note": "Mesma projeção do Plano atualizada e relida com igualdade; recibos anteriores permanecem históricos e a pendência Bruna preservada."
-      },
-      "previousIntegratedProjection": {
-        "status": "written_verified",
-        "sourceCommit": "2138b679ef1ad1099e55baa74df9d1888d26bca8",
-        "verifiedAt": "2026-10-15T11:34:00.700Z",
-        "method": "Authenticated readback with exact byte equality to local and source-commit content and SHA-256",
-        "manual": {
-          "path": "docs/estrategia-abordagem-bruna.md",
-          "sha256": "4f234b291aab79540d9b82cf25bdcac3da6602059a552e0fa48f413ad1666c73",
-          "bytes": 74146,
-          "readbackAt": "2026-10-15T11:34:00.700Z",
-          "authenticated": true,
-          "sameExistingFile": true,
-          "localEqualsReadback": true,
-          "sourceCommitEqualsReadback": true,
-          "evidence": "Authenticated Drive fetch of existing manual file 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF"
-        },
-        "executivePlan": {
-          "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-          "sha256": "d15cce6e2932fa8e2ba414baace4526ab1e76f440b614a070e86388b0432a55a",
-          "bytes": 13684,
-          "readbackAt": "2026-10-15T11:34:00.700Z",
-          "authenticated": true,
-          "sameExistingFile": true,
-          "localEqualsReadback": true,
-          "sourceCommitEqualsReadback": true,
-          "evidence": "Authenticated Drive fetch of existing plan file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
-        },
-        "existingFilesPreserved": true,
-        "equalityVerified": true,
-        "previousVerifiedProjection": {
-          "status": "written_verified",
-          "sourceCommit": "e5ac48e7b3636a61419f52e2822616073fe76c68",
-          "verifiedAt": "2026-10-15T11:14:56.252Z",
-          "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
-          "manual": {
-            "path": "docs/estrategia-abordagem-bruna.md",
-            "sha256": "2b0b4e1159e9ac788b1755c6bef4af28ab4f5ed75caaff2d77481d5626098ebc",
-            "bytes": 73293
-          },
-          "executivePlan": {
-            "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-            "sha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
-            "bytes": 13075
-          },
-          "existingFilesPreserved": true,
-          "previousParallelProjection": {
-            "status": "written_verified",
-            "note": "Os recibos anteriores acima permanecem históricos. A mesma projeção do Plano integrado foi atualizada e relida com igualdade; mantém a tentativa Bruna bloqueada, a correção pendente e Ads publicado. Manual e manifesto preservados.",
-            "executivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
-            "verifiedAt": "2026-10-15T10:34:43.126Z",
-            "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
-            "bytes": 12768
-          }
-        }
-      }
-    },
-    "drivePlanSha256": "345d750247179229b48dd4ca135990951b9d3d6c7625e413d30a11151d4a7aca",
-    "drivePlanReadbackVerifiedAt": "2026-10-15T11:36:35.552Z",
-    "rollback": {
-      "functionalCommit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
-      "netlifyDeployId": "6acff7b9dc7d30f39ad66b31",
-      "method": "New Git revert commit and verified build; preserve data, queues, flags and receipts; no replay"
-    },
-    "previousBlockedAttempt": "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
-    "priorAttempts": [
-      {
-        "approvedCommit": "30b01f4267719effebd094edc2949a163ac1ed98",
-        "deployId": "6ad0a6f33904b3954a95aec5",
-        "status": "blocked_before_publication",
-        "cause": "Not confirmed from the missing hosted scenario receipt; corrected prompt contradiction is independently verified."
-      },
-      {
-        "approvedCommit": "94f066e663fcd85f28f3e52ff15d8a2d5c75cedc",
-        "deployId": "6ad0abedf8ca5991c929014d",
-        "status": "blocked_before_publication",
-        "cause": "Observed procedure=consulta_online instead of unknown in remote_consultation_price_continuation_1; 15/16 executed scenarios passed, 2 full histories and 3/3 audio passed."
-      },
-      {
-        "approvedCommit": "3be4621fd2f82fd032301f74aba565e648567413",
-        "deployId": "6ad0b3b112e2fc6ad811f8e1",
-        "status": "blocked_before_publication",
-        "cause": "Observed connector a instead of the required literal e in approved_price_with_photo_request; 12/13 executed scenarios passed, no full histories reached and 3/3 audio passed."
-      }
-    ],
-    "priorPreflightBlocks": [
-      {
-        "status": "blocked_before_push",
-        "checkedAt": "2026-10-15T10:52:33.170Z",
-        "approvedCommit": "51e57c695d106263a42255cc9b0fa6139755b41b",
-        "remoteHead": "20d4b5be99c15b24a26cded8b6c9a0a33dafbf93",
-        "reason": "Remote branch contains parallel published Google Ads records; the authorized commit cannot be pushed as a fast-forward, and forcing it would remove the parallel commits.",
-        "newDeployCreated": false,
-        "productionPreserved": {
-          "commit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
-          "deployId": "6acff7b9dc7d30f39ad66b31",
-          "state": "ready"
-        },
-        "resolution": "Merge the existing Ads records and verify code equality; request approval for the new exact integrated candidate.",
-        "patientMessagesSent": 0,
-        "publicHealth": {
-          "checkedAt": "2026-10-15T10:53:23.930Z",
-          "httpStatus": 200,
-          "ok": true,
-          "automationMode": "active",
-          "signatureProtection": "active"
-        },
-        "resolutionStatus": "integrated_tested_and_documented_awaiting_exact_commit_authorization",
-        "integrationSourceCommit": "e9f584b93e9cbbcbcb2bd2f48ae2599244e060d3"
-      }
-    ],
-    "naturalPostReleaseConversationsReviewed": 0,
-    "limits": [
-      "Synthetic checks and endpoint health do not prove a natural patient interaction or conversion improvement.",
-      "Documentation projections require actual authenticated readback before final operational closure."
-    ],
-    "functionScheduleInventory": {
-      "status": "written_verified",
-      "checkedAt": "2026-10-15T11:30:58.676Z",
-      "comparisonSha256": "e9ba048d397ed4f1296f6ab98a71f09123d56c2a7e8d0a8e1e0f7e97570dabb3",
-      "baseline": {
-        "deployId": "6acff7b9dc7d30f39ad66b31",
-        "commit": "cbda0cf80a817e5cbaf967d44abe8bd9f3c0c58d",
-        "sourceSha256": "25a82666352ed91c2534ef8a5b47dc604255b02d8f62df3297131e5e3bd91626",
-        "checkedAt": "2026-10-15T11:26:36.6683525Z",
-        "evidence": "Authenticated Netlify get_deploy API"
-      },
-      "published": {
-        "deployId": "6ad0b88d46ff84caa6a749e7",
-        "commit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
-        "checkedAt": "2026-10-15T11:30:58.676Z",
-        "evidence": "Authenticated Netlify get_deploy API"
-      },
-      "functions": [
-        "appointment-reminder",
-        "appointment-review",
-        "attribution-journey",
-        "attribution-journey-purge",
-        "classify-leads",
-        "classify-leads-background",
-        "conversation-archive",
-        "human-resume",
-        "human-resume-background",
-        "post-consult-followup",
-        "scheduled-followup",
-        "synthetic-integration-health",
-        "ycloud-recovery",
-        "ycloud-recovery-background",
-        "ycloud-webhook"
-      ],
-      "schedules": [
-        {
-          "name": "attribution-journey-purge",
-          "cron": "17 6 * * *"
-        },
-        {
-          "name": "classify-leads",
-          "cron": "*/5 * * * *"
-        },
-        {
-          "name": "conversation-archive",
-          "cron": "*/5 * * * *"
-        },
-        {
-          "name": "human-resume",
-          "cron": "*/5 * * * *"
-        },
-        {
-          "name": "synthetic-integration-health",
-          "cron": "17 12 * * *"
-        },
-        {
-          "name": "ycloud-recovery",
-          "cron": "*/5 * * * *"
-        }
-      ],
-      "functionCount": 15,
-      "scheduleCount": 6,
-      "functionNamesEqual": true,
-      "scheduleNamesAndCronEqual": true
-    },
-    "documentationReconciledAt": "2026-10-15T11:36:35.552Z",
-    "operationalClosure": {
-      "status": "passed",
-      "checkedAt": "2026-10-15T11:37:49.603Z",
-      "checkedCommit": "25870cb6d4d28e12bbf214dc90632d5411d2b454",
-      "canonicalBranch": "reestruturacao-site",
-      "canonicalCheckoutClean": true,
-      "changeSafety": "OK",
-      "scopeFiles": 45,
-      "architecture": "OK",
-      "opsCheck": "OK",
-      "documentationReconciled": true,
-      "productionDeployId": "6ad0b88d46ff84caa6a749e7",
-      "productionPointerReverifiedAt": "2026-10-15T11:37:33Z",
-      "approvedFunctionalCodeUnchanged": true,
-      "metadataTests": {
-        "passed": 15,
-        "total": 15
-      },
-      "pending": []
-    },
-    "receipt": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json"
+    "reference": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json",
+    "candidateHistoricalCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
+    "unchangedByThisPackage": true
   },
-  "operationalPlanning": {
-    "status": "written_verified",
-    "date": "2026-10-15",
-    "target": "Central de Atendimento canônica, observação da equipe",
-    "authorization": "Adequação estratégica solicitada nesta conversa",
-    "patientMessagesSent": 0,
-    "queuesOrFlagsChanged": false,
-    "requiresFreshIdentityAndSourceKeyReadback": true,
-    "writtenAt": "2026-10-15T10:02:12Z",
-    "verifiedAt": "2026-10-15T10:02:24Z",
-    "allTargetNotesVerified": true,
-    "onlyTeamObservationChanged": true,
-    "protectedFieldsUnchanged": true,
-    "identityRevalidated": true,
-    "newMessagesRevalidated": true,
-    "omissions": false,
-    "visualReadback": "confirmed_saved",
-    "rebuildNotTriggered": true
-  },
-  "documentation": {
-    "status": "written_verified",
-    "sourceCommit": "f28a7a51c0cd1a71687478dfc0842c1595065de3",
-    "verifiedAt": "2026-10-15T11:36:35.552Z",
-    "method": "Authenticated readback with exact byte equality to local and source-commit content and SHA-256",
-    "manual": {
-      "path": "docs/estrategia-abordagem-bruna.md",
-      "sha256": "4f234b291aab79540d9b82cf25bdcac3da6602059a552e0fa48f413ad1666c73",
-      "bytes": 74146,
-      "readbackAt": "2026-10-15T11:36:35.552Z",
-      "authenticated": true,
-      "sameExistingFile": true,
-      "localEqualsReadback": true,
-      "sourceCommitEqualsReadback": true,
-      "evidence": "Authenticated Drive fetch of existing manual file 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF"
+  "preservedPublishedReleases": [
+    {
+      "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
+      "status": "published_verified",
+      "reference": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json"
     },
-    "executivePlan": {
-      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "sha256": "345d750247179229b48dd4ca135990951b9d3d6c7625e413d30a11151d4a7aca",
-      "bytes": 16921,
-      "readbackAt": "2026-10-15T11:36:35.552Z",
-      "authenticated": true,
-      "sameExistingFile": true,
-      "localEqualsReadback": true,
-      "sourceCommitEqualsReadback": true,
-      "evidence": "Authenticated Drive fetch of existing plan file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
-    },
-    "existingFilesPreserved": true,
-    "equalityVerified": true,
-    "previousVerifiedProjection": {
-      "status": "written_verified",
-      "sourceCommit": "e5ac48e7b3636a61419f52e2822616073fe76c68",
-      "verifiedAt": "2026-10-15T11:14:56.252Z",
-      "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
-      "manual": {
-        "path": "docs/estrategia-abordagem-bruna.md",
-        "sha256": "2b0b4e1159e9ac788b1755c6bef4af28ab4f5ed75caaff2d77481d5626098ebc",
-        "bytes": 73293
-      },
-      "executivePlan": {
-        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-        "sha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
-        "bytes": 13075
-      },
-      "existingFilesPreserved": true,
-      "previousParallelProjection": {
-        "status": "written_verified",
-        "note": "Os recibos anteriores acima permanecem históricos. A mesma projeção do Plano integrado foi atualizada e relida com igualdade; mantém a tentativa Bruna bloqueada, a correção pendente e Ads publicado. Manual e manifesto preservados.",
-        "executivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
-        "verifiedAt": "2026-10-15T10:34:43.126Z",
-        "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
-        "bytes": 12768
-      }
-    },
-    "previousParallelComplementProjection": {
-      "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
-      "status": "written_verified",
-      "sameExistingFile": true,
-      "sha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
-      "bytes": 16274,
-      "verifiedAt": "2026-10-15T11:31:14.1519180Z",
-      "sourceCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
-      "modifiedAt": "2026-10-15T11:30:50.929Z",
-      "method": "Authenticated raw download equal to local bytes and committed Git blob dfb9b2eb74eda8a484d9395a79a717c646b0e5af",
-      "note": "Mesma projeção do Plano atualizada e relida com igualdade; recibos anteriores permanecem históricos e a pendência Bruna preservada."
-    },
-    "previousIntegratedProjection": {
-      "status": "written_verified",
-      "sourceCommit": "2138b679ef1ad1099e55baa74df9d1888d26bca8",
-      "verifiedAt": "2026-10-15T11:34:00.700Z",
-      "method": "Authenticated readback with exact byte equality to local and source-commit content and SHA-256",
-      "manual": {
-        "path": "docs/estrategia-abordagem-bruna.md",
-        "sha256": "4f234b291aab79540d9b82cf25bdcac3da6602059a552e0fa48f413ad1666c73",
-        "bytes": 74146,
-        "readbackAt": "2026-10-15T11:34:00.700Z",
-        "authenticated": true,
-        "sameExistingFile": true,
-        "localEqualsReadback": true,
-        "sourceCommitEqualsReadback": true,
-        "evidence": "Authenticated Drive fetch of existing manual file 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF"
-      },
-      "executivePlan": {
-        "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-        "sha256": "d15cce6e2932fa8e2ba414baace4526ab1e76f440b614a070e86388b0432a55a",
-        "bytes": 13684,
-        "readbackAt": "2026-10-15T11:34:00.700Z",
-        "authenticated": true,
-        "sameExistingFile": true,
-        "localEqualsReadback": true,
-        "sourceCommitEqualsReadback": true,
-        "evidence": "Authenticated Drive fetch of existing plan file 18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
-      },
-      "existingFilesPreserved": true,
-      "equalityVerified": true,
-      "previousVerifiedProjection": {
-        "status": "written_verified",
-        "sourceCommit": "e5ac48e7b3636a61419f52e2822616073fe76c68",
-        "verifiedAt": "2026-10-15T11:14:56.252Z",
-        "method": "Authenticated readback with exact UTF-8 byte equality to local and committed content and SHA-256",
-        "manual": {
-          "path": "docs/estrategia-abordagem-bruna.md",
-          "sha256": "2b0b4e1159e9ac788b1755c6bef4af28ab4f5ed75caaff2d77481d5626098ebc",
-          "bytes": 73293
-        },
-        "executivePlan": {
-          "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-          "sha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
-          "bytes": 13075
-        },
-        "existingFilesPreserved": true,
-        "previousParallelProjection": {
-          "status": "written_verified",
-          "note": "Os recibos anteriores acima permanecem históricos. A mesma projeção do Plano integrado foi atualizada e relida com igualdade; mantém a tentativa Bruna bloqueada, a correção pendente e Ads publicado. Manual e manifesto preservados.",
-          "executivePlanSha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
-          "verifiedAt": "2026-10-15T10:34:43.126Z",
-          "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
-          "bytes": 12768
-        }
-      }
-    }
-  },
-  "integratedExternalComponents": [
     {
       "changeId": "GOOGLE-ADS-COMUNICACAO-2026-10-15",
       "status": "published_verified",
-      "approvedCommit": "2f5adbecb3712e99786cbf91acfa32510103b975",
-      "receipt": "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json",
-      "googleAdsVerifiedAt": "2026-10-15T10:31:45Z",
-      "historicalVerification": {
-        "status": "passed_local",
-        "commands": [
-          "git diff --check",
-          "node --test apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs campanhas/conversion-tracking.test.mjs google-ads-scripts/google-ads-search-review-email.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/procedure-context.test.mjs",
-          "node --test campanhas/google-ads-ad-strength-20260913.test.mjs",
-          "node --test campanhas/google-ads-lift-max-conversions-20260913.test.mjs",
-          "node --test campanhas/google-ads-settings.test.mjs",
-          "npm.cmd run architecture:check",
-          "npm.cmd run change:check",
-          "npm.cmd run ops:check",
-          "npm.cmd run site:build",
-          "npm.cmd run site:check",
-          "npm.cmd test",
-          "node --test scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
-          "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
-        ],
-        "baseline": "b77b1d6e6795164ed41efefea67ab24a4e6c6556",
-        "evidence": "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json",
-        "executed": [
-          {
-            "command": "npm.cmd test",
-            "status": "passed",
-            "passed": 2175,
-            "failed": 0
-          },
-          {
-            "command": "focused_contract_union",
-            "status": "passed",
-            "passed": 192,
-            "failed": 0,
-            "includedInFullSuite": true,
-            "note": "União dos testes focados de aquisição, configurações, piloto LIFT, qualidade RSA, governança e recibo da Bruna."
-          },
-          {
-            "command": "npm.cmd run change:check",
-            "status": "passed",
-            "exactFiles": 9
-          },
-          {
-            "command": "npm.cmd run architecture:check",
-            "status": "passed"
-          },
-          {
-            "command": "npm.cmd run site:build",
-            "status": "passed",
-            "files": 193,
-            "sitemapUrls": 54,
-            "auditFilesInArtifact": 0
-          },
-          {
-            "command": "npm.cmd run site:check",
-            "status": "passed"
-          },
-          {
-            "command": "git diff --check",
-            "status": "passed"
-          },
-          {
-            "command": "npm.cmd run ops:check",
-            "status": "SYNC_PENDING",
-            "reasons": [
-              "CHANGE_PUBLICATION_PENDING",
-              "WRONG_BRANCH",
-              "DIRTY_WORKTREE"
-            ],
-            "note": "Candidato planejado em worktree de desenvolvimento; fechamento ainda não permitido."
-          }
-        ],
-        "checkedAt": "2026-10-15T09:45:41.145831+00:00",
-        "livePreflightCompletedAt": "2026-10-15T10:00:27.977056+00:00"
-      },
-      "rollback": {
-        "local": "Reverter somente os nove arquivos deste candidato ao baseline, preservando publicações anteriores.",
-        "production": "Restaurar somente cada campo alterado ao before vivo guardado, incluindo URL final vazia. Não excluir objetos/histórico nem reverter mudanças paralelas. Preservar orçamento, lances, estado de campanha, site e atendimento."
-      },
-      "monitoring": {
-        "owner": "Daniel / equipe LIV",
-        "window": "Integridade e política em 17/10/2026; coortes em 29/10/2026 e 12/11/2026, com maturação comparável, sem nova automação.",
-        "signals": [
-          "Campos salvos/readback iguais ao payload aprovado; URLs, âncoras, parâmetros e associações coerentes.",
-          "Política, elegibilidade e veiculação verificadas como estados distintos.",
-          "Contatos válidos, qualificados e consultas agendadas/realizadas com cobertura e maturação equivalentes; baixa amostra inconclusiva.",
-          "Conter diante de destino ou procedimento incorreto, perda de atribuição, promessa indevida ou regressão consistente."
-        ]
-      },
-      "doesNotAuthorizeBrunaPublication": true,
-      "drive": {
-        "status": "written_verified",
-        "sourceCommit": "7cc0e18c8e9e8e0ae17d39373dd0d0b95d28c024",
-        "modifiedAt": "2026-10-15T10:34:20.732Z",
-        "verifiedAt": "2026-10-15T10:34:43.126Z",
-        "bytes": 12768,
-        "sha256": "256bff5ec96c75d874fdf5cb92a5c11a6dbb7a0458c453d1a5a9ebd346c75742",
-        "sameExistingFile": true,
-        "localEqualsDownload": true,
-        "commitEqualsDownload": true,
-        "method": "Authenticated update of the existing projection, followed by raw download, exact byte comparison and SHA-256."
-      },
-      "verifiedAt": "2026-10-15T10:34:43.126Z",
-      "note": "Somente o componente Ads foi publicado e reconciliado; preservar o estado pendente e a autorização própria do candidato Bruna."
+      "reference": "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json"
     },
     {
       "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
       "status": "published_verified",
-      "baseCommit": "3be4621fd2f82fd032301f74aba565e648567413",
-      "receipt": "auditorias/google-ads-complementos-2026-10-15/REVISAO.json",
-      "plan": "auditorias/google-ads-complementos-2026-10-15/PLANO.json",
-      "preflight": "auditorias/google-ads-complementos-2026-10-15/PREFLIGHT.json",
-      "externalWritesPerformed": true,
-      "doesNotAuthorizeBrunaPublication": true,
-      "authorizationScope": "Somente Google Ads e a mesma projeção do Plano no Drive; autorização anterior de publicar ao fim e novo pedido de fazer o restante.",
-      "verification": {
-        "status": "passed_local",
-        "checkedAt": "2026-10-15T11:13:55Z",
-        "integratedBaseline": "3be4621fd2f82fd032301f74aba565e648567413",
-        "executed": [
-          {
-            "command": "npm.cmd test",
-            "status": "passed",
-            "passed": 2207,
-            "failed": 0
-          },
-          {
-            "command": "node --test <union of requiredTestFiles for the seven declared contracts>",
-            "status": "passed",
-            "files": 74,
-            "passed": 1533,
-            "failed": 0,
-            "overlapsFullSuite": true
-          },
-          {
-            "command": "npm.cmd run change:check",
-            "status": "passed",
-            "exactFiles": 44
-          },
-          {
-            "command": "npm.cmd run architecture:check",
-            "status": "passed"
-          },
-          {
-            "command": "npm.cmd run site:build",
-            "status": "passed",
-            "files": 193,
-            "sitemapUrls": 54,
-            "auditFilesInArtifact": 0
-          },
-          {
-            "command": "npm.cmd run site:check",
-            "status": "passed"
-          },
-          {
-            "command": "npm.cmd run ops:check",
-            "status": "SYNC_PENDING",
-            "reasons": [
-              "CHANGE_PUBLICATION_PENDING",
-              "WRONG_BRANCH",
-              "DIRTY_WORKTREE"
-            ],
-            "note": "Bruna permanece committed e bloqueada, com autorização própria; nenhum fechamento global declarado."
-          },
-          {
-            "command": "git diff --check && git diff --cached --check",
-            "status": "passed",
-            "note": "Nove documentos contra 3be4621f; nenhum delta em código, testes ou manifesto Bruna."
-          }
-        ],
-        "limitations": "Suítes locais e sintéticas; nenhum teste hospedado, deploy, mensagem, importação ou publicação executado por esta validação. Commit exato e release:preflight exclusivos Ads+Drive permanecem anteriores à escrita."
-      },
-      "rollback": {
-        "local": "Reverter somente os arquivos deste componente, preservando recibos Ads anteriores e candidato Bruna.",
-        "production": "Restaurar apenas o campo alterado ao before vivo guardado; nenhuma associação foi selecionada para mudança. Preservar objetos, histórico, orçamento, lances e alterações paralelas."
-      },
-      "monitoring": {
-        "owner": "Daniel / equipe LIV",
-        "window": "Integridade e política em 16 e 17/10/2026; progressão em 22 e 29/10/2026; decisão comercial em 12/11/2026, com coortes e maturação comparáveis. Nenhuma automação nova.",
-        "signals": [
-          "Campos e associações iguais ao payload aprovado; identidade, tracking e destinos preservados.",
-          "Política, elegibilidade, força do anúncio e exibição tratados como estados diferentes.",
-          "Contatos válidos, qualificados e consultas por coortes com cobertura e maturação comparáveis; baixa amostra permanece inconclusiva.",
-          "Corrigir destino, procedimento, promessa ou atribuição incorretos; reverter só o campo responsável diante de regressão consistente."
-        ]
-      },
-      "initialPreparationBase": "20d4b5be99c15b24a26cded8b6c9a0a33dafbf93",
-      "verificationHistory": [
-        {
-          "status": "passed_local_checks_pending_live_preflight",
-          "checkedAt": "2026-10-15T10:59:32Z",
-          "executed": [
-            {
-              "command": "npm.cmd test",
-              "status": "passed",
-              "passed": 2205,
-              "failed": 0,
-              "log": "Evidência local privada do componente; testes sintéticos, sem mensagens reais."
-            },
-            {
-              "command": "npm.cmd run change:check",
-              "status": "passed",
-              "exactFiles": 42,
-              "note": "Gate estrutural; não equivale à conclusão do preflight vivo nem à autorização de Bruna."
-            },
-            {
-              "command": "npm.cmd run architecture:check",
-              "status": "passed"
-            },
-            {
-              "command": "npm.cmd run site:build",
-              "status": "passed",
-              "files": 193,
-              "sitemapUrls": 54,
-              "auditFilesInArtifact": 0
-            },
-            {
-              "command": "npm.cmd run site:check",
-              "status": "passed"
-            },
-            {
-              "command": "git diff --check",
-              "status": "passed"
-            },
-            {
-              "command": "npm.cmd run ops:check",
-              "status": "SYNC_PENDING",
-              "reasons": [
-                "CHANGE_PUBLICATION_PENDING",
-                "WRONG_BRANCH",
-                "DIRTY_WORKTREE"
-              ],
-              "note": "Candidato Bruna committed e componente complementar planned; nenhum fechamento global."
-            },
-            {
-              "command": "node --test <union of requiredTestFiles for the seven declared contracts>",
-              "status": "passed",
-              "files": 74,
-              "passed": 1531,
-              "failed": 0,
-              "overlapsFullSuite": true,
-              "checkedAt": "2026-10-15T11:01:41Z",
-              "note": "Resumo íntegro do log Node conferido; o wrapper Python teve apenas erro de encoding ao imprimir o resumo, depois do término dos testes."
-            }
-          ]
-        }
-      ],
-      "externalDelta": {
-        "rsaObjects": 3,
-        "rsaFields": 11,
-        "sitelinkFields": 2,
-        "selectedCallouts": 3,
-        "conditionalCallouts": 0,
-        "excludedCallouts": 1
-      },
-      "approvedCommit": "66b881e46234d7d8b4a6936a8144dfd9edc90dd7",
-      "googleAds": {
-        "status": "applied_verified",
-        "approvedCommit": "66b881e46234d7d8b4a6936a8144dfd9edc90dd7",
-        "readbackStartedAt": "2026-10-15T11:18:04.778Z",
-        "readbackFinishedAt": "2026-10-15T11:22:14.744Z",
-        "objectsVerified": 8,
-        "fieldsChanged": 16,
-        "rsaFields": 11,
-        "sitelinkFields": 2,
-        "calloutFields": 3,
-        "statusChanges": 0,
-        "associationChanges": 0,
-        "receipt": [
-          {
-            "object": "rsa-lift",
-            "status": "applied_verified",
-            "readBackAt": "2026-10-15T11:18:04.778Z",
-            "changedFields": 2,
-            "fieldsCompared": 30,
-            "beforeEvidenceSha256": "079fa7e692e70349aa7d09edb514f7c41aab384d45c83fb11bb94be1746150a5",
-            "afterEvidenceSha256": "6bb54bc7a8d6cf927c11db95c834d2560e0ab3843f0b1feec5652ebe9c07caa0",
-            "screenshotSha256": "0133a4903e41f5e08c989032b1895e451c9ed02181fdfa424006f9a36c3b9559",
-            "identityPreserved": true,
-            "unmodifiedFieldsEqual": true,
-            "pinsEqual": true,
-            "mobileOverrideEqual": true,
-            "note": "Editor reaberto após salvar; todos os campos, fixações e override móvel comparados. Capturas privadas registradas pelo operador."
-          },
-          {
-            "object": "rsa-price",
-            "status": "applied_verified",
-            "readBackAt": "2026-10-15T11:18:53.243Z",
-            "changedFields": 6,
-            "fieldsCompared": 30,
-            "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9",
-            "afterEvidenceSha256": "71180a0a1bce00f60e53cb2fdee8da01b477f183846fcccb59b5cb6b72296540",
-            "screenshotSha256": "ce6dd311f71b6006ce5ac11cf16f9b1744bbba430a29735400148d9b0a72a346",
-            "identityPreserved": true,
-            "unmodifiedFieldsEqual": true,
-            "pinsEqual": true,
-            "mobileOverrideEqual": true,
-            "note": "Editor reaberto após salvar; todos os campos, fixações e override móvel comparados. Capturas privadas registradas pelo operador."
-          },
-          {
-            "object": "rsa-oto",
-            "status": "applied_verified",
-            "readBackAt": "2026-10-15T11:19:36.883Z",
-            "changedFields": 3,
-            "fieldsCompared": 28,
-            "beforeEvidenceSha256": "1f5f0b08a5d369dcb8576771e1bb9cf6b1ce0c9b3def07a355a3307b183cb3c6",
-            "afterEvidenceSha256": "bba500be5ac293cd65a503916982adffe8af1f7258e90a5c3005953329e61ce5",
-            "screenshotSha256": "7d52dbf7d4bc8890d5f680bb4c335cbb54f15cc6fb66fc14bedb9758cea37d05",
-            "identityPreserved": true,
-            "unmodifiedFieldsEqual": true,
-            "pinsEqual": true,
-            "mobileOverrideEqual": true,
-            "note": "Editor reaberto após salvar; todos os campos, fixações e override móvel comparados. Capturas privadas registradas pelo operador."
-          },
-          {
-            "object": "sl04",
-            "status": "applied_verified",
-            "readBackAt": "2026-10-15T11:20:25.308Z",
-            "changedFields": 1,
-            "fieldsCompared": 8,
-            "beforeEvidenceSha256": "dafb42ac4aeffa0b0aa94282b59abab8b8dbbc4b9d26562331ed1bf6a75b9749",
-            "afterEvidenceSha256": "704343380d512b27ff4ecb8703b145b7added1329378f184bbbe61279902057e",
-            "screenshotSha256": "7ee721e21e746ad8acba320a7a399b5591d14046cac83b03fd1753e42bd6c7b9",
-            "identityPreserved": true,
-            "unmodifiedFieldsEqual": true,
-            "schedulePreserved": "Início e término Nenhuma, todos os dias 00:00–00:00.",
-            "associationPreserved": true,
-            "note": "Editor reaberto após salvar; campos e agenda comparados. Capturas privadas registradas pelo operador."
-          },
-          {
-            "object": "sl05",
-            "status": "applied_verified",
-            "readBackAt": "2026-10-15T11:21:01.862Z",
-            "changedFields": 1,
-            "fieldsCompared": 8,
-            "beforeEvidenceSha256": "c8c548bbf0be3f37ef1650af49b56589368e527005741fcf96d3312a5f81ac13",
-            "afterEvidenceSha256": "53300b35fd405da7a2c1bdcbceb9e2ec2ba0d90677fbec307e4dfd0fccdc4c78",
-            "screenshotSha256": "38d8ef22eff3824da5c63d0840adcb3c665c3c4a626d6699b8c09836ccef094e",
-            "identityPreserved": true,
-            "unmodifiedFieldsEqual": true,
-            "schedulePreserved": "Início e término Nenhuma, todos os dias 00:00–00:00.",
-            "associationPreserved": true,
-            "note": "Editor reaberto após salvar; campos e agenda comparados. Capturas privadas registradas pelo operador."
-          },
-          {
-            "object": "co01",
-            "status": "applied_verified",
-            "readBackAt": "2026-10-15T11:21:30.328Z",
-            "changedFields": 1,
-            "fieldsCompared": 1,
-            "beforeEvidenceSha256": "179612ef4a85f9b2dcf7f567737237496959ec31deefb0af60043b21d8a31df0",
-            "afterEvidenceSha256": "179855f28b91deeebb1d493891aa478b7b8185ba5fe956a918073f7de7bc87e7",
-            "screenshotSha256": "08ac488db8cc838b3191c9ce7a1e96c12aa1d4aa5bee49ec064800f2db0e889e",
-            "identityPreserved": true,
-            "unmodifiedFieldsEqual": true,
-            "schedulePreserved": "Início e término Nenhuma, todos os dias 00:00–00:00.",
-            "associationPreserved": true,
-            "note": "Editor reaberto após salvar; campos e agenda comparados. Capturas privadas registradas pelo operador."
-          },
-          {
-            "object": "co02",
-            "status": "applied_verified",
-            "readBackAt": "2026-10-15T11:21:50.253Z",
-            "changedFields": 1,
-            "fieldsCompared": 1,
-            "beforeEvidenceSha256": "2d788c0fe085c7ae81e82a7e5cb272c8ab006f59c8ad1a14475b043b0335ef8f",
-            "afterEvidenceSha256": "45ca4ec8d1968b07a110e73f3b035cf3a1843cb3684b844240f9068986f0445a",
-            "screenshotSha256": "cfccd2baa3356d53c22e5f286a4262646a6c64841b789dbc29575d482de388f0",
-            "identityPreserved": true,
-            "unmodifiedFieldsEqual": true,
-            "schedulePreserved": "Início e término Nenhuma, todos os dias 00:00–00:00.",
-            "associationPreserved": true,
-            "note": "Editor reaberto após salvar; campos e agenda comparados. Capturas privadas registradas pelo operador."
-          },
-          {
-            "object": "co03",
-            "status": "applied_verified",
-            "readBackAt": "2026-10-15T11:22:14.744Z",
-            "changedFields": 1,
-            "fieldsCompared": 1,
-            "beforeEvidenceSha256": "8f7184d39bbf8897bbca40708b33dc183b0b2704cdb8117f3fcd195f54a39a94",
-            "afterEvidenceSha256": "54e731c890b0846e4181a2e99b555fa5eb1f7f37f3ee37f9470ef9f7c93dffc3",
-            "screenshotSha256": "0d27a017f3f8041e0328f2d94f0629c45f6f0a6af39b9f48445bdf6d3ad2f108",
-            "identityPreserved": true,
-            "unmodifiedFieldsEqual": true,
-            "schedulePreserved": "Início e término Nenhuma, todos os dias 00:00–00:00.",
-            "associationPreserved": true,
-            "note": "Editor reaberto após salvar; campos e agenda comparados. Capturas privadas registradas pelo operador."
-          }
-        ],
-        "campaignPreservation": {
-          "status": "verified_readback",
-          "checkedAt": "2026-10-15T11:22:55.924Z",
-          "evidenceSha256": "d26fdb240b07a5affd61ed6b4cb52750714467e8c435419717ee490e67714bff",
-          "campaigns": 8,
-          "active": 6,
-          "finished": 2,
-          "budgetsBidsTargetsAndStatusPreserved": true,
-          "note": "Valores e identificadores operacionais privados. Indicador genérico Ativado não substitui o estado operacional Finalizada."
-        },
-        "rsaStatus": {
-          "checkedAt": "2026-10-15T11:23:22.513Z",
-          "evidenceSha256": "91b98e40cfa1899ecd9801624ac1b06298decbb82072ffc40bc61f0fd930c472",
-          "objects": 3,
-          "status": "Ativado",
-          "primaryStatus": "Qualificada",
-          "qualityIndicator": "Pendente",
-          "note": "Força do anúncio pendente após edição; não equivale a política pendente, exibição confirmada ou resultado comercial."
-        },
-        "independentQA": {
-          "status": "PASS",
-          "approvedCommit": "66b881e46234d7d8b4a6936a8144dfd9edc90dd7",
-          "checkedAtUtc": "2026-10-15T11:28:52.3526713Z",
-          "objectsCompared": 8,
-          "allFieldValuesCompared": 107,
-          "changedFieldValues": 16,
-          "preservedFieldValues": 91,
-          "rsaTextsCompared": 57,
-          "rsaPinsCompared": 57,
-          "limitations": [
-            "QA de JSONs de editores salvos/reabertos e snapshots de associação. PNGs foram hashados, sem revisão visual independente por este agente.",
-            "Não demonstra impressão, ganho comercial ou aprovação final de política dos cinco recursos, que permanecem Pendente/Em análise.",
-            "Os três RSAs estavam Ativado/Qualificada, com quality_indicator Pendente no recibo final; não declarar Excelente atual.",
-            "D1 fixada na posição 1 nas três peças e demais 54 seletores preservados; suffix vazio de preço/OTO permanece vazio.",
-            "Comparação de campanhas limitada aos oito campos protegidos e status operacional; dados históricos de desempenho não foram usados como prova de configuração."
-          ],
-          "evidenceSha256": "6874347b7763caae1720a4c299a42d6058fc28ae7e4b48d3354d63973c801711",
-          "evidenceBytes": 21105,
-          "campaignProtectedValuesCompared": 64,
-          "campaignStatesCompared": 8,
-          "campaignsPreserved": true
-        },
-        "resourceStatuses": {
-          "objects": [
-            {
-              "object": "sl04",
-              "status": "Ativado",
-              "primaryStatus": "Pendente",
-              "policyStatus": "Em análise",
-              "evidenceSha256": "d93e248221a90734a846f4906753e2b468deb173003a7c118e3fd2fce00767c9",
-              "associationLevelPreserved": true
-            },
-            {
-              "object": "sl05",
-              "status": "Ativado",
-              "primaryStatus": "Pendente",
-              "policyStatus": "Em análise",
-              "evidenceSha256": "e1bde19b389b2230a9a039914642a6ef9ec1a8cc21e820c80f385809b93958da",
-              "associationLevelPreserved": true
-            },
-            {
-              "object": "co01",
-              "status": "Ativado",
-              "primaryStatus": "Pendente",
-              "policyStatus": "Em análise",
-              "evidenceSha256": "a351a81e067c69e52710b06ebd0cd4d0c8f4e023f504fe2d534f7742d6b796d9",
-              "associationLevelPreserved": true
-            },
-            {
-              "object": "co02",
-              "status": "Ativado",
-              "primaryStatus": "Pendente",
-              "policyStatus": "Em análise",
-              "evidenceSha256": "6859ff672f02a1b031eab5cf061978eecb144f7df9d7cff2c864584b1726386e",
-              "associationLevelPreserved": true
-            },
-            {
-              "object": "co03",
-              "status": "Ativado",
-              "primaryStatus": "Pendente",
-              "policyStatus": "Em análise",
-              "evidenceSha256": "02d7ae43b95a8a9aa022be0887b9f7f5868135c2ae4130024c0850a390cb6457",
-              "associationLevelPreserved": true
-            }
-          ],
-          "note": "Recibos posteriores às edições: cinco recursos ainda em análise. Não representa aprovação final, exibição ou efeito comercial. A limitação de saúde anterior de SL04 permanece documentada no before."
-        },
-        "excludedCalloutReadback": {
-          "object": "CO04",
-          "status": "Ativado",
-          "primaryStatus": "Qualificada",
-          "level": "campanha OTO",
-          "modified": false,
-          "evidenceSha256": "5712e539a8a70a7006c51ef6f9e6e3caca475aa0a2461689f924117cada5910c"
-        },
-        "siteDeploymentPreserved": {
-          "status": "verified_by_live_api",
-          "evidenceSha256": "b599119f04b5f2550d9a89381f011cc453ed5cdd493561ddc60f6294b7476c11",
-          "note": "Mesmo deploy público anterior confirmado pelo operador; nenhum deploy de site ou Bruna foi publicado por este componente. IDs permanecem privados."
-        }
-      },
-      "drive": {
-        "status": "written_verified",
-        "sameExistingFile": true,
-        "sha256": "345d750247179229b48dd4ca135990951b9d3d6c7625e413d30a11151d4a7aca",
-        "bytes": 16921,
-        "verifiedAt": "2026-10-15T11:42:22.111925+00:00",
-        "sourceCommit": "f28a7a51c0cd1a71687478dfc0842c1595065de3",
-        "latestCanonicalCommitCompared": "2205356e25dde664d7ad301fcb857b37211a34fb",
-        "modifiedAt": "2026-10-15T11:36:10.748Z",
-        "method": "Independent authenticated raw download equal to local and latest canonical committed bytes; adopted already reconciled parallel projection without another overwrite."
-      },
-      "note": "Componente Ads publicado e relido; Plano integrado já reconciliado no mesmo arquivo Drive, confirmado por nova leitura independente. A publicação Bruna possui autorização e recibos próprios.",
-      "releaseGate": {
-        "status": "passed_before_first_write",
-        "checkedAt": "2026-10-15T11:17:28.9829022Z",
-        "approvalScope": "Autorização de publicar ao fim e fazer o restante das sugestões; exclusivamente GOOGLE-ADS-COMPLEMENTOS-2026-10-15 e mesma projeção Drive. Não autoriza Bruna.",
-        "evidenceSha256": "29f6db4e55c48732768b2be1342a4c2d4a2d19fdf29ca533ad39257a2b70203e",
-        "evidenceType": "Recibo derivado do output real do comando; não é log integral."
-      },
-      "postPublicationParallelIntegration": {
-        "status": "integrated_document_sync_verified",
-        "sourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
-        "driveBeforeModifiedAt": "2026-10-15T11:14:05.591Z",
-        "driveBeforeBytes": 13075,
-        "driveBeforeSha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
-        "driveEqualsSourceCommit": true,
-        "brunaCodeTestsManifestAndReceiptsPreserved": true,
-        "approvedAdsCommitUnchanged": true,
-        "note": "Nova deriva Drive detectada antes da substituição. Terceira tentativa Bruna bloqueada e correção financeira literal preservadas, sem publicação ou autorização própria inferida."
-      },
-      "postPublicationIntegrationChecks": {
-        "status": "passed_local",
-        "checkedAt": "2026-10-15T11:27:57Z",
-        "sourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
-        "executed": [
-          {
-            "command": "npm.cmd test",
-            "status": "passed",
-            "passed": 2208,
-            "failed": 0
-          },
-          {
-            "command": "node --test <union of requiredTestFiles for the seven declared contracts>",
-            "status": "passed",
-            "files": 74,
-            "passed": 1534,
-            "failed": 0,
-            "overlapsFullSuite": true
-          },
-          {
-            "command": "npm.cmd run change:check",
-            "status": "passed",
-            "exactFiles": 44
-          },
-          {
-            "command": "npm.cmd run architecture:check",
-            "status": "passed"
-          },
-          {
-            "command": "npm.cmd run site:build",
-            "status": "passed",
-            "files": 193,
-            "sitemapUrls": 54,
-            "auditFilesInArtifact": 0
-          },
-          {
-            "command": "npm.cmd run site:check",
-            "status": "passed"
-          },
-          {
-            "command": "npm.cmd run ops:check",
-            "status": "SYNC_PENDING",
-            "reasons": [
-              "CHANGE_PUBLICATION_PENDING",
-              "WRONG_BRANCH",
-              "DIRTY_WORKTREE"
-            ]
-          }
-        ],
-        "limitations": "Nova revisão somente local; não altera o commit aprovado que precedeu as escritas Ads e não autoriza publicação Bruna."
-      },
-      "verifiedAt": "2026-10-15T11:42:22.111925+00:00",
-      "driveProjectionHistory": [
-        {
-          "status": "written_verified",
-          "sameExistingFile": true,
-          "sha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
-          "bytes": 16274,
-          "verifiedAt": "2026-10-15T11:31:14.1519180Z",
-          "sourceCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
-          "modifiedAt": "2026-10-15T11:30:50.929Z",
-          "method": "Authenticated raw download equal to local bytes and committed Git blob dfb9b2eb74eda8a484d9395a79a717c646b0e5af"
-        }
-      ],
-      "latestCanonicalIntegration": "2205356e25dde664d7ad301fcb857b37211a34fb"
+      "reference": "auditorias/google-ads-complementos-2026-10-15/REVISAO.json"
     }
-  ]
+  ],
+  "documentation": {
+    "status": "pending",
+    "canonicalLocalPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+    "sameExistingDriveFile": true,
+    "previousVerifiedSha256": "345d750247179229b48dd4ca135990951b9d3d6c7625e413d30a11151d4a7aca",
+    "note": "Anterior igualdade preservada como histórica; este Plano alterado exige nova projeção e readback."
+  }
 }

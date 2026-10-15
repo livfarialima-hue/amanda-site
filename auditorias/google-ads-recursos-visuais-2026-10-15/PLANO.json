@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-RECURSOS-VISUAIS-2026-10-15",
+  "status": "tested_local",
+  "baseCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
+  "authorizedScope": "Pedido do usuário: Ajuste e publique se ficou mais algo pendente. Remoção estrita de associações de Imagem já reprovadas, com cobertura elegível confirmada; publicação só depois de testes, commit, preflight e releitura.",
+  "privacy": "Registro público sanitizado; conta, IDs dos objetos, métricas de mídia e snapshots completos ficam na prova privada ignorada pelo Git.",
+  "decision": "Desassociar 14 vínculos não elegíveis entre cinco imagens existentes e seis campanhas, preservando 57 vínculos aprovados e a biblioteca.",
+  "reason": "A conferência autenticada mostrou reprovação por sobreposições de texto ou imagem. As seis campanhas já têm associações de Imagem aprovadas.",
+  "hypothesis": "Retirar vínculos não elegíveis simplifica a manutenção sem retirar cobertura aprovada. Não há ganho de desempenho ou aprovação nova presumidos.",
+  "counts": {
+    "associationsBefore": 71,
+    "approvedPreserved": 57,
+    "disapprovedSelected": 14,
+    "existingAssetsSelected": 5,
+    "campaigns": 6,
+    "logosExcluded": 7
+  },
+  "coverageBefore": {
+    "Marca": {
+      "approved": 5,
+      "disapproved": 2
+    },
+    "Lifting cervical": {
+      "approved": 13,
+      "disapproved": 3
+    },
+    "Blefaroplastia": {
+      "approved": 11,
+      "disapproved": 2
+    },
+    "Cirurgia facial": {
+      "approved": 9,
+      "disapproved": 2
+    },
+    "Lifting facial": {
+      "approved": 10,
+      "disapproved": 2
+    },
+    "Otoplastia": {
+      "approved": 9,
+      "disapproved": 3
+    }
+  },
+  "exactTargets": "Banco privado de 14 pares e snapshot integral vinculados pelos hashes no PREFLIGHT.json.",
+  "failureDesign": {
+    "maximumEffect": "Uma seleção incorreta poderia retirar recurso elegível ou afetar outra campanha.",
+    "failClosed": "Não salvar se conta, tipo, nível, status, identidade ou contagem divergirem; não usar seleção global sem conferência individual.",
+    "idempotency": "Depois de timeout ou resposta ambígua, reler primeiro. Não repetir remoção nem compensar por criação de novo recurso.",
+    "states": "Preparado localmente não significa salvo. Publicado exige leitura posterior dos 14 removidos e 57 preservados."
+  },
+  "invariants": [
+    "Remover somente as 14 associações de Imagem reprovadas por sobreposições, no nível campanha, identificadas na prova privada; preservar as 57 associações aprovadas.",
+    "Preservar os cinco recursos originais na biblioteca, arquivos, histórico e todas as associações fora do lote; não excluir recursos da biblioteca.",
+    "Preservar campanhas, grupos, orçamentos, lances, metas, redes, segmentação, palavras, negativas, anúncios, textos, URLs, rastreamento, sitelinks e destaques.",
+    "Sete associações de logotipos reprovadas ficam fora do lote; correção depende do original aprovado. Não alterar identidade visual nem reenviar imagem inelegível para contornar política.",
+    "Bruna, site, Netlify, Apps Script v164, LEADS, CRM e Calendar permanecem intactos; nenhuma mensagem, contato ou conversão de teste.",
+    "A mesma projeção do Plano no Drive é atualizada somente após commit, com download e igualdade de bytes; recibos de publicações anteriores preservados."
+  ],
+  "rollback": {
+    "local": "Reverter apenas os documentos deste pacote por novo commit, sem modificar código nem os recibos Bruna e dos lotes Ads anteriores.",
+    "production": "Reassociar somente os mesmos 14 pares recurso/campanha, no mesmo nível campanha, a partir do banco privado anterior. Preservar os cinco recursos originais e as 57 associações aprovadas. Antes de reverter, reler o estado para não duplicar nem sobrescrever mudança paralela; a reassociação não remove a reprovação."
+  },
+  "monitoring": {
+    "owner": "Daniel / equipe LIV",
+    "window": "Readback imediato e conferência de integridade em 16/10/2026; revisão conjunta de política em 17/10/2026. Sem automação nova.",
+    "signals": [
+      "Exatamente 14 associações removidas e 57 aprovadas preservadas, sem campanha perder cobertura de Imagem.",
+      "Nenhuma alteração de orçamento, lance, identidade, anúncio, palavra, recurso elegível ou biblioteca.",
+      "Elegibilidade e exibição são distintas. Desempenho comercial segue o acompanhamento existente por contatos válidos, qualificados e consultas, sem alegar ganho pela limpeza."
+    ]
+  },
+  "strategicDecisionChanged": false,
+  "externalWritesPerformed": false
+}

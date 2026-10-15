@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-RECURSOS-VISUAIS-2026-10-15",
+  "status": "passed_local_awaiting_publication",
+  "baseCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
+  "preparedAt": "2026-10-15T12:04:14.950140+00:00",
+  "externalWritesPerformed": false,
+  "independentSnapshotReview": {
+    "status": "passed",
+    "countedAssociations": 71,
+    "approvedPreserved": 57,
+    "selectedDisapproved": 14,
+    "existingAssets": 5,
+    "campaignsWithApprovedCoverage": 6,
+    "policyReason": "Sobreposições de texto ou imagem",
+    "note": "Quatro associações selecionadas também têm limitação de saúde; a reprovação por sobreposição é o motivo que as torna não elegíveis."
+  },
+  "localValidation": {
+    "status": "passed",
+    "checkedAt": "2026-10-15T12:07:07.488715+00:00",
+    "contractUnion": {
+      "passed": 254,
+      "total": 254,
+      "testFiles": 16,
+      "overlapsFullSuite": true
+    },
+    "fullSuite": {
+      "passed": 2208,
+      "total": 2208
+    },
+    "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
+    "changeSafety": {
+      "status": "CHANGE_SAFETY_STATUS=OK",
+      "exactScopeFiles": 8
+    },
+    "siteBuild": {
+      "files": 193,
+      "sitemapUrls": 54,
+      "auditFilesInArtifact": 0,
+      "errors": 0
+    },
+    "siteCheck": {
+      "errors": 0
+    },
+    "diff": "passed",
+    "opsCheck": {
+      "status": "SYNC_PENDING",
+      "expected": true,
+      "reasons": [
+        "Novo pacote ainda não publicado.",
+        "Worktree isolado fora da branch canônica.",
+        "Documentos de recibo ainda não commitados no momento da checagem."
+      ]
+    },
+    "initialEnvironmentAttempt": {
+      "status": "failed_missing_dependency",
+      "cause": "O novo worktree ainda não continha @netlify/blobs.",
+      "resolution": "npm ci --ignore-scripts --no-audit --no-fund usando o lock versionado; nenhuma alteração de dependência, código ou teste.",
+      "subsequentFullSuite": "2208/2208 passed"
+    },
+    "limitation": "Suíte local não comprova escrita, política ou exibição no Google. A falha de HTML de auditoria observada no checkout primário não ocorreu neste worktree isolado; nenhum teste foi alterado."
+  },
+  "publication": {
+    "status": "awaiting_commit_and_release_preflight",
+    "approvedCommit": null,
+    "releasePreflight": null
+  },
+  "readback": {
+    "status": "pending",
+    "expectedRemovedAssociations": 14,
+    "expectedPreservedApproved": 57,
+    "expectedLibraryDeletedAssets": 0
+  },
+  "driveProjection": {
+    "status": "pending",
+    "sameExistingFileRequired": true
+  },
+  "preservedPublishedReleases": [
+    {
+      "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
+      "status": "published_verified",
+      "reference": "auditorias/bruna-respostas-retomadas-2026-10-14/PUBLICACAO.json"
+    },
+    {
+      "changeId": "GOOGLE-ADS-COMUNICACAO-2026-10-15",
+      "status": "published_verified",
+      "reference": "auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json"
+    },
+    {
+      "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
+      "status": "published_verified",
+      "reference": "auditorias/google-ads-complementos-2026-10-15/REVISAO.json"
+    }
+  ],
+  "independentReview": {
+    "status": "approved_by_coordinator",
+    "scope": "O coordenador revisou os oito documentos e confirmou o payload de 14 pares, preservação de 57 associações e exclusão dos logos.",
+    "note": "Nenhuma escrita externa foi executada pelo preparador."
+  }
+}

@@ -922,3 +922,8 @@ Seção38 do Norte: Daniel autorizou seguir as sugestões nos anúncios. Auditor
 ### 20/09/2026 — convite opcional para avaliação da Amanda
 
 Decisão: convite único após consulta realizada, com conferência individual; relato livre e destino exclusivo Amanda. Motivo, evidência, hipótese, métricas e regra de contenção no Norte, seção “Convite a avaliação pública”. Pacote 2026-09-20.2 publicado e verificado em 20/09/2026; recibos no relatório do pacote.
+
+
+## 15/10/2026 — manutenção de associações de Imagem no Google Ads
+
+Preparada, sob o pedido de ajustar e publicar o restante, a remoção de 14 associações de Imagem já reprovadas por sobreposições. A leitura atual encontrou 57 associações aprovadas nas mesmas seis campanhas, que serão preservadas. Os cinco recursos originais permanecem na biblioteca; sete associações de logotipos aguardam original aprovado. Não há mudança estratégica: orçamento, lances, anúncios, palavras, metas, destinos e rastreamento permanecem. A hipótese é simplificar a manutenção sem perder cobertura elegível, sem alegar ganho comercial. Revisar integridade em 16/10 e política em 17/10; reverter somente os mesmos pares e níveis diante de seleção incorreta. Publicação e igualdade documental ainda pendentes; recibos em `auditorias/google-ads-recursos-visuais-2026-10-15/`.

@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-RECURSOS-VISUAIS-2026-10-15",
+  "status": "verified_baseline_with_limits",
+  "baseCommit": "fc9a0294ec65fd1fe37bcde54a81785ec95a6852",
+  "preparedAt": "2026-10-15T12:04:14.950140+00:00",
+  "externalWritesPerformed": false,
+  "imageInventory": {
+    "status": "verified_baseline_with_limits",
+    "checkedAt": "2026-10-15T12:01:07.645Z",
+    "method": "Leitura autenticada da tabela Google Ads pelo coordenador; revisão independente dos snapshots locais.",
+    "associations": 71,
+    "approved": 57,
+    "disapproved": 14,
+    "allSelectedAtCampaignLevel": true,
+    "coverageBefore": {
+      "Marca": {
+        "approved": 5,
+        "disapproved": 2
+      },
+      "Lifting cervical": {
+        "approved": 13,
+        "disapproved": 3
+      },
+      "Blefaroplastia": {
+        "approved": 11,
+        "disapproved": 2
+      },
+      "Cirurgia facial": {
+        "approved": 9,
+        "disapproved": 2
+      },
+      "Lifting facial": {
+        "approved": 10,
+        "disapproved": 2
+      },
+      "Otoplastia": {
+        "approved": 9,
+        "disapproved": 3
+      }
+    },
+    "sourceFile": "imagens-todas-ativadas-before.json",
+    "sourceSha256": "ba7260ab9e00ee0afbd0f002ce1363520a9cf2343570e9fc82303e8dbf311e0b",
+    "selectedSnapshotFile": "imagens-reprovadas-before.json",
+    "selectedSnapshotSha256": "d295715f88c51f492519a4e332c50a72ec21edf9c4931e7e75508db6940c3ad5",
+    "selectedUiFile": "imagens-selected-before.json",
+    "selectedUiSha256": "61c101cdce68f87873f2da0d4f92591d42e5f0aaea50aaa5edb0619b54cc5dee",
+    "coverageCounting": "Os 57 vínculos incluem níveis de campanha e grupo. Preservar o multiconjunto completo, sem eliminar associações repetidas do mesmo recurso em grupos diferentes.",
+    "approvedCampaignLevelCoverage": {"Marca": 5, "Lifting cervical": 9, "Blefaroplastia": 9, "Cirurgia facial": 6, "Lifting facial": 7, "Otoplastia": 8},
+    "limits": "Snapshot operacional datado. IDs e métricas não publicados. Contagens de recursos não equivalem a exibição ou conversão."
+  },
+  "accountAndProtectedSettings": {
+    "status": "verified_baseline_with_limits",
+    "checkedAt": "2026-10-15T12:05:21.054Z",
+    "method": "Leitura autenticada pelo coordenador da conta e das seis campanhas ativas afetadas; snapshot privado.",
+    "sourceSha256": "c5324681e74d9920278056d9d0c67b53046c300054adfe898c28f8e5c624aad0",
+    "campaigns": 6,
+    "settings": "Estados, orçamentos, lances sem CPA desejado e metas qualificadas registrados e preservados.",
+    "limitation": "Filtro de campanhas ativadas: as duas campanhas finalizadas não foram relidas nesta conferência e não integram o lote."
+  },
+  "driveProjection": {
+    "status": "verified_baseline_with_limits",
+    "sameExistingFile": true,
+    "checkedAt": "2026-10-15T12:03:01.091787+00:00",
+    "timeSource": "Hora de gravação local do download autenticado, conferida com a execução do coordenador.",
+    "modifiedAt": "2026-10-15T11:36:10.748Z",
+    "bytes": 16921,
+    "sha256": "345d750247179229b48dd4ca135990951b9d3d6c7625e413d30a11151d4a7aca",
+    "comparison": "Mesmo arquivo e pasta canônicos confirmados pelo coordenador; bytes idênticos ao Plano no baseline fc9a0294.",
+    "beforeWrite": "Se a metadata ou conteúdo mudar novamente, integrar a deriva antes de substituir. Requer download e igualdade depois da escrita."
+  },
+  "release": {
+    "status": "passed_local_awaiting_commit_and_release_preflight",
+    "required": "Suítes e gates aplicáveis, diff exato, commit intencional e release:preflight do HEAD autorizado em worktree limpo.",
+    "note": "2.208 testes integrais e 254 de contratos passaram, com sobreposição; arquitetura, escopo, build/check e diff aprovados. Commit intencional e release:preflight do HEAD autorizado ainda necessários."
+  },
+  "exclusions": [
+    "Logotipos reprovados sem original aprovado disponível.",
+    "Legados fora do filtro das seis campanhas atuais.",
+    "Correção de CERV sem falha comprovada; rastreamento herdado foi confirmado pelo coordenador."
+  ],
+  "notClaimed": [
+    "Alteração externa aplicada",
+    "Aprovação ou exibição nova",
+    "Ganho comercial",
+    "Nova auditoria das conversas ou classificação dos 12 contatos"
+  ],
+  "selection": {
+    "status": "passed",
+    "selected": 14,
+    "approvedPreserved": 57,
+    "sha256": "fd5f37bcba4db8565ebb6040e655425b1231adb1afc1054561535c5bf7bcf366",
+    "note": "Seleção de caixas conferida; remover/salvar ainda não executado."
+  }
+}
