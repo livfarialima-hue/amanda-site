@@ -10,11 +10,11 @@ Saúde HTTP 200 e rejeição sem assinatura HTTP 401 conferidas no domínio e UR
 
 BRUNA-CONSUMO-CATEGORIAS-2026-10-15, pacote `.3`, commit `a599aea842545c666b3b2cee780dfc22d7c52f55`, continua sem publicação: timeout do gate no deploy `6ad12b0ac06af392d0dda00a`. Código, testes e documentação foram preservados na branch acima e no histórico Git; os recibos originais foram reintegrados sem suas alterações funcionais. O sucesso do novo pacote de preço não resolve nem autoriza repetir o gate antigo. Detalhe em `auditorias/bruna-consumo-categorias-2026-10-15/TENTATIVA-PUBLICACAO.json`.
 
-## Candidato local — coerência e processamento pela conta, 15/10/2026
+## Publicado anteriormente — coerência e processamento pela conta, 15/10/2026
 
-BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15, pacote 2026-10-15.2, publicado no commit/deploy indicados acima. A projeção existente no Drive não é alterada por este candidato local; requer fechamento autorizado e readback.
+BRUNA-COERENCIA-CONTEXTO-CONTA-2026-10-15, pacote 2026-10-15.2, publicado no commit `6c9cb7ee0129260dd0f9394b1d74c0bd49a05228`, deploy `6ad120701654730b8c969605`, em 2026-10-15T18:54:29.938Z. O sucessor funcional é o pacote `.4` descrito acima; o recibo histórico de `.2` permanece em `auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json`.
 
-O candidato retira dois falsos bloqueios: perguntas específicas iniciadas por “Poderia me dizer” e pedidos coloquiais explícitos de repetição, como “Qual era mesmo o valor da consulta?”. Não libera convite de agenda proibido, reinício genérico, faixa cirúrgica repetida, fatos não aprovados ou conversa sob responsabilidade humana. O protótipo de relaxamento de “se quiser” foi descartado antes do commit: a revisão encontrou escapes de convite e mostrou que o classificador parcial não sustenta essa liberação com segurança.
+Esse pacote retirou dois falsos bloqueios: perguntas específicas iniciadas por “Poderia me dizer” e pedidos coloquiais explícitos de repetição, como “Qual era mesmo o valor da consulta?”. Não libera convite de agenda proibido, reinício genérico, faixa cirúrgica repetida, fatos não aprovados ou conversa sob responsabilidade humana. O protótipo de relaxamento de “se quiser” foi descartado antes do commit: a revisão encontrou escapes de convite e mostrou que o classificador parcial não sustenta essa liberação com segurança.
 
 A política do plugin 1.0.1 já prioriza a conta para revisões e propostas. Isso não transfere automaticamente a execução do webhook. Cálculos simples continuam determinísticos, sem IA; migrar classificação ou aprendizado exige uma ponte autenticada, fila durável, contexto versionado e validação no servidor. Desenho, evidências e testes: [relatório deste pacote](../auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md). Próximas autorizações e ordem permanecem exclusivamente no Plano Executivo.
 

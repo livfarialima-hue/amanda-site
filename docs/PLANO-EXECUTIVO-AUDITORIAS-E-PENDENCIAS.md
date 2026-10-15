@@ -16,7 +16,7 @@ O candidato `.3` continua bloqueado: commit `a599aea842545c666b3b2cee780dfc22d7c
 
 ## Estado anterior reconciliado — Bruna coerente e integração pela conta, 15/10/2026
 
-Fonte de detalhe: [relatório técnico](../auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md). Este painel continua sendo o único planejamento executivo. `.2` foi publicada em 15/10 às 18:54:29.938Z, conforme o baseline acima. O candidato local atual não muda plugin, rotina, Drive ou dado operacional.
+Fonte de detalhe: [relatório técnico](../auditorias/bruna-coerencia-conta-2026-10-15/RELATORIO.md). Este painel continua sendo o único planejamento executivo. `.2` foi publicada em 15/10 às 18:54:29.938Z, conforme o baseline acima, e foi sucedida pela `.4`. Este fechamento atualiza os registros e suas mesmas projeções no Drive; não altera plugin, rotina ou dado operacional.
 
 | Ordem | Entrega | Estado / gate | Momento de avaliação |
 | --- | --- | --- | --- |
@@ -27,7 +27,7 @@ Fonte de detalhe: [relatório técnico](../auditorias/bruna-coerencia-conta-2026
 | 5 | Considerar atendimento imediato pela conta | Observar, não executar agora. Só após provar latência, disponibilidade, quota, privacidade e entrega ponta a ponta. | Depois do piloto, sem data artificial. |
 | 6 | Reavaliar vetos lexicais de CTA por contrato de atos conversacionais | Adiado. Protótipo de “se quiser” revertido antes do commit por escapes de convite e falso bloqueio de negação. Não ampliar lista de regex como solução geral. | Desenho e testes próprios antes de nova autorização de publicação. |
 
-Não afirmar economia financeira atual: custo por tarefa e volume faturado são N/D nesta revisão. Preservar modelo, esforço, história completa, proteção clínica, preço, agenda, takeover e idempotência. A projeção deste painel no mesmo arquivo do Drive será atualizada no fechamento autorizado; por ora está pendente, explicitamente.
+Não afirmar economia financeira atual: custo por tarefa e volume faturado são N/D nesta revisão. Preservar modelo, esforço, história completa, proteção clínica, preço, agenda, takeover e idempotência. A igualdade da projeção deste painel no mesmo arquivo do Drive é controlada pelo hash, commit de origem e releitura autenticada no recibo `auditorias/bruna-referencia-global-2026-10-15/PUBLICACAO.json`; nenhum planejamento concorrente é criado.
 
 <!-- BRUNA-AUTONOMIA-CONTEXTUAL-2026-10-15 -->
 ## Publicado e verificado — autonomia contextual, 15/10/2026
