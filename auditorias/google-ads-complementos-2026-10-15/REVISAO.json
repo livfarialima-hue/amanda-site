@@ -1,0 +1,568 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
+  "status": "published_verified",
+  "baseCommit": "3be4621fd2f82fd032301f74aba565e648567413",
+  "counts": {
+    "rsaObjects": 3,
+    "rsaFields": 11,
+    "sitelinkFields": 2,
+    "selectedCallouts": 3,
+    "conditionalCallouts": 0,
+    "excludedCallouts": 1
+  },
+  "externalWritesPerformed": true,
+  "proposalValidation": {
+    "status": "passed_exact_live_before_and_limits",
+    "rsaFields": 11,
+    "allWithinLimits": true,
+    "sourceDeltasSha256": "c353f40b1ab29500575dd1de751f2a59f6ff117cc611f80a12cf9c481252b154",
+    "note": "Todos os before selecionados, textos, identidade, fixações, rastreamento e agenda conferidos. CO04 excluído pela associação de campanha que inclui infantil.",
+    "rsaTextSlotsCompared": 57,
+    "pinsCompared": 57,
+    "sitelinkResources": 2,
+    "sitelinkFieldsCompared": 16,
+    "independentReview": "passed_three_rsas_two_sitelinks_three_account_callouts",
+    "selectedCallouts": 3
+  },
+  "verification": {
+    "status": "passed_local",
+    "checkedAt": "2026-10-15T11:13:55Z",
+    "integratedBaseline": "3be4621fd2f82fd032301f74aba565e648567413",
+    "executed": [
+      {
+        "command": "npm.cmd test",
+        "status": "passed",
+        "passed": 2207,
+        "failed": 0
+      },
+      {
+        "command": "node --test <union of requiredTestFiles for the seven declared contracts>",
+        "status": "passed",
+        "files": 74,
+        "passed": 1533,
+        "failed": 0,
+        "overlapsFullSuite": true
+      },
+      {
+        "command": "npm.cmd run change:check",
+        "status": "passed",
+        "exactFiles": 44
+      },
+      {
+        "command": "npm.cmd run architecture:check",
+        "status": "passed"
+      },
+      {
+        "command": "npm.cmd run site:build",
+        "status": "passed",
+        "files": 193,
+        "sitemapUrls": 54,
+        "auditFilesInArtifact": 0
+      },
+      {
+        "command": "npm.cmd run site:check",
+        "status": "passed"
+      },
+      {
+        "command": "npm.cmd run ops:check",
+        "status": "SYNC_PENDING",
+        "reasons": [
+          "CHANGE_PUBLICATION_PENDING",
+          "WRONG_BRANCH",
+          "DIRTY_WORKTREE"
+        ],
+        "note": "Bruna permanece committed e bloqueada, com autorização própria; nenhum fechamento global declarado."
+      },
+      {
+        "command": "git diff --check && git diff --cached --check",
+        "status": "passed",
+        "note": "Nove documentos contra 3be4621f; nenhum delta em código, testes ou manifesto Bruna."
+      }
+    ],
+    "limitations": "Suítes locais e sintéticas; nenhum teste hospedado, deploy, mensagem, importação ou publicação executado por esta validação. Commit exato e release:preflight exclusivos Ads+Drive permanecem anteriores à escrita."
+  },
+  "publication": {
+    "status": "published_verified",
+    "approvedCommit": "66b881e46234d7d8b4a6936a8144dfd9edc90dd7",
+    "releaseGate": {
+      "status": "passed_before_first_write",
+      "checkedAt": "2026-10-15T11:17:28.9829022Z",
+      "approvalScope": "Autorização de publicar ao fim e fazer o restante das sugestões; exclusivamente GOOGLE-ADS-COMPLEMENTOS-2026-10-15 e mesma projeção Drive. Não autoriza Bruna.",
+      "evidenceSha256": "29f6db4e55c48732768b2be1342a4c2d4a2d19fdf29ca533ad39257a2b70203e",
+      "evidenceType": "Recibo derivado do output real do comando; não é log integral."
+    },
+    "googleAds": {
+      "status": "applied_verified",
+      "approvedCommit": "66b881e46234d7d8b4a6936a8144dfd9edc90dd7",
+      "readbackStartedAt": "2026-10-15T11:18:04.778Z",
+      "readbackFinishedAt": "2026-10-15T11:22:14.744Z",
+      "objectsVerified": 8,
+      "fieldsChanged": 16,
+      "rsaFields": 11,
+      "sitelinkFields": 2,
+      "calloutFields": 3,
+      "statusChanges": 0,
+      "associationChanges": 0,
+      "receipt": [
+        {
+          "object": "rsa-lift",
+          "status": "applied_verified",
+          "readBackAt": "2026-10-15T11:18:04.778Z",
+          "changedFields": 2,
+          "fieldsCompared": 30,
+          "beforeEvidenceSha256": "079fa7e692e70349aa7d09edb514f7c41aab384d45c83fb11bb94be1746150a5",
+          "afterEvidenceSha256": "6bb54bc7a8d6cf927c11db95c834d2560e0ab3843f0b1feec5652ebe9c07caa0",
+          "screenshotSha256": "0133a4903e41f5e08c989032b1895e451c9ed02181fdfa424006f9a36c3b9559",
+          "identityPreserved": true,
+          "unmodifiedFieldsEqual": true,
+          "pinsEqual": true,
+          "mobileOverrideEqual": true,
+          "note": "Editor reaberto após salvar; todos os campos, fixações e override móvel comparados. Capturas privadas registradas pelo operador."
+        },
+        {
+          "object": "rsa-price",
+          "status": "applied_verified",
+          "readBackAt": "2026-10-15T11:18:53.243Z",
+          "changedFields": 6,
+          "fieldsCompared": 30,
+          "beforeEvidenceSha256": "03af28c2108c57eabc38614d0dc2a448e65d8f20fac63a744c231a6ab6977da9",
+          "afterEvidenceSha256": "71180a0a1bce00f60e53cb2fdee8da01b477f183846fcccb59b5cb6b72296540",
+          "screenshotSha256": "ce6dd311f71b6006ce5ac11cf16f9b1744bbba430a29735400148d9b0a72a346",
+          "identityPreserved": true,
+          "unmodifiedFieldsEqual": true,
+          "pinsEqual": true,
+          "mobileOverrideEqual": true,
+          "note": "Editor reaberto após salvar; todos os campos, fixações e override móvel comparados. Capturas privadas registradas pelo operador."
+        },
+        {
+          "object": "rsa-oto",
+          "status": "applied_verified",
+          "readBackAt": "2026-10-15T11:19:36.883Z",
+          "changedFields": 3,
+          "fieldsCompared": 28,
+          "beforeEvidenceSha256": "1f5f0b08a5d369dcb8576771e1bb9cf6b1ce0c9b3def07a355a3307b183cb3c6",
+          "afterEvidenceSha256": "bba500be5ac293cd65a503916982adffe8af1f7258e90a5c3005953329e61ce5",
+          "screenshotSha256": "7d52dbf7d4bc8890d5f680bb4c335cbb54f15cc6fb66fc14bedb9758cea37d05",
+          "identityPreserved": true,
+          "unmodifiedFieldsEqual": true,
+          "pinsEqual": true,
+          "mobileOverrideEqual": true,
+          "note": "Editor reaberto após salvar; todos os campos, fixações e override móvel comparados. Capturas privadas registradas pelo operador."
+        },
+        {
+          "object": "sl04",
+          "status": "applied_verified",
+          "readBackAt": "2026-10-15T11:20:25.308Z",
+          "changedFields": 1,
+          "fieldsCompared": 8,
+          "beforeEvidenceSha256": "dafb42ac4aeffa0b0aa94282b59abab8b8dbbc4b9d26562331ed1bf6a75b9749",
+          "afterEvidenceSha256": "704343380d512b27ff4ecb8703b145b7added1329378f184bbbe61279902057e",
+          "screenshotSha256": "7ee721e21e746ad8acba320a7a399b5591d14046cac83b03fd1753e42bd6c7b9",
+          "identityPreserved": true,
+          "unmodifiedFieldsEqual": true,
+          "schedulePreserved": "Início e término Nenhuma, todos os dias 00:00–00:00.",
+          "associationPreserved": true,
+          "note": "Editor reaberto após salvar; campos e agenda comparados. Capturas privadas registradas pelo operador."
+        },
+        {
+          "object": "sl05",
+          "status": "applied_verified",
+          "readBackAt": "2026-10-15T11:21:01.862Z",
+          "changedFields": 1,
+          "fieldsCompared": 8,
+          "beforeEvidenceSha256": "c8c548bbf0be3f37ef1650af49b56589368e527005741fcf96d3312a5f81ac13",
+          "afterEvidenceSha256": "53300b35fd405da7a2c1bdcbceb9e2ec2ba0d90677fbec307e4dfd0fccdc4c78",
+          "screenshotSha256": "38d8ef22eff3824da5c63d0840adcb3c665c3c4a626d6699b8c09836ccef094e",
+          "identityPreserved": true,
+          "unmodifiedFieldsEqual": true,
+          "schedulePreserved": "Início e término Nenhuma, todos os dias 00:00–00:00.",
+          "associationPreserved": true,
+          "note": "Editor reaberto após salvar; campos e agenda comparados. Capturas privadas registradas pelo operador."
+        },
+        {
+          "object": "co01",
+          "status": "applied_verified",
+          "readBackAt": "2026-10-15T11:21:30.328Z",
+          "changedFields": 1,
+          "fieldsCompared": 1,
+          "beforeEvidenceSha256": "179612ef4a85f9b2dcf7f567737237496959ec31deefb0af60043b21d8a31df0",
+          "afterEvidenceSha256": "179855f28b91deeebb1d493891aa478b7b8185ba5fe956a918073f7de7bc87e7",
+          "screenshotSha256": "08ac488db8cc838b3191c9ce7a1e96c12aa1d4aa5bee49ec064800f2db0e889e",
+          "identityPreserved": true,
+          "unmodifiedFieldsEqual": true,
+          "schedulePreserved": "Início e término Nenhuma, todos os dias 00:00–00:00.",
+          "associationPreserved": true,
+          "note": "Editor reaberto após salvar; campos e agenda comparados. Capturas privadas registradas pelo operador."
+        },
+        {
+          "object": "co02",
+          "status": "applied_verified",
+          "readBackAt": "2026-10-15T11:21:50.253Z",
+          "changedFields": 1,
+          "fieldsCompared": 1,
+          "beforeEvidenceSha256": "2d788c0fe085c7ae81e82a7e5cb272c8ab006f59c8ad1a14475b043b0335ef8f",
+          "afterEvidenceSha256": "45ca4ec8d1968b07a110e73f3b035cf3a1843cb3684b844240f9068986f0445a",
+          "screenshotSha256": "cfccd2baa3356d53c22e5f286a4262646a6c64841b789dbc29575d482de388f0",
+          "identityPreserved": true,
+          "unmodifiedFieldsEqual": true,
+          "schedulePreserved": "Início e término Nenhuma, todos os dias 00:00–00:00.",
+          "associationPreserved": true,
+          "note": "Editor reaberto após salvar; campos e agenda comparados. Capturas privadas registradas pelo operador."
+        },
+        {
+          "object": "co03",
+          "status": "applied_verified",
+          "readBackAt": "2026-10-15T11:22:14.744Z",
+          "changedFields": 1,
+          "fieldsCompared": 1,
+          "beforeEvidenceSha256": "8f7184d39bbf8897bbca40708b33dc183b0b2704cdb8117f3fcd195f54a39a94",
+          "afterEvidenceSha256": "54e731c890b0846e4181a2e99b555fa5eb1f7f37f3ee37f9470ef9f7c93dffc3",
+          "screenshotSha256": "0d27a017f3f8041e0328f2d94f0629c45f6f0a6af39b9f48445bdf6d3ad2f108",
+          "identityPreserved": true,
+          "unmodifiedFieldsEqual": true,
+          "schedulePreserved": "Início e término Nenhuma, todos os dias 00:00–00:00.",
+          "associationPreserved": true,
+          "note": "Editor reaberto após salvar; campos e agenda comparados. Capturas privadas registradas pelo operador."
+        }
+      ],
+      "campaignPreservation": {
+        "status": "verified_readback",
+        "checkedAt": "2026-10-15T11:22:55.924Z",
+        "evidenceSha256": "d26fdb240b07a5affd61ed6b4cb52750714467e8c435419717ee490e67714bff",
+        "campaigns": 8,
+        "active": 6,
+        "finished": 2,
+        "budgetsBidsTargetsAndStatusPreserved": true,
+        "note": "Valores e identificadores operacionais privados. Indicador genérico Ativado não substitui o estado operacional Finalizada."
+      },
+      "rsaStatus": {
+        "checkedAt": "2026-10-15T11:23:22.513Z",
+        "evidenceSha256": "91b98e40cfa1899ecd9801624ac1b06298decbb82072ffc40bc61f0fd930c472",
+        "objects": 3,
+        "status": "Ativado",
+        "primaryStatus": "Qualificada",
+        "qualityIndicator": "Pendente",
+        "note": "Força do anúncio pendente após edição; não equivale a política pendente, exibição confirmada ou resultado comercial."
+      },
+      "independentQA": {
+        "status": "PASS",
+        "approvedCommit": "66b881e46234d7d8b4a6936a8144dfd9edc90dd7",
+        "checkedAtUtc": "2026-10-15T11:28:52.3526713Z",
+        "objectsCompared": 8,
+        "allFieldValuesCompared": 107.0,
+        "changedFieldValues": 16.0,
+        "preservedFieldValues": 91.0,
+        "rsaTextsCompared": 57,
+        "rsaPinsCompared": 57,
+        "limitations": [
+          "QA de JSONs de editores salvos/reabertos e snapshots de associação. PNGs foram hashados, sem revisão visual independente por este agente.",
+          "Não demonstra impressão, ganho comercial ou aprovação final de política dos cinco recursos, que permanecem Pendente/Em análise.",
+          "Os três RSAs estavam Ativado/Qualificada, com quality_indicator Pendente no recibo final; não declarar Excelente atual.",
+          "D1 fixada na posição 1 nas três peças e demais 54 seletores preservados; suffix vazio de preço/OTO permanece vazio.",
+          "Comparação de campanhas limitada aos oito campos protegidos e status operacional; dados históricos de desempenho não foram usados como prova de configuração."
+        ],
+        "evidenceSha256": "6874347b7763caae1720a4c299a42d6058fc28ae7e4b48d3354d63973c801711",
+        "evidenceBytes": 21105,
+        "campaignProtectedValuesCompared": 64,
+        "campaignStatesCompared": 8,
+        "campaignsPreserved": true
+      },
+      "resourceStatuses": {
+        "objects": [
+          {
+            "object": "sl04",
+            "status": "Ativado",
+            "primaryStatus": "Pendente",
+            "policyStatus": "Em análise",
+            "evidenceSha256": "d93e248221a90734a846f4906753e2b468deb173003a7c118e3fd2fce00767c9",
+            "associationLevelPreserved": true
+          },
+          {
+            "object": "sl05",
+            "status": "Ativado",
+            "primaryStatus": "Pendente",
+            "policyStatus": "Em análise",
+            "evidenceSha256": "e1bde19b389b2230a9a039914642a6ef9ec1a8cc21e820c80f385809b93958da",
+            "associationLevelPreserved": true
+          },
+          {
+            "object": "co01",
+            "status": "Ativado",
+            "primaryStatus": "Pendente",
+            "policyStatus": "Em análise",
+            "evidenceSha256": "a351a81e067c69e52710b06ebd0cd4d0c8f4e023f504fe2d534f7742d6b796d9",
+            "associationLevelPreserved": true
+          },
+          {
+            "object": "co02",
+            "status": "Ativado",
+            "primaryStatus": "Pendente",
+            "policyStatus": "Em análise",
+            "evidenceSha256": "6859ff672f02a1b031eab5cf061978eecb144f7df9d7cff2c864584b1726386e",
+            "associationLevelPreserved": true
+          },
+          {
+            "object": "co03",
+            "status": "Ativado",
+            "primaryStatus": "Pendente",
+            "policyStatus": "Em análise",
+            "evidenceSha256": "02d7ae43b95a8a9aa022be0887b9f7f5868135c2ae4130024c0850a390cb6457",
+            "associationLevelPreserved": true
+          }
+        ],
+        "note": "Recibos posteriores às edições: cinco recursos ainda em análise. Não representa aprovação final, exibição ou efeito comercial. A limitação de saúde anterior de SL04 permanece documentada no before."
+      },
+      "excludedCalloutReadback": {
+        "object": "CO04",
+        "status": "Ativado",
+        "primaryStatus": "Qualificada",
+        "level": "campanha OTO",
+        "modified": false,
+        "evidenceSha256": "5712e539a8a70a7006c51ef6f9e6e3caca475aa0a2461689f924117cada5910c"
+      },
+      "siteDeploymentPreserved": {
+        "status": "verified_by_live_api",
+        "evidenceSha256": "b599119f04b5f2550d9a89381f011cc453ed5cdd493561ddc60f6294b7476c11",
+        "note": "Mesmo deploy público anterior confirmado pelo operador; nenhum deploy de site ou Bruna foi publicado por este componente. IDs permanecem privados."
+      }
+    },
+    "driveProjectionEquality": "verified_equal",
+    "drivePlanSha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
+    "drivePlanReadbackVerifiedAt": "2026-10-15T11:31:14.1519180Z",
+    "drive": {
+      "status": "written_verified",
+      "sameExistingFile": true,
+      "sha256": "707c3faf3d60dbc313479081390e437a8aa6afd08bd4b9b86623c6dc60d49744",
+      "bytes": 16274,
+      "verifiedAt": "2026-10-15T11:31:14.1519180Z",
+      "sourceCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
+      "modifiedAt": "2026-10-15T11:30:50.929Z",
+      "method": "Authenticated raw download equal to local bytes and committed Git blob dfb9b2eb74eda8a484d9395a79a717c646b0e5af"
+    },
+    "documentationGate": {
+      "status": "passed",
+      "checkedAt": "2026-10-15T11:30:40.5648952Z",
+      "approvedCommit": "ab23496b3543fa51b96e7cf22d4a6250b17a9f57",
+      "scope": "Somente fechamento Ads e mesma projeção Drive; nenhuma autorização Bruna."
+    }
+  },
+  "parallelCandidate": {
+    "changeId": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
+    "status": "committed",
+    "release": "blocked_live_gate",
+    "correctedCandidate": "pending_authorization",
+    "codeAndManifestUnchangedByThisComponent": true,
+    "globalOpsExpected": "SYNC_PENDING",
+    "preservedCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788"
+  },
+  "pending": [
+    "Acompanhamento nas datas registradas; classificação individual e continuidade cervical permanecem abertas. Pendência global Bruna separada."
+  ],
+  "publicDestinations": {
+    "status": "passed_http_html_only",
+    "checkedAt": "2026-10-15T10:54:15.171221+00:00",
+    "method": "HTTP GET e inspeção do HTML público; sem execução de JavaScript, clique ou mensagem.",
+    "pages": [
+      {
+        "requested_url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+        "http_status": 200,
+        "final_url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+        "requested_fragment": null,
+        "fragment_found": null,
+        "sha256": "fc906104b029bf871138fc05816fec9ae72ab16946d5c0d2d7757771ab09ff37"
+      },
+      {
+        "requested_url": "https://draamandaschroeder.com.br/lifting-facial/",
+        "http_status": 200,
+        "final_url": "https://draamandaschroeder.com.br/lifting-facial/",
+        "requested_fragment": null,
+        "fragment_found": null,
+        "sha256": "396e094ce801f87572bc17c73e5acd083eb56b3f953d2d6640f9b9072a116f85"
+      },
+      {
+        "requested_url": "https://draamandaschroeder.com.br/otoplastia-adulto/#anatomia",
+        "http_status": 200,
+        "final_url": "https://draamandaschroeder.com.br/otoplastia-adulto/#anatomia",
+        "requested_fragment": "anatomia",
+        "fragment_found": true,
+        "sha256": "bdfe545e4fe36f174acc777ef4b3ec86b682598ac458b9318002407ad2a4fe6b"
+      },
+      {
+        "requested_url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "http_status": 200,
+        "final_url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "requested_fragment": null,
+        "fragment_found": null,
+        "sha256": "33e3f29a588cb2f293279ea57d2d0bb38b21148e8cd8ee99442f944e018bfd8f"
+      }
+    ],
+    "intent": "Guia lifting mantém price_range_reference e pedido de faixa geral informativa; anatomia adulta encontrada.",
+    "limitations": "Disponibilidade/HTML não comprovam entrega de clique, atendimento ou efeito comercial."
+  },
+  "initialPreparationBase": "20d4b5be99c15b24a26cded8b6c9a0a33dafbf93",
+  "verificationHistory": [
+    {
+      "status": "passed_local_checks_pending_live_preflight",
+      "checkedAt": "2026-10-15T10:59:32Z",
+      "executed": [
+        {
+          "command": "npm.cmd test",
+          "status": "passed",
+          "passed": 2205,
+          "failed": 0,
+          "log": "Evidência local privada do componente; testes sintéticos, sem mensagens reais."
+        },
+        {
+          "command": "npm.cmd run change:check",
+          "status": "passed",
+          "exactFiles": 42,
+          "note": "Gate estrutural; não equivale à conclusão do preflight vivo nem à autorização de Bruna."
+        },
+        {
+          "command": "npm.cmd run architecture:check",
+          "status": "passed"
+        },
+        {
+          "command": "npm.cmd run site:build",
+          "status": "passed",
+          "files": 193,
+          "sitemapUrls": 54,
+          "auditFilesInArtifact": 0
+        },
+        {
+          "command": "npm.cmd run site:check",
+          "status": "passed"
+        },
+        {
+          "command": "git diff --check",
+          "status": "passed"
+        },
+        {
+          "command": "npm.cmd run ops:check",
+          "status": "SYNC_PENDING",
+          "reasons": [
+            "CHANGE_PUBLICATION_PENDING",
+            "WRONG_BRANCH",
+            "DIRTY_WORKTREE"
+          ],
+          "note": "Candidato Bruna committed e componente complementar planned; nenhum fechamento global."
+        },
+        {
+          "command": "node --test <union of requiredTestFiles for the seven declared contracts>",
+          "status": "passed",
+          "files": 74,
+          "passed": 1531,
+          "failed": 0,
+          "overlapsFullSuite": true,
+          "checkedAt": "2026-10-15T11:01:41Z",
+          "note": "Resumo íntegro do log Node conferido; o wrapper Python teve apenas erro de encoding ao imprimir o resumo, depois do término dos testes."
+        }
+      ]
+    }
+  ],
+  "calloutInheritance": {
+    "rule": "Destaques em nível mais específico impedem servir os de nível superior; editar Conta não comprova elegibilidade em campanhas/grupos com destaques próprios.",
+    "source": "https://support.google.com/google-ads/answer/6079510?hl=en",
+    "decision": "CO02/CO03 de MARCA permanecem íntegros. Não inferir dupla exibição por terem texto igual no before. Nenhuma pausa, exclusão, criação ou reassociação."
+  },
+  "funnelReadOnlyAnnex": {
+    "status": "partial_evidence_resolved_no_mutations",
+    "evidenceSha256": "2808daca90707130515bfc2dfb9d2d2a0ca19092a6d11684b6d7a57fd7172229",
+    "cohort": {
+      "start": "2026-09-14",
+      "end": "2026-10-13",
+      "contacts": 17,
+      "classified": 5,
+      "qualifiedOrLater": 5,
+      "scheduledOrLater": 3,
+      "completedOrLater": 1,
+      "unclassified": 12
+    },
+    "preparation": "Fila com 12 prontos e 12 linhas de importação; igualdade de ação+data, sem comparar IDs de transação. O qualificado MAMA da coorte não tinha identificador de clique e não foi preparado, sem demonstrar falha de upload. Há quatro eventos preparados com data de conversão na janela; essa seleção difere da coorte por data de contato e não constitui reconciliação individual.",
+    "googleImportReceipt": {
+      "readbackAt": "2026-10-15T11:09:35.482Z",
+      "latestRunLocal": "2026-10-15 05:05 GMT-03:00",
+      "status": "Concluído",
+      "executedBy": "Programado",
+      "importedRows": 12,
+      "errorRows": 0,
+      "mappedFields": 7,
+      "previousRunLocal": "2026-10-14 05:05 GMT-03:00",
+      "previousImportedRows": 11,
+      "previousErrorRows": 0,
+      "nextScheduledRunLocal": "2026-10-16 05:05 GMT-03:00",
+      "manualRunsTriggered": 0
+    },
+    "limitations": [
+      "12 linhas importadas não significam 12 conversões novas; aceite agregado não reconcilia cada transação, atribuição ou relatório de conversões.",
+      "Recontagem anônima de fases armazenadas; não houve revisão de conversas ou evidência clínica individual.",
+      "12 contatos da mesma coorte continuam sem classificação; ausência de classificação não é desqualificação.",
+      "Continuidade cervical permanece aberta; zero contato recente não localiza a causa da perda."
+    ],
+    "decision": "Nenhuma evidência nova autoriza mudança de orçamento, lance, meta, negativas ou reativação de pilotos. P0 permanece parcial.",
+    "externalWrites": 0
+  },
+  "postPublicationParallelIntegration": {
+    "status": "integrated_document_sync_verified",
+    "sourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+    "driveBeforeModifiedAt": "2026-10-15T11:14:05.591Z",
+    "driveBeforeBytes": 13075,
+    "driveBeforeSha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
+    "driveEqualsSourceCommit": true,
+    "brunaCodeTestsManifestAndReceiptsPreserved": true,
+    "approvedAdsCommitUnchanged": true,
+    "note": "Nova deriva Drive detectada antes da substituição. Terceira tentativa Bruna bloqueada e correção financeira literal preservadas, sem publicação ou autorização própria inferida."
+  },
+  "postPublicationIntegrationChecks": {
+    "status": "passed_local",
+    "checkedAt": "2026-10-15T11:27:57Z",
+    "sourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+    "executed": [
+      {
+        "command": "npm.cmd test",
+        "status": "passed",
+        "passed": 2208,
+        "failed": 0
+      },
+      {
+        "command": "node --test <union of requiredTestFiles for the seven declared contracts>",
+        "status": "passed",
+        "files": 74,
+        "passed": 1534,
+        "failed": 0,
+        "overlapsFullSuite": true
+      },
+      {
+        "command": "npm.cmd run change:check",
+        "status": "passed",
+        "exactFiles": 44
+      },
+      {
+        "command": "npm.cmd run architecture:check",
+        "status": "passed"
+      },
+      {
+        "command": "npm.cmd run site:build",
+        "status": "passed",
+        "files": 193,
+        "sitemapUrls": 54,
+        "auditFilesInArtifact": 0
+      },
+      {
+        "command": "npm.cmd run site:check",
+        "status": "passed"
+      },
+      {
+        "command": "npm.cmd run ops:check",
+        "status": "SYNC_PENDING",
+        "reasons": [
+          "CHANGE_PUBLICATION_PENDING",
+          "WRONG_BRANCH",
+          "DIRTY_WORKTREE"
+        ]
+      }
+    ],
+    "limitations": "Nova revisão somente local; não altera o commit aprovado que precedeu as escritas Ads e não autoriza publicação Bruna."
+  }
+}

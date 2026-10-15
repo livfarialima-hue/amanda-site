@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "changeId": "GOOGLE-ADS-COMPLEMENTOS-2026-10-15",
+  "status": "verified_baseline_with_limits",
+  "baseCommit": "3be4621fd2f82fd032301f74aba565e648567413",
+  "createdAt": "2026-10-15T10:55:01Z",
+  "externalWritesPerformed": false,
+  "accountIdentityVerified": true,
+  "objectsReadBack": true,
+  "requiredBeforeWriting": [
+    "Confirmar conta e os três RSAs existentes por identidade/hierarquia; comparar todos os campos com a proposta.",
+    "Identificar SL04/SL05 e todos os consumidores; conferir before, fixações, tracking, parâmetros e estados.",
+    "Selecionar destaques somente com redundância e consumidores documentados; preservar recursos pertinentes e não duplicar níveis.",
+    "Conferir destinos públicos, fragmento de anatomia adulta, CTA e intenção de referência do guia lifting.",
+    "Reler orçamentos/lances/estados e preservar os valores vigentes.",
+    "Reler a mesma projeção do Plano no Drive antes de substituir; preservar alterações paralelas.",
+    "Testar, commitar o escopo exato, vincular autorização exclusivamente Ads+Drive e executar release:preflight antes de qualquer save."
+  ],
+  "partialChecks": [
+    {
+      "type": "rsa",
+      "status": "before_verified_independent_review",
+      "contexts": 3,
+      "textSlotsCompared": 57,
+      "exactDeltas": 11,
+      "pinsPreserved": 57,
+      "note": "Proposta e todos os textos vivos coincidem. Três descrições médicas 1 fixadas e 54 posições livres; URLs/caminhos corretos. Sufixos vazios de preço/OTO preservados, sem preencher marcadores do export."
+    },
+    {
+      "type": "sitelink",
+      "status": "before_verified_independent_review",
+      "resources": 2,
+      "associations": 2,
+      "note": "SL04 somente uma campanha LIFT, alteração da descrição 1; SL05 somente um grupo OTO Adulto, alteração da URL. Oito campos de cada editor comparados; rastreamento vazio e override móvel desativado.",
+      "limitation": "No snapshot inicial, opções avançadas estavam colapsadas; conferência complementar de agenda/data está registrada em sitelink_schedule. SL04 já exibe limitação de Saúde na publicidade personalizada; não atribuir esse estado à mudança futura."
+    },
+    {
+      "type": "callout",
+      "status": "before_verified_independent_review",
+      "selectedResources": 3,
+      "associationLevel": "account",
+      "note": "Before e 23/25, 25/25, 23/25 caracteres conferidos; cada editor confirma apenas conta. Agenda sem datas, todos os dias 00:00–00:00. Recursos MARCA preservados; CO04 excluído por estar no nível campanha OTO, incluindo infantil.",
+      "inheritance": {
+        "rule": "Destaques em nível mais específico impedem servir os de nível superior; editar Conta não comprova elegibilidade em campanhas/grupos com destaques próprios.",
+        "source": "https://support.google.com/google-ads/answer/6079510?hl=en",
+        "decision": "CO02/CO03 de MARCA permanecem íntegros. Não inferir dupla exibição por terem texto igual no before. Nenhuma pausa, exclusão, criação ou reassociação."
+      }
+    },
+    {
+      "type": "sitelink_schedule",
+      "status": "before_verified",
+      "note": "Conferência complementar abriu opções avançadas dos dois recursos e confirmou agenda sem datas, todos os dias 00:00–00:00. Hashes dos snapshots iniciais preservados."
+    }
+  ],
+  "driveProjection": {
+    "status": "verified_baseline_with_limits",
+    "sameExistingFile": true,
+    "identity": "Título, tipo text/markdown e pasta canônica confirmados; identificadores privados preservados.",
+    "modifiedAt": "2026-10-15T10:54:20.798Z",
+    "contentSha256": "f26b242b6d68d47f84a83f27748f33a235035dc59a4726ae908d17e034425bd8",
+    "bytes": 13459,
+    "matchedCommit": "3be4621fd2f82fd032301f74aba565e648567413",
+    "comparison": "Download autenticado idêntico aos bytes do Plano commitado mais recente. Deriva frente a 20d4 detectada e integrada sem sobrescrever a correção Bruna.",
+    "permissionLimitation": "Metadata não devolveu canEdit; permissão de escrita não inferida. Nenhuma escrita externa nesta leitura.",
+    "policy": "Substituir o mesmo arquivo somente após commit; exigir novo download e igualdade para fechamento."
+  },
+  "notClaimed": [
+    "Leitura autenticada nova completa",
+    "Alteração aplicada",
+    "Aprovação ou exibição",
+    "Resultado comercial",
+    "Auditoria nova da jornada privada ou publicação Bruna"
+  ],
+  "publicDestinations": {
+    "status": "passed_http_html_only",
+    "checkedAt": "2026-10-15T10:54:15.171221+00:00",
+    "method": "HTTP GET e inspeção do HTML público; sem execução de JavaScript, clique ou mensagem.",
+    "pages": [
+      {
+        "requested_url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+        "http_status": 200,
+        "final_url": "https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/",
+        "requested_fragment": null,
+        "fragment_found": null,
+        "sha256": "fc906104b029bf871138fc05816fec9ae72ab16946d5c0d2d7757771ab09ff37"
+      },
+      {
+        "requested_url": "https://draamandaschroeder.com.br/lifting-facial/",
+        "http_status": 200,
+        "final_url": "https://draamandaschroeder.com.br/lifting-facial/",
+        "requested_fragment": null,
+        "fragment_found": null,
+        "sha256": "396e094ce801f87572bc17c73e5acd083eb56b3f953d2d6640f9b9072a116f85"
+      },
+      {
+        "requested_url": "https://draamandaschroeder.com.br/otoplastia-adulto/#anatomia",
+        "http_status": 200,
+        "final_url": "https://draamandaschroeder.com.br/otoplastia-adulto/#anatomia",
+        "requested_fragment": "anatomia",
+        "fragment_found": true,
+        "sha256": "bdfe545e4fe36f174acc777ef4b3ec86b682598ac458b9318002407ad2a4fe6b"
+      },
+      {
+        "requested_url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "http_status": 200,
+        "final_url": "https://draamandaschroeder.com.br/conteudos/consulta-cirurgia-plastica/",
+        "requested_fragment": null,
+        "fragment_found": null,
+        "sha256": "33e3f29a588cb2f293279ea57d2d0bb38b21148e8cd8ee99442f944e018bfd8f"
+      }
+    ],
+    "intent": "Guia lifting mantém price_range_reference e pedido de faixa geral informativa; anatomia adulta encontrada.",
+    "limitations": "Disponibilidade/HTML não comprovam entrega de clique, atendimento ou efeito comercial."
+  },
+  "pending": [
+    "Commit exato e release:preflight exclusivos Ads+Drive antes da primeira escrita",
+    "Revalidar eventual deriva antes de substituir a mesma projeção Drive"
+  ],
+  "initialPreparationBase": "20d4b5be99c15b24a26cded8b6c9a0a33dafbf93",
+  "campaignBaseline": {
+    "status": "verified_preserve",
+    "checkedAt": "2026-10-15T11:04:42.156Z",
+    "activeCampaigns": 6,
+    "finishedCampaigns": 2,
+    "evidenceSha256": "6e5d7980df1e5912454900fffb2e125b87bb3413f33fa06395140581c4f7ca80",
+    "note": "Orçamentos e estratégias vivos conferidos. LIFT Maximizar conversões sem CPA; outras cinco ativas Maximizar cliques. Estado operacional Finalizada de duas campanhas prevalece sobre indicador genérico Ativado. Valores e IDs privados não copiados."
+  },
+  "parallelIntegration": {
+    "sourceCommit": "3be4621fd2f82fd032301f74aba565e648567413",
+    "codeTestsManifestPreserved": true,
+    "newDeployment": false,
+    "note": "Tentativa Bruna bloqueada e correção pendente permanecem integralmente registradas; autorização Ads não publica Bruna."
+  },
+  "localChecks": {
+    "status": "passed",
+    "reference": "auditorias/google-ads-complementos-2026-10-15/REVISAO.json",
+    "checkedAt": "2026-10-15T11:13:55Z"
+  },
+  "postPublicationParallelIntegration": {
+    "status": "integrated_pending_document_sync",
+    "sourceCommit": "7242d54df4e4487aeb59e1f7ec37c0f0c4dc6788",
+    "driveBeforeModifiedAt": "2026-10-15T11:14:05.591Z",
+    "driveBeforeBytes": 13075,
+    "driveBeforeSha256": "dea8dbf58fa3d823bf3c54820e897b6db1696f4f9124ea9a9863aaf21b853903",
+    "driveEqualsSourceCommit": true,
+    "brunaCodeTestsManifestAndReceiptsPreserved": true,
+    "approvedAdsCommitUnchanged": true,
+    "note": "Nova deriva Drive detectada antes da substituição. Terceira tentativa Bruna bloqueada e correção financeira literal preservadas, sem publicação ou autorização própria inferida."
+  }
+}
