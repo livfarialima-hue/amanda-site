@@ -2176,6 +2176,7 @@ export function isImmediateHumanContextContinuationCandidate(
 }
 
 function approvedPriceReplyKindForPlan(plan) {
+  if (plan?.reason === 'lipo_papada_price_range_direct' && plan?.procedure === 'lipo_papada') return 'lipo_papada_range';
   if (
     plan?.reason === "price_initial_information" &&
     ["lifting_facial", "lifting_cervical", "otoplastia"].includes(
@@ -2568,7 +2569,7 @@ async function completeOpenAIActive({
             currentText: input.text,
             introduceBruna,
           })
-        : ["lifting_range", "otoplasty_range"].includes(
+        : ["lifting_range", "otoplasty_range", "lipo_papada_range"].includes(
             approvedPriceReplyKind,
           )
           ? buildSurgicalPriceSuggestedReply({
@@ -2623,6 +2624,8 @@ async function completeOpenAIActive({
                 ? "LIFTING-PRICE-RANGE-01"
                 : approvedPriceReplyKind === "otoplasty_range"
                   ? "OTOPLASTY-PRICE-RANGE-01"
+                  : approvedPriceReplyKind === "lipo_papada_range"
+                    ? "LIPO-PAPADA-PRICE-RANGE-01"
                   : "SURGICAL-PRICE-INITIAL-01",
             suggestedReply: approvedPriceBody,
             reviewReason: "",
@@ -6020,9 +6023,12 @@ export async function handleYCloudWebhook(
         professional: delivery.opportunityId && ["amanda", "daniel"].includes(delivery.professional) ? delivery.professional : "",
         requestId: String(eventId) });
     commitmentSyncStatus = commitmentResult.ok
-      ? commitmentResult.responseData?.duplicate
-        ? "duplicate"
-        : "completed"
+      ? shouldQueuePriceHolding && automationPlan.procedure === 'lipo_papada' &&
+          commitmentResult.responseData?.created !== true && commitmentResult.responseData?.duplicate !== true
+        ? "receipt_unconfirmed"
+        : commitmentResult.responseData?.duplicate
+          ? "duplicate"
+          : "completed"
       : commitmentResult.errorCode;
   }
 
@@ -6300,10 +6306,16 @@ export async function handleYCloudWebhook(
       semanticReviewAssessment.decision?.urgent !== true &&
       isSurgicalPriceReview(semanticReviewAssessment.decision));
   const reviewAlertDelivered = reviewAlertReceipt?.status === 'completed' || reviewAlertReceipt?.emailStatus === 'completed';
-  if (shouldQueuePriceHolding && (!semanticPriceHoldingAllowed || !reviewAlertDelivered)) {
-    priceHoldingStatus = !semanticPriceHoldingAllowed ? 'semantic_review_veto' : 'review_alert_failed';
+  // The new lipo holding can promise a return only when its canonical human
+  // obligation exists and the team has received the alert. A failed write is
+  // retryable through inbound recovery; it is never replaced by a verbal promise.
+  const priceCommitmentRecorded = automationPlan.procedure !== 'lipo_papada' ||
+    ['completed','duplicate'].includes(commitmentSyncStatus);
+  if (shouldQueuePriceHolding && (!semanticPriceHoldingAllowed || !reviewAlertDelivered || !priceCommitmentRecorded)) {
+    priceHoldingStatus = !semanticPriceHoldingAllowed ? 'semantic_review_veto' :
+      !reviewAlertDelivered ? 'review_alert_failed' : 'review_commitment_failed';
   }
-  if (shouldQueuePriceHolding && semanticPriceHoldingAllowed && reviewAlertDelivered) {
+  if (shouldQueuePriceHolding && semanticPriceHoldingAllowed && reviewAlertDelivered && priceCommitmentRecorded) {
     priceHoldingQueued = true;
     const priceHoldingBody = buildSurgicalPriceHoldingReply({
       patientName: patientDisplayName,
@@ -6896,7 +6908,7 @@ export async function handleYCloudWebhook(
     );
   const automaticWorkFinished =
     leadRoutingFinished &&
-    (!shouldQueuePriceHolding || reviewAlertDelivered) &&
+    (!shouldQueuePriceHolding || (reviewAlertDelivered && priceCommitmentRecorded)) &&
     (!aiActiveQueued || !["failed", "deferred"].includes(aiActiveStatus)) &&
     (!priceHoldingQueued || terminalSendStatuses.has(priceHoldingStatus)) &&
     (!approvedPriceReplyQueued || terminalSendStatuses.has(approvedPriceReplyStatus)) &&

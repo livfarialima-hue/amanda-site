@@ -1,7 +1,7 @@
 import { usableProfileFirstName } from "./profile-name.mjs";
 import { resolveOfferedInformationChoice, consultationQuestionTopics } from "./patient-turn-context.mjs";
 import { approvedProcedureInformationFacts } from "./lifting-information.mjs";
-import { isAutomaticSurgicalPriceProcedure, facialPriceLines, earPriceScope, SURGICAL_PRICE_DISCLOSURE } from "./surgical-price-policy.mjs";
+import { isAutomaticSurgicalPriceProcedure, hasIsolatedLipoPapadaScope, facialPriceLines, earPriceScope, SURGICAL_PRICE_DISCLOSURE } from "./surgical-price-policy.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
 import {
   buildConsultationInformationReply,
@@ -503,15 +503,20 @@ export function buildSurgicalPriceSuggestedReply({
   if (directToPatient && !isAutomaticSurgicalPriceProcedure(procedure)) {
     return buildSurgicalPriceHoldingReply({patientName, procedure, recentConversation, currentText, introduceBruna});
   }
+  if (procedure === 'lipo_papada' && !hasIsolatedLipoPapadaScope(currentText, recentConversation)) {
+    return buildSurgicalPriceHoldingReply({patientName, procedure, recentConversation, currentText, introduceBruna});
+  }
   const paymentContext = /parcel|pagamento|desconto|[àa]\s+vista|quantas?\s+vezes/i.test(currentText)
     ? "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista."
     : "";
-  if (directToPatient) {
+  if (directToPatient || procedure === 'lipo_papada') {
     const range = procedure === 'lifting_facial'
       ? facialReferenceParagraph(currentText, recentConversation)
       : procedure === 'lifting_cervical'
         ? 'Para você ter uma noção de valores, a cervicoplastia (lifting cervical) tem uma referência entre R$ 18 mil e R$ 26 mil.'
-        : 'Para você ter uma noção de valores, a otoplastia tem uma referência entre R$ 8 mil e R$ 14 mil.';
+        : procedure === 'lipo_papada'
+          ? 'Para você ter uma noção de valores, a lipo de papada isolada tem uma referência entre R$ 12 mil e R$ 18 mil.'
+          : 'Para você ter uma noção de valores, a otoplastia tem uma referência entre R$ 8 mil e R$ 14 mil.';
     return [
       includeGreeting ? directPriceGreeting(patientName, recentConversation, introduceBruna) : '',
       range,
@@ -605,20 +610,31 @@ export function buildSurgicalPriceSuggestedReply({
 // price plan already authorized by surgical-price-policy can enter this reply.
 export function buildAcceptedProcedurePriceReply({plan, currentText, recentConversation = []} = {}) {
   const choice = resolveOfferedInformationChoice({text:currentText,recentConversation});
-  if (!choice || plan?.reason !== 'lifting_price_range_direct' || plan.automaticAllowed !== true ||
-      !['lifting_facial','lifting_cervical'].includes(plan.procedure)) return null;
+  // Keep the existing semantic composition of other procedure questions. The
+  // new natural three-part preview belongs to isolated lipo; explicit selection
+  // of the offered pair retains the previously approved shared path.
+  if (!choice && plan?.procedure !== 'lipo_papada') return null;
+  if (!['lifting_price_range_direct','otoplasty_price_range_direct','lipo_papada_price_range_direct'].includes(plan?.reason) || plan.automaticAllowed !== true ||
+      !isAutomaticSurgicalPriceProcedure(plan.procedure) ||
+      (plan.procedure === 'lipo_papada' && !hasIsolatedLipoPapadaScope(currentText,recentConversation))) return null;
   const approved = approvedProcedureInformationFacts({text:currentText,procedure:plan.procedure,recentConversation});
-  const explanation = approved?.facts.filter(fact => ['procedure_explanation','neck_procedure_explanation'].includes(fact.topic)) || [];
-  if (!explanation.length) return null;
-  const price = buildSurgicalPriceSuggestedReply({procedure:plan.procedure,currentText:choice.requestText,
+  const facts = approved?.facts.filter(fact => ['procedure_explanation','neck_procedure_explanation','recovery'].includes(fact.topic)) || [];
+  if (!facts.length) return null;
+  const coveredIntents = new Set(['price_surgery']);
+  for (const fact of facts) {
+    if (['procedure_explanation','neck_procedure_explanation'].includes(fact.topic)) coveredIntents.add('procedure_information');
+    if (fact.topic === 'recovery') coveredIntents.add('recovery');
+    if (plan.procedure === 'lifting_facial') coveredIntents.add(`lifting_${fact.topic}`);
+  }
+  const price = buildSurgicalPriceSuggestedReply({procedure:plan.procedure,currentText:choice?.requestText || currentText,
     recentConversation,directToPatient:true,introduceBruna:false,includeGreeting:false});
   return {
     status:'completed', model:'deterministic-approved-procedure-price',
     // Internal coverage, not model output. Extra requests still veto selection.
-    coveredIntents:[...choice.topics,...explanation.filter(fact=>fact.topic==='procedure_explanation').map(()=> 'lifting_procedure_explanation')],
+    coveredIntents:[...coveredIntents],
     decision:{route:'standard_reply',confidence:'high',automaticAllowed:true,urgent:false,
-      professional:'amanda',procedure:plan.procedure,replyCode:'LIFTING-PRICE-RANGE-01',reviewReason:'',
-      suggestedReply:['Claro, te explico os dois.',...explanation.map(fact=>fact.statement),price].join('\n\n')},
+      professional:'amanda',procedure:plan.procedure,replyCode:plan.replyCode,reviewReason:'',
+      suggestedReply:[choice ? 'Claro, te explico os dois.' : '',...facts.map(fact=>fact.statement),price].filter(Boolean).join('\n\n')},
   };
 }
 
@@ -669,6 +685,10 @@ export function buildSurgicalPriceHoldingReply({
       ? "a condição atual de desconto à vista"
       : /inclu[ií]|hospital|anestes/i.test(text)
         ? "quais itens se aplicam ao orçamento"
+        : procedure === 'lipo_papada'
+          ? hasIsolatedLipoPapadaScope(currentText,recentConversation)
+            ? 'sua dúvida sobre o valor da lipo de papada isolada'
+            : 'a referência de valor para o tratamento solicitado'
         : reference
           ? `a faixa atual de valor para ${procedure === "blefaroplastia" ? "a blefaroplastia" : reference.label}`
           : "a faixa atual de valor desse procedimento";
@@ -677,9 +697,13 @@ export function buildSurgicalPriceHoldingReply({
       ? "De forma geral, o pagamento cirúrgico pode ser parcelado antecipadamente, com quitação antes do procedimento, e há desconto à vista."
       : "";
 
+  const approved = approvedProcedureInformationFacts({text:currentText,procedure,recentConversation});
+  const facts = approved?.facts.filter(fact => ['procedure_explanation','neck_procedure_explanation','recovery'].includes(fact.topic)) || [];
+
   return [
     opening,
     location,
+    ...facts.map(fact => fact.statement),
     `Vou confirmar ${pendingTopic} com a equipe e te retorno ${returnTiming}.`,
     paymentContext,
   ].filter(Boolean).join("\n\n");
@@ -723,7 +747,7 @@ export function buildPendingHospitalQuoteAlert({
 
 export function buildPriceReviewSourceNote({procedure, currentText = "", recentConversation = []}) {
   const reference = internalPriceReferenceForConversation(procedure, currentText, recentConversation);
-  if (isAutomaticSurgicalPriceProcedure(procedure)) {
+  if (isAutomaticSurgicalPriceProcedure(procedure) && (procedure !== 'lipo_papada' || hasIsolatedLipoPapadaScope(currentText, recentConversation))) {
     return "Base: faixa operacional já autorizada para este procedimento. Reenvio ou negociação continuam sujeitos à sua revisão.";
   }
   return reference

@@ -2,7 +2,13 @@
 
 **Publicado e conferido no Google Ads em 15/10/2026**, a partir do commit autorizado `2f5adbecb3712e99786cbf91acfa32510103b975`, com gate do HEAD exato antes das escritas. Três destinos de sitelinks corrigidos em quatro associações existentes; 13 campos de três RSAs e duas URLs finais de palavras de preço de blefaroplastia salvos e relidos, com QA independente aprovada. Sem mudanças de orçamento/lance, novas palavras/negativas, site ou atendimento. Três RSAs Ativado/Qualificada, indicador de qualidade Pendente; duas palavras ativadas e Pendente/Em análise após edição, com baixo índice anterior. Não confundir configuração, revisão de política, veiculação e efeito comercial.
 
-Decisão canônica na seção 42 do Norte; antes/depois e recibos em auditorias/google-ads-comunicacao-2026-10-15/. Motivo: corresponder intenção, anúncio e conteúdo; hipótese de menos atrito até contato útil, sem resultado demonstrado. Daniel/equipe revê integridade/política em 17/10 e etapas reais do funil em 29/10 e 12/11, com maturação comparável. Manter clareza/integridade e reverter somente o campo responsável ao before vivo diante de erro ou regressão consistente. A igualdade da mesma projeção do Plano no Drive é exigida no recibo de fechamento; nenhuma automação nova.
+Decisão canônica na seção 43 do Norte; antes/depois e recibos em auditorias/google-ads-comunicacao-2026-10-15/. Motivo: corresponder intenção, anúncio e conteúdo; hipótese de menos atrito até contato útil, sem resultado demonstrado. Daniel/equipe revê integridade/política em 17/10 e etapas reais do funil em 29/10 e 12/11, com maturação comparável. Manter clareza/integridade e reverter somente o campo responsável ao before vivo diante de erro ou regressão consistente. A igualdade da mesma projeção do Plano no Drive é exigida no recibo de fechamento; nenhuma automação nova.
+
+## 14/10/2026 — continuidade da Bruna e retomadas devidas
+
+Pedido do responsável: concluir correção iniciada em diagnóstico no Cloud e adequar retomadas para 15/10 com abordagem estratégica e não invasiva. Faixa de lipo de papada isolada confirmada nesta conversa: R$12–18mil; não extrapolar da tabela histórica de lipoaspiração nem misturar com cervicoplastia.
+
+Decisão, motivo, hipótese, métricas e revisão estão na seção 42 do Norte estratégico. Prioridade: responder dívida da clínica e cumprir promessa antes de nova abordagem; depois apenas continuidade contextual individual elegível. Preservados dados, cadência, flags, campanhas e consentimento. Estado: candidato em implementação; nenhum envio ou publicação deste pacote. Evidência técnica sanitizada: auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md.
 
 ## 2026-10-14 — continuidade entre site e WhatsApp
 

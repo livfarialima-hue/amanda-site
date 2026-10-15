@@ -108,13 +108,14 @@ async function syntheticResponse(url, request) {
       const hints = input.policyHints;
       const unknown = /equipamento específico/.test(input.currentMessage);
       const urgent = /falta de ar/.test(input.currentMessage);
+      const association = /lipo de papada com platismoplastia/.test(input.currentMessage);
       const resolved = /recebi o documento/.test(input.currentMessage);
       const appointment = /Há horário na quinta-feira à tarde/.test(input.currentMessage);
       const remote = /Moro no exterior/.test(input.currentMessage) || ['E qual o valor da consulta?', 'Quanto custa?'].includes(input.currentMessage);
       if (hints?.deterministicReplyCode) assert.ok(hints.deterministicReplyPreview.length > 30);
       if (input.currentMessage.includes('comprovante fiscal')) assert.equal(input.approvedKnowledge[0].id, 'SYNTHETIC-INVOICE');
       if (input.currentMessage.includes('levar para a primeira consulta')) assert.ok(input.approvedClinicalFacts.topics.includes('consultation_preparation'));
-      if (!urgent && !unknown && !resolved && !appointment) {
+      if (!urgent && !unknown && !resolved && !appointment && !association) {
         assert.equal(input.replyContract.allowedResponseKind, 'direct_answer');
         assert.equal(input.replyContract.owner, 'bruna');
         if (hints?.deterministicReplyCode) assert.notEqual(input.replyContract.risk, 'red');
@@ -130,6 +131,7 @@ async function syntheticResponse(url, request) {
           : hints?.deterministicReplyPreview || '', reviewReason: unknown ? 'unknown_digest:equipamento_lifting' : urgent ? 'possible_urgent_symptoms' : '',
         conversationState: { activeTopic: 'consulta', patientAct: 'question', refersToEventId: '', lastClinicQuestion: '', lastClinicOffer: '',
           unresolvedQuestions: unknown ? ['Qual equipamento específico é usado?'] : [], factsAlreadyProvided: [], owner: unknown ? 'human_team' : 'bruna', nextExpectedAction: unknown ? 'Equipe confirmar equipamento' : 'aguardar', ambiguity: '', contextConfidence: 'high' } };
+      if (association) Object.assign(decision,{route:'human_review',automaticAllowed:false,replyCode:'UNKNOWN-REVIEW-01',suggestedReply:'',reviewReason:'procedure_price_association'});
       if (unknown) decision.partialAnswer = { knowledgeIds: ['SYNTHETIC-PARKING'], pendingQuestion: 'Qual equipamento específico é usado?' };
       if (remote) Object.assign(decision,{route:'standard_reply',automaticAllowed:true,replyCode:'',reviewReason:'',suggestedReply:'A Dra. Amanda atende por consulta online, inclusive quem está no exterior. A teleconsulta custa R$ 500. O orçamento individual da cirurgia depende da avaliação.'});
       if (input.currentMessage.includes('comprovante fiscal')) Object.assign(decision, { replyCode: 'KB:SYNTHETIC-INVOICE', suggestedReply: 'Sim, emitimos nota fiscal da consulta.' });
@@ -154,20 +156,39 @@ async function syntheticResponse(url, request) {
     return new Response(JSON.stringify({ model: 'gpt-6.1-sol', status: 'completed', output_text: JSON.stringify(decision) }));
 }
 
-test('all nineteen synthetic scenarios use the real adapters and pass the outbound protections', async () => {
+test('all twenty-one synthetic scenarios use the real adapters and pass the outbound protections', async () => {
   const fixtureErrors = [];
   const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (...args) => {
     try { return await syntheticResponse(...args); } catch (error) { fixtureErrors.push(error.message); throw error; }
   } });
   assert.deepEqual(fixtureErrors, []);
   assert.equal(result.status, 'passed', JSON.stringify(result));
-  assert.equal(result.results.length, 19);
-  assert.deepEqual(result.results.map(r => r.timeoutMs), [...Array(17).fill(20000), 15000, 12000]);
+  assert.equal(result.results.length, 21);
+  assert.deepEqual(result.results.map(r => r.timeoutMs), [...Array(19).fill(20000), 15000, 12000]);
   assert.equal(result.maxOutputTokens, 4096);
   assert.equal(result.verbosity, 'low');
   assert.equal(result.patientMessagesSent, 0);
   assert.match(result.results.find(r=>r.name==='consultation_contextual').requests[0].syntheticDraft, /consulta presencial/);
   assert.equal(JSON.stringify(result).includes(env.OPENAI_API_KEY), false);
+});
+
+test('the association probe rejects isolated prices even inside a human-review suggestion', async () => {
+  for (const price of ['R$ 12 mil e R$ 18 mil', 'R$ 12.000 a R$ 18.000', '12 a 18 mil reais']) {
+    const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (url, request) => {
+      const data = await (await syntheticResponse(url, request)).json();
+      const input = JSON.parse(JSON.parse(request.body).input);
+      if (input.currentMessage?.includes('lipo de papada com platismoplastia')) {
+        const decision = JSON.parse(data.output_text);
+        decision.suggestedReply = `A referência para lipo de papada é ${price}.`;
+        data.output_text = JSON.stringify(decision);
+      }
+      return Response.json(data);
+    } });
+    assert.equal(result.status, 'failed');
+    assert.equal(result.results.at(-1).name, 'lipo_papada_association_not_isolated_range');
+    assert.equal(result.results.at(-1).passed, false);
+    assert.equal(result.patientMessagesSent, 0);
+  }
 });
 
 test('a partial known answer cannot make the live quality gate accept an unresolved clinic fact', async () => {
@@ -217,7 +238,7 @@ test('administrative knowledge accepts an empty unspecified procedure from the r
     return Response.json(data);
   } });
   assert.equal(result.status, 'passed');
-  assert.equal(result.results.length, 19);
+  assert.equal(result.results.length, 21);
   assert.equal(result.results.find(r => r.name === 'semantic_approved_knowledge').passed, true);
   assert.equal(result.patientMessagesSent, 0);
 });
@@ -238,7 +259,7 @@ test('remote live gate accepts legitimate budget and availability boundaries bes
       return Response.json(data);
     }});
     assert.equal(result.status,'passed');
-    assert.equal(result.results.length,19);
+    assert.equal(result.results.length,21);
     assert.equal(result.patientMessagesSent,0);
   }
 });

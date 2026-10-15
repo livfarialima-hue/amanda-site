@@ -359,6 +359,9 @@ export function enrichAutomationPlanFromConversation(
       recentPatientProcedure?.key ||
       recentClinicProcedure?.key ||
       context.procedure;
+    if (procedure === 'lipo_papada') return resolveSurgicalPricePlan({...plan,
+      reason:'price_initial_information', procedure, professional:'amanda',
+      currentText, priceRequestKind:'amount'}, recentConversation);
     const previousLiftingRangeReply = hasPreviousLiftingRangeReply(
       recentConversation,
       procedure,

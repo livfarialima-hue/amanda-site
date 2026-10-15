@@ -46,6 +46,9 @@ export function isPatientPhotoAssessmentRequest(text) {
 // This identifies intent only; callers still require procedure-specific facts.
 export function isProcedureExplanationInquiry(text) {
   const value = String(text || "").normalize("NFD").replace(/\p{M}/gu, "");
+  if (/\b(?:saber|entender|informacoes?\s+sobre|explica(?:r)?|explique)\s+(?:(?:mais\s+)?sobre\s+)?(?:(?:o|esse|este)\s+)?procedimento\b/i.test(value) &&
+      !/\bnao\s+(?:quero|preciso|desejo)\s+(?:saber|entender|informacoes?)\b/i.test(value)) return true;
+  if (/\bcomo\s+(?:e|eh|seria)\s+(?:(?:o|esse|este)\s+)?procedimento\b/i.test(value)) return true;
   const questions = value.matchAll(/\bcomo\s+(?:(?:e|eh|sao|seria|sera)\s+)?(?:feit[oa]s?|realizad[oa]s?|funcionam?|se\s+faz)\b/gi);
   return [...questions].some(question => !/^\s+(?:(?:o|a|os|as|essa|esse|minha|meu)\s+)?(?:consulta|avaliacao|pagamento|parcelamento|agendamento|reembolso|contato|reserva)\b/i.test(value.slice(question.index + question[0].length)));
 }
@@ -99,15 +102,15 @@ export function consultationQuestionTopics(text) {
   const clauses = value.split(/[\n.!?;]+/).filter(Boolean);
   const active = clauses.filter(c => !/\b(?:nao quero|nao preciso|sem interesse em)\b.{0,30}\b(?:precos?|custos?|valor(?:es)?|faixa|orcamento)\b/.test(c));
   const consultationPrice = active.some(isConsultationCostInquiry);
-  const surgeryWord = /\b(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|mastopexia|abdominoplastia|lipoaspiracao|ninfoplastia|mamoplastia|minilifting|procedimento)\b/;
+  const surgeryWord = /\b(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|mastopexia|abdominoplastia|lipo(?:aspiracao)?\s+(?:de\s+)?papada|lipoaspiracao|ninfoplastia|mamoplastia|minilifting|procedimento)\b/;
   const surgeryPrice = active.some(c => {
     if (!surgeryWord.test(c)) return false;
     if (!isPriceAmountInquiry(c)) return consultationPrice && /^\s*e\s+(?:[oa]|d[oa])\s+(?:lifting|cervicoplastia|otoplastia|cirurgia)\b/.test(c);
     if (!isConsultationCostInquiry(c)) return true;
     // A shared price question: "preço da consulta e do lifting", in either order.
-    return /\b(?:consulta|teleconsulta|avaliacao)\s*(?:(?:presencial|online)\s*)?(?:,|e|ou)\s*(?:(?:tambem|d[oa]|[oa])\s+)*(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting)\b/.test(c) ||
-      /\b(?:cirurgia|lifting(?: facial| cervical)?|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting)\s*(?:,|e|ou)\s*(?:d[ae]|a|da minha)?\s*(?:consulta|avaliacao)\b/.test(c) ||
-      /\b(?:e|tambem)\s+(?:qual\s+(?:e\s+)?(?:o\s+)?|quanto\s+|[oa]\s+)?(?:preco|valor|faixa|media|custa|fica)\b.{0,45}\b(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting)\b/.test(c);
+    return /\b(?:consulta|teleconsulta|avaliacao)\s*(?:(?:presencial|online)\s*)?(?:,|e|ou)\s*(?:(?:tambem|d[oa]|[oa])\s+)*(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting|lipo(?:aspiracao)?\s+(?:de\s+)?papada)\b/.test(c) ||
+      /\b(?:cirurgia|lifting(?: facial| cervical)?|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting|lipo(?:aspiracao)?\s+(?:de\s+)?papada)\s*(?:,|e|ou)\s*(?:d[ae]|a|da minha)?\s*(?:consulta|avaliacao)\b/.test(c) ||
+      /\b(?:e|tambem)\s+(?:qual\s+(?:e\s+)?(?:o\s+)?|quanto\s+|[oa]\s+)?(?:preco|valor|faixa|media|custa|fica)\b.{0,45}\b(?:cirurgia|lifting|cervicoplastia|otoplastia|blefaroplastia|rinoplastia|minilifting|lipo(?:aspiracao)?\s+(?:de\s+)?papada)\b/.test(c);
   });
   return [
     consultationPrice && 'price_consultation',

@@ -1,5 +1,12 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+## Candidato local — 2026-10-14.5
+
+Correção implementada e testada localmente, sem efeito publicado: perguntas conjuntas devem conservar explicação e recuperação aprovadas; a faixa R$12–18mil autorizada para lipo de papada isolada segue contrato próprio de escopo e envio único. Pendências variáveis permanecem com a equipe e promessa exige encaminhamento real. A tabela histórica genérica não comprova preço de lipo de papada.
+
+Em 15/10, a equipe confere primeiro respostas devidas e consulta iminente, depois continuidades individuais úteis. Fila antiga/manual não é autorização de disparo. Consultar a estratégia canônica e os registros privados antes de cada ação; nenhum rascunho deste pacote foi enviado. Apps Script v164 e todos os acionadores/flags permanecem intactos. Publicação, modelo vivo/áudio/histórico e equivalência de projeções ainda são gates pendentes.
+
+
 Edição pública revisada em 14/10/2026. O conteúdo integral anterior foi preservado como evidência fechada em área restrita. Este documento não publica contatos, IDs de contas, configuração de ambiente, códigos de campanha, credenciais ou observações individuais. Não apaga o histórico Git anterior.
 
 ## Correção publicada

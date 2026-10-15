@@ -234,6 +234,49 @@ function dependencies() {
   };
 }
 
+for (const scenario of ['complete','price_only','semantic_veto','new_human','wrong_procedure']) {
+  test(`isolated lipo resumption preserves the whole request and ownership: ${scenario}`,async()=>{
+    const deps=dependencies();
+    const text=scenario==='price_only' ? 'Qual o valor da lipo de papada?' : 'Gostaria de saber sobre o procedimento, valor e recuperação';
+    const turns=[{role:'user',source:'patient',text:'Estou pesquisando lipo de papada para minha esposa.'},
+      {role:'assistant',source:'bruna',text:'Qual é a dúvida de vocês?'}];
+    deps.runOpenAIShadowImpl=async payload=>{
+      assert.equal(payload.policyHints.deterministicReplyCode,'LIPO-PAPADA-PRICE-RANGE-01');
+      if(scenario!=='price_only') {
+        assert.match(payload.policyHints.deterministicReplyPreview,/remove gordura.*inchaço.*R\$ 12 mil e R\$ 18 mil/s);
+        assert.ok(payload.replyContract.unresolvedIntents.includes('procedure_information'));
+        assert.ok(payload.replyContract.unresolvedIntents.includes('recovery'));
+      }
+      const veto=scenario==='semantic_veto';
+      return {status:'completed',decision:{route:veto?'human_review':'standard_reply',confidence:'high',automaticAllowed:!veto,urgent:false,
+        professional:'amanda',procedure:scenario==='wrong_procedure'?'lifting_cervical':'lipo_papada',replyCode:'LIPO-PAPADA-PRICE-RANGE-01',
+        suggestedReply:payload.policyHints.deterministicReplyPreview,reviewReason:veto?'clinical_detail_review':''}};
+    };
+    if(scenario==='new_human')deps.readConversationTurnsImpl=async()=>({status:'completed',turns:[{role:'assistant',source:'equipe_humana',text:'Já estou atendendo.',at:'2026-07-28T15:20:00Z',eventId:'synthetic-lipo-human'}]});
+    const result=await processHumanResumeJob(job({text,procedure:'lipo_papada',recentConversation:turns}),{env:ACTIVE_ENV,now:NOW,...deps});
+    if(!['complete','price_only'].includes(scenario)){assert.equal(deps.patientMessages.length,0,JSON.stringify(result));return;}
+    assert.equal(deps.patientMessages.length,1,JSON.stringify(result));
+    const body=deps.patientMessages[0].body;
+    assert.match(body,/lipo de papada isolada.*R\$ 12 mil e R\$ 18 mil/);assert.match(body,/não é um orçamento fechado/);
+    if(scenario==='complete')assert.match(body,/gordura.*flacidez.*Dra\. Amanda.*inchaço.*sensibilidade.*roxos/s);
+    assert.doesNotMatch(body,/26 mil|42 mil|Olá|sou a Bruna|confirmar.*equipe/);assert.equal(deps.alerts.length,0);
+  });
+}
+
+for (const alertFailure of [false,true]) {
+  test(`unapproved lipo association keeps facts and requires a delivered human alert: ${alertFailure}`,async()=>{
+    const deps=dependencies(),order=[];
+    deps.rescheduleHumanResumeImpl=async()=>({status:'rescheduled'});
+    deps.sendYCloudReviewAlertImpl=async input=>{deps.alerts.push(input);order.push('alert');return {status:alertFailure?'failed':'completed'};};
+    deps.sendYCloudPatientTextImpl=async input=>{deps.patientMessages.push(input);order.push('patient');return {status:'completed'};};
+    const text='Quero lipo de papada com tratamento muscular. Gostaria de saber sobre o procedimento, valor e recuperação';
+    const result=await processHumanResumeJob(job({text,procedure:'lipo_papada',recentConversation:[{role:'user',source:'patient',text:'Quero lipo de papada com tratamento muscular.'},{role:'assistant',source:'bruna',text:'Qual é sua dúvida?'}]}),{env:ACTIVE_ENV,now:NOW,...deps});
+    if(alertFailure){assert.equal(deps.patientMessages.length,0);assert.equal(result.status,'alert_retry_pending');return;}
+    assert.deepEqual(order,['alert','patient']);assert.equal(result.status,'waiting_human');
+    assert.match(deps.patientMessages[0].body,/gordura.*inchaço.*confirmar.*valor/s);assert.doesNotMatch(deps.patientMessages[0].body,/R\$/);
+  });
+}
+
 for (const scenario of ["address", "invoice", "semantic_veto", "new_human", "new_patient", "opt_out", "too_early", "clinical", "unknown_professional"] ) {
   test(`administrative side question preserves clinical ownership and send guards: ${scenario}`, async () => {
     const deps = dependencies();

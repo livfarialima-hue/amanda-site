@@ -1,5 +1,16 @@
 # Plano executivo — auditorias, pendências e prazos
 
+## Candidato testado localmente — respostas e retomadas de 15/10
+
+Pacote 2026-10-14.5, ainda sem publicação. Corrigir perguntas conjuntas de procedimento/recuperação/preço e incorporar exclusivamente a faixa de lipo de papada isolada autorizada pelo responsável. Preservar oferta de informações úteis, revisão clínica, confirmação semântica e envio único. Baseline local b77b1d6 e deploy vigente 6acff7b9dc7d30f39ad66b31; Apps Script v164 preservado.
+
+**15/10, manhã — Daniel/equipe:** conferir primeiro esclarecimentos administrativos de consulta iminente, retorno prometido para a manhã e promessas anteriores sem resposta. Validar com Amanda preço ou material individual pendente e entregar informação concreta. Após isso, considerar somente continuidades individuais justificadas; excluir pausa, recusa, cuidado ativo e convites recentes. Registros e identidades permanecem na Central/CRM privados. Não transformar cartões manuais antigos em lote automático. Não existe autorização de envio por este registro.
+
+**Gates:** testes focados/cruzados/integrais e revisão independente; commit; autorização de publicação do pacote; preflight vivo; modelo/áudio/histórico; publicação e equivalência; projeção neste mesmo arquivo do Drive. Até lá, SYNC_PENDING. Relatório: auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md.
+
+**Revisão:** 15/10 para obrigações; 48h após eventual publicação e 22/10 para completude, promessas, duplicidade e contato indevido. Manter abordagem somente com continuidade útil; corrigir qualquer mistura de preço/procedimento ou insistência. As orientações individuais foram registradas apenas em Observação da equipe na Central canônica, com identidade e histórico relidos antes da escrita e igualdade dos demais campos verificada depois. Pausas e recusa preservadas. Nenhuma campanha, flag, gatilho, fila, agenda ou mensagem foi alterada por esse planejamento.
+
+
 Versão pública revisada em 14/10/2026 com autorização do responsável. O conteúdo integral anterior foi preservado como histórico fechado em área restrita. Esta edição remove contatos, gastos, identificadores de contas/campanhas e registros operacionais detalhados; não cancela decisões ou pendências anteriores. Não altera permissões de arquivos nem apaga o histórico Git já existente.
 
 ## Google Ads — configuração publicada e acompanhamento
@@ -12,7 +23,7 @@ Orçamentos, lances e estados das campanhas preservados; nenhuma palavra nova/ne
 
 Daniel/equipe: conferir integridade e política em **17/10/2026**; avaliar contatos válidos, qualificados e consultas em **29/10/2026** e **12/11/2026**, com maturação e cobertura comparáveis. Baixa amostra continua inconclusiva. Restaurar somente o campo responsável ao before vivo diante de erro, reprovação atribuível ao delta ou regressão consistente, preservando histórico. Nenhuma automação nova.
 
-O fechamento documental exige substituir esta mesma projeção no Drive, baixar novamente e comprovar igualdade; o resultado efetivo fica no recibo, sem criar planejamento concorrente. Publicações anteriores abaixo permanecem preservadas.
+O fechamento documental do componente Ads exige substituir esta mesma projeção no Drive, baixar novamente e comprovar igualdade; o resultado efetivo fica no recibo, sem criar planejamento concorrente. O candidato Bruna acima permanece sem publicação: a autorização Ads não o abrange, e o estado operacional global continua SYNC_PENDING até seu próprio fechamento autorizado. Publicações anteriores abaixo permanecem preservadas.
 
 ## Publicação verificada
 

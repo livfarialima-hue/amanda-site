@@ -8,7 +8,7 @@ import { buildConsultationInformationReply, buildAdministrativeSideAnswer } from
 import { approvedPartialAnswer } from '../netlify/functions/lib/knowledge-learning.mjs';
 import { buildLiftingFacialInformationReply } from '../netlify/functions/lib/lifting-information.mjs';
 import { selectConfirmedReplyText, semanticDecisionConfirmsDeterministicReply, deterministicReplyCoversPatientQuestions } from '../netlify/functions/lib/semantic-reply-policy.mjs';
-import { buildSurgicalPriceSuggestedReply } from '../netlify/functions/lib/surgical-price-review.mjs';
+import { buildAcceptedProcedurePriceReply, buildSurgicalPriceSuggestedReply } from '../netlify/functions/lib/surgical-price-review.mjs';
 import { enrichAutomationPlanFromConversation, planAutomation } from '../netlify/functions/lib/whatsapp-automation.mjs';
 import { validateOutboundReply } from '../netlify/functions/lib/outbound-reply-gate.mjs';
 import { decideConversationAction } from '../netlify/functions/lib/conversation-action-controller.mjs';
@@ -99,6 +99,12 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       recentConversation:[{role:'user',source:'patient',text:'A Dra. Amanda atende por teleconsulta? Moro no exterior.'},
         {role:'assistant',source:'bruna',text:'Sim, a Dra. Amanda atende por consulta online, inclusive quem está no exterior.'}]
     })),
+    { name:'lipo_papada_complete_requested_answer', lipoCompound:true, procedure:'lipo_papada', code:'LIPO-PAPADA-PRICE-RANGE-01',
+      text:'Gostaria de saber sobre o procedimento, valor e recuperação',
+      recentConversation:[{role:'user',source:'patient',text:'Estou pesquisando lipo de papada para minha esposa.'},
+        {role:'assistant',source:'bruna',text:'Qual é a sua dúvida?'}] },
+    { name:'lipo_papada_association_not_isolated_range', lipoAssociation:true, procedure:'lipo_papada',
+      text:'Qual o valor da lipo de papada com platismoplastia?',recentConversation:[] },
     { name: 'classification', classification: true },
     { name: 'followup_declined', followup: true },
   ];
@@ -146,12 +152,13 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     } else {
       // Reuse the actual owner of the reply contract. A hand-written partial
       // contract normalizes to risk=red/allowedResponseKind=none in the adapter.
-      const plan = scenario.priceWithPhotos || scenario.remoteAssessment || scenario.appointment ? enrichAutomationPlanFromConversation(planAutomation({text:scenario.text,messageType:'text'}),scenarioHistory) :
+      const plan = scenario.priceWithPhotos || scenario.remoteAssessment || scenario.appointment || scenario.lipoCompound || scenario.lipoAssociation ? enrichAutomationPlanFromConversation(planAutomation({text:scenario.text,messageType:'text'}),scenarioHistory) :
         { route: scenario.fullHistoryResolved ? 'ignore' : scenario.urgent || scenario.review ? 'human_review' : 'standard_reply', professional: 'amanda', procedure: scenario.procedure,
         automaticAllowed: !scenario.urgent && !scenario.review, replyCode: scenario.code, reason: scenario.reason };
       const conversationAction = decideConversationAction({ text: scenario.text, plan, recentConversation: scenarioHistory, conversionExperienceEnabled: true });
       const replyContract = conversationAction.replyContract;
-      const preview = scenario.administrative ? buildAdministrativeSideAnswer({ text: scenario.text, professional: 'amanda' }).decision.suggestedReply : scenario.priceWithPhotos
+      const completePriceCandidate = scenario.lipoCompound ? buildAcceptedProcedurePriceReply({plan,currentText:scenario.text,recentConversation:scenarioHistory}) : null;
+      const preview = scenario.lipoCompound ? completePriceCandidate?.decision.suggestedReply || '' : scenario.administrative ? buildAdministrativeSideAnswer({ text: scenario.text, professional: 'amanda' }).decision.suggestedReply : scenario.priceWithPhotos
         ? buildSurgicalPriceSuggestedReply({patientName:'Helena',procedure:plan.procedure,currentText:scenario.text,recentConversation:scenarioHistory,directToPatient:true,introduceBruna:false})
         : scenario.code === 'AMANDA-CONSULTA-INFO-01'
         ? buildConsultationInformationReply({ consultationPriceRequested: true, conversionExperienceEnabled: true, consultationNextStep: replyContract.consultationNextStep })
@@ -163,7 +170,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         patientRelationship: scenario.patientRelationship,
         priorInteractionKnown: true, policyHints, replyContract, deterministicUrgent: !!scenario.urgent }, options);
       if ((scenario.code || scenario.educational || scenario.remoteAssessment) && result.status === 'completed') {
-        const candidate = {status:'completed', decision: { route: 'standard_reply', confidence: 'high', automaticAllowed: true, urgent: false,
+        const candidate = completePriceCandidate || {status:'completed', decision: { route: 'standard_reply', confidence: 'high', automaticAllowed: true, urgent: false,
           professional: 'amanda', procedure: scenario.procedure, replyCode: scenario.code, suggestedReply: preview } };
         const confirmed = semanticDecisionConfirmsDeterministicReply(result,candidate);
         selectedReply = scenario.knowledge || scenario.educational || scenario.remoteAssessment ? result.decision?.suggestedReply : confirmed && deterministicReplyCoversPatientQuestions(candidate,conversationAction)
@@ -180,6 +187,8 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     const procedureMatches = result.decision?.procedure === scenario.procedure ||
       (scenario.knowledge === true && scenario.procedure === 'unknown' && result.decision?.procedure === '');
     const behaviorPassed = scenario.classification ? true : scenario.followup ? result.allowed === false :
+      scenario.lipoAssociation ? result.decision?.route === 'human_review' && result.decision?.automaticAllowed === false &&
+        !/R\$|\d[\d.,\s]*(?:mil|reais)|LIPO-PAPADA-PRICE-RANGE-01/i.test((result.decision?.suggestedReply || '')+' '+(result.decision?.replyCode || '')) :
       scenario.remoteAssessment ? gate?.allowed === true && result.decision?.route === 'standard_reply' && result.decision?.automaticAllowed === true &&
         result.decision?.confidence === 'high' && result.decision?.professional === 'amanda' && result.decision?.urgent !== true &&
         (procedureMatches || (scenario.procedure === 'unknown' && !result.decision?.procedure)) &&
@@ -198,6 +207,10 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       gate?.allowed === true && result.decision?.route === 'standard_reply' && result.decision?.automaticAllowed === true &&
         result.decision?.confidence === 'high' && result.decision?.urgent !== true &&
         result.decision?.replyCode === scenario.code && procedureMatches &&
+        (!scenario.lipoCompound || (/lipo de papada isolada.*R\$ 12 mil e R\$ 18 mil/s.test(selectedReply) &&
+          /gordura/i.test(selectedReply) && /flacidez/i.test(selectedReply) && /platisma/i.test(selectedReply) &&
+          /inchaço/i.test(selectedReply) && /não é um orçamento fechado/i.test(selectedReply) &&
+          !/vou confirmar.*valor|retorno pela manhã|R\$ 26/i.test(selectedReply))) &&
         (!scenario.fullHistoryName || (/Elisa/.test(selectedReply) && !/Helena|qual.*nome/i.test(selectedReply))) &&
         (!scenario.priceWithPhotos || (/Helena/i.test(selectedReply) && /bochechas/i.test(selectedReply) && /boca/i.test(selectedReply) &&
           /R\$ 26 mil e R\$ 42 mil/.test(selectedReply) && /fotos/i.test(selectedReply) && !/confirmar.*valor|recebi.*foto|R\$ 500/i.test(selectedReply))) &&

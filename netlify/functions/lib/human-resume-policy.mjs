@@ -31,6 +31,7 @@ const SENSITIVE_REASONS = new Set([
   "surgical_price_range_review",
   "price_range_without_confirmed_procedure",
   "surgical_price_terms_review",
+  "lipo_papada_price_range_already_sent_review",
   "possible_urgent_symptoms",
   "intense_appearance_distress",
   "existing_patient_administrative_followup",
@@ -346,6 +347,10 @@ export function classifyHumanResume({
         (
           enrichedPlan?.reason === "otoplasty_price_range_direct" &&
           enrichedPlan?.procedure === "otoplastia"
+        ) ||
+        (
+          enrichedPlan?.reason === "lipo_papada_price_range_direct" &&
+          enrichedPlan?.procedure === "lipo_papada"
         )
       ),
   );

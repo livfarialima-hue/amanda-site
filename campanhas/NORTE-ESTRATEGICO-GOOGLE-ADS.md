@@ -1,6 +1,6 @@
 # Norte estratégico de aquisição e conversão
 
-## 42. Comunicação e destinos no Google Ads — publicado em 15/10/2026
+## 43. Comunicação e destinos no Google Ads — publicado em 15/10/2026
 
 **Publicado e conferido no Google Ads; recibo documental em `auditorias/google-ads-comunicacao-2026-10-15/REVISAO.json`.** Foram corrigidos três destinos de sitelinks em quatro associações existentes, 13 campos nos anúncios de blefaroplastia/cervicoplastia/lipo de papada e a URL final de duas palavras exatas existentes de preço de blefaroplastia. Before vivo e after em `PLANO.json`. Commit autorizado `2f5adbecb3712e99786cbf91acfa32510103b975`, com gate antes das escritas. Sugestões de reserva para lifting facial, otoplastia e destaques permaneceram fora do lote.
 
@@ -11,6 +11,17 @@
 **Status e limites:** três RSAs relidos Ativado/Qualificada, com indicador de qualidade Pendente — campo distinto de política. Duas palavras ativadas e Pendente/Em análise após edição da URL; baixo índice de qualidade preexistente. Configuração salva não comprova exibição ou resultado comercial. A igualdade da projeção documental do Plano no Drive é exigida e registrada separadamente no recibo; nenhuma conclusão é inferida antes do readback.
 
 **Revisão e manutenção:** integridade/política em 17/10/2026; coortes em 29/10/2026 e 12/11/2026 por contatos válidos, qualificados e consultas, com maturação/cobertura comparáveis. Daniel/equipe acompanha, sem automação nova. Manter clareza e pertinência; diante de erro, reprovação atribuível ao delta ou regressão consistente, restaurar somente o campo responsável ao before vivo, preservando histórico. Baixa amostra é inconclusiva; CTR ou nota não substituem etapas reais do funil.
+
+## 42. Continuidade útil e obrigações da clínica — 14/10/2026
+
+**Decisão autorizada:** corrigir respostas conjuntas para entregar procedimento, recuperação e informação financeira aprovada no mesmo contexto; Daniel confirmou referência de R$12–18mil exclusivamente para lipo de papada isolada. Preservar ressalvas, solicitação explícita, envio único e revisão de qualquer associação ou orçamento individual. A tabela histórica não contém linha específica desse procedimento.
+
+**Retomadas de 15/10:** priorizar respostas prometidas e necessidades administrativas de consulta próxima. Obrigações da clínica não são nova captação. Só depois considerar continuidade individual de pedido pessoal de avaliação ou dúvida concreta, sem pressão. Pausa, recusa, iniciativa reservada à pessoa e cuidado ativo excluem marketing. Fila manual antiga não será reativada em lote por esta decisão.
+
+**Evidência e hipótese:** diagnóstico no Cloud reproduzido localmente mostrou perda de fatos seguros quando apenas preço dependia da equipe. Leitura operacional revelou promessas ainda pendentes e cartões antigos que exigem revalidação. Responder com completude e cumprir o combinado pode reduzir abandono; melhora de conversão não está demonstrada.
+
+**Métrica e revisão:** conferir em 15/10 os retornos devidos e em 22/10 a completude das respostas, duplicidade, contato após pausa/recusa, contatos válidos, qualificados e consultas reais com maturação compatível. Manter se houver continuidade sem invasão; conter diante de faixa de procedimento errado, repetição, indicação individual ou promessa sem encaminhamento. Nenhuma alteração de campanha, orçamento, lance, conversão ou site público integra este pacote. Implementação local; publicação e envios reais dependem das autorizações específicas.
+
 
 ## 41. Continuidade do site — decisão autorizada em 14/10/2026
 

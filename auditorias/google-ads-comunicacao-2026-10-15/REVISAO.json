@@ -207,7 +207,13 @@
           "priorDiagnostic": "Raramente mostrado por baixo índice de qualidade, já presente antes.",
           "preservedFields": "Texto, correspondência, grupo/campanha, identidade, CPC máximo, modelo, sufixo, parâmetros e estratégia efetiva.",
           "afterEvidenceSha256": "4a9e32ed3ac821fa90871e9730100c57d8baf6ff0070538869b4cd91218f334d",
-          "limitation": "A URL móvel não foi reaberta no after fornecido; o link secundário da tabela permanece vazio. Somente URL final foi editada."
+          "limitation": "Editor reaberto; URL aprovada e override móvel desativado preservados.",
+          "mobileOverrideReadback": {
+            "status": "verified_disabled",
+            "checkedAt": "2026-10-15T10:25:00.631Z",
+            "evidenceSha256": "e14f64e1cf47011a5b4b078d453f2078213c55b91b58d455f3cfe0f2153db7be",
+            "additionalWrites": false
+          }
         },
         {
           "type": "keyword",
@@ -222,7 +228,13 @@
           "priorDiagnostic": "Raramente mostrado por baixo índice de qualidade, já presente antes.",
           "preservedFields": "Texto, correspondência, grupo/campanha, identidade, CPC máximo, modelo, sufixo, parâmetros e estratégia efetiva.",
           "afterEvidenceSha256": "4a9e32ed3ac821fa90871e9730100c57d8baf6ff0070538869b4cd91218f334d",
-          "limitation": "A URL móvel não foi reaberta no after fornecido; o link secundário da tabela permanece vazio. Somente URL final foi editada."
+          "limitation": "Editor reaberto; URL aprovada e override móvel desativado preservados.",
+          "mobileOverrideReadback": {
+            "status": "verified_disabled",
+            "checkedAt": "2026-10-15T10:25:00.631Z",
+            "evidenceSha256": "e14f64e1cf47011a5b4b078d453f2078213c55b91b58d455f3cfe0f2153db7be",
+            "additionalWrites": false
+          }
         }
       ],
       "budgetsAndBids": {
@@ -384,5 +396,61 @@
     "keywordUniqueExportMatches": 2,
     "note": "Validação da proposta/export separada do preflight autenticado; não é prova de salvamento."
   },
-  "livePreflightStatus": "verified_baseline_with_limits"
+  "livePreflightStatus": "verified_baseline_with_limits",
+  "parallelIntegration": {
+    "remoteCommit": "30b01f4267719effebd094edc2949a163ac1ed98",
+    "activeCandidate": "BRUNA-RESPOSTAS-RETOMADAS-2026-10-14",
+    "activeCandidateStatus": "committed",
+    "brunaPublication": "pending_authorization",
+    "scopeFilesFromCommonBaseline": 36,
+    "brunaCodeTestsManifestPreserved": true,
+    "executivePlan": "Integra a pendência Bruna e o componente Ads, aguardando substituição da mesma projeção e novo readback.",
+    "globalOpsExpected": "SYNC_PENDING",
+    "note": "A autorização e publicação Ads não abrangem o candidato Bruna; o recibo deste componente não encerra a pendência global.",
+    "validation": {
+      "status": "passed_local",
+      "checkedAt": "2026-10-15T10:28:15Z",
+      "remoteBaseline": "30b01f4267719effebd094edc2949a163ac1ed98",
+      "adsReadbackCommit": "9846d4840ab3bc1c1668d491c98215bc7200b7ab",
+      "exactScopeFiles": 36,
+      "adsFilesAgainstRemote": 9,
+      "brunaCodeTestsManifestEqualRemote": true,
+      "unmergedFiles": 0,
+      "commands": [
+        {
+          "command": "npm.cmd run change:check",
+          "result": "CHANGE_SAFETY_STATUS=OK",
+          "exactFiles": 36
+        },
+        {
+          "command": "npm.cmd run architecture:check",
+          "result": "JOURNEY_MODULE_BOUNDARIES=OK"
+        },
+        {
+          "command": "node --test netlify/functions/lib/bruna-policy/regression-governance.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
+          "passed": 15,
+          "failed": 0
+        },
+        {
+          "command": "git diff --check",
+          "result": "passed"
+        },
+        {
+          "command": "git diff --cached --check",
+          "result": "passed"
+        },
+        {
+          "command": "npm.cmd run ops:check",
+          "result": "SYNC_PENDING",
+          "reasons": [
+            "CHANGE_PUBLICATION_PENDING",
+            "WRONG_BRANCH",
+            "DIRTY_WORKTREE"
+          ],
+          "note": "Candidato Bruna committed, aguardando sua própria autorização/publicação; branch de integração e merge ainda sem commit."
+        }
+      ],
+      "note": "Resultados anteriores de 2.204 testes Bruna e 2.175 testes Ads são históricos das respectivas revisões. A integração documental não publica Bruna; sua pendência global permanece visível."
+    }
+  }
 }
