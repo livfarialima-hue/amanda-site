@@ -84,13 +84,12 @@
       "artifact": "193 files, 54 pages, build/check passed",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
       "change": "12 exact files; change:check before commit",
-      "patientTestMessagesSent": 0
+      "patientTestMessagesSent": 0,
+      "production": "v166, fonte igual LF, flags true, 11 acionadores/1 lembrete, saúde 200"
     }
   },
   "externalChecksPending": [
-    "Publicar arquivo do commit testado no deployment canônico",
-    "Reler código e ativar contrato seguro; verificar propriedades e um acionador",
-    "Atualizar mesmas projeções Drive e conferir hashes"
+    "Atualizar a mesma projeção Drive do Plano e conferir hash"
   ],
   "rollback": {
     "local": "Novo commit revertendo somente este delta; preservar trabalho paralelo.",

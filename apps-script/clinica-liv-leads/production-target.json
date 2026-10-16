@@ -10,14 +10,13 @@
   "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/1rZJbqYcNp8FOmQNfzVed7UQOMoRo-Q818RHRyekMuMU/edit",
   "sourceRoot": "apps-script/clinica-liv-leads",
   "productionBranch": "reestruturacao-site",
-  "lastVerifiedVersion": 165,
-  "lastVerifiedAt": "2026-10-15T23:16:04.1644112Z",
+  "lastVerifiedVersion": 166,
+  "lastVerifiedAt": "2026-10-16T19:10:26.040Z",
   "knownNonProductionProjects": [
     {
       "scriptId": "1PfTPOQvQzqjKbnn1hRce5JuY50Rf0zA1f7k12nrw0l9y5F-qkkdP1m_r",
       "label": "ARQUIVO — NÃO PUBLICAR — Clínica LIV (sem deployment)",
       "reason": "Cópia confirmada sem deployment ativo e rotulada em 2026-08-14."
     }
-  ],
-  "pendingChange": "LEMBRETES-24H-2026-10-16; v165 permanece até publicação verificada"
+  ]
 }

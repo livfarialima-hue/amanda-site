@@ -1,12 +1,12 @@
 # Apps Script da Clínica LIV
 
-## Ajuste de lembrete em preparação — 16/10/2026
+## Runtime publicado — lembrete 24 horas, 16/10/2026
 
-Candidato de 24 horas antes; produção ainda v165. Publicar e comparar LembretesConsultas.gs antes de ativar o contrato seguro. Recibo: auditorias/lembretes-24h-2026-10-16/PUBLICACAO.json.
+Versão canônica atual: v166, commit 71d14078580165ac6f3fb3e0917b0c0897f8ce2a, mesmo deployment e URL. Somente LembretesConsultas.gs alterado, persistido, recarregado e comparado integralmente em LF. Lembrete único 24h antes, ciclo de 15min entre 09h e 19h; legado 48h preservado por compatibilidade. Ativação concluída às 16h08 BRT, ambas as chaves true, um acionador de lembretes e onze totais. Saúde 200 e 2320 testes aprovados. Sem mensagem artificial, novas filas ou alteração Netlify. Rollback: desativar somente lembretes e reverter o delta; preservar recibos. Recibo: auditorias/lembretes-24h-2026-10-16/PUBLICACAO.json.
 
-## Runtime publicado — revisão de conversas, 15/10/2026
+## Histórico — revisão de conversas, 15/10/2026
 
-**Versão canônica atual: v165**, publicada em 15/10/2026 às 20:15 BRT a partir do commit aprovado `4a21792bc311c8220eb9908204e6fa80d6098847`. O deployment `AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A`, o projeto, a planilha e a URL canônicos foram preservados. `Code.gs`, `LeadClassification.gs`, `DataQualityRepair.gs` e `BusinessMilestones.gs` foram salvos, recarregados e comparados integralmente com o commit após normalização de quebras de linha para LF. O recibo privado `release-source-persisted-comparison.json` confirma igualdade dos quatro arquivos; diferenças de hash bruto por CRLF não são diferenças de código.
+**Versão anterior: v165**, publicada em 15/10/2026 às 20:15 BRT a partir do commit aprovado `4a21792bc311c8220eb9908204e6fa80d6098847`. O deployment `AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A`, o projeto, a planilha e a URL canônicos foram preservados. `Code.gs`, `LeadClassification.gs`, `DataQualityRepair.gs` e `BusinessMilestones.gs` foram salvos, recarregados e comparados integralmente com o commit após normalização de quebras de linha para LF. O recibo privado `release-source-persisted-comparison.json` confirma igualdade dos quatro arquivos; diferenças de hash bruto por CRLF não são diferenças de código.
 
 Pós-voo Apps Script verificado em `2026-10-15T23:16:04.1644112Z`: GET de saúde HTTP 200, `ok:true` e serviço `clinica-liv-leads`; GET de cancelamento com token inválido HTTP 200, rejeitado com segurança. Evidência privada: `release-apps-script-v165.json`.
 

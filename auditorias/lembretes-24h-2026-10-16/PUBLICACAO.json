@@ -1,5 +1,5 @@
 {
-  "status": "pending",
+  "status": "published_activated_drive_pending",
   "baseline": "9a81dee03e4d6256caf45f98c8eaa62640fbbaff",
   "appsScriptVersionBefore": 165,
   "sourcePreflightSha256LF": "c4251d5f0b9600aee17fc2e4edc562d8839dd457ed68356fa52288a4d8680724",
@@ -8,5 +8,61 @@
     "LEMBRETES_CONSULTA_CONTRATO_SEGURO_ATIVO": null
   },
   "netlifyUnchanged": "6ad253ae7b4cafb02a15a633",
-  "patientTestMessagesSent": 0
+  "patientTestMessagesSent": 0,
+  "approvedCommit": "71d14078580165ac6f3fb3e0917b0c0897f8ce2a",
+  "appsScriptVersion": 166,
+  "publishedAtLocal": "2026-10-16T16:07:00-03:00",
+  "publishedTimePrecision": "minute, as shown by Apps Script UI",
+  "sourceVerifiedAt": "2026-10-16T19:07:11.440Z",
+  "sourceSha256LF": "f81725acac182938448c8f6af78dfdc391fa50dfbc798f84a5b94265af9cf509",
+  "sourceEqualsApproved": true,
+  "activation": {
+    "function": "ativarLembretesConsultas",
+    "startedAt": "2026-10-16T19:08:32Z",
+    "completedAt": "2026-10-16T19:08:36Z",
+    "flagsAfter": {
+      "LEMBRETES_CONSULTA_ATIVOS": "true",
+      "LEMBRETES_CONSULTA_CONTRATO_SEGURO_ATIVO": "true"
+    },
+    "triggerCountBefore": 11,
+    "triggerCountAfter": 11,
+    "reminderTriggerCount": 1
+  },
+  "health": {
+    "status": 200,
+    "ok": true,
+    "service": "clinica-liv-leads"
+  },
+  "netlify": {
+    "changed": false,
+    "deployId": "6ad253ae7b4cafb02a15a633",
+    "mode": "active",
+    "remindersEnabled": true
+  },
+  "operation": {
+    "consultationConfirmed": true,
+    "calendarReadbackVerified": true,
+    "duplicateEventsObserved": 0,
+    "newConfirmationMessagesSent": 0,
+    "rowsChangedDuringActivation": 0,
+    "upcoming": 4,
+    "eligibleByLocalGuards": 1,
+    "blocked": {
+      "unsupportedProfessional": 1,
+      "missingCalendarLink": 2
+    },
+    "note": "One missing-link record also lacks patient name. Live Calendar was verified for the authorized booking; no synthetic patient message."
+  },
+  "verification": {
+    "tests": 2320,
+    "passed": 2320,
+    "architecture": "OK",
+    "change": "OK",
+    "siteBuild": "193 files / 54 pages",
+    "siteCheck": "OK"
+  },
+  "documentation": {
+    "status": "pending"
+  },
+  "verifiedAt": "2026-10-16T19:10:26.040Z"
 }
