@@ -4,6 +4,60 @@ import test from "node:test";
 
 import webhook from "../ycloud-webhook.mjs";
 
+for (const scenario of ["parking", "transit", "semantic_veto"]) {
+  test(`actual inbound answers known clinic logistics without a holding: ${scenario}`, async t => {
+    const settings={YCLOUD_WEBHOOK_SECRET:"synthetic-logistics-secret",YCLOUD_API_KEY:"synthetic",GOOGLE_SHEETS_WEBHOOK_URL:"https://sheets.example.test/webhook",GOOGLE_SHEETS_WEBHOOK_SECRET:"synthetic",WHATSAPP_AUTOMATION_MODE:"active",WHATSAPP_HUMAN_REPLY_GUARD_MS:"0",WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS:"0",WHATSAPP_REPLY_DEBOUNCE_AI_MS:"0",OPENAI_API_KEY:"synthetic",WHATSAPP_ALERT_NUMBER:""};
+    const saved=Object.fromEntries(Object.keys(settings).map(k=>[k,process.env[k]]));Object.assign(process.env,settings);
+    t.after(()=>{for(const[k,v]of Object.entries(saved)){if(v===undefined)delete process.env[k];else process.env[k]=v;}});
+    const logs=[];t.mock.method(console,"log",line=>logs.push(String(line)));
+    const sent=[],text=scenario==="transit"?"Tem metrô perto?":"Tem estacionamento ai",phone=scenario==="parking"?"+5511900000072":scenario==="transit"?"+5511900000073":"+5511900000074";
+    const history=[{role:"user",source:"paciente",text:"Gostaria de informações sobre a consulta com a Dra. Amanda.",at:"2026-08-19T16:00:00Z"}];
+    t.mock.method(globalThis,"fetch",async(url,options)=>{
+      const data=JSON.parse(options.body);
+      if(url===settings.GOOGLE_SHEETS_WEBHOOK_URL){
+        if(data.action==="get_conversation_context")return Response.json({ok:true,turns:history,professional:"amanda"});
+        if(data.action==="get_bot_knowledge_context")return Response.json({ok:true,candidates:[]});
+        return Response.json({ok:true,routed:true,routeStatus:"resolved",professional:"amanda",patientRelationship:{found:false,state:"new_lead"}});
+      }
+      if(url==="https://api.openai.com/v1/responses"){
+        const input=JSON.parse(data.input),h=input.policyHints;
+        assert.match(h.deterministicReplyCode,/^ADMIN-SIDE-(?:PARKING|TRANSIT)-01$/);
+        assert.doesNotMatch(h.deterministicReplyPreview,/recebi|retorno|avisad/i);
+        return Response.json({model:"synthetic",output_text:JSON.stringify({route:scenario==="semantic_veto"?"human_review":"standard_reply",confidence:"high",automaticAllowed:scenario!=="semantic_veto",urgent:false,professional:"amanda",procedure:"unknown",replyCode:h.deterministicReplyCode,suggestedReply:h.deterministicReplyPreview,reviewReason:scenario==="semantic_veto"?"wait_for_team":"",
+          conversationState:{activeTopic:"logística da clínica",patientAct:"question",refersToEventId:"",lastClinicQuestion:"",lastClinicOffer:"",unresolvedQuestions:[],factsAlreadyProvided:[],owner:scenario==="semantic_veto"?"human_team":"bruna",nextExpectedAction:"responder pergunta",ambiguity:"",contextConfidence:"high"}})});
+      }
+      assert.equal(url,"https://api.ycloud.com/v2/whatsapp/messages");sent.push(data);return Response.json({status:"accepted"});
+    });
+    const payload={id:`synthetic-logistics-${scenario}`,type:"whatsapp.inbound_message.received",createTime:"2026-08-19T17:00:00Z",whatsappInboundMessage:{id:`synthetic-logistics-message-${scenario}`,from:phone,to:"+5511900000098",sendTime:"2026-08-19T17:00:00Z",type:"text",text:{body:text}}};
+    const body=JSON.stringify(payload),timestamp="1787158800",signature=createHmac("sha256",settings.YCLOUD_WEBHOOK_SECRET).update(`${timestamp}.${body}`).digest("hex");
+    const response=await webhook(new Request("http://localhost/api/ycloud/webhook",{method:"POST",headers:{"YCloud-Signature":`t=${timestamp},s=${signature}`},body}));
+    const result=await response.json(),replies=sent.filter(m=>m.to===phone);
+    assert.equal(replies.length,scenario==="semantic_veto"?0:1,JSON.stringify({result,logs}));
+    if(replies.length){assert.match(replies[0].text.body,scenario==="transit"?/estação Pinheiros/:/estacionamento pago/);assert.doesNotMatch(replies[0].text.body,/recebi|retorno|avisad|\?/i);}
+  });
+}
+
+test("actual webhook ignores unavailable content after an older supplier offer", async t => {
+  const settings={YCLOUD_WEBHOOK_SECRET:"synthetic-supplier-secret",YCLOUD_API_KEY:"synthetic",GOOGLE_SHEETS_WEBHOOK_URL:"https://sheets.example.test/webhook",GOOGLE_SHEETS_WEBHOOK_SECRET:"synthetic",WHATSAPP_AUTOMATION_MODE:"active",WHATSAPP_HUMAN_REPLY_GUARD_MS:"0",WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS:"0",OPENAI_API_KEY:""};
+  const saved=Object.fromEntries(Object.keys(settings).map(k=>[k,process.env[k]]));Object.assign(process.env,settings);
+  t.after(()=>{for(const[k,v]of Object.entries(saved)){if(v===undefined)delete process.env[k];else process.env[k]=v;}});
+  t.mock.method(console,"log",()=>{});
+  const calls=[],history=[{role:"user",direction:"IN",source:"paciente",text:"Sou Ana, da Empresa Exemplo. Ajudamos clínicas a vender mais e gostaria de apresentar nossos serviços.",at:"2026-08-01T12:00:00Z"}];
+  t.mock.method(globalThis,"fetch",async(url,options)=>{
+    const body=JSON.parse(options.body);calls.push({url,body});
+    assert.equal(url,settings.GOOGLE_SHEETS_WEBHOOK_URL,"no model or WhatsApp destination is allowed");
+    if(body.action==="get_conversation_context")return Response.json({ok:true,turns:history});
+    return Response.json({ok:true,routed:false,routeStatus:"pending",professional:"unknown",patientRelationship:{found:false}});
+  });
+  const payload={id:"synthetic-old-supplier-empty-event",type:"whatsapp.inbound_message.received",createTime:"2026-08-19T17:00:00Z",whatsappInboundMessage:{id:"synthetic-old-supplier-empty-message",from:"+5511900000071",to:"+5511900000098",sendTime:"2026-08-19T17:00:00Z",type:"unsupported",unsupported:{}}};
+  const body=JSON.stringify(payload),timestamp="1787158800",signature=createHmac("sha256",settings.YCLOUD_WEBHOOK_SECRET).update(`${timestamp}.${body}`).digest("hex");
+  const response=await webhook(new Request("http://localhost/api/ycloud/webhook",{method:"POST",headers:{"YCloud-Signature":`t=${timestamp},s=${signature}`},body}));
+  const result=await response.json();
+  assert.equal(response.status,200);assert.equal(result.automation.route,"ignore",JSON.stringify(result));
+  assert.notEqual(result.missingTextClarificationSent,true);
+  assert.equal(calls.filter(x=>x.body.action==="send_review_alert_email").length,0);
+});
+
 test("a text event with an omitted body receives one safe clarification", async () => {
   const environmentKeys = [
     "YCLOUD_WEBHOOK_SECRET",

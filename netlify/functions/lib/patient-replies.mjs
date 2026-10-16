@@ -66,6 +66,10 @@ export const AMANDA_SITE_URL =
   "https://draamandaschroeder.com.br/";
 const CLINIC_ADDRESS =
   "R. Pais Leme, 215, cj. 710 — Pinheiros, São Paulo, CEP 05424-150";
+// Confirmed by Daniel on 2026-10-16. No tariff, reservation, accessibility,
+// walking distance or operating hours were approved.
+export const CLINIC_PARKING_REPLY = "Sim, há estacionamento pago no local.";
+export const CLINIC_TRANSIT_REPLY = "A clínica fica próxima à estação Pinheiros do metrô.";
 
 // Narrow factual assistance during a human-owned conversation. A full match
 // excludes compound clinical/scheduling requests; semantics must also confirm.
@@ -77,13 +81,21 @@ export function buildAdministrativeSideAnswer({ text, professional, relationship
     .replace(/[,! .]+(?:por favor|por gentileza|obrigad[ao])[.!? ]*$/, "")
     .replace(/[.!?]+$/, "").trim();
   const facts = [
+    { code: "ADMIN-SIDE-PARKING-01", pattern: /^(?:(?:(?:voces|a clinica) )?(?:tem|temos|ha|possui|possuem|oferece|oferecem) estacionamento(?: (?:ai|aqui|no local|na clinica))?|(?:o )?estacionamento(?: (?:ai|aqui|no local|da clinica))? e (?:pago|gratuito))$/, answer: CLINIC_PARKING_REPLY },
+    { code: "ADMIN-SIDE-TRANSIT-01", pattern: /^(?:(?:a clinica |voces )?(?:fica|ficam|e) (?:perto|proxim[ao]) (?:do metro|da estacao pinheiros(?: do metro)?)|(?:tem|ha) (?:metro|estacao de metro) (?:perto|proxim[ao])(?: (?:ai|da clinica))?|qual (?:e )?a estacao(?: de metro)? (?:mais proxima|perto da clinica))$/, answer: CLINIC_TRANSIT_REPLY },
     { code: "ADMIN-SIDE-LOCATION-01", pattern: /^(?:onde (?:fica(?: a clinica)?|voces (?:ficam|atendem))|qual (?:e )?o endereco(?: da clinica)?|(?:(?:pode|podem|consegue)(?: me)? (?:passar|mandar|enviar)|(?:me )?(?:envia|envie|manda|mande|passa|passe)) o endereco(?: da clinica)?)$/, answer: `A Clínica LIV fica na ${CLINIC_ADDRESS}.` },
     { code: "ADMIN-SIDE-INVOICE-01", pattern: /^(?:(?:voces )?(?:emitem|fornecem|dao) nota fiscal(?: da consulta)?|(?:a )?consulta (?:tem|inclui) nota fiscal)$/, answer: "Emitimos nota fiscal da consulta." },
     { code: "ADMIN-SIDE-INSURANCE-01", pattern: /^(?:(?:voces )?(?:aceitam|atendem|trabalham com)(?: por)? (?:convenio|plano(?: de saude)?)|a consulta e particular|a consulta tem reembolso)$/, answer: AMANDA_PRIVATE_REIMBURSEMENT_REPLY },
   ];
   const fact = facts.find(item => item.pattern.test(value));
   return fact ? { status: "completed", decision: { route: "standard_reply", confidence: "high", automaticAllowed: true,
-    urgent: false, professional: "amanda", procedure: "", replyCode: fact.code, suggestedReply: fact.answer, reviewReason: "" } } : null;
+    urgent: false, professional: "amanda", procedure: "", replyCode: fact.code, replyWording: "approved_exact", suggestedReply: fact.answer, reviewReason: "" } } : null;
+}
+
+// This recognizes the question only; it grants no permission to send and is
+// used to avoid a pointless receipt when the known answer is gated for review.
+export function isKnownSimpleAdministrativeQuestion(text) {
+  return Boolean(buildAdministrativeSideAnswer({ text, professional: "amanda" }));
 }
 const CLINIC_MAPS_URL =
   "https://maps.app.goo.gl/yDFBmbcn5oDpHSM46";

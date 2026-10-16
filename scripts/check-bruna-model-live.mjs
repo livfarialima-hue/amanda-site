@@ -78,6 +78,8 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       learningContext: { candidates: [{ id: 'SYNTHETIC-PARKING', subject: 'Estacionamento', answer: 'Há estacionamento no local.', mode: 'Automática', risk: 'Baixo', boundaries: 'Somente estacionamento; não cobre equipamento, técnica ou atendimento clínico.' }] } },
     { name: 'semantic_approved_knowledge', text: 'Vocês fornecem o comprovante fiscal da avaliação?', procedure: 'unknown', code: 'KB:SYNTHETIC-INVOICE', knowledge: true,
       learningContext: { candidates: [{ id: 'SYNTHETIC-INVOICE', subject: 'Nota fiscal', answer: 'Emitimos nota fiscal da consulta.', mode: 'Automática', risk: 'Baixo', boundaries: 'Somente emissão de nota; não confirmar reembolso, cobertura ou benefício fiscal.' }] } },
+    ...[{name:'simple_parking_direct',text:'Tem estacionamento ai',code:'ADMIN-SIDE-PARKING-01'},
+      {name:'simple_transit_direct',text:'Tem metrô perto?',code:'ADMIN-SIDE-TRANSIT-01'}].map(s => ({...s,procedure:'unknown',reason:'administrative_side_question',administrative:true})),
     { name: 'human_clinical_task_administrative_question', text: 'Pode me passar o endereço?', procedure: 'unknown', code: 'ADMIN-SIDE-LOCATION-01', reason: 'administrative_side_question', administrative: true,
       patientRelationship: { state: 'active_postop', professional: 'amanda', hasPendingHumanTask: true },
       recentConversation: [{ role: 'assistant', source: 'human', text: 'A médica vai conferir sua dúvida clínica e responder por aqui.' }] },
@@ -210,6 +212,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       gate?.allowed === true && result.decision?.route === 'standard_reply' && result.decision?.automaticAllowed === true &&
         result.decision?.confidence === 'high' && result.decision?.urgent !== true &&
         result.decision?.replyCode === scenario.code && procedureMatches &&
+        (!scenario.administrative || !/recebi|retorno|avisad|\?/i.test(selectedReply)) &&
         (!scenario.firstPrice || (deterministicConfirmed === true && hasApprovedGlobalSurgicalPriceDisclosure(selectedReply) &&
           /lifting facial[^\n]*R\$ 26 mil e R\$ 42 mil/i.test(selectedReply) &&
           !/confirmar.*(?:valor|faixa)|R\$ 500|https?:\/\/|G26LIFT|JID|como posso te chamar|qual.*nome/i.test(selectedReply))) &&

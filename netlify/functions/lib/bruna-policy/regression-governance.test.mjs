@@ -124,7 +124,7 @@ test("the published manifest matches the current bundle and closes its own candi
       assert.equal(manifest.pendingRelease.liveModelCheckRequired, true);
       assert.equal(manifest.pendingRelease.audioTranscriptionCheckRequired, true);
       assert.equal(manifest.pendingRelease.fullHistoryCheckRequired, true);
-      assert.equal(manifest.pendingRelease.liveModelScenarioCount, 25);
+      assert.equal(manifest.pendingRelease.liveModelScenarioCount, 27);
     } else {
       assert.equal(manifest.pendingRelease.changeId, candidate.changeId);
       assert.notEqual(manifest.release.bundleVersion, manifest.bundleVersion);

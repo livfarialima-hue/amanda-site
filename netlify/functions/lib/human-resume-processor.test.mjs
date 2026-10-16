@@ -16,6 +16,18 @@ const ACTIVE_ENV = {
 const INITIAL_PRICE_REPLY =
   "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 
+for (const messageType of ["unsupported", "audio", "image"]) {
+  test(`known supplier with unavailable ${messageType} has no receipt, alert or model call`, async () => {
+    const deps = dependencies();
+    deps.runOpenAIShadowImpl = async () => { assert.fail("known commercial context needs no model or response"); };
+    const result = await processHumanResumeJob(job({text:"", messageType, recentConversation:[
+      {role:"user",source:"paciente",text:"Sou Ana, da Empresa Exemplo. Ajudamos clínicas a vender mais e gostaria de apresentar nossos serviços.",at:"2026-07-01T12:00:00Z"},
+    ]}),{env:ACTIVE_ENV,now:NOW,...deps});
+    assert.equal(deps.patientMessages.length,0,JSON.stringify(result));
+    assert.equal(deps.alerts.length,0,JSON.stringify(result));
+  });
+}
+
 for (const scenario of ['approved', 'invalid_amount', 'semantic_veto', 'new_human']) {
   test(`consultation price after human outreach uses the canonical preview: ${scenario}`, async () => {
     const deps = dependencies();
@@ -428,7 +440,7 @@ for (const alertFailure of [false,true]) {
   });
 }
 
-for (const scenario of ["address", "invoice", "semantic_veto", "new_human", "new_patient", "opt_out", "too_early", "clinical", "unknown_professional"] ) {
+for (const scenario of ["address", "invoice", "parking", "transit", "semantic_veto", "new_human", "new_patient", "opt_out", "too_early", "clinical", "unknown_professional"] ) {
   test(`administrative side question preserves clinical ownership and send guards: ${scenario}`, async () => {
     const deps = dependencies();
     const relationship = { state: "active_postop", professional: scenario === "unknown_professional" ? "" : "amanda", hasPendingHumanTask: true };
@@ -455,11 +467,12 @@ for (const scenario of ["address", "invoice", "semantic_veto", "new_human", "new
         urgent: false, professional: "amanda", procedure: "", replyCode: input.policyHints.deterministicReplyCode,
         suggestedReply: input.policyHints.deterministicReplyPreview || "A equipe vai conferir.", reviewReason: veto ? "wait_for_team" : "" } };
     };
-    const result = await processHumanResumeJob(job({ opportunityId: "synthetic-opportunity", professional: scenario === "unknown_professional" ? "" : "amanda", text: scenario === "clinical" ? "Posso tomar remédio?" : scenario === "invoice" ? "Vocês emitem nota fiscal?" : "Pode me passar o endereço?",
+    const result = await processHumanResumeJob(job({ opportunityId: "synthetic-opportunity", professional: scenario === "unknown_professional" ? "" : "amanda", text: scenario === "clinical" ? "Posso tomar remédio?" : scenario === "invoice" ? "Vocês emitem nota fiscal?" : scenario === "parking" ? "Tem estacionamento ai" : scenario === "transit" ? "Tem metrô perto?" : "Pode me passar o endereço?",
       receivedAt: scenario === "too_early" ? "2026-07-28T15:25:00Z" : "2026-07-28T15:00:00Z" }), { env: ACTIVE_ENV, now: NOW, ...deps });
-    if (["address", "invoice"].includes(scenario)) {
+    if (["address", "invoice", "parking", "transit"].includes(scenario)) {
       assert.equal(deps.patientMessages.length, 1, JSON.stringify(result));
-      assert.match(deps.patientMessages[0].body, scenario === "address" ? /Pais Leme, 215/ : /nota fiscal/);
+      assert.match(deps.patientMessages[0].body, scenario === "address" ? /Pais Leme, 215/ : scenario === "parking" ? /estacionamento pago/ : scenario === "transit" ? /estação Pinheiros/ : /nota fiscal/);
+      assert.doesNotMatch(deps.patientMessages[0].body, /Recebi|retorno por aqui|equipe foi avisada/);
       assert.equal(result.status, "waiting_human");
       assert.equal(deps.completions[0].options.controlStatus, "waiting_human");
       assert.equal(deps.alerts.length, 0);

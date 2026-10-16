@@ -6,6 +6,7 @@ import {
   hasRecentCommercialSolicitationContext,
   isCommercialSolicitation,
   isCommercialProfileContinuation,
+  latestInboundIsCommercialSolicitation,
 } from "./commercial-contact.mjs";
 import {
   foldMarketingText,
@@ -264,7 +265,15 @@ export function enrichAutomationPlanFromConversation(
     return plan;
   }
 
-  if (plan.reason !== "possible_urgent_symptoms" && isCommercialProfileContinuation(plan.currentText, recentConversation)) {
+  // An unavailable event adds no new intent. Keep the latest substantive
+  // inbound context, including an older supplier offer; a later personal
+  // request still replaces that context and is evaluated normally.
+  if (plan.reason !== "possible_urgent_symptoms" && (
+    isCommercialProfileContinuation(plan.currentText, recentConversation) ||
+    (plan.reason === "unsupported_or_empty_message" &&
+      !String(plan.currentText || "").trim() &&
+      latestInboundIsCommercialSolicitation(recentConversation))
+  )) {
     return {...plan,route:"ignore",reason:"commercial_solicitation_or_partnership",automaticAllowed:false,replyCode:null,professional:null,procedure:null};
   }
 

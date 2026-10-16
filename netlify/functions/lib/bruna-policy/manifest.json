@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-10-16.2",
-  "promptVersion": "bruna-concierge-2026-10-16.2",
+  "bundleVersion": "2026-10-16.3",
+  "promptVersion": "bruna-concierge-2026-10-16.3",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-10-16.2",
+  "knowledgeSnapshot": "kb-2026-10-16.3",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -48,32 +48,16 @@
   "replyContinuityContract": "reply-continuity",
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
-    "changeId": "BRUNA-CONTINUIDADE-RETOMADAS-2026-10-16",
-    "status": "published_verified",
+    "changeId": "BRUNA-ADMIN-SILENCIO-2026-10-16",
+    "status": "tested_local",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
-    "liveModelScenarioCount": 25,
-    "baselineCommit": "478a8d4a28ae097157a310cdb166b1f69f865055",
-    "baselineDeployId": "6ad1ec48cbd7eeb7c47f6351",
+    "liveModelScenarioCount": 27,
+    "baselineCommit": "a11d020856622a24e114de8968e409a6230ccf71",
+    "baselineDeployId": "6ad231358102a7e6a3f30726",
     "baselineAppsScriptVersion": 165,
-    "bundleVersion": "2026-10-16.2",
-    "note": "Mesmo conteúdo aprovado e modelo; alteração do adaptador da continuidade. Gates hospedados preservados. Sem ampliação de autonomia ou mídia.",
-    "sourceCommit": "a11d020856622a24e114de8968e409a6230ccf71",
-    "liveModelResult": {
-      "status": "passed",
-      "passed": 25,
-      "total": 25,
-      "fullHistoryPassed": 2,
-      "checkedAt": "2026-10-16T14:18:27.228Z",
-      "syntheticOnly": true,
-      "patientMessagesSent": 0
-    },
-    "liveAudioResult": {
-      "status": "passed",
-      "model": "whisper-1",
-      "passed": 3,
-      "total": 3
-    }
+    "bundleVersion": "2026-10-16.3",
+    "note": "Silêncio comercial contextual; fatos de estacionamento pago e estação Pinheiros confirmados pelo proprietário, sem preço ou agenda nova. Gates hospedados preservados."
   }
 }

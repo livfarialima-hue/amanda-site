@@ -1,0 +1,27 @@
+{
+  "changeId": "BRUNA-ADMIN-SILENCIO-2026-10-16",
+  "status": "tested_local",
+  "bundleVersion": "2026-10-16.3",
+  "runtimeBaselineCommit": "a11d020856622a24e114de8968e409a6230ccf71",
+  "runtimeBaselineDeployId": "6ad231358102a7e6a3f30726",
+  "appsScriptVersion": 165,
+  "patientMessagesSent": 0,
+  "operationalDataWrites": 0,
+  "liveModel": {
+    "status": "pending",
+    "total": 27,
+    "fullHistoryRequired": 2
+  },
+  "liveAudio": {
+    "status": "pending",
+    "total": 3
+  },
+  "localTests": {
+    "passed": 2318,
+    "total": 2318,
+    "timezone": "America/Sao_Paulo",
+    "architecture": "passed",
+    "change": "passed",
+    "artifact": "passed"
+  }
+}

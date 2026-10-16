@@ -1,5 +1,10 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+## Silêncio comercial e logística direta — candidato 2026-10-16.3
+
+Ofertas de marketing, vendas e fornecedores conhecidos permanecem ignoradas, inclusive após conteúdo indisponível; uma nova procura pessoal explícita é reavaliada. Estacionamento pago no local e proximidade da estação Pinheiros do metrô foram confirmados por Daniel em16/10/2026. Perguntas administrativas independentes com fatos aprovados recebem resposta direta, sem confirmação intermediária de recebimento ou promessa de retorno. Não inventar tarifa, gratuidade, reserva, distância, horário ou acessibilidade. Posse humana, espera vigente, urgência, veto semântico, preços e confirmação de agenda permanecem. Estado e validação no candidato ativo e em auditorias/bruna-admin-silencio-2026-10-16/PUBLICACAO.json; implementação não comprova publicação.
+
+
 ## Continuidade após retomadas — publicada em 16/10/2026
 
 Commit funcional aprovado a11d020856622a24e114de8968e409a6230ccf71; Netlify de produção 6ad231358102a7e6a3f30726, READY e publicado em 2026-10-16T14:18:43.506Z (11h18 BRT). O log hospedado confirmou 25/25 cenários, dois históricos completos e 3/3 áudios em 2026-10-16T14:18:27.228Z. Validação local: 239/239 testes focados e 2307/2307 integrais. As 15 funções e seis programações permanecem; somente human-resume e human-resume-background mudaram de artefato. Domínio e URL imutável responderam saúde 200 e rejeitaram POST sem assinatura com 401. Apps Script v165 preservado, sem republicação. Rollback por novo commit/build restrito para comportamento 478a8d4a28ae097157a310cdb166b1f69f865055 / deploy6ad1ec48cbd7eeb7c47f6351, preservando dados, filas e recibos, sem replay.

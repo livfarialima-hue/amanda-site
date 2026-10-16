@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   buildAppearanceDistressReviewReply,
+  buildAdministrativeSideAnswer,
+  CLINIC_PARKING_REPLY,
+  CLINIC_TRANSIT_REPLY,
   buildCampaignReferenceExplanationReply,
   buildConsultationInformationReply,
   buildContextRoutingClarificationReply,
@@ -20,6 +23,23 @@ import {
   shouldSendAutomaticPatientReply,
   shouldSendOpenAIPatientReply,
 } from "./patient-replies.mjs";
+
+test("approved clinic logistics answer the whole simple question without waiting or invented conditions", () => {
+  for (const text of ["Tem estacionamento ai", "Vocês têm estacionamento?", "Há estacionamento no local?", "O estacionamento é gratuito?"]) {
+    const answer = buildAdministrativeSideAnswer({ text, professional: "amanda" });
+    assert.equal(answer?.decision.suggestedReply, CLINIC_PARKING_REPLY, text);
+    assert.equal(answer?.decision.replyWording, "approved_exact");
+    assert.doesNotMatch(answer.decision.suggestedReply, /recebi|retorno|avisad|R\$|gratuito|\?/i);
+  }
+  for (const text of ["Tem metrô perto?", "Fica perto da estação Pinheiros?", "Qual é a estação de metrô mais próxima?"]) {
+    assert.equal(buildAdministrativeSideAnswer({ text, professional: "amanda" })?.decision.suggestedReply, CLINIC_TRANSIT_REPLY, text);
+  }
+  for (const text of ["Quanto custa o estacionamento?", "Tem manobrista?", "Tem estacionamento e posso tomar remédio?", "Tem estacionamento? Quero remarcar.", "Tem estacionamento com acessibilidade?"]) {
+    assert.equal(buildAdministrativeSideAnswer({ text, professional: "amanda" }), null, text);
+  }
+  assert.equal(buildAdministrativeSideAnswer({ text: "Tem estacionamento?", professional: "unknown" }), null);
+  assert.equal(buildAdministrativeSideAnswer({ text: "Tem estacionamento?", professional: "amanda", relationship: { neverBotReply: true } }), null);
+});
 
 test("a named procedure after discovery receives useful information without restarting discovery", () => {
   const reply = buildProcedureContinuationReply({ currentText: "Cervicoplastia", procedure: "lifting_cervical",

@@ -48,7 +48,7 @@ const PAYMENT_PATTERN =
 const SCHEDULING_PATTERN =
   /\b(?:agenda|agendar|agendamento|marcar|hor[áa]rios?|disponibilidade|vagas?|data|dia|manh[ãa]|tarde)\b/i;
 const LOCATION_PATTERN =
-  /\b(?:endere[cç]o|onde\s+fica|localiza[cç][ãa]o|como\s+chegar|maps|pinheiros|pais\s+leme)\b/i;
+  /\b(?:endere[cç]o|onde\s+fica|localiza[cç][ãa]o|como\s+chegar|maps|pinheiros|pais\s+leme|estacionamento)\b|\bmetr[oô](?=\s|[?.!,;:]|$)/i;
 const RECOVERY_PATTERN =
   /\b(?:recupera[cç][ãa]o|p[óo]s[-\s]?operat[óo]rio|afastamento|repouso|incha[cç]o|retomar\s+(?:o\s+)?trabalho)\b/i;
 const CREDENTIALS_PATTERN =
@@ -743,6 +743,12 @@ export function decideConversationAction({
     );
   }
 
+  // A known ignored context remains closed even if the next envelope has no
+  // readable content. It must not become an obligation to alert or reply.
+  if (plan?.route === "ignore") {
+    return decide(CONVERSATION_ACTIONS.CLOSED, plan.reason || "ignored_by_plan");
+  }
+
   if (type !== "text" || !value) {
     return decide(
       CONVERSATION_ACTIONS.WAIT_TEAM,
@@ -817,13 +823,6 @@ export function decideConversationAction({
         followupPolicy: "patient_initiated",
         minimumFollowupDelayHours: 0,
       },
-    );
-  }
-
-  if (plan?.route === "ignore") {
-    return decide(
-      CONVERSATION_ACTIONS.CLOSED,
-      plan.reason || "ignored_by_plan",
     );
   }
 

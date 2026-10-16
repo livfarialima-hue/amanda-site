@@ -180,6 +180,8 @@
         "auditorias/bruna-acolhimento-2026-09-26/PREFLIGHT.json",
         "auditorias/bruna-acolhimento-2026-09-26/PUBLICACAO.json",
         "auditorias/bruna-acolhimento-2026-09-26/RELATORIO.md",
+        "auditorias/bruna-admin-silencio-2026-10-16/PUBLICACAO.json",
+        "auditorias/bruna-admin-silencio-2026-10-16/RELATORIO.md",
         "auditorias/bruna-api-essencial-2026-10-15/PREFLIGHT.json",
         "auditorias/bruna-api-essencial-2026-10-15/PUBLICACAO.json",
         "auditorias/bruna-api-essencial-2026-10-15/RELATORIO.md",
@@ -197,13 +199,11 @@
         "auditorias/bruna-coerencia-contexto-conta-2026-10-15/PUBLICACAO.json",
         "auditorias/bruna-consumo-categorias-2026-10-15/RELATORIO.md",
         "auditorias/bruna-consumo-categorias-2026-10-15/TENTATIVA-PUBLICACAO.json",
-        "auditorias/bruna-referencia-global-2026-10-15/PREFLIGHT.json",
-        "auditorias/bruna-referencia-global-2026-10-15/PUBLICACAO.json",
-        "auditorias/bruna-revisao-conversas-2026-10-15/PREFLIGHT.json",
-        "auditorias/bruna-revisao-conversas-2026-10-15/PUBLICACAO.json",
         "auditorias/bruna-contexto-indisponivel-2026-09-25/PREFLIGHT.json",
         "auditorias/bruna-contexto-indisponivel-2026-09-25/PUBLICACAO.json",
         "auditorias/bruna-contexto-indisponivel-2026-09-25/RELATORIO.md",
+        "auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json",
+        "auditorias/bruna-continuidade-retomadas-2026-10-16/RELATORIO.md",
         "auditorias/bruna-conversao-leads-2026-09-12/PUBLICACAO.json",
         "auditorias/bruna-convite-gentil-2026-09-20/PREFLIGHT.json",
         "auditorias/bruna-convite-gentil-2026-09-20/PUBLICACAO.json",
@@ -238,6 +238,8 @@
         "auditorias/bruna-recuperacao-conteudo-2026-09-25/PREFLIGHT.json",
         "auditorias/bruna-recuperacao-conteudo-2026-09-25/PUBLICACAO.json",
         "auditorias/bruna-recuperacao-conteudo-2026-09-25/RELATORIO.md",
+        "auditorias/bruna-referencia-global-2026-10-15/PREFLIGHT.json",
+        "auditorias/bruna-referencia-global-2026-10-15/PUBLICACAO.json",
         "auditorias/bruna-respostas-contextuais-2026-09-25/PREFLIGHT.json",
         "auditorias/bruna-respostas-contextuais-2026-09-25/PUBLICACAO.json",
         "auditorias/bruna-respostas-contextuais-2026-09-25/RELATORIO.md",
@@ -246,13 +248,15 @@
         "auditorias/bruna-respostas-retomadas-2026-10-14/RELATORIO.md",
         "auditorias/bruna-respostas-retomadas-2026-10-14/REVISAO.json",
         "auditorias/bruna-respostas-retomadas-2026-10-14/TENTATIVA-PUBLICACAO.json",
+        "auditorias/bruna-revisao-conversas-2026-10-15/PREFLIGHT.json",
+        "auditorias/bruna-revisao-conversas-2026-10-15/PUBLICACAO.json",
         "auditorias/bruna-teleconsulta-2026-10-14/PREFLIGHT.json",
         "auditorias/bruna-teleconsulta-2026-10-14/PUBLICACAO.json",
         "auditorias/bruna-teleconsulta-2026-10-14/RELATORIO.md",
         "auditorias/bruna-teleconsulta-2026-10-14/REVISAO.json",
-        "auditorias/retomadas-manuais-2026-10-16/PUBLICACAO.json",
         "auditorias/reconciliacao-leads-conversas-2026-09-13/PUBLICACAO.json",
         "auditorias/reconciliacao-leads-conversas-2026-09-13/RELATORIO.md",
+        "auditorias/retomadas-manuais-2026-10-16/PUBLICACAO.json",
         "auditorias/site-continuidade-2026-10-14/PREFLIGHT.json",
         "auditorias/site-continuidade-2026-10-14/PUBLICACAO.json",
         "auditorias/site-continuidade-2026-10-14/RELATORIO.md",
@@ -273,9 +277,7 @@
         "scripts/check-journey-module-boundaries.mjs",
         "scripts/check-operational-consistency.mjs",
         "scripts/check-operational-consistency.test.mjs",
-        "scripts/run-tests.mjs",
-        "auditorias/bruna-continuidade-retomadas-2026-10-16/RELATORIO.md",
-        "auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json"
+        "scripts/run-tests.mjs"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",
@@ -569,6 +571,9 @@
         "netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
         "netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
         "netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
+        "netlify/functions/lib/bruna-policy/CHANGELOG.md",
+        "netlify/functions/lib/bruna-policy/manifest.json",
+        "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
         "netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
         "netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
         "netlify/functions/lib/bruna-preco-direto.integration.test.mjs",
@@ -607,6 +612,8 @@
         "netlify/functions/lib/outbound-reply-gate.mjs",
         "netlify/functions/lib/outbound-reply-gate.test.mjs",
         "netlify/functions/lib/overnight-webhook.test.mjs",
+        "netlify/functions/lib/patient-replies.mjs",
+        "netlify/functions/lib/patient-replies.test.mjs",
         "netlify/functions/lib/patient-turn-context.mjs",
         "netlify/functions/lib/patient-turn-context.test.mjs",
         "netlify/functions/lib/price-holding-webhook.test.mjs",
@@ -621,6 +628,8 @@
         "netlify/functions/lib/surgical-price-policy.test.mjs",
         "netlify/functions/lib/surgical-price-review.mjs",
         "netlify/functions/lib/surgical-price-review.test.mjs",
+        "netlify/functions/lib/whatsapp-automation.mjs",
+        "netlify/functions/lib/whatsapp-automation.test.mjs",
         "netlify/functions/ycloud-webhook.mjs"
       ],
       "requiredTestFiles": [
@@ -753,9 +762,9 @@
     {
       "id": "patient-journey-funnel-followups",
       "ownerFiles": [
-      "apps-script/clinica-liv-leads/BusinessMilestones.gs",
-      "apps-script/clinica-liv-leads/Code.gs",
-      "apps-script/clinica-liv-leads/DataQualityRepair.gs",
+        "apps-script/clinica-liv-leads/BusinessMilestones.gs",
+        "apps-script/clinica-liv-leads/Code.gs",
+        "apps-script/clinica-liv-leads/DataQualityRepair.gs",
         "apps-script/clinica-liv-leads/LeadClassification.gs",
         "apps-script/clinica-liv-leads/Retomadas.gs",
         "netlify/functions/lib/commercial-contact.mjs",
@@ -780,12 +789,12 @@
         "netlify/functions/ycloud-webhook.mjs"
       ],
       "coveredPaths": [
-      "apps-script/clinica-liv-leads/BusinessMilestones.gs",
-      "apps-script/clinica-liv-leads/BusinessMilestones.test.mjs",
-      "apps-script/clinica-liv-leads/Code.gs",
-      "apps-script/clinica-liv-leads/DataQualityRepair.gs",
-      "apps-script/clinica-liv-leads/DataQualityRepair.test.mjs",
-      "apps-script/clinica-liv-leads/README.md",
+        "apps-script/clinica-liv-leads/BusinessMilestones.gs",
+        "apps-script/clinica-liv-leads/BusinessMilestones.test.mjs",
+        "apps-script/clinica-liv-leads/Code.gs",
+        "apps-script/clinica-liv-leads/DataQualityRepair.gs",
+        "apps-script/clinica-liv-leads/DataQualityRepair.test.mjs",
+        "apps-script/clinica-liv-leads/README.md",
         "apps-script/clinica-liv-leads/CentralAtendimento.gs",
         "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
         "apps-script/clinica-liv-leads/ClassificationReconciliation.gs",
@@ -844,8 +853,8 @@
         "netlify/functions/ycloud-webhook.mjs"
       ],
       "requiredTestFiles": [
-      "apps-script/clinica-liv-leads/BusinessMilestones.test.mjs",
-      "apps-script/clinica-liv-leads/DataQualityRepair.test.mjs",
+        "apps-script/clinica-liv-leads/BusinessMilestones.test.mjs",
+        "apps-script/clinica-liv-leads/DataQualityRepair.test.mjs",
         "apps-script/clinica-liv-leads/CentralAtendimento.test.mjs",
         "apps-script/clinica-liv-leads/ClassificationReconciliation.test.mjs",
         "apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs",
@@ -871,7 +880,7 @@
         "netlify/functions/lib/whatsapp-automation.test.mjs"
       ],
       "requiredCommands": [
-      "node --test apps-script/clinica-liv-leads/Code.schema.test.mjs apps-script/clinica-liv-leads/DataQualityRepair.test.mjs apps-script/clinica-liv-leads/BusinessMilestones.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
+        "node --test apps-script/clinica-liv-leads/Code.schema.test.mjs apps-script/clinica-liv-leads/DataQualityRepair.test.mjs apps-script/clinica-liv-leads/BusinessMilestones.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
         "git diff --check",
         "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
         "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",
@@ -1397,18 +1406,19 @@
         "netlify/functions/lib/bruna-policy/rules.jsonl"
       ],
       "coveredPaths": [
+        "auditorias/bruna-prefill-preco-2026-10-16/PREFLIGHT.json",
+        "auditorias/bruna-prefill-preco-2026-10-16/PUBLICACAO.json",
+        "auditorias/bruna-prefill-preco-2026-10-16/RELATORIO.md",
         "docs/ARQUITETURA-JORNADA-PACIENTE.md",
         "docs/REFERENCIAS-ABORDAGEM-BRUNA.md",
         "docs/estrategia-abordagem-bruna.md",
+        "netlify/functions/lib/bruna-policy/CHANGELOG.md",
         "netlify/functions/lib/bruna-policy/manifest.json",
         "netlify/functions/lib/bruna-policy/regression-baseline.json",
         "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
         "netlify/functions/lib/bruna-policy/rules.jsonl",
         "scripts/check-bruna-model-live.mjs",
-        "scripts/check-bruna-model-live.test.mjs",
-        "auditorias/bruna-prefill-preco-2026-10-16/RELATORIO.md",
-        "auditorias/bruna-prefill-preco-2026-10-16/PREFLIGHT.json",
-        "auditorias/bruna-prefill-preco-2026-10-16/PUBLICACAO.json"
+        "scripts/check-bruna-model-live.test.mjs"
       ],
       "requiredTestFiles": [
         "netlify/functions/lib/bruna-policy/regression-governance.test.mjs"
@@ -1910,7 +1920,9 @@
     },
     {
       "id": "bruna-global-price-reference",
-      "ownerFiles": ["netlify/functions/lib/surgical-price-policy.mjs"],
+      "ownerFiles": [
+        "netlify/functions/lib/surgical-price-policy.mjs"
+      ],
       "consumerFiles": [
         "netlify/functions/lib/surgical-price-review.mjs",
         "netlify/functions/lib/conversation-guidelines.mjs",
@@ -1947,7 +1959,10 @@
         "npm.cmd run change:check",
         "git diff --check"
       ],
-      "liveSystems": ["Netlify", "GitHub"],
+      "liveSystems": [
+        "Netlify",
+        "GitHub"
+      ],
       "requiresReadOnlyPreflight": true
     }
   ]

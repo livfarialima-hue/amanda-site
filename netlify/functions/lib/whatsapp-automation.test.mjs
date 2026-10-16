@@ -1448,3 +1448,17 @@ test("standalone lifting is preserved as lifting facial on the next turn", () =>
 
   assert.equal(enriched.procedure, "lifting_facial");
 });
+// Owner-directed regression: unavailable content cannot erase a supplier.
+test("older supplier context survives unavailable content but not a later personal request", () => {
+  const history = [{ role: "user", source: "paciente", text: "Sou Ana, da Empresa Exemplo. Ajudamos clínicas a vender mais e gostaria de apresentar nossos serviços.", at: "2026-10-01T12:00:00Z" }];
+  for (const messageType of ["unsupported", "audio", "image", "document", "text"]) {
+    const plan = enrichAutomationPlanFromConversation(planAutomation({ text: "", messageType }), history);
+    assert.equal(plan.route, "ignore", messageType);
+    assert.equal(plan.automaticAllowed, false);
+    assert.equal(plan.replyCode, null);
+  }
+  const personal = [...history, { role: "user", text: "Agora quero uma avaliação para mim com a Dra. Amanda." }];
+  assert.notEqual(enrichAutomationPlanFromConversation(planAutomation({ text: "", messageType: "unsupported" }), personal).route, "ignore");
+  assert.notEqual(enrichAutomationPlanFromConversation(planAutomation({ text: "Quero marcar uma avaliação para mim com a Dra. Amanda.", messageType: "text" }), history).route, "ignore");
+  assert.equal(enrichAutomationPlanFromConversation(planAutomation({ text: "Estou com falta de ar após cirurgia.", messageType: "text" }), history).reason, "possible_urgent_symptoms");
+});

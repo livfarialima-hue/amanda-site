@@ -45,6 +45,7 @@ import {
   buildMarketingPrefilledOpeningReply,
   buildProcedureContinuationReply,
   buildMissingInboundTextClarificationReply,
+  buildAdministrativeSideAnswer,
   buildOfficialChannelsReply,
   buildPatientReply,
   hasClinicLocationInConversation,
@@ -2596,7 +2597,11 @@ async function completeOpenAIActive({
         introduceBruna,
       });
     const acceptedProcedurePriceReply = buildAcceptedProcedurePriceReply({plan,currentText:input.text,recentConversation:input.recentConversation});
-    const deterministicReplyResult = consultationBundle?.candidate || acceptedProcedurePriceReply || (appointmentPreferenceBody
+    const administrativeAnswer = plan?.route === "standard_reply"
+      ? buildAdministrativeSideAnswer({ text: input.text,
+          professional: plan.professional || input.professional,
+          relationship: input.patientRelationship }) : null;
+    const deterministicReplyResult = administrativeAnswer || consultationBundle?.candidate || acceptedProcedurePriceReply || (appointmentPreferenceBody
       ? {
           status: "completed",
           model: "deterministic-appointment-preference",
@@ -2816,6 +2821,7 @@ async function completeOpenAIActive({
           ...input,
           policyHints: {
             ...plan,
+            ...(administrativeAnswer ? { reason: "administrative_side_question" } : {}),
             unansweredPatientBlock:
               unansweredPatientBlock.coalesced,
             unansweredPatientRequestCount:

@@ -1,106 +1,118 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-CONTINUIDADE-RETOMADAS-2026-10-16",
-  "title": "Restabelecer resposta canônica de consulta após atendimento humano",
-  "status": "published_verified",
-  "baseCommit": "1219ec81a85bb0e64340b658a2a405b96a528298",
+  "changeId": "BRUNA-ADMIN-SILENCIO-2026-10-16",
+  "title": "Ignorar ofertas comerciais conhecidas e responder logística aprovada diretamente",
+  "status": "tested_local",
+  "baseCommit": "941f5ed0980b3e68d406a479556b6247eab550c9",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel pediu corrigir, publicar e continuar as respostas conhecidas. O preflight vinculará essa autorização ao commit exato; não autoriza novo lote ou alteração de campanha."
+    "note": "Pedido explícito de aplicar e publicar em 16/10/2026 nesta conversa; o preflight vinculará o pedido ao SHA validado, preservando trabalho paralelo."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true,
-    "note": "Uma composição já aprovada passa a ser consumida também pelo processador após atendimento humano. Sem ampliar valores, posse, horário, consentimento, transporte ou filas."
+    "externalWritesPerformed": false,
+    "note": "Respostas factuais existentes e novos fatos de logística confirmados pelo proprietário, sob confirmação semântica, controle humano e gate final."
   },
   "scope": {
     "files": [
-      "auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json",
-      "auditorias/bruna-continuidade-retomadas-2026-10-16/RELATORIO.md",
+      "auditorias/bruna-admin-silencio-2026-10-16/PUBLICACAO.json",
+      "auditorias/bruna-admin-silencio-2026-10-16/RELATORIO.md",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/human-resume.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
+      "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/human-resume-policy.mjs",
       "netlify/functions/lib/human-resume-processor.test.mjs",
+      "netlify/functions/lib/missing-text-webhook.test.mjs",
+      "netlify/functions/lib/patient-replies.mjs",
+      "netlify/functions/lib/patient-replies.test.mjs",
+      "netlify/functions/lib/whatsapp-automation.mjs",
+      "netlify/functions/lib/whatsapp-automation.test.mjs",
+      "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json"
+      "ops/IMPACT-REGISTRY.json",
+      "scripts/check-bruna-model-live.mjs",
+      "scripts/check-bruna-model-live.test.mjs"
     ],
     "contracts": [
       "change-governance",
       "bruna-conversation-safety",
       "bruna-regression-governance"
     ],
-    "note": "Correção limitada à prévia canônica de consulta no processador de continuidade, regressões e documentação. Regras de mídia e reservas clínicas permanecem humanas. Fechamento inclui o manual operacional obrigatório, totalizando onze arquivos; nenhum novo código após o commit funcional."
+    "note": "Somente silêncio comercial contextual e respostas administrativas diretas; nenhum preço, calendário, dado de paciente, flag ou campanha."
   },
   "impact": {
     "consumers": [
       "AGENTS.md",
-      "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "apps-script/clinica-liv-leads/Code.gs",
       "apps-script/clinica-liv-leads/LeadClassification.gs",
       "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
       "apps-script/clinica-liv-leads/Retomadas.gs",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
+      "netlify/functions/appointment-review.mjs",
       "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/conversation-action-controller.mjs",
-      "netlify/functions/lib/lead-classifier.mjs",
-      "netlify/functions/lib/whatsapp-automation.mjs",
-      "netlify/functions/ycloud-webhook.mjs",
-      "netlify/functions/lib/patient-replies.mjs",
-      "netlify/functions/lib/surgical-price-review.mjs",
-      "netlify/functions/lib/appointment-suggestions.mjs",
       "netlify/functions/lib/appointment-confirmation.mjs",
-      "netlify/functions/lib/extreme-night-policy.mjs",
-      "netlify/functions/lib/knowledge-learning.mjs",
+      "netlify/functions/lib/appointment-suggestions.mjs",
+      "netlify/functions/lib/bruna-conversion-experience.mjs",
+      "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
+      "netlify/functions/lib/bruna-policy/rules.jsonl",
       "netlify/functions/lib/consultation-question-bundle.mjs",
+      "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/extract-inbound-text.mjs",
+      "netlify/functions/lib/extreme-night-policy.mjs",
+      "netlify/functions/lib/inbound-message-kind.mjs",
+      "netlify/functions/lib/knowledge-learning.mjs",
+      "netlify/functions/lib/knowledge-wording.mjs",
+      "netlify/functions/lib/lead-classifier.mjs",
       "netlify/functions/lib/lifting-information.mjs",
       "netlify/functions/lib/openai-shadow.mjs",
-      "netlify/functions/lib/professional-fact-review.mjs",
-      "netlify/functions/appointment-review.mjs",
-      "netlify/functions/lib/inbound-message-kind.mjs",
-      "netlify/functions/lib/extract-inbound-text.mjs",
-      "netlify/functions/lib/bruna-conversion-experience.mjs",
       "netlify/functions/lib/outbound-reply-gate.mjs",
-      "netlify/functions/lib/knowledge-wording.mjs",
+      "netlify/functions/lib/patient-replies.mjs",
+      "netlify/functions/lib/professional-fact-review.mjs",
       "netlify/functions/lib/semantic-reply-policy.mjs",
-      "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-      "netlify/functions/lib/bruna-policy/rules.jsonl"
+      "netlify/functions/lib/surgical-price-review.mjs",
+      "netlify/functions/lib/whatsapp-automation.mjs",
+      "netlify/functions/ycloud-webhook.mjs"
     ],
     "preservedInvariants": [
-      "A espera humana de dez minutos, nova atividade, opt-out, cuidado, pendências e janela continuam revalidados antes do envio.",
-      "O modelo precisa confirmar código, profissional e procedimento; veto semântico não é contornado.",
-      "Preço da consulta continua R$500; nenhum novo preço, desconto, cobertura de convênio, indicação ou confirmação de agenda.",
-      "O gate monetário permanece intacto; a resposta usa os mesmos fatos canônicos já aprovados no webhook.",
-      "Nenhum replay de evento concluído, limpeza de recibo, reenvio de retomada ou mudança de fase/Google Ads.",
-      "Identidades e conversas reais ficam somente nas evidências privadas; testes usam cenários sintéticos.",
-      "As respostas manuais desta tarefa são verificadas na interface e registradas separadamente do lote anterior."
+      "Oferta comercial conhecida permanece sem resposta, saudação, alerta assistencial ou retomada.",
+      "Nova intenção assistencial explícita é reavaliada; não bloquear telefone permanentemente.",
+      "Veto semântico, profissional, preferência humana, espera de dez minutos e nova atividade permanecem.",
+      "Estacionamento é pago; nenhum valor, gratuidade, horário ou condição não confirmada.",
+      "Nenhuma alteração de agenda, Apps Script, preços, conversões, campanhas ou filas.",
+      "Sem replay, limpeza de recibos ou mensagem artificial para pacientes."
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "change-governance",
         "status": "verified",
-        "source": "Git, Netlify observabilidade, WhatsApp oficial, LEADS/CRM e alerta operacional autenticados",
-        "observedAt": "2026-10-16T14:12:51Z",
-        "evidence": "HEAD e remoto1219ec81 limpos; runtime478a8d4/deploy6ad1ec48. Worker executou a continuidade, com bloqueio unapproved_monetary_amount confirmado no alerta. Teste sintético reproduziu ausência de prévia de consulta: três falhas e um bloqueio humano preservado. Sem acesso à redação bruta rejeitada; não atribuir uma formulação específica ao modelo."
+        "source": "Netlify project/deploy API, operational branch and explicit owner instruction",
+        "observedAt": "2026-10-16T16:04:12.257112+00:00",
+        "evidence": "Produção READY a11d020856622a24e114de8968e409a6230ccf71 / 6ad231358102a7e6a3f30726; branch operacional avançou apenas documentação até941f5ed. Worktree isolado integrado por fast-forward. Apps Script v165 é recibo documental, editor não inspecionado. Fatos de estacionamento pago e estação Pinheiros explicitamente confirmados pelo proprietário nesta conversa."
       },
       {
         "contract": "bruna-conversation-safety",
         "status": "verified",
-        "source": "Git, Netlify observabilidade, WhatsApp oficial, LEADS/CRM e alerta operacional autenticados",
-        "observedAt": "2026-10-16T14:12:51Z",
-        "evidence": "HEAD e remoto1219ec81 limpos; runtime478a8d4/deploy6ad1ec48. Worker executou a continuidade, com bloqueio unapproved_monetary_amount confirmado no alerta. Teste sintético reproduziu ausência de prévia de consulta: três falhas e um bloqueio humano preservado. Sem acesso à redação bruta rejeitada; não atribuir uma formulação específica ao modelo."
+        "source": "Netlify project/deploy API, operational branch and explicit owner instruction",
+        "observedAt": "2026-10-16T16:04:12.257112+00:00",
+        "evidence": "Produção READY a11d020856622a24e114de8968e409a6230ccf71 / 6ad231358102a7e6a3f30726; branch operacional avançou apenas documentação até941f5ed. Worktree isolado integrado por fast-forward. Apps Script v165 é recibo documental, editor não inspecionado. Fatos de estacionamento pago e estação Pinheiros explicitamente confirmados pelo proprietário nesta conversa."
       },
       {
         "contract": "bruna-regression-governance",
         "status": "verified",
-        "source": "Git, Netlify observabilidade, WhatsApp oficial, LEADS/CRM e alerta operacional autenticados",
-        "observedAt": "2026-10-16T14:12:51Z",
-        "evidence": "HEAD e remoto1219ec81 limpos; runtime478a8d4/deploy6ad1ec48. Worker executou a continuidade, com bloqueio unapproved_monetary_amount confirmado no alerta. Teste sintético reproduziu ausência de prévia de consulta: três falhas e um bloqueio humano preservado. Sem acesso à redação bruta rejeitada; não atribuir uma formulação específica ao modelo."
+        "source": "Netlify project/deploy API, operational branch and explicit owner instruction",
+        "observedAt": "2026-10-16T16:04:12.257112+00:00",
+        "evidence": "Produção READY a11d020856622a24e114de8968e409a6230ccf71 / 6ad231358102a7e6a3f30726; branch operacional avançou apenas documentação até941f5ed. Worktree isolado integrado por fast-forward. Apps Script v165 é recibo documental, editor não inspecionado. Fatos de estacionamento pago e estação Pinheiros explicitamente confirmados pelo proprietário nesta conversa."
       }
     ]
   },
@@ -137,77 +149,44 @@
       "npm.cmd run site:check",
       "npm.cmd run ops:check"
     ],
-    "status": "passed_local_and_external",
+    "status": "passed_local",
     "results": {
-      "reproduction": "3/4 casos falharam no baseline por prévia ausente; nova saída humana já bloqueava corretamente.",
-      "focused": "239/239 passed; includes4new cases; semantic veto permits only the existing receipt after alert, never the answer price",
-      "fullSuite": "2307/2307 passed, including every declared contract test file",
+      "focused": "215/215 owner/planner/resumption tests; 27/27 inbound and hosted-gate adapter tests; transport/controller regression passed. Overlapping counts are not summed.",
+      "fullSuite": "2318/2318, TZ=America/Sao_Paulo, including all required contract files",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "change": "CHANGE_SAFETY_STATUS=OK; onze arquivos exatos no fechamento, incluindo o manual operacional obrigatório.",
-      "artifact": "193files;54pages;sitecheck passed",
-      "ops": "SYNC_PENDING antes do recibo/commit; executar novamente no checkout canônico limpo após integração.",
-      "documentaryRegression": "11/11 passed"
+      "change": "CHANGE_SAFETY_STATUS=OK;24 exact files",
+      "artifact": "193files,54pages;site:build and site:check passed",
+      "ops": "SYNC_PENDING expected until publication, current Drive equality and clean operational branch"
     }
   },
-  "externalChecksPending": [],
+  "externalChecksPending": [
+    "Gates locais",
+    "Build hospedado obrigatório de modelo/histórico/áudio",
+    "Publicação Netlify e saúde somente leitura",
+    "Projeções existentes do manual e plano no Drive"
+  ],
   "rollback": {
-    "local": "Reverter somente a composição adicionada neste pacote, por novo commit, preservando alterações paralelas.",
-    "production": "Novo build do delta reverso para comportamento478a8d4/deploy6ad1ec48; nunca apagar dados ou recibos, reexecutar webhook ou repetir mensagem."
+    "local": "Novo commit revertendo somente este delta, preservando trabalho paralelo.",
+    "production": "Novo build do delta reverso para comportamento a11d020, sem restaurar deploy antigo, replay ou alteração dos dados."
   },
   "monitoring": {
-    "owner": "Daniel/equipe; Aníbal nesta conversa",
-    "window": "Primeiro ciclo natural elegível, 48h e revisão22/10 pela rotina existente",
+    "owner": "Daniel/equipe e supervisão existente",
+    "window": "Primeira conversa natural elegível, 48h e D+7, sem criar automação",
     "signals": [
-      "Bloqueios monetários indevidos",
-      "Perguntas respondidas por completo sem repetição",
-      "Nenhum conflito com atendimento humano, preço não aprovado ou mensagem duplicada",
-      "Imagem e decisões clínicas continuam com revisão humana"
+      "Zero resposta para ofertas comerciais conhecidas, inclusive conteúdo indisponível",
+      "Resposta direta sobre estacionamento pago/acesso, sem ciência intermediária",
+      "Zero conflito com posse humana, nova mensagem, preço/agenda ou duplicidade"
     ]
-  },
-  "baselineCandidateReference": {
-    "commit": "1219ec81a85bb0e64340b658a2a405b96a528298",
-    "path": "ops/CHANGE-CANDIDATE.json",
-    "note": "Lote anterior fechado e continuidade única PAUSED; recibos preservados por ancestralidade."
   },
   "runtimeBaseline": {
     "changed": true,
-    "approvedCommit": "478a8d4a28ae097157a310cdb166b1f69f865055",
-    "netlifyDeployId": "6ad1ec48cbd7eeb7c47f6351",
-    "appsScriptVersion": 165
-  },
-  "documentationCloseout": {
-    "status": "written_verified",
-    "canonicalLocalPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-    "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "sourceCommit": "a1c8c21d8ece44f260a317ae32b4c4c9eb48cdf9",
-    "sha256": "f832c672c660de3d46f8610f0ec8414b7a61d270c48a4acc0b90b2be816a8d41",
-    "readbackAt": "2026-10-16T14:27:39.498Z"
-  },
-  "release": {
-    "status": "published_verified",
     "approvedCommit": "a11d020856622a24e114de8968e409a6230ccf71",
     "netlifyDeployId": "6ad231358102a7e6a3f30726",
-    "appsScriptVersion": 165,
-    "publishedAt": "2026-10-16T14:18:43.506Z",
-    "verifiedAt": "2026-10-16T14:27:39.554Z",
-    "drivePlanSha256": "f832c672c660de3d46f8610f0ec8414b7a61d270c48a4acc0b90b2be816a8d41",
-    "driveManualSha256": "1741b8dbc2bf99eda421d5ed6b2e7aafaebebdea094571c06bfb5aa15c91035d",
-    "documentationSourceCommit": "a1c8c21d8ece44f260a317ae32b4c4c9eb48cdf9",
-    "liveModel": {
-      "status": "passed",
-      "passed": 25,
-      "total": 25,
-      "fullHistoryPassed": 2,
-      "checkedAt": "2026-10-16T14:18:27.228Z",
-      "syntheticOnly": true,
-      "patientMessagesSent": 0
-    },
-    "liveAudio": {
-      "status": "passed",
-      "model": "whisper-1",
-      "passed": 3,
-      "total": 3
-    },
-    "receiptPath": "auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json"
+    "appsScriptVersion": 165
+  },
+  "baselineCandidateReference": {
+    "commit": "941f5ed0980b3e68d406a479556b6247eab550c9",
+    "path": "ops/CHANGE-CANDIDATE.json",
+    "note": "Recibos de publicação anteriores preservados por ancestralidade."
   }
 }

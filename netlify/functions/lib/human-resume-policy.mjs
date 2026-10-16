@@ -3,6 +3,7 @@ import { isAppointmentPreferenceReply } from "./appointment-suggestions.mjs";
 import { usableProfileFirstName } from "./profile-name.mjs";
 import { detectPatientAppointmentReply } from "./appointment-confirmation.mjs";
 import { isSchedulingRequest } from "./whatsapp-automation.mjs";
+import { isKnownSimpleAdministrativeQuestion } from "./patient-replies.mjs";
 import {
   CONVERSATION_ACTIONS,
   decideConversationAction,
@@ -424,6 +425,7 @@ export const HUMAN_RESUME_HOLDING_MESSAGE =
   "";
 
 export function buildDelayedHumanReceipt({ text, messageType = "text", reason, recentConversation = [] } = {}) {
+  if (isKnownSimpleAdministrativeQuestion(text)) return "";
   if (isReactionMessageType(messageType)) return "";
   if (reason === "possible_urgent_symptoms" || reason === "contact_preference_no_bot") return "";
   if (messageType === "text" && !hasUnresolvedPatientRequest(text, recentConversation)) return "";

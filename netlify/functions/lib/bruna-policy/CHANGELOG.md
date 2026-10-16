@@ -1,3 +1,7 @@
+## 2026-10-16.3 — candidato
+
+Silêncio preservado para fornecedor conhecido após conteúdo indisponível. Resposta direta sobre estacionamento pago e estação Pinheiros; mesma prévia canônica em entrada/retomada, sem recibo genérico. Gates humanos e semânticos preservados. Publicação depende do recibo do pacote.
+
 ## 2026-10-16.2 — publicado
 
 Continuidade após contato humano passa a compor a prévia de consulta do mesmo proprietário usado no webhook. Confirmação semântica, proteção de fatos, tempo de espera, atividade nova, consentimento, pendências e gate monetário permanecem. Sem preços ou fatos novos. Teste sintético falhou antes da correção; cenário real teve bloqueio monetário, sem rascunho bruto recuperado.

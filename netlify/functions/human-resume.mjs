@@ -599,8 +599,8 @@ export async function processHumanResumeJob(
   const knownProfessional = job.patientRelationship.professional || job.professional || "";
   job.professional = job.professional || enrichedPlan.professional || "";
   if (enrichedPlan.patientRelationship?.hasPendingHumanTask || /^known_patient_active/.test(enrichedPlan.reason || "")) job.preserveHumanOwnership = true;
-  const administrativeSideAnswer = job.preserveHumanOwnership &&
-    enrichedPlan.reason !== "possible_urgent_symptoms" &&
+  const administrativeSideAnswer = enrichedPlan.reason !== "possible_urgent_symptoms" &&
+    enrichedPlan.route !== "ignore" &&
     !["daniel_greeting_and_alert", "ignore"].includes(currentMessagePlan.route)
       ? buildAdministrativeSideAnswer({ text: job.text, professional: knownProfessional, relationship: job.patientRelationship }) : null;
   if (administrativeSideAnswer) {
