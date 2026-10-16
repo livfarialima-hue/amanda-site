@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-ADMIN-SILENCIO-2026-10-16",
   "title": "Ignorar ofertas comerciais conhecidas e responder logística aprovada diretamente",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "941f5ed0980b3e68d406a479556b6247eab550c9",
   "authorization": {
     "required": true,
@@ -156,15 +156,11 @@
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
       "change": "CHANGE_SAFETY_STATUS=OK;24 exact files",
       "artifact": "193files,54pages;site:build and site:check passed",
-      "ops": "SYNC_PENDING expected until publication, current Drive equality and clean operational branch"
+      "ops": "Execute again after documentary integration in a clean operational checkout; all external release receipts are now present.",
+      "documentaryRegression": "11/11 passed after final receipt reconciliation."
     }
   },
-  "externalChecksPending": [
-    "Gates locais",
-    "Build hospedado obrigatório de modelo/histórico/áudio",
-    "Publicação Netlify e saúde somente leitura",
-    "Projeções existentes do manual e plano no Drive"
-  ],
+  "externalChecksPending": [],
   "rollback": {
     "local": "Novo commit revertendo somente este delta, preservando trabalho paralelo.",
     "production": "Novo build do delta reverso para comportamento a11d020, sem restaurar deploy antigo, replay ou alteração dos dados."
@@ -188,5 +184,38 @@
     "commit": "941f5ed0980b3e68d406a479556b6247eab550c9",
     "path": "ops/CHANGE-CANDIDATE.json",
     "note": "Recibos de publicação anteriores preservados por ancestralidade."
+  },
+  "release": {
+    "status": "published_verified",
+    "approvedCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
+    "netlifyDeployId": "6ad253ae7b4cafb02a15a633",
+    "appsScriptVersion": 165,
+    "publishedAt": "2026-10-16T16:45:22.642Z",
+    "verifiedAt": "2026-10-16T17:27:48.921007+00:00",
+    "drivePlanSha256": "e988cfac37d8ceaa3d8ac7ccdd71d928d9628a58587178af14bbc96dea632191",
+    "driveManualSha256": "a40d8b74809cb0d1ffc6f60e67f2030e49247508598c78f428fd7948dc607023",
+    "documentationSourceCommit": "d7d0a39f32efe9f66162620621397c2eddc24928",
+    "liveModel": {
+      "status": "passed",
+      "passed": 27,
+      "total": 27,
+      "fullHistoryPassed": 2,
+      "evidenceMethod": "inferred_from_successful_mandatory_production_build_at_exact_commit",
+      "directBuildLogRead": false,
+      "buildId": "6ad253ae7b4cafb02a15a631",
+      "syntheticOnly": true,
+      "patientMessagesSent": 0,
+      "note": "Production command runs the marked 27-scenario gate before building; exact source and READY production build inspected. No individual log timings recovered and no paid rerun."
+    },
+    "liveAudio": {
+      "status": "passed",
+      "passed": 3,
+      "total": 3,
+      "model": "whisper-1",
+      "evidenceMethod": "inferred_from_successful_mandatory_production_build_at_exact_commit",
+      "directBuildLogRead": false,
+      "syntheticOnly": true
+    },
+    "receiptPath": "auditorias/bruna-admin-silencio-2026-10-16/PUBLICACAO.json"
   }
 }

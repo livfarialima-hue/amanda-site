@@ -17,31 +17,31 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "a11d020856622a24e114de8968e409a6230ccf71",
-    "lastObservedProductionCommit": "a11d020856622a24e114de8968e409a6230ccf71",
-    "functionalDeployId": "6ad231358102a7e6a3f30726",
-    "lastObservedProductionDeployId": "6ad231358102a7e6a3f30726",
-    "rollbackCommit": "478a8d4a28ae097157a310cdb166b1f69f865055",
-    "rollbackDeployId": "6ad1ec48cbd7eeb7c47f6351",
+    "functionalCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
+    "lastObservedProductionCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
+    "functionalDeployId": "6ad253ae7b4cafb02a15a633",
+    "lastObservedProductionDeployId": "6ad253ae7b4cafb02a15a633",
+    "rollbackCommit": "a11d020856622a24e114de8968e409a6230ccf71",
+    "rollbackDeployId": "6ad231358102a7e6a3f30726",
     "rollbackConstraint": "Novo commit/build restrito para o comportamento anterior, preservando dados, filas, recibos, Apps Script e trabalho paralelo; sem replay.",
-    "publishedAt": "2026-10-16T14:18:43.506Z",
+    "publishedAt": "2026-10-16T16:45:22.642Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-10-16T14:22:41.771Z",
-    "candidateChangeId": "BRUNA-CONTINUIDADE-RETOMADAS-2026-10-16",
+    "lastVerifiedAt": "2026-10-16T17:27:48.921007+00:00",
+    "candidateChangeId": "BRUNA-ADMIN-SILENCIO-2026-10-16",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-10-16.2",
+    "bundleVersion": "2026-10-16.3",
     "appsScriptVersion": 165
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
     "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "1741b8dbc2bf99eda421d5ed6b2e7aafaebebdea094571c06bfb5aa15c91035d",
-    "driveProjectionVerifiedAt": "2026-10-16T14:27:39.554Z",
+    "driveProjectionSha256": "a40d8b74809cb0d1ffc6f60e67f2030e49247508598c78f428fd7948dc607023",
+    "driveProjectionVerifiedAt": "2026-10-16T17:27:48.921007+00:00",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
     "status": "written_verified",
-    "sourceCommit": "a1c8c21d8ece44f260a317ae32b4c4c9eb48cdf9",
-    "note": "Mesmo arquivo Drive substituído e relido em bytes; runtime a11d020 e documentação fonte separados."
+    "sourceCommit": "d7d0a39f32efe9f66162620621397c2eddc24928",
+    "note": "Same Drive file replaced and authenticated raw bytes compared exactly with documentary source commit; functional runtime commit remains separate."
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -49,7 +49,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-ADMIN-SILENCIO-2026-10-16",
-    "status": "tested_local",
+    "status": "published_verified",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
@@ -58,6 +58,9 @@
     "baselineDeployId": "6ad231358102a7e6a3f30726",
     "baselineAppsScriptVersion": 165,
     "bundleVersion": "2026-10-16.3",
-    "note": "Silêncio comercial contextual; fatos de estacionamento pago e estação Pinheiros confirmados pelo proprietário, sem preço ou agenda nova. Gates hospedados preservados."
+    "note": "Silêncio comercial contextual; fatos de estacionamento pago e estação Pinheiros confirmados pelo proprietário, sem preço ou agenda nova. Gates hospedados preservados.",
+    "sourceCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
+    "netlifyDeployId": "6ad253ae7b4cafb02a15a633",
+    "publishedAt": "2026-10-16T16:45:22.642Z"
   }
 }

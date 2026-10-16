@@ -1,6 +1,6 @@
 {
   "changeId": "BRUNA-ADMIN-SILENCIO-2026-10-16",
-  "status": "tested_local",
+  "status": "published_verified",
   "bundleVersion": "2026-10-16.3",
   "runtimeBaselineCommit": "a11d020856622a24e114de8968e409a6230ccf71",
   "runtimeBaselineDeployId": "6ad231358102a7e6a3f30726",
@@ -8,13 +8,25 @@
   "patientMessagesSent": 0,
   "operationalDataWrites": 0,
   "liveModel": {
-    "status": "pending",
+    "status": "passed",
+    "passed": 27,
     "total": 27,
-    "fullHistoryRequired": 2
+    "fullHistoryPassed": 2,
+    "evidenceMethod": "inferred_from_successful_mandatory_production_build_at_exact_commit",
+    "directBuildLogRead": false,
+    "buildId": "6ad253ae7b4cafb02a15a631",
+    "syntheticOnly": true,
+    "patientMessagesSent": 0,
+    "note": "Production command runs the marked 27-scenario gate before building; exact source and READY production build inspected. No individual log timings recovered and no paid rerun."
   },
   "liveAudio": {
-    "status": "pending",
-    "total": 3
+    "status": "passed",
+    "passed": 3,
+    "total": 3,
+    "model": "whisper-1",
+    "evidenceMethod": "inferred_from_successful_mandatory_production_build_at_exact_commit",
+    "directBuildLogRead": false,
+    "syntheticOnly": true
   },
   "localTests": {
     "passed": 2318,
@@ -22,6 +34,73 @@
     "timezone": "America/Sao_Paulo",
     "architecture": "passed",
     "change": "passed",
-    "artifact": "passed"
+    "artifact": "passed",
+    "documentaryRegression": "11/11 passed after final receipt reconciliation."
+  },
+  "approvedCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
+  "netlifyDeployId": "6ad253ae7b4cafb02a15a633",
+  "publishedAt": "2026-10-16T16:45:22.642Z",
+  "verifiedAt": "2026-10-16T17:27:48.921007+00:00",
+  "runtimeComparison": {
+    "functions": 15,
+    "schedules": 6,
+    "schedulesIdentical": true,
+    "changedFunctions": [
+      "human-resume",
+      "human-resume-background",
+      "ycloud-recovery",
+      "ycloud-recovery-background",
+      "ycloud-webhook"
+    ]
+  },
+  "smoke": {
+    "domainHealth": 200,
+    "immutableHealth": 200,
+    "unsignedPost": 401,
+    "observedAt": "2026-10-16T17:24:01.328949+00:00"
+  },
+  "netlifyBuildId": "6ad253ae7b4cafb02a15a631",
+  "immutableUrl": "https://6ad253ae7b4cafb02a15a633--inspiring-sprite-b35ca4.netlify.app",
+  "lastVerifiedAt": "2026-10-16T17:27:48.921007+00:00",
+  "naturalPostReleaseResponse": {
+    "observed": false,
+    "note": "No replay or artificial patient message to obtain evidence."
+  },
+  "periodicSupervisionChanged": false,
+  "note": "Technical runtime and exact documentary projections verified. Hosted gate totals inferred from successful mandatory production build, not direct log retrieval. Natural outcome and conversion impact N/D.",
+  "documentation": {
+    "status": "written_verified",
+    "sourceCommit": "d7d0a39f32efe9f66162620621397c2eddc24928",
+    "sameExistingFiles": true,
+    "method": "Same IDs updated; authenticated raw base64 bytes exactly equal to committed UTF-8 file bytes.",
+    "plan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "bytes": 51809,
+      "sha256": "e988cfac37d8ceaa3d8ac7ccdd71d928d9628a58587178af14bbc96dea632191",
+      "id": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "equal": true,
+      "modifiedAt": "2026-10-16T17:26:48.013Z",
+      "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sourceCommit": "d7d0a39f32efe9f66162620621397c2eddc24928",
+      "readbackAt": "2026-10-16T17:27:48.921007+00:00"
+    },
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "bytes": 96686,
+      "sha256": "a40d8b74809cb0d1ffc6f60e67f2030e49247508598c78f428fd7948dc607023",
+      "id": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "equal": true,
+      "modifiedAt": "2026-10-16T17:26:51.698Z",
+      "driveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sourceCommit": "d7d0a39f32efe9f66162620621397c2eddc24928",
+      "readbackAt": "2026-10-16T17:27:48.921007+00:00"
+    }
+  },
+  "authorization": {
+    "reference": "current-thread:aplique-e-publique-tudo",
+    "approvedAt": "2026-10-16T16:01:19Z",
+    "approvedBy": "Daniel",
+    "runtimeApprovedCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
+    "note": "Explicit user instruction applied to exact validated tree and functional commit; no authorization for patient messages, pricing/campaign changes or new automation."
   }
 }
