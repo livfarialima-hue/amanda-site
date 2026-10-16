@@ -443,6 +443,7 @@ export function applyFirstReplyGreetingGuard(
     recentConversation = null,
     patientRelationship = null,
     priorInteractionKnown = false,
+    replyContract = null,
   } = {},
 ) {
   if (
@@ -482,7 +483,7 @@ export function applyFirstReplyGreetingGuard(
     body = `${introduction} ${body}`.trim();
   }
 
-  if (!knownPatient && !firstName) {
+  if (!knownPatient && !firstName && replyContract?.maxQuestions !== 0) {
     const patientNameQuestion = "Como posso te chamar?";
     const alreadyAsksPatientName =
       /\bComo\s+posso\s+(?:te|lhe)\s+chamar\s*\?/iu.test(body) ||
@@ -680,7 +681,7 @@ function normalizePolicyHints(value) {
     return null;
   }
 
-  const normalized = {};
+  const normalized = { marketingPrefill: value.marketingPrefill === true };
   for (const key of [
     "route",
     "reason",
@@ -945,6 +946,7 @@ export function parseOpenAIShadowResponse(response, fallbackModel, options = {})
             patientProfileName: options.patientProfileName,
             recentConversation: options.recentConversation,
             patientRelationship: options.patientRelationship,
+            replyContract: options.replyContract,
             priorInteractionKnown:
               options.priorInteractionKnown === true,
           },
@@ -1167,6 +1169,7 @@ export async function runOpenAIShadow(
 
     const parseOptions = {
       deterministicUrgent,
+      replyContract: normalizedReplyContract,
       currentMessage: text,
       patientProfileName,
       hasConversationHistory:

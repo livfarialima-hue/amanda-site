@@ -1402,7 +1402,10 @@
         "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
         "netlify/functions/lib/bruna-policy/rules.jsonl",
         "scripts/check-bruna-model-live.mjs",
-        "scripts/check-bruna-model-live.test.mjs"
+        "scripts/check-bruna-model-live.test.mjs",
+        "auditorias/bruna-prefill-preco-2026-10-16/RELATORIO.md",
+        "auditorias/bruna-prefill-preco-2026-10-16/PREFLIGHT.json",
+        "auditorias/bruna-prefill-preco-2026-10-16/PUBLICACAO.json"
       ],
       "requiredTestFiles": [
         "netlify/functions/lib/bruna-policy/regression-governance.test.mjs"

@@ -1,5 +1,14 @@
 # Arquitetura da jornada da paciente
 
+## Distinção entre proveniência e pedido explícito — 16/10/2026, candidato local
+
+**Falha reproduzida no adaptador:** no primeiro contato sem nome pessoal utilizável, o guard de apresentação acrescentava “Como posso te chamar?” mesmo com maxQuestions=0. Essa pergunta criada pelo próprio código provocava revisão de estilo e podia impedir a resposta aprovada. O guard passa a respeitar o contrato ao acrescentar perguntas, mantendo saudação e apresentação. A regressão usa a prévia integral, sem ajustar o mock para esconder a falha. O motivo bruto do evento natural não foi recuperado; essa reprodução prova o defeito, sem atribuir ao modelo bruto uma decisão não observada.
+
+'whatsapp-automation.mjs' continua proprietário da decisão entre abertura genérica e resposta de preço autorizada. 'openai-shadow.mjs' preserva 'currentTemplateId' e transmite 'policyHints.marketingPrefill' como booleano do plano; o prompt não infere abertura obrigatória somente pela proveniência. A confirmação semântica, 'semantic-reply-policy.mjs' e o gate final continuam capazes de vetar a prévia. Não há alteração de preço, classificação, identidade, transporte, recovery, horário ou Apps Script. A resposta informativa não é evidência comercial para qualificação.
+
+O gate hospedado cobre primeiro contato com pedido de faixa, marcador estruturado, histórico vazio e relação desconhecida, além de entradas genéricas e urgência. O histórico real que levou ao incidente fica fora do repositório. Recibos do pacote: 'auditorias/bruna-prefill-preco-2026-10-16/'.
+
+
 ## Publicação coordenada 2026-10-15.5 — classificação e reconciliação administrativa auditada
 
 Commit aprovado `4a21792bc311c8220eb9908204e6fa80d6098847`: Apps Script v165 publicado em 15/10/2026 às 20:15 BRT no deployment canônico preservado; os quatro arquivos alterados foram recarregados e comparados ao commit com normalização LF. Saúde e rejeição segura de token inválido verificadas em `2026-10-15T23:16:04.1644112Z`. Netlify de produção `6ad15ebcc63792b19f648797`, READY no mesmo SHA, publicado em `2026-10-15T23:19:41.688Z`. O log real confirmou 21/21 cenários de modelo, dois históricos completos e 3/3 áudios; API com 15 funções e seis programações. Página/saúde 200 e rejeição de POST sem assinatura 401 conferidas no domínio e URL imutável em `2026-10-15T23:23:36.9828665Z`. A igualdade das mesmas projeções no Drive e o estado final seguem `auditorias/bruna-revisao-conversas-2026-10-15/PUBLICACAO.json`; publicação técnica não substitui o readback autenticado.

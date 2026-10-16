@@ -160,12 +160,28 @@ async function syntheticResponse(url, request) {
       if (!urgent && !unknown && !resolved && !appointment && !association) {
         assert.equal(input.replyContract.allowedResponseKind, 'direct_answer');
         assert.equal(input.replyContract.owner, 'bruna');
-        if (hints?.deterministicReplyCode) assert.notEqual(input.replyContract.risk, 'red');
+        if (hints?.deterministicReplyCode && hints.marketingPrefill !== true) assert.notEqual(input.replyContract.risk, 'red');
       }
       if (hints?.deterministicReplyCode === 'AMANDA-CONSULTA-INFO-01' && input.replyContract.consultationNextStep === 'answer_only') {
         assert.doesNotMatch(hints.deterministicReplyPreview, /horário|agenda/i, 'the preview must honor the answer-only consultation contract');
       }
-      assert.equal(input.currentTemplateId, '');
+      const firstPrefill = /G26LIFT-SYNTHETIC/.test(input.currentMessage);
+      if (firstPrefill) {
+        assert.equal(input.currentTemplateId, 'procedure_evaluation_v1');
+        assert.deepEqual(input.recentConversation, []);
+        assert.deepEqual(input.fullConversation.turns, []);
+        assert.equal(input.patientRelationship.knownPatient, false);
+        assert.equal(input.patientRelationship.state, 'unknown');
+        assert.equal(input.patientRelationship.hasPendingHumanTask, false);
+        assert.equal(input.priorInteractionKnown, false);
+        if (!urgent) {
+          const priceRequested = /faixa geral de valores/.test(input.currentMessage);
+          assert.equal(hints.marketingPrefill, !priceRequested);
+          assert.equal(hints.deterministicReplyCode, priceRequested ? 'LIFTING-PRICE-RANGE-01' : 'MARKETING-PREFILL-OPENING-01');
+          if (priceRequested) assert.match(hints.deterministicReplyPreview, /R\$ 26 mil e R\$ 42 mil/);
+          else assert.doesNotMatch(hints.deterministicReplyPreview, /R\$|\d/);
+        }
+      } else assert.equal(input.currentTemplateId, '');
       decision = { route: urgent || unknown ? 'human_review' : 'standard_reply', confidence: 'high', automaticAllowed: !urgent && !unknown,
         urgent, professional: 'amanda', procedure: input.procedureContext || 'unknown', replyCode: unknown ? 'UNKNOWN-REVIEW-01' : hints?.deterministicReplyCode || '',
         replyWording: 'contextual', suggestedReply: hints?.deterministicReplyCode === 'AMANDA-CONSULTA-INFO-01'
@@ -201,15 +217,15 @@ async function syntheticResponse(url, request) {
     return new Response(JSON.stringify({ model: 'gpt-6.1-sol', status: 'completed', output_text: JSON.stringify(decision) }));
 }
 
-test('all twenty-one synthetic scenarios use the real adapters and pass the outbound protections', async () => {
+test('all twenty-five synthetic scenarios use the real adapters and pass the outbound protections', async () => {
   const fixtureErrors = [];
   const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (...args) => {
     try { return await syntheticResponse(...args); } catch (error) { fixtureErrors.push(error.message); throw error; }
   } });
   assert.deepEqual(fixtureErrors, []);
   assert.equal(result.status, 'passed', JSON.stringify(result));
-  assert.equal(result.results.length, 21);
-  assert.deepEqual(result.results.map(r => r.timeoutMs), [...Array(19).fill(20000), 15000, 12000]);
+  assert.equal(result.results.length, 25);
+  assert.deepEqual(result.results.map(r => r.timeoutMs), [...Array(23).fill(20000), 15000, 12000]);
   assert.equal(result.maxOutputTokens, 4096);
   assert.equal(result.verbosity, 'low');
   assert.equal(result.patientMessagesSent, 0);
@@ -219,6 +235,64 @@ test('all twenty-one synthetic scenarios use the real adapters and pass the outb
   assert.match(compound.selectedReply, /^Para vocês se planejarem:/);
   assert.equal(compound.selectedReply, compound.decision.suggestedReply);
   assert.equal(compound.requests.length, 1, 'contextual wording is accepted without a paid style retry');
+  const firstPrice = result.results.find(r => r.name === 'first_price_prefill_with_legacy_template');
+  assert.equal(firstPrice.deterministicConfirmed, true);
+  assert.equal(firstPrice.gate.allowed, true);
+  assert.equal(firstPrice.requests.length, 1);
+  assert.match(firstPrice.selectedReply, /R\$ 26 mil e R\$ 42 mil/);
+});
+
+test('a semantic veto on the first price request blocks deployment even with the matching approved code', async () => {
+  const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (url, request) => {
+    const data = await (await syntheticResponse(url, request)).json();
+    const decision = JSON.parse(data.output_text);
+    Object.assign(decision, { route: 'human_review', automaticAllowed: false, reviewReason: 'synthetic_prefill_conflict' });
+    return Response.json({ ...data, output_text: JSON.stringify(decision) });
+  } });
+  assert.equal(result.status, 'failed');
+  assert.equal(result.results.length, 1);
+  assert.equal(result.results[0].replyCode, 'LIFTING-PRICE-RANGE-01');
+  assert.equal(result.results[0].deterministicConfirmed, false);
+  assert.equal(result.results[0].passed, false);
+  assert.equal(result.patientMessagesSent, 0);
+});
+
+test('the first-turn probes preserve safety when the adapter or selector repairs an unsafe model draft', async () => {
+  for (const target of ['lifting facial', 'cervicoplastia (lifting cervical)', 'urgency']) {
+    const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (url, request) => {
+      const data = await (await syntheticResponse(url, request)).json();
+      const input = JSON.parse(JSON.parse(request.body).input);
+      const urgent = /falta de ar/.test(input.currentMessage || '');
+      const generic = (input.currentMessage || '').startsWith(`Olá! Tenho interesse em ${target} com`) && !urgent;
+      if (target === 'urgency' ? urgent : generic) {
+        const decision = JSON.parse(data.output_text);
+        Object.assign(decision, target === 'urgency'
+          ? { route: 'standard_reply', automaticAllowed: true, urgent: false, suggestedReply: 'Podemos conversar sobre a avaliação.' }
+          : { suggestedReply: 'A faixa de valores é de R$ 26 mil e R$ 42 mil.', replyWording: 'contextual' });
+        return Response.json({ ...data, output_text: JSON.stringify(decision) });
+      }
+      return Response.json(data);
+    } });
+    const expectedName = target === 'urgency' ? 'first_prefill_urgency_preserves_review'
+      : `first_generic_prefill_${target === 'lifting facial' ? 'lifting_facial' : 'lifting_cervical'}`;
+    const probe = result.results.find(r => r.name === expectedName);
+    assert.ok(probe, target);
+    if (probe.passed) {
+      if (target === 'urgency') {
+        assert.equal(probe.decision.route, 'human_review');
+        assert.equal(probe.decision.automaticAllowed, false);
+        assert.equal(probe.decision.urgent, true);
+        assert.equal(probe.decision.suggestedReply, '');
+      } else {
+        assert.equal(probe.gate.allowed, true);
+        assert.doesNotMatch(probe.selectedReply, /R\$|\d[\d.,\s]*(?:mil|reais)/);
+      }
+    } else {
+      assert.equal(result.status, 'failed', target);
+      assert.equal(result.results.at(-1).name, expectedName);
+    }
+    assert.equal(result.patientMessagesSent, 0);
+  }
 });
 
 test('the association probe rejects isolated prices even inside a human-review suggestion', async () => {
@@ -269,9 +343,15 @@ test('remote live gate rejects denied availability, obsolete holding, invented b
   ]) {
     const result=await checkBrunaModelLive({env,manifest,fetchImpl:async(url,request)=>{
       const data=await(await syntheticResponse(url,request)).json();
-      const decision=JSON.parse(data.output_text);Object.assign(decision,patch);data.output_text=JSON.stringify(decision);return Response.json(data);
+      const input=JSON.parse(JSON.parse(request.body).input);
+      if(input.currentMessage?.startsWith('Moro no exterior e quero agendar online.')) {
+        const decision=JSON.parse(data.output_text);Object.assign(decision,patch);data.output_text=JSON.stringify(decision);
+      }
+      return Response.json(data);
     }});
-    assert.equal(result.status,'failed');assert.equal(result.results[0].passed,false);
+    assert.equal(result.status,'failed');
+    assert.equal(result.results.at(-1).name,'remote_assessment_after_price_audio_context');
+    assert.equal(result.results.at(-1).passed,false);
   }
 });
 
@@ -290,7 +370,7 @@ test('remote continuation still fails when a correct answer misclassifies consul
       return Response.json(data);
     } });
     assert.equal(result.status, 'failed', procedure);
-    assert.equal(result.results.length, 16);
+    assert.equal(result.results.length, 20);
     const failed = result.results.at(-1);
     assert.equal(failed.name, 'remote_consultation_price_continuation_1');
     assert.equal(failed.passed, false);
@@ -313,7 +393,7 @@ test('administrative knowledge accepts an empty unspecified procedure from the r
     return Response.json(data);
   } });
   assert.equal(result.status, 'passed');
-  assert.equal(result.results.length, 21);
+  assert.equal(result.results.length, 25);
   assert.equal(result.results.find(r => r.name === 'semantic_approved_knowledge').passed, true);
   assert.equal(result.patientMessagesSent, 0);
 });
@@ -334,7 +414,7 @@ test('remote live gate accepts legitimate budget and availability boundaries bes
       return Response.json(data);
     }});
     assert.equal(result.status,'passed');
-    assert.equal(result.results.length,21);
+    assert.equal(result.results.length,25);
     assert.equal(result.patientMessagesSent,0);
   }
 });

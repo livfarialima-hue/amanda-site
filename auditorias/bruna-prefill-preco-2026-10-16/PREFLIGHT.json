@@ -1,0 +1,20 @@
+{
+  "status": "observed_read_only",
+  "observedAt": "2026-10-16T09:14:00Z",
+  "baselineCommit": "80cea30fbdeeb46ecfee8a4bb2ec643a11d9fdae",
+  "productionCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
+  "netlifyDeployId": "6ad15ebcc63792b19f648797",
+  "appsScriptVersion": 165,
+  "findings": {
+    "ingestion": "inserted_resolved",
+    "classification": "Novo_correct_for_prefill",
+    "patientOutbound": "none",
+    "semanticRoute": "human_review",
+    "reason": "deterministic_context_mismatch",
+    "emailAlert": "sent",
+    "internalWhatsappAlert": "failed"
+  },
+  "limits": "O motivo original da decisao semantica foi substituido pelo wrapper. Nao afirmar divergencia de procedimento. Nenhuma escrita ou chamada de teste ao paciente.",
+  "releasePreflight": "pending_fresh_readback",
+  "reproducedDefect": "FirstReplyGreetingGuard appended a name question despite maxQuestions=0; real adapter with exact preview entered human_review. Unknown profile and zero history covered."
+}

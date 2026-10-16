@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { runOpenAIShadow } from '../netlify/functions/lib/openai-shadow.mjs';
 import { runLeadClassifier } from '../netlify/functions/lib/lead-classifier.mjs';
 import { reviewScheduledFollowupContext } from '../netlify/functions/lib/scheduled-followup-context-review.mjs';
-import { buildConsultationInformationReply, buildAdministrativeSideAnswer } from '../netlify/functions/lib/patient-replies.mjs';
+import { buildConsultationInformationReply, buildAdministrativeSideAnswer, buildMarketingPrefilledOpeningReply } from '../netlify/functions/lib/patient-replies.mjs';
 import { approvedPartialAnswer } from '../netlify/functions/lib/knowledge-learning.mjs';
 import { buildLiftingFacialInformationReply } from '../netlify/functions/lib/lifting-information.mjs';
 import { buildSemanticReplyConversationAction, selectConfirmedReplyText, semanticDecisionConfirmsDeterministicReply, deterministicReplyCoversPatientQuestions } from '../netlify/functions/lib/semantic-reply-policy.mjs';
@@ -46,6 +46,19 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       i % 2 ? 'Entendido.' : `Estou apenas pesquisando e organizando minhas dúvidas, etapa ${i}.`,
     eventId: `synthetic-long-${i}`, at: new Date(Date.UTC(2026, 8, 1, 0, i)).toISOString() }));
   const scenarios = [
+    { name: 'first_price_prefill_with_legacy_template', firstContact: true, firstPrice: true,
+      text: 'Olá! Gostaria de uma faixa geral de valores para o lifting facial como ponto de partida.\n\nRef. G26LIFT-SYNTHETIC',
+      procedure: 'lifting_facial', code: 'LIFTING-PRICE-RANGE-01', templateId: 'procedure_evaluation_v1',
+      recentConversation: [], priorInteractionKnown: false, patientRelationship: { knownPatient: false, state: 'unknown', hasPendingHumanTask: false } },
+    ...[['lifting_facial', 'lifting facial'], ['lifting_cervical', 'cervicoplastia (lifting cervical)']].map(([procedure, label]) => ({
+      name: `first_generic_prefill_${procedure}`, firstContact: true, genericPrefill: true, procedure,
+      text: `Olá! Tenho interesse em ${label} com a Dra. Amanda e gostaria de entender melhor como funciona a avaliação.\n\nRef. G26LIFT-SYNTHETIC`,
+      code: 'MARKETING-PREFILL-OPENING-01', templateId: 'procedure_evaluation_v1', recentConversation: [], priorInteractionKnown: false,
+      patientRelationship: { knownPatient: false, state: 'unknown', hasPendingHumanTask: false } })),
+    { name: 'first_prefill_urgency_preserves_review', firstContact: true, urgent: true, procedure: 'lifting_facial',
+      text: 'Olá! Tenho interesse em lifting facial com a Dra. Amanda. Estou no pós-operatório e com falta de ar agora.\n\nRef. G26LIFT-SYNTHETIC',
+      templateId: 'procedure_evaluation_v1', recentConversation: [], priorInteractionKnown: false,
+      patientRelationship: { knownPatient: false, state: 'unknown', hasPendingHumanTask: false } },
     { name:'remote_assessment_after_price_audio_context', remoteAssessment:true, procedure:'lifting_facial',
       text:'Moro no exterior e quero agendar online. Consigo fazer um orçamento online para planejar minha viagem e operar?',
       recentConversation:[{role:'user',source:'patient',text:'Gostaria de informações de lifting facial.'},
@@ -124,7 +137,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       status: 'completed', historyMode: 'full', turns: scenario.fullHistory || scenarioHistory,
       coverage: { availableTurns: (scenario.fullHistory || scenarioHistory).length, omittedTurns: 0 },
     }) };
-    let result, selectedReply, gate;
+    let result, selectedReply, gate, deterministicConfirmed;
     if (scenario.classification) {
       result = await runLeadClassifier({ phone: '+5511900000000', currentStatus: 'Novo', currentProfessional: 'amanda', messages: history }, options);
     } else if (scenario.followup) {
@@ -133,28 +146,34 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     } else {
       // Reuse the actual owner of the reply contract. A hand-written partial
       // contract normalizes to risk=red/allowedResponseKind=none in the adapter.
-      const plan = scenario.priceWithPhotos || scenario.remoteAssessment || scenario.appointment || scenario.lipoCompound || scenario.lipoAssociation ? enrichAutomationPlanFromConversation(planAutomation({text:scenario.text,messageType:'text',reference:scenario.reference}),scenarioHistory) :
+      const plan = scenario.firstContact || scenario.priceWithPhotos || scenario.remoteAssessment || scenario.appointment || scenario.lipoCompound || scenario.lipoAssociation ? enrichAutomationPlanFromConversation(planAutomation({text:scenario.text,messageType:'text',reference:scenario.reference,templateId:scenario.templateId}),scenarioHistory) :
         { route: scenario.fullHistoryResolved ? 'ignore' : scenario.urgent || scenario.review ? 'human_review' : 'standard_reply', professional: 'amanda', procedure: scenario.procedure,
         automaticAllowed: !scenario.urgent && !scenario.review, replyCode: scenario.code, reason: scenario.reason };
       const conversationAction = decideConversationAction({ text: scenario.text, plan, recentConversation: scenarioHistory, conversionExperienceEnabled: true });
       const replyContract = conversationAction.replyContract;
       const completePriceCandidate = scenario.lipoCompound ? buildAcceptedProcedurePriceReply({plan,currentText:scenario.text,recentConversation:scenarioHistory}) : null;
-      const preview = scenario.lipoCompound ? completePriceCandidate?.decision.suggestedReply || '' : scenario.administrative ? buildAdministrativeSideAnswer({ text: scenario.text, professional: 'amanda' }).decision.suggestedReply : scenario.priceWithPhotos
+      const preview = scenario.genericPrefill ? buildMarketingPrefilledOpeningReply({ procedure: plan.procedure, introduceBruna: true, conversionExperienceEnabled: true })
+        : scenario.firstPrice ? buildSurgicalPriceSuggestedReply({ procedure: plan.procedure, currentText: scenario.text, recentConversation: scenarioHistory, directToPatient: true, introduceBruna: true })
+        : scenario.lipoCompound ? completePriceCandidate?.decision.suggestedReply || '' : scenario.administrative ? buildAdministrativeSideAnswer({ text: scenario.text, professional: 'amanda' }).decision.suggestedReply : scenario.priceWithPhotos
         ? buildSurgicalPriceSuggestedReply({patientName:'Helena',procedure:plan.procedure,currentText:scenario.text,recentConversation:scenarioHistory,directToPatient:true,introduceBruna:false})
         : scenario.code === 'AMANDA-CONSULTA-INFO-01'
         ? buildConsultationInformationReply({ consultationPriceRequested: true, conversionExperienceEnabled: true, consultationNextStep: replyContract.consultationNextStep })
         : buildLiftingFacialInformationReply({ text: scenario.text, procedure: scenario.procedure });
-      const resolvedProcedure = scenario.lipoCompound ? plan.procedure : scenario.procedure;
-      const policyHints = scenario.code && !scenario.knowledge ? { route: 'standard_reply', reason: scenario.reason, professional: 'amanda', procedure: resolvedProcedure, automaticAllowed: true,
-        deterministicReplyCode: scenario.code, deterministicReplyProfessional: 'amanda', deterministicReplyProcedure: resolvedProcedure, deterministicReplyPreview: preview } : undefined;
+      const resolvedProcedure = scenario.lipoCompound || scenario.firstContact ? plan.procedure : scenario.procedure;
+      const policyHints = scenario.firstContact ? { ...plan,
+        ...(scenario.code ? { deterministicReplyCode: scenario.code, deterministicReplyProfessional: plan.professional,
+          deterministicReplyProcedure: plan.procedure, deterministicReplyPreview: preview } : {}) }
+        : scenario.code && !scenario.knowledge ? { route: 'standard_reply', reason: scenario.reason, professional: 'amanda', procedure: resolvedProcedure, automaticAllowed: true,
+          deterministicReplyCode: scenario.code, deterministicReplyProfessional: 'amanda', deterministicReplyProcedure: resolvedProcedure, deterministicReplyPreview: preview } : undefined;
       result = await runOpenAIShadow({ phone: '+5511900000000', opportunityId: 'synthetic-only-opportunity', professional: 'amanda', text: scenario.text, procedure: resolvedProcedure, recentConversation: scenarioHistory,
         previousConversationState: scenario.previousConversationState, learningContext: scenario.learningContext,
         patientRelationship: scenario.patientRelationship,
-        priorInteractionKnown: true, policyHints, replyContract, deterministicUrgent: !!scenario.urgent }, options);
+        templateId: scenario.templateId, priorInteractionKnown: scenario.priorInteractionKnown ?? true, policyHints, replyContract, deterministicUrgent: !!scenario.urgent }, options);
       if ((scenario.code || scenario.educational || scenario.remoteAssessment) && result.status === 'completed') {
         const candidate = completePriceCandidate || {status:'completed', decision: { route: 'standard_reply', confidence: 'high', automaticAllowed: true, urgent: false,
           professional: 'amanda', procedure: scenario.procedure, replyCode: scenario.code, suggestedReply: preview } };
         const confirmed = semanticDecisionConfirmsDeterministicReply(result,candidate);
+        deterministicConfirmed = confirmed;
         selectedReply = scenario.knowledge || scenario.educational || scenario.remoteAssessment ? result.decision?.suggestedReply : confirmed && deterministicReplyCoversPatientQuestions(candidate,conversationAction)
           ? selectConfirmedReplyText(result,candidate) : result.decision?.suggestedReply || '';
         gate = validateOutboundReply({ body: selectedReply, currentText: scenario.text, recentConversation: scenarioHistory,
@@ -182,7 +201,8 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       scenario.appointment ? result.decision?.route === 'appointment_review' && result.decision?.automaticAllowed === false && !result.decision?.suggestedReply &&
         result.decision?.professional === 'amanda' && result.decision?.confidence === 'high' && result.decision?.urgent !== true :
       scenario.fullHistoryResolved ? result.decision?.route === 'ignore' && result.decision?.automaticAllowed === false && !result.decision?.suggestedReply :
-      scenario.urgent ? result.decision?.automaticAllowed === false :
+      scenario.urgent ? result.decision?.automaticAllowed === false && (!scenario.firstContact ||
+        (result.decision?.route === 'human_review' && result.decision?.urgent === true && !result.decision?.suggestedReply)) :
       scenario.review ? result.decision?.route === 'human_review' && result.decision?.automaticAllowed === false &&
         result.decision?.replyCode === 'UNKNOWN-REVIEW-01' && /equipamento/i.test(result.decision?.conversationState?.unresolvedQuestions?.join(' ')) &&
         approvedPartialAnswer(result.decision, scenario.learningContext)?.knowledgeIds.includes('SYNTHETIC-PARKING') :
@@ -190,6 +210,11 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       gate?.allowed === true && result.decision?.route === 'standard_reply' && result.decision?.automaticAllowed === true &&
         result.decision?.confidence === 'high' && result.decision?.urgent !== true &&
         result.decision?.replyCode === scenario.code && procedureMatches &&
+        (!scenario.firstPrice || (deterministicConfirmed === true && hasApprovedGlobalSurgicalPriceDisclosure(selectedReply) &&
+          /lifting facial[^\n]*R\$ 26 mil e R\$ 42 mil/i.test(selectedReply) &&
+          !/confirmar.*(?:valor|faixa)|R\$ 500|https?:\/\/|G26LIFT|JID|como posso te chamar|qual.*nome/i.test(selectedReply))) &&
+        (!scenario.genericPrefill || (deterministicConfirmed === true &&
+          !/R\$|\d[\d.,\s]*(?:mil|reais)|(?:faixa|referência) de valores|(?:ver|consultar|verificar) (?:os )?horários/i.test(selectedReply))) &&
         (!scenario.lipoCompound || (hasApprovedGlobalSurgicalPriceDisclosure(selectedReply) && /lipo de papada isolada.*R\$ 12 mil e R\$ 18 mil/s.test(selectedReply) &&
           /gordura/i.test(selectedReply) && /flacidez/i.test(selectedReply) && /platisma/i.test(selectedReply) &&
           /inchaço/i.test(selectedReply) && /não é um orçamento fechado/i.test(selectedReply) &&
@@ -204,7 +229,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     // Preserve the observed failure; diagnostics never spend on a second
     // model request or extend the adapter's original deadline.
     results.push({ name: scenario.name, passed, elapsedMs, timeoutMs, requests, status: result.status,
-      errorCode: result.errorCode, decision: result.decision, replyCode: result.decision?.replyCode, replyWording: result.decision?.replyWording, selectedReply, gate });
+      errorCode: result.errorCode, decision: result.decision, replyCode: result.decision?.replyCode, replyWording: result.decision?.replyWording, selectedReply, gate, deterministicConfirmed });
     if (!passed) break;
   }
   // Collect the independent synthetic audio diagnostic even when a conversation

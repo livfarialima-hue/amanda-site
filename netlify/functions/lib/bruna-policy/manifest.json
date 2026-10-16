@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-10-15.5",
-  "promptVersion": "bruna-concierge-2026-10-15.5",
+  "bundleVersion": "2026-10-16.1",
+  "promptVersion": "bruna-concierge-2026-10-16.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-10-15.5",
+  "knowledgeSnapshot": "kb-2026-10-16.1",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -48,17 +48,16 @@
   "replyContinuityContract": "reply-continuity",
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
-    "changeId": "BRUNA-REVISAO-CONVERSAS-2026-10-15",
-    "status": "published_verified",
+    "changeId": "BRUNA-PREFILL-PRECO-2026-10-16",
+    "status": "tested_local",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
-    "liveModelScenarioCount": 21,
-    "baselineCommit": "2fae17f1e0c0903a7d282d93ac7467a786a1fb58",
-    "bundleVersion": "2026-10-15.5",
-    "baselineDeployId": "6ad140400f41025d3ef0a3f7",
-    "baselineAppsScriptVersion": 164,
-    "sourceCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
-    "note": "Publicado no Apps Script v165 e Netlify do SHA aprovado; 21/21 cenarios, dois historicos completos e 3/3 audios lidos no log real. Gates futuros preservados. Bridge administrativa nao executada; retomadas e recarga permanecem decisao operacional separada."
+    "liveModelScenarioCount": 25,
+    "baselineCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
+    "bundleVersion": "2026-10-16.1",
+    "baselineDeployId": "6ad15ebcc63792b19f648797",
+    "baselineAppsScriptVersion": 165,
+    "note": "Primeiro pedido de faixa com template herdado coberto no modelo real; sem replay nem qualificacao implicita. Total de cenarios sera confirmado antes do commit."
   }
 }

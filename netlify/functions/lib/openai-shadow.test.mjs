@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createHmac } from "node:crypto";
+import { planAutomation } from "./whatsapp-automation.mjs";
+import { buildSurgicalPriceSuggestedReply } from "./surgical-price-review.mjs";
+import { decideConversationAction } from "./conversation-action-controller.mjs";
 import {
   applyAnsweredDiscoveryQuestionGuard,
   applyContextClarificationGuard,
@@ -24,6 +27,104 @@ import webhook, {
 } from "../ycloud-webhook.mjs";
 
 const PHONE = "+5511961957144";
+
+test("the real adapter distinguishes a requested price from generic openings with the same template provenance", async () => {
+  const templateId = "procedure_evaluation_v1";
+  const scenarios = [
+    { text: "Olá! Gostaria de uma faixa geral de valores para o lifting facial como ponto de partida.\nRef. G26LIFT-820414650683-lifting-facial-preco", generic: false },
+    { text: "Olá, li sobre valores de lifting facial e gostaria de consultar os horários para uma avaliação com a Dra. Amanda.", generic: true },
+    { text: "Olá! Tenho interesse em cervicoplastia (lifting cervical) e gostaria de entender a avaliação.", generic: true },
+  ];
+  for (const scenario of scenarios) {
+    const plan = planAutomation({ text: scenario.text, messageType: "text", templateId });
+    const action = decideConversationAction({ text: scenario.text, messageType: "text", plan,
+      recentConversation: [], conversionExperienceEnabled: true });
+    const preview = scenario.generic ? "Olá! Posso te orientar sobre esse procedimento. O que gostaria de entender primeiro?"
+      : buildSurgicalPriceSuggestedReply({ procedure: plan.procedure, currentText: scenario.text, recentConversation: [], directToPatient: true });
+    const code = scenario.generic ? "MARKETING-PREFILL-OPENING-01" : plan.replyCode;
+    let request, calls = 0;
+    const result = await runOpenAIShadow({ phone: PHONE, professional: "amanda", procedure: plan.procedure,
+      text: scenario.text, templateId, patientProfileName: "", recentConversation: [], priorInteractionKnown: false,
+      replyContract: action.replyContract,
+      policyHints: { ...plan, deterministicReplyCode: code, deterministicReplyPreview: preview,
+        deterministicReplyProfessional: "amanda", deterministicReplyProcedure: plan.procedure } }, {
+      env: { OPENAI_API_KEY: "synthetic-test-key", BRUNA_CONVERSION_EXPERIENCE_V1: "enabled" }, logImpl: () => {},
+      fetchImpl: async (_url, options) => {
+        calls++;
+        request = JSON.parse(options.body);
+        return Response.json(validResponse(validDecision({ procedure: plan.procedure, replyCode: code, suggestedReply: preview })));
+      },
+    });
+    const input = JSON.parse(request.input);
+    assert.equal(input.currentTemplateId, templateId, "keep acquisition provenance in every case");
+    assert.equal(input.policyHints.marketingPrefill, scenario.generic);
+    assert.equal(input.policyHints.reason, plan.reason);
+    assert.equal(input.policyHints.deterministicReplyCode, code);
+    assert.equal(input.policyHints.deterministicReplyPreview, preview);
+    assert.equal(input.priorInteractionKnown, false);
+    assert.deepEqual(input.recentConversation, []);
+    assert.equal(result.decision.route, "standard_reply");
+    assert.equal(calls, 1, "the adapter must not add a question that forces a needless revision");
+    assert.match(request.instructions, /Somente quando policyHints\.marketingPrefill for true/);
+    assert.match(request.instructions, /pedido explícito de faixa tem prioridade sobre a abertura genérica/);
+    assert.match(request.instructions, /mesmo com currentTemplateId procedure_evaluation_v1/);
+    if (!scenario.generic) {
+      assert.equal(plan.reason, "lifting_price_range_direct");
+      assert.match(preview, /R\$ 26 mil e R\$ 42 mil/);
+      assert.match(result.decision.suggestedReply, /Eu sou a Bruna/);
+      assert.doesNotMatch(result.decision.suggestedReply, /Como posso te chamar|\?/);
+    }
+  }
+});
+
+test("the first-reply guard respects zero questions while leaving a model-authored question for the style gate", async () => {
+  const text = "Gostaria de uma faixa geral de valores para o lifting facial como ponto de partida.";
+  const plan = planAutomation({ text, messageType: "text", templateId: "procedure_evaluation_v1" });
+  const action = decideConversationAction({ text, messageType: "text", plan, recentConversation: [], conversionExperienceEnabled: true });
+  assert.equal(action.replyContract.maxQuestions, 0);
+  const preview = buildSurgicalPriceSuggestedReply({ procedure: plan.procedure, currentText: text, recentConversation: [], directToPatient: true });
+  let calls = 0;
+  const result = await runOpenAIShadow({ phone: PHONE, professional: "amanda", procedure: plan.procedure,
+    text, patientProfileName: "", recentConversation: [], replyContract: action.replyContract, policyHints: plan }, {
+    env: { OPENAI_API_KEY: "synthetic-test-key", BRUNA_CONVERSION_EXPERIENCE_V1: "enabled" }, logImpl: () => {},
+    fetchImpl: async () => {
+      calls++;
+      return Response.json(validResponse(validDecision({ procedure: plan.procedure, replyCode: plan.replyCode,
+        suggestedReply: `${preview} Como posso te chamar?` })));
+    },
+  });
+  assert.equal(calls, 2, "an actual model-authored excess question still receives only the existing bounded revision");
+  assert.equal(result.decision.route, "human_review");
+  assert.equal(result.decision.automaticAllowed, false);
+  assert.equal(result.decision.reviewReason, "too_many_questions_for_context");
+  assert.equal(result.decision.suggestedReply, "");
+  for (const replyContract of [undefined, { maxQuestions: 1 }]) {
+    const legacy = applyFirstReplyGreetingGuard(validDecision({ suggestedReply: "Posso explicar essa informação." }),
+      { patientProfileName: "", recentConversation: [], replyContract });
+    assert.match(legacy.suggestedReply, /Como posso te chamar\?/);
+  }
+});
+
+test("the marketing hint is bounded and never rewrites the model's human-review veto", async () => {
+  for (const marker of [undefined, false, true, "true", { enabled: true }]) {
+    let input;
+    const result = await runOpenAIShadow({ phone: PHONE, text: "Qual o valor do lifting facial?",
+      templateId: "procedure_evaluation_v1", policyHints: { marketingPrefill: marker,
+        reason: "lifting_price_range_direct", automaticAllowed: true, replyCode: "LIFTING-PRICE-RANGE-01" } }, {
+      env: { OPENAI_API_KEY: "synthetic-test-key" }, logImpl: () => {},
+      fetchImpl: async (_url, options) => {
+        input = JSON.parse(JSON.parse(options.body).input);
+        return Response.json(validResponse(validDecision({ route: "human_review", automaticAllowed: false,
+          procedure: "lifting_facial", replyCode: "LIFTING-PRICE-RANGE-01", suggestedReply: "", reviewReason: "synthetic_context_veto" })));
+      },
+    });
+    assert.equal(input.policyHints.marketingPrefill, marker === true);
+    assert.equal(result.decision.route, "human_review");
+    assert.equal(result.decision.automaticAllowed, false);
+    assert.equal(result.decision.reviewReason, "synthetic_context_veto");
+    assert.equal(result.decision.suggestedReply, "");
+  }
+});
 
 test("the real adapter sends the procedure versus consultation-topic contract without changing context or free procedure labels", async () => {
   const remoteHistory = [
@@ -1889,6 +1990,7 @@ test("the model receives bounded mechanical hints as non-authoritative context",
     JSON.parse(calls[0].options.body).input,
   );
   assert.deepEqual(input.policyHints, {
+    marketingPrefill: false,
     route: "standard_reply",
     reason: "known_procedure",
     replyCode: "G-LIFT-CERV-01",

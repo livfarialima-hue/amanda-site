@@ -5,17 +5,51 @@ import { planAutomation, enrichAutomationPlanFromConversation } from './whatsapp
 import { buildSurgicalPriceSuggestedReply } from './surgical-price-review.mjs';
 import { decideConversationAction } from './conversation-action-controller.mjs';
 import { conformOutboundReplyToContract, validateOutboundReply } from './outbound-reply-gate.mjs';
+import { enforcePrefillOnlyClassificationGuard, isLikelyClassifierMarketingPrefill } from './lead-classifier.mjs';
+import { semanticDecisionConfirmsDeterministicReply } from './semantic-reply-policy.mjs';
 
 const prefill = 'Olá! Li sobre o valor do lifting facial e gostaria de conversar sobre uma faixa geral de valores como ponto de partida.\nRef. SITE-lifting-facial-preco';
 const patient = text => ({role:'user',source:'patient',text});
 const clinic = text => ({role:'assistant',source:'bruna',text});
-function reply(text, history = []) {
-  const plan = enrichAutomationPlanFromConversation(planAutomation({text,messageType:'text'}),history);
+function reply(text, history = [], { templateId } = {}) {
+  const plan = enrichAutomationPlanFromConversation(planAutomation({text,messageType:'text',templateId}),history);
   const action = decideConversationAction({text,plan,recentConversation:history,messageType:'text',conversionExperienceEnabled:true});
   const draft = buildSurgicalPriceSuggestedReply({procedure:plan.procedure,patientName:'Ana',currentText:text,recentConversation:history,directToPatient:true});
   const body = conformOutboundReplyToContract({body:draft,currentText:text,conversationAction:action,recentConversation:history});
   return {plan,action,body,draft,validate: changed => validateOutboundReply({body:changed || body,currentText:text,conversationAction:action,recentConversation:history})};
 }
+
+test('an explicit price prefill keeps its provenance and Novo classification while its approved answer remains eligible', () => {
+  const text = 'Olá! Gostaria de uma faixa geral de valores para o lifting facial como ponto de partida.';
+  const templateId = 'procedure_evaluation_v1';
+  const r = reply(text, [], { templateId });
+  assert.equal(r.plan.reason, 'lifting_price_range_direct');
+  assert.notEqual(r.plan.marketingPrefill, true);
+  assert.equal(r.action.allowAutomaticReply, true);
+  assert.equal(r.validate().allowed, true);
+  assert.match(r.body, /R\$ 26 mil e R\$ 42 mil/);
+  assert.doesNotMatch(r.body, /agendar|horários|Como posso te chamar|posso te passar/i);
+  const classification = enforcePrefillOnlyClassificationGuard({ currentStatus: 'Novo',
+    messages: [{ direction: 'IN', text, templateId, marketingPrefill: isLikelyClassifierMarketingPrefill({ templateId }) }],
+    classification: { recommendedStatus: 'Qualificado', confidence: 'high', nextAction: 'Responder à dúvida', expectedParty: 'clinic' } });
+  assert.equal(classification.recommendedStatus, 'Novo');
+  assert.equal(classification.expectedParty, 'clinic');
+});
+
+test('a price candidate never overrides a semantic veto or incompatible procedure', () => {
+  const r = reply(prefill, [], { templateId: 'procedure_evaluation_v1' });
+  const candidate = { status: 'completed', decision: { route: 'standard_reply', confidence: 'high',
+    automaticAllowed: true, urgent: false, professional: 'amanda', procedure: 'lifting_facial',
+    replyCode: r.plan.replyCode, suggestedReply: r.body } };
+  assert.equal(semanticDecisionConfirmsDeterministicReply(candidate, candidate), true);
+  for (const veto of [
+    { route: 'human_review', automaticAllowed: false }, { urgent: true },
+    { confidence: 'low' }, { procedure: 'lifting_cervical' }, { professional: 'daniel' },
+  ]) {
+    assert.equal(semanticDecisionConfirmsDeterministicReply({ ...candidate,
+      decision: { ...candidate.decision, ...veto } }, candidate), false);
+  }
+});
 
 for (const text of [prefill, 'Olá! Gostaria de uma faixa geral de valores para o lifting facial como ponto de partida.']) {
   test(`price-page request gets a welcoming, concise and protected answer: ${text.slice(0,22)}`, () => {

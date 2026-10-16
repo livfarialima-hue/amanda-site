@@ -1,5 +1,14 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+## Pedido de faixa no primeiro contato — correção local em 16/10/2026
+
+**Falha reproduzida no adaptador:** no primeiro contato sem nome pessoal utilizável, o guard de apresentação acrescentava “Como posso te chamar?” mesmo com maxQuestions=0. Essa pergunta criada pelo próprio código provocava revisão de estilo e podia impedir a resposta aprovada. O guard passa a respeitar o contrato ao acrescentar perguntas, mantendo saudação e apresentação. A regressão usa a prévia integral, sem ajustar o mock para esconder a falha. O motivo bruto do evento natural não foi recuperado; essa reprodução prova o defeito, sem atribuir ao modelo bruto uma decisão não observada.
+
+O marcador 'procedure_evaluation_v1' identifica a origem do texto preparado pelo site e continua servindo à classificação. Ele não apaga um pedido explícito de faixa que a política vigente já autoriza responder. O adaptador transmite ao modelo o resultado 'marketingPrefill' do planejador: a entrada genérica recebe abertura breve; pedido explícito com procedimento e prévia aprovados recebe a informação solicitada, respeitando o veto semântico, os limites financeiros e o envio único. Esse atendimento informativo mantém o prefill isolado como Novo e não cria conversão qualificada, agendamento ou indicação.
+
+Incidente observado: entrada e atribuição íntegras, sem resposta à pessoa após revisão semântica; o wrapper substituiu o motivo anterior por 'deterministic_context_mismatch'. A inspeção identificou duas instruções genéricas conflitantes com a regra vigente de preço. Corrigidas na mesma fonte, com regressão do adaptador e primeiro turno sem histórico no gate hospedado. Não há bypass de revisão nem replay do contato. Publicação, validação e limites em 'auditorias/bruna-prefill-preco-2026-10-16/'; até recibo externo, estado local pendente.
+
+
 ## Publicado e verificado — revisão do lote de conversas, 15/10/2026
 
 O lote de 224 conversas distintas reforça a ordem: responder a dúvida concreta, completar perguntas conjuntas e só então propor um próximo passo compatível. Preço isolado é pesquisa, não objeção nem qualificação. Intenção pessoal de tratamento pode qualificar sem pedido de data, conforme o Norte; isso não autoriza agenda, fechamento ou retomada. O pacote aprovado alinha o classificador a essa regra e acrescenta a interpretação contextual do aceite curto e o bloqueio de profissional divergente. A extensão final passou em 2298 testes e 30 cenários adversariais independentes. Proprietários de preço, agenda, cuidado e contato permanecem protegidos.
@@ -107,7 +116,7 @@ O histórico documental integral anterior foi arquivado em área restrita. Esta 
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste conteúdo. Estratégia de aquisição e estado vivo seguem suas fontes próprias.
 
-**Versão:** 2026-10-15.5
+**Versão:** 2026-10-16.1
 
 Projeção ativa: 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF. O identificador não concede acesso; as permissões existentes são preservadas.
 
