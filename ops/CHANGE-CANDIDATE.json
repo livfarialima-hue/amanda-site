@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-PREFILL-PRECO-2026-10-16",
   "title": "Responder pedido explicito aprovado no primeiro contato sem criar perguntas incompatíveis",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "80cea30fbdeeb46ecfee8a4bb2ec643a11d9fdae",
   "authorization": {
     "required": true,
@@ -185,8 +185,8 @@
       "npm.cmd run site:check",
       "npm.cmd run ops:check"
     ],
-    "status": "passed_local",
-    "note": "2303/2303 testes integrais locais;133 focados do adaptador e228 testes independentes sobrepostos. Build/check193arquivos/54URLs semerro. change:check15paths, arquitetura e diffcheckOK. Modelo25cenarios/audio3 aguardam build hospedado; nenhuma chamada local real e zero mensagens de paciente. Gate hospedado lido diretamente no log:25/25, historicos2, audio3/3; primeiro pedido de faixa aprovado com1chamada. Publicado09:24:24Z; smoke09:24:50Z200/401,15funcoes6programacoes. Igualdade Drive ainda pendente."
+    "status": "passed_published",
+    "note": "2303/2303 testes integrais locais;133 focados do adaptador e228 testes independentes sobrepostos. Build/check193arquivos/54URLs semerro. change:check15paths, arquitetura e diffcheckOK. Modelo25cenarios/audio3 aguardam build hospedado; nenhuma chamada local real e zero mensagens de paciente. Gate hospedado lido diretamente no log:25/25, historicos2, audio3/3; primeiro pedido de faixa aprovado com1chamada. Publicado09:24:24Z; smoke09:24:50Z200/401,15funcoes6programacoes. Mesmas duas projecoes Drive substituidas e relidas iguais aos bytes do commit documental71f7edc."
   },
   "rollback": {
     "local": "Reverter apenas o delta deste candidato em novo commit; preservar trabalho paralelo.",
@@ -235,6 +235,16 @@
       },
       "syntheticOnly": true,
       "patientMessagesSent": 0
-    }
+    },
+    "drivePlanSha256": "a67edd9987d7e12a208a092337e74d5720061f4614876533627ec24638986287",
+    "documentationSourceCommit": "71f7edc54a5e95faf0f7a90a1943fe5246f987b9",
+    "documentationVerifiedAt": "2026-10-16T09:27:30.606Z"
+  },
+  "documentationCloseout": {
+    "sourceCommit": "71f7edc54a5e95faf0f7a90a1943fe5246f987b9",
+    "sameFileDriveReadback": true,
+    "manualSha256": "de297b2596219dd71006ea1d40a18363a1701829134062af3adc3351bf9db239",
+    "executivePlanSha256": "a67edd9987d7e12a208a092337e74d5720061f4614876533627ec24638986287",
+    "runtimeUnchangedFromApprovedCommit": true
   }
 }

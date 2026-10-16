@@ -28,7 +28,7 @@
     "publishedTimePrecision": "Netlify API published_at",
     "lastVerifiedAt": "2026-10-16T09:24:50.627Z",
     "candidateChangeId": "BRUNA-PREFILL-PRECO-2026-10-16",
-    "candidateStatus": "committed",
+    "candidateStatus": "published_verified",
     "bundleVersion": "2026-10-16.1",
     "appsScriptVersion": 165
   },
@@ -36,12 +36,12 @@
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
     "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "dc450be42b637704108575ce304758582d3ac00bf5a37cf9306c2d34d8aa672f",
-    "driveProjectionVerifiedAt": "2026-10-15T23:42:59.800469Z",
+    "driveProjectionSha256": "de297b2596219dd71006ea1d40a18363a1701829134062af3adc3351bf9db239",
+    "driveProjectionVerifiedAt": "2026-10-16T09:27:30.606Z",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
     "status": "written_verified",
-    "sourceCommit": "6263eeb7be8285753727c97352eebcab2cfc2a22",
-    "note": "Mesmos arquivos existentes no Drive substituidos e relidos em bytes; fonte documental commitada e runtime aprovado registrados separadamente no recibo."
+    "sourceCommit": "71f7edc54a5e95faf0f7a90a1943fe5246f987b9",
+    "note": "Mesmo arquivo existente substituido e relido em bytes; recibos de runtime e documentacao separados, sem runtime novo apos478a8d4."
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -49,7 +49,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-PREFILL-PRECO-2026-10-16",
-    "status": "committed",
+    "status": "published_verified",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
@@ -58,7 +58,7 @@
     "bundleVersion": "2026-10-16.1",
     "baselineDeployId": "6ad15ebcc63792b19f648797",
     "baselineAppsScriptVersion": 165,
-    "note": "Runtime publicado e conferido,25/25modelo2historicos3/3audio; primeira faixa1chamada. Nenhum envio ou alteracao de dados. Fechamento documental pendente.",
+    "note": "Publicado e verificado no SHA478a8d4;25/25modelo2historicos3/3audio. Mesmas projecoes Drive iguais ao commit71f7edc; zero envio de paciente, Novo/Ads preservados. Intervencao humana do contato original continua sinalizada.",
     "sourceCommit": "478a8d4a28ae097157a310cdb166b1f69f865055"
   }
 }
