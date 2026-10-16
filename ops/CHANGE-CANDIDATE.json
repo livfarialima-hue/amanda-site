@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "changeId": "RETOMADAS-MANUAIS-2026-10-16",
   "title": "Registrar a execução individual das retomadas e reconciliar o Plano Executivo",
-  "status": "implementing_local",
+  "status": "published_verified",
   "baseCommit": "6980c8281b0acaf03b744344e1809f996d810a60",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou nesta conversa executar as retomadas revisadas, atualizar o Plano e a mesma projeção Drive e encerrar a continuidade única. O commit documental exato será vinculado no preflight externo; a autorização do incidente anterior não cobre este recibo."
+    "note": "Autorização expressa do pedido atual cobre execução individual, encerramento da continuidade e atualização do Plano e da mesma projeção Drive. O preflight vincula o commit documental D a esse escopo; não é autorização para publicar runtime."
   },
   "risk": {
     "level": "high",
     "patientEffects": false,
-    "externalWritesPerformed": false,
-    "note": "A operação manual registrada envolve pacientes e ocorre separadamente pelo responsável autorizado. Este candidato altera somente documentação, recibos e teste de governança; não envia mensagens, altera dados de pacientes nem publica runtime. A projeção Drive ainda não foi escrita."
+    "externalWritesPerformed": true,
+    "note": "Efeito documental externo: substituição da mesma projeção Drive, com readback igual ao commit D. A operação manual foi encerrada e possui recibos privados. Nenhuma nova publicação de runtime."
   },
   "scope": {
     "files": [
@@ -87,14 +87,11 @@
       "architectureCheck": "passed",
       "diffCheck": "passed",
       "independentReview": "passed; no open blocker in the six-file documentary delta",
-      "opsCheck": "SYNC_PENDING; implementing_local, worktree branch and uncommitted documentary changes"
+      "opsCheck": "Preflight local SYNC_PENDING confirmado; verificação final após commit e integração registrada no fechamento da tarefa."
     },
-    "note": "Validação local sem chamadas pagas. Rodada operacional reconciliada e continuidade única PAUSED com readback. Postflight confirmou 76/76 ecos canônicos e humanos; arquivo bruto Drive validado em 15/76, com 61 ainda não observados no corte. O candidato permanece implementing_local: commit documental e readback do Plano no Drive ainda pendentes."
+    "note": "Testes locais e gates aprovados; rodada concluída com adiamentos; continuidade PAUSED com readback; Plano de D substituído no mesmo Drive ID e igual em bytes/SHA256. ops:check final é executado após commit e integração na branch canônica limpa."
   },
-  "externalChecksPending": [
-    "Reler metadados/revisão do mesmo arquivo Drive antes da substituição.",
-    "Comparar bytes e SHA256 do Plano no Drive com o commit documental D."
-  ],
+  "externalChecksPending": [],
   "rollback": {
     "local": "Reverter somente o delta documental/teste deste candidato por novo commit, preservando trabalho paralelo e recibos históricos.",
     "production": "Não há publicação de runtime neste pacote. Se o registro estiver errado, corrigir a documentação e a mesma projeção por novo commit. Não apagar mensagens, dados ou evidências; mensagem enviada não é reversível por rollback técnico."
@@ -144,11 +141,25 @@
     "oneOffFinalState": "PAUSED"
   },
   "documentationCloseout": {
-    "status": "pending",
+    "status": "written_verified",
     "canonicalLocalPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
     "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "sourceCommit": null,
-    "sameFileDriveReadback": false,
-    "executivePlanSha256": null
+    "sourceCommit": "cf8158dd7082e211659ec5e1e4e36af0e2636db2",
+    "sameFileDriveReadback": true,
+    "executivePlanSha256": "204244a988ab5db3ef6ac4b22e7aec8b4e56026663d2b69f03cbaf2c716bb6a0",
+    "readbackAt": "2026-10-16T13:54:20.7685845Z",
+    "bytes": 47056,
+    "beforeRevision": "0B1ooePcDNIPVdEtvTjRZNm82VTBKZ2ZEbkN6Yit6YlAvRXVFPQ",
+    "afterRevision": "0B1ooePcDNIPVSGtJVEo5RXdGZjNMZzFyK0YrTlpmTnM4bVlnPQ"
+  },
+  "release": {
+    "approvedCommit": "cf8158dd7082e211659ec5e1e4e36af0e2636db2",
+    "documentationSourceCommit": "cf8158dd7082e211659ec5e1e4e36af0e2636db2",
+    "receiptPath": "auditorias/retomadas-manuais-2026-10-16/PUBLICACAO.json",
+    "netlifyDeployId": "6ad1ec48cbd7eeb7c47f6351",
+    "appsScriptVersion": 165,
+    "verifiedAt": "2026-10-16T13:54:20.7685845Z",
+    "drivePlanSha256": "204244a988ab5db3ef6ac4b22e7aec8b4e56026663d2b69f03cbaf2c716bb6a0",
+    "note": "Publicação somente documental. Netlify e Apps Script são baselines herdados, sem republicação."
   }
 }

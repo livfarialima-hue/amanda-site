@@ -1,15 +1,17 @@
 {
   "schemaVersion": 1,
   "changeId": "RETOMADAS-MANUAIS-2026-10-16",
-  "status": "IN_PROGRESS",
+  "status": "published_verified",
   "statusNote": "Rodada operacional concluída com dois adiamentos; fechamento documental ainda depende do commit e da mesma projeção Drive relida.",
   "scope": "Execução individual autorizada e fechamento documental do lote; sem nova publicação de runtime.",
   "baseCommit": "6980c8281b0acaf03b744344e1809f996d810a60",
   "authorization": {
     "reference": "current-thread:executar-retomadas-atualizar-plano-e-encerrar-continuidade-unica",
     "scope": "Conferir cada conversa e enviar pelo WhatsApp oficial; atualizar o Plano existente e sua mesma projeção Drive; encerrar a continuidade única após a rodada.",
-    "documentaryApprovedCommit": null,
-    "documentaryPreflightStatus": "pending"
+    "documentaryApprovedCommit": "cf8158dd7082e211659ec5e1e4e36af0e2636db2",
+    "documentaryPreflightStatus": "verified_against_current_task_authorization",
+    "note": "A autorização expressa do pedido atual para atualizar o Plano cobre o commit documental D; nenhum consentimento adicional ou autorização de runtime foi presumido.",
+    "documentaryPreflightEvidence": "Mesma revisão Drive e metadados relidos imediatamente antes da escrita; sourceCommit D já existente e escopo conferido."
   },
   "operation": {
     "status": "completed_with_deferrals",
@@ -134,17 +136,21 @@
     }
   },
   "documentation": {
-    "status": "pending",
-    "sourceCommit": null,
+    "status": "written_verified",
+    "sourceCommit": "cf8158dd7082e211659ec5e1e4e36af0e2636db2",
     "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
     "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
     "sameExistingFile": true,
-    "beforeRevision": null,
-    "sha256": null,
-    "bytes": null,
-    "readbackAt": null,
-    "equal": false,
-    "manualProjectionChanged": false
+    "beforeRevision": "0B1ooePcDNIPVdEtvTjRZNm82VTBKZ2ZEbkN6Yit6YlAvRXVFPQ",
+    "sha256": "204244a988ab5db3ef6ac4b22e7aec8b4e56026663d2b69f03cbaf2c716bb6a0",
+    "bytes": 47056,
+    "readbackAt": "2026-10-16T13:54:20.7685845Z",
+    "equal": true,
+    "manualProjectionChanged": false,
+    "afterRevision": "0B1ooePcDNIPVSGtJVEo5RXdGZjNMZzFyK0YrTlpmTnM4bVlnPQ",
+    "beforeModifiedAt": "2026-10-16T09:27:14.339Z",
+    "afterModifiedAt": "2026-10-16T13:53:50.934Z",
+    "method": "Drive files.update same ID; fresh raw readback compared byte-for-byte to git show D"
   },
   "postflight": {
     "canonicalEchoAndArchive": {
@@ -195,6 +201,6 @@
     "A continuidade única está PAUSED com readback; a supervisão periódica é independente e não foi alterada.",
     "O postflight confirmou todos os ecos, mas somente 15 dos 76 arquivos brutos foram observados e validados no corte; 61 permanecem para acompanhamento pelo fluxo existente, sem inferir perda ou reenviar.",
     "Não houve reclassificação integral do CRM, varredura de todo o arquivo histórico ou interpretação da imagem recebida; respostas não implicam consulta, qualificação, conversão ou elegibilidade Ads.",
-    "Este recibo ainda não tem commit documental aprovado nem igualdade da projeção Drive."
+    "A reconciliação documental está comprovada; a cobertura parcial do arquivo de conversas e os atendimentos pendentes permanecem registrados, sem novo envio automático."
   ]
 }
