@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "LEMBRETES-24H-2026-10-16",
   "title": "Lembrete único 24 horas antes e ativação do contrato seguro",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "9a81dee03e4d6256caf45f98c8eaa62640fbbaff",
   "authorization": {
     "required": true,
@@ -77,7 +77,7 @@
       "node --test apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
       "npm.cmd run ops:check"
     ],
-    "status": "passed_local",
+    "status": "passed_local_and_external",
     "results": {
       "fullSuite": "2320/2320 passed",
       "focused": "161/162 initial; planner expectation corrected to 14:00 and covered in full passing suite",
@@ -88,9 +88,7 @@
       "production": "v166, fonte igual LF, flags true, 11 acionadores/1 lembrete, saúde 200"
     }
   },
-  "externalChecksPending": [
-    "Atualizar a mesma projeção Drive do Plano e conferir hash"
-  ],
+  "externalChecksPending": [],
   "rollback": {
     "local": "Novo commit revertendo somente este delta; preservar trabalho paralelo.",
     "production": "Desativar somente lembretes em caso de guarda violada; restaurar proprietário do baseline sem apagar recibos ou reexecutar mensagens."
@@ -113,5 +111,27 @@
     "approvedCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
     "netlifyDeployId": "6ad253ae7b4cafb02a15a633",
     "appsScriptVersion": 165
+  },
+  "release": {
+    "status": "published_verified",
+    "approvedCommit": "71d14078580165ac6f3fb3e0917b0c0897f8ce2a",
+    "appsScriptVersion": 166,
+    "netlifyDeployId": "6ad253ae7b4cafb02a15a633",
+    "netlifyChanged": false,
+    "publishedAt": "2026-10-16T19:07:00Z",
+    "publishedTimePrecision": "minute",
+    "activatedAt": "2026-10-16T19:08:36Z",
+    "verifiedAt": "2026-10-16T19:12:55.123Z",
+    "drivePlanSha256": "262382ab248dca7c0efccd5cae9c1053b9a85de0fd86e5381c29f079ddbcd5f0",
+    "documentationSourceCommit": "97e66a8525a643e9f93b56fe098ea1d364689a94",
+    "receiptPath": "auditorias/lembretes-24h-2026-10-16/PUBLICACAO.json"
+  },
+  "documentationCloseout": {
+    "status": "written_verified",
+    "canonicalLocalPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+    "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "sourceCommit": "97e66a8525a643e9f93b56fe098ea1d364689a94",
+    "sha256": "262382ab248dca7c0efccd5cae9c1053b9a85de0fd86e5381c29f079ddbcd5f0",
+    "readbackAt": "2026-10-16T19:12:55.123Z"
   }
 }

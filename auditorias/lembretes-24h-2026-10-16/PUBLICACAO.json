@@ -1,5 +1,5 @@
 {
-  "status": "published_activated_drive_pending",
+  "status": "published_verified",
   "baseline": "9a81dee03e4d6256caf45f98c8eaa62640fbbaff",
   "appsScriptVersionBefore": 165,
   "sourcePreflightSha256LF": "c4251d5f0b9600aee17fc2e4edc562d8839dd457ed68356fa52288a4d8680724",
@@ -62,7 +62,14 @@
     "siteCheck": "OK"
   },
   "documentation": {
-    "status": "pending"
+    "status": "written_verified",
+    "sourceCommit": "97e66a8525a643e9f93b56fe098ea1d364689a94",
+    "sameExistingFile": true,
+    "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "sha256": "262382ab248dca7c0efccd5cae9c1053b9a85de0fd86e5381c29f079ddbcd5f0",
+    "bytes": 54290,
+    "readbackAt": "2026-10-16T19:12:55.123Z",
+    "exactRawBytesEqual": true
   },
-  "verifiedAt": "2026-10-16T19:10:26.040Z"
+  "verifiedAt": "2026-10-16T19:12:55.123Z"
 }
