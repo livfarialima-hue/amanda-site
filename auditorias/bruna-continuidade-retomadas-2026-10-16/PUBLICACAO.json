@@ -1,6 +1,6 @@
 {
   "changeId": "BRUNA-CONTINUIDADE-RETOMADAS-2026-10-16",
-  "status": "tested_local",
+  "status": "runtime_published_documentation_pending",
   "bundleVersion": "2026-10-16.2",
   "runtimeBaseline": {
     "commit": "478a8d4a28ae097157a310cdb166b1f69f865055",
@@ -8,18 +8,66 @@
     "appsScriptVersion": 165
   },
   "manualContinuation": {
-    "answered": 3,
-    "deliveryObserved": 3,
-    "automaticReplay": false
+    "messagesSent": 4,
+    "uniqueContacts": 3,
+    "deliveryObserved": 4,
+    "readObservedMinimum": 3,
+    "canonicalEchoExact": 4,
+    "automaticReplay": false,
+    "channel": "WhatsApp Business oficial no Chrome",
+    "ledgerSha256": "27a9760bcfaf63e07ebfc8b1a206dbb0b5f728c88a9662d711fcae41fc94df03",
+    "evidence": "Evidências privadas autenticadas; sem identidades no repositório.",
+    "humanAppointmentContinuation": "Equipe ofereceu opções e houve escolha; confirmação operacional depende da equipe.",
+    "pauseRespect": "Orçamento e intenção de retornar depois respeitados, sem insistência."
   },
-  "note": "Recibos serão preenchidos somente após efeitos verificados.",
+  "note": "Publicação técnica verificada. Documentação aguarda commit fonte, mesmas projeções e readback. Não há prova de novo ciclo natural automático após o deploy.",
   "localValidation": {
     "reproduction": "3/4 casos falharam no baseline por prévia ausente; nova saída humana já bloqueava corretamente.",
     "focused": "239/239 passed; includes4new cases; semantic veto permits only the existing receipt after alert, never the answer price",
     "fullSuite": "2307/2307 passed, including every declared contract test file",
     "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-    "change": "CHANGE_SAFETY_STATUS=OK;10exact files",
+    "change": "Fechamento documental inclui manual operacional obrigatório; onze arquivos exatos, gate novamente antes do commit.",
     "artifact": "193files;54pages;sitecheck passed",
     "ops": "SYNC_PENDING expected while publication and Drive receipts remain pending"
+  },
+  "approvedCommit": "a11d020856622a24e114de8968e409a6230ccf71",
+  "netlifyDeployId": "6ad231358102a7e6a3f30726",
+  "publishedAt": "2026-10-16T14:18:43.506Z",
+  "verifiedAt": "2026-10-16T14:22:41.771Z",
+  "liveModel": {
+    "status": "passed",
+    "passed": 25,
+    "total": 25,
+    "fullHistoryPassed": 2,
+    "checkedAt": "2026-10-16T14:18:27.228Z",
+    "syntheticOnly": true,
+    "patientMessagesSent": 0
+  },
+  "liveAudio": {
+    "status": "passed",
+    "model": "whisper-1",
+    "passed": 3,
+    "total": 3
+  },
+  "runtimeComparison": {
+    "functions": 15,
+    "schedules": 6,
+    "schedulesIdentical": true,
+    "changedFunctions": [
+      "human-resume",
+      "human-resume-background"
+    ]
+  },
+  "smoke": {
+    "domainHealth": 200,
+    "immutableHealth": 200,
+    "unsignedPost": 401,
+    "observedAt": "2026-10-16T14:22:41.771Z"
+  },
+  "documentation": {
+    "status": "pending_drive",
+    "sameExistingFiles": true,
+    "planId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "manualId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF"
   }
 }

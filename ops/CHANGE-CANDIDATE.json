@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-CONTINUIDADE-RETOMADAS-2026-10-16",
   "title": "Restabelecer resposta canônica de consulta após atendimento humano",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "1219ec81a85bb0e64340b658a2a405b96a528298",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "note": "Uma composição já aprovada passa a ser consumida também pelo processador após atendimento humano. Sem ampliar valores, posse, horário, consentimento, transporte ou filas."
   },
   "scope": {
@@ -22,6 +22,7 @@
       "auditorias/bruna-continuidade-retomadas-2026-10-16/RELATORIO.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/human-resume.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
@@ -34,7 +35,7 @@
       "bruna-conversation-safety",
       "bruna-regression-governance"
     ],
-    "note": "Correção limitada à prévia canônica de consulta no processador de continuidade, regressões e documentação. Regras de mídia e reservas clínicas permanecem humanas."
+    "note": "Correção limitada à prévia canônica de consulta no processador de continuidade, regressões e documentação. Regras de mídia e reservas clínicas permanecem humanas. Fechamento inclui o manual operacional obrigatório, totalizando onze arquivos; nenhum novo código após o commit funcional."
   },
   "impact": {
     "consumers": [
@@ -142,15 +143,13 @@
       "focused": "239/239 passed; includes4new cases; semantic veto permits only the existing receipt after alert, never the answer price",
       "fullSuite": "2307/2307 passed, including every declared contract test file",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "change": "CHANGE_SAFETY_STATUS=OK;10exact files",
+      "change": "CHANGE_SAFETY_STATUS=OK no pacote funcional de dez arquivos; fechamento ampliado para onze arquivos com o manual operacional, sujeito ao gate novamente.",
       "artifact": "193files;54pages;sitecheck passed",
       "ops": "SYNC_PENDING expected while publication and Drive receipts remain pending"
     }
   },
   "externalChecksPending": [
-    "Publicação do commit exato no Netlify com os gates hospedados existentes",
-    "Readback do deploy e sondas sem efeitos",
-    "Mesmas projeções Drive do Plano e manual"
+    "Mesmas projeções Drive do Plano e manual; readback byte a byte e recibos finais"
   ],
   "rollback": {
     "local": "Reverter somente a composição adicionada neste pacote, por novo commit, preservando alterações paralelas.",
@@ -178,12 +177,36 @@
     "appsScriptVersion": 165
   },
   "documentationCloseout": {
-    "status": "pending",
+    "status": "pending_drive",
     "canonicalLocalPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
     "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
   },
   "release": {
-    "status": "pending",
-    "receiptPath": "auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json"
+    "status": "runtime_published_documentation_pending",
+    "approvedCommit": "a11d020856622a24e114de8968e409a6230ccf71",
+    "netlifyDeployId": "6ad231358102a7e6a3f30726",
+    "appsScriptVersion": 165,
+    "verifiedAt": "2026-10-16T14:22:41.771Z",
+    "publishedAt": "2026-10-16T14:18:43.506Z",
+    "liveModel": {
+      "status": "passed",
+      "checkedAt": "2026-10-16T14:18:27.228Z",
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "maxOutputTokens": 4096,
+      "verbosity": "low",
+      "billingMode": "api_paid_authorized",
+      "syntheticOnly": true,
+      "patientMessagesSent": 0,
+      "passed": 25,
+      "total": 25,
+      "fullHistoryPassed": 2,
+      "audioCheck": {
+        "status": "passed",
+        "model": "whisper-1",
+        "passed": 3,
+        "total": 3
+      }
+    }
   }
 }

@@ -1,8 +1,12 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
-## Continuidade após atendimento humano — candidato16/10/2026
+## Continuidade após atendimento humano — publicada em 16/10/2026
 
 A pergunta isolada sobre a consulta ou seu valor deve receber os mesmos fatos aprovados também na continuidade após atendimento humano: human-resume consome patient-replies, com confirmação semântica e seleção protegida. Não reinicia apresentação nem repete a explicação já dada. Dez minutos de preferência humana, janela, novas atividades, pendências, opt-out e gate final continuam obrigatórios. Imagens de convênio não autorizam análise de cobertura: informações administrativas confirmadas podem ser respondidas manualmente pela equipe. Este ajuste não amplia preços, agenda, mídia ou autonomia.
+
+Commit funcional aprovado a11d020856622a24e114de8968e409a6230ccf71; Netlify de produção 6ad231358102a7e6a3f30726, READY e publicado em 2026-10-16T14:18:43.506Z (11h18 BRT). O log hospedado confirmou 25/25 cenários, dois históricos completos e 3/3 áudios em 2026-10-16T14:18:27.228Z. Validação local: 239/239 testes focados e 2307/2307 integrais. As 15 funções e seis programações permanecem; somente human-resume e human-resume-background mudaram de artefato. Domínio e URL imutável responderam saúde 200 e rejeitaram POST sem assinatura com 401. Apps Script v165 preservado, sem republicação. Rollback por novo commit/build restrito para comportamento 478a8d4a28ae097157a310cdb166b1f69f865055 / deploy6ad1ec48cbd7eeb7c47f6351, preservando dados, filas e recibos, sem replay.
+
+Quatro respostas manuais foram verificadas nesta continuidade; isso não comprova novo ciclo natural automático. Responder à pergunta devida, preservar a equipe que assumiu horários e acolher uma pausa sem nova oferta. Registro de publicação e igualdade documental em auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json.
 
 ## Pedido de faixa no primeiro contato — publicado em 16/10/2026
 

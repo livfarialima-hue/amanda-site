@@ -1,6 +1,8 @@
-## 2026-10-16.2 — candidato
+## 2026-10-16.2 — publicado
 
 Continuidade após contato humano passa a compor a prévia de consulta do mesmo proprietário usado no webhook. Confirmação semântica, proteção de fatos, tempo de espera, atividade nova, consentimento, pendências e gate monetário permanecem. Sem preços ou fatos novos. Teste sintético falhou antes da correção; cenário real teve bloqueio monetário, sem rascunho bruto recuperado.
+
+Publicado no commit a11d020856622a24e114de8968e409a6230ccf71, deploy 6ad231358102a7e6a3f30726; 2307 testes locais e 25/25 cenários hospedados, dois históricos completos e 3/3 áudios. Recibo em auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json.
 
 # Histórico público de alterações
 

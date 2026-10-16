@@ -1,8 +1,14 @@
 # Plano executivo — auditorias, pendências e prazos
 
-## Continuidade das respostas — candidato de16/10/2026
+## Continuidade das respostas — correção publicada em 16/10/2026
 
-Daniel autorizou corrigir, publicar e continuar as dúvidas conhecidas após o lote. Três respostas administrativas foram entregues pelo WhatsApp Business, com evidência privada. O worker rodou, mas uma pergunta de avaliação foi bloqueada por valor; o teste reproduziu a ausência da prévia canônica de consulta no processador. Correção local em validação, sem retirar o gate monetário ou a espera humana. Imagens/decisões clínicas continuam em revisão. Não repetir o lote: continuidade única permanece PAUSED. Publicação e projeções ainda pendentes; ver auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json.
+Commit funcional aprovado a11d020856622a24e114de8968e409a6230ccf71; Netlify de produção 6ad231358102a7e6a3f30726, READY e publicado em 2026-10-16T14:18:43.506Z (11h18 BRT). O log hospedado confirmou 25/25 cenários, dois históricos completos e 3/3 áudios em 2026-10-16T14:18:27.228Z. Validação local: 239/239 testes focados e 2307/2307 integrais. As 15 funções e seis programações permanecem; somente human-resume e human-resume-background mudaram de artefato. Domínio e URL imutável responderam saúde 200 e rejeitaram POST sem assinatura com 401. Apps Script v165 preservado, sem republicação. Rollback por novo commit/build restrito para comportamento 478a8d4a28ae097157a310cdb166b1f69f865055 / deploy6ad1ec48cbd7eeb7c47f6351, preservando dados, filas e recibos, sem replay.
+
+Daniel autorizou corrigir, publicar e continuar as dúvidas conhecidas. O worker executava, mas uma pergunta de avaliação terminou em bloqueio monetário. A regressão reproduziu a ausência da prévia canônica de consulta na continuidade; human-resume agora consome o mesmo proprietário da resposta aprovada. O gate monetário, a preferência humana de dez minutos, a revisão de mídia, os limites de agenda e o veto semântico permanecem. A redação bruta rejeitada não foi recuperada.
+
+Nesta continuidade foram enviadas quatro mensagens a três contatos pelo WhatsApp Business oficial, com quatro entregas observadas e ao menos três leituras; as quatro saídas também apareceram no registro canônico. São respostas administrativas e um acolhimento de pausa, separados das 76 retomadas anteriores. A equipe assumiu a negociação de horário e houve escolha de uma opção; confirmação operacional ainda exige a equipe. Pausa por orçamento e decisão de retornar depois devem ser respeitadas, sem insistência. Nenhuma fase, conversão Ads ou agendamento foi alterado por esta execução. Identidades e comprovantes permanecem privados.
+
+A continuidade única do lote permanece PAUSED; a supervisão periódica existente continua inalterada. A publicação e as respostas manuais não comprovam um novo ciclo natural automático após a correção. Monitorar esse primeiro ciclo, 48 horas e 22/10 pela rotina existente. Intervenções humanas são comunicadas por Aníbal nesta conversa. Igualdade das mesmas projeções Drive e fechamento documental seguem auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json.
 
 ## Rodada concluída — retomadas manuais de 16/10/2026
 
