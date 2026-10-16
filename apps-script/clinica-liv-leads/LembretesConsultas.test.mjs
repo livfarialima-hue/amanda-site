@@ -80,12 +80,12 @@ test("explicit refusal of contact blocks reminders", () => {
   );
 });
 
-test("the single reminder is due at 10am on the previous day", () => {
+test("the single reminder is due exactly 24 hours before the appointment", () => {
   const appointment = new Date("2026-07-30T14:00:00-03:00");
 
   assert.equal(
     context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-29T09:59:00-03:00"),
+      now: new Date("2026-07-29T13:59:59-03:00"),
       appointment,
       reminder48hSent: "",
       sameDaySent: "",
@@ -95,7 +95,7 @@ test("the single reminder is due at 10am on the previous day", () => {
 
   assert.equal(
     context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-29T10:00:00-03:00"),
+      now: new Date("2026-07-29T14:00:00-03:00"),
       appointment,
       reminder48hSent: "",
       sameDaySent: "",
@@ -109,7 +109,7 @@ test("an appointment that already received the old 48h reminder gets no second r
 
   assert.equal(
     context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-29T10:00:00-03:00"),
+      now: new Date("2026-07-29T14:00:00-03:00"),
       appointment,
       reminder48hSent: new Date(),
       sameDaySent: "",
@@ -123,7 +123,7 @@ test("an appointment that already received the old same-day reminder gets no new
 
   assert.equal(
     context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-29T10:00:00-03:00"),
+      now: new Date("2026-07-29T14:00:00-03:00"),
       appointment,
       reminder48hSent: "",
       sameDaySent: new Date(),
@@ -137,7 +137,7 @@ test("a reminder attempt is never repeated even when the delivery response was l
 
   assert.equal(
     context.definirTipoLembreteConsulta_({
-      now: new Date("2026-07-29T10:15:00-03:00"),
+      now: new Date("2026-07-29T14:15:00-03:00"),
       appointment,
       reminder48hSent: "",
       sameDaySent: "",
@@ -147,12 +147,25 @@ test("a reminder attempt is never repeated even when the delivery response was l
   );
 });
 
-test("all appointments use a 10am reminder on the previous day", () => {
+test("morning appointments retain their own time on the previous day", () => {
   const appointment = new Date("2026-07-30T09:00:00-03:00");
   const target =
     context.horarioAlvoLembretePrincipalConsulta_(appointment);
 
-  assert.equal(target.toISOString(), "2026-07-29T13:00:00.000Z");
+  assert.equal(target.toISOString(), "2026-07-29T12:00:00.000Z");
+});
+
+test("the 24-hour target preserves minutes across month and year boundaries", () => {
+  for (const [appointment, expected] of [
+    ["2026-10-20T10:30:00-03:00", "2026-10-19T13:30:00.000Z"],
+    ["2026-11-01T16:15:00-03:00", "2026-10-31T19:15:00.000Z"],
+    ["2027-01-01T18:45:00-03:00", "2026-12-31T21:45:00.000Z"],
+  ]) {
+    assert.equal(
+      context.horarioAlvoLembretePrincipalConsulta_(new Date(appointment)).toISOString(),
+      expected,
+    );
+  }
 });
 
 test("a monitored appointment converted to Date by Sheets keeps the same key", () => {

@@ -115,3 +115,24 @@ test("cross-consumer drift in the care agenda is detected", () => {
     ),
   );
 });
+
+test("restoring the fixed 10am cadence blocks publication", () => {
+  const root = mkdtempSync(join(tmpdir(), "liv-reminder-cadence-"));
+  for (const path of [
+    "apps-script/clinica-liv-leads/LembretesConsultas.gs",
+    "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+    "netlify/functions/appointment-reminder.mjs",
+    "netlify/functions/lib/ycloud-appointment-reminder.mjs",
+  ]) {
+    mkdirSync(dirname(join(root, path)), { recursive: true });
+    cpSync(join(PROJECT_ROOT, path), join(root, path));
+  }
+  const owner = join(root, "apps-script/clinica-liv-leads/LembretesConsultas.gs");
+  writeFileSync(owner, readFileSync(owner, "utf8").replace(
+    "singleReminderHoursBefore: 24,",
+    'singleReminderDaysBefore: 1,\n  singleReminderTime: "10:00",',
+  ));
+  assert.ok(validateAppointmentReminderContract(root).some(
+    (item) => item.code === "REMINDER_OWNER_CADENCE_INVALID",
+  ));
+});

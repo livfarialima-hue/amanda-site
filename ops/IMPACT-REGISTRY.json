@@ -277,7 +277,8 @@
         "scripts/check-journey-module-boundaries.mjs",
         "scripts/check-operational-consistency.mjs",
         "scripts/check-operational-consistency.test.mjs",
-        "scripts/run-tests.mjs"
+        "scripts/run-tests.mjs",
+        "auditorias/lembretes-24h-2026-10-16/PUBLICACAO.json"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",

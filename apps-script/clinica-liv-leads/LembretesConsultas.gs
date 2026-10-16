@@ -5,8 +5,7 @@ const LEMBRETES_CONSULTAS_CONFIG = Object.freeze({
   timezone: "America/Sao_Paulo",
   startHour: 9,
   endHour: 19,
-  singleReminderDaysBefore: 1,
-  singleReminderTime: "10:00",
+  singleReminderHoursBefore: 24,
   reconciliationDaysAhead: 30,
   endpoint:
     "https://draamandaschroeder.com.br/.netlify/functions/appointment-reminder",
@@ -1226,21 +1225,12 @@ function definirTipoLembreteConsulta_(input) {
 }
 
 function horarioAlvoLembretePrincipalConsulta_(appointment) {
-  const previousDate = new Date(
+  return new Date(
     appointment.getTime() -
-      LEMBRETES_CONSULTAS_CONFIG.singleReminderDaysBefore *
-        24 *
+      LEMBRETES_CONSULTAS_CONFIG.singleReminderHoursBefore *
         60 *
         60 *
         1000,
-  );
-
-  return criarDataSaoPauloLembretesConsultas_(
-    formatarDataLembretesConsultas_(
-      previousDate,
-      "yyyy-MM-dd",
-    ),
-    LEMBRETES_CONSULTAS_CONFIG.singleReminderTime,
   );
 }
 

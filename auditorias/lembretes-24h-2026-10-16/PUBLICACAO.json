@@ -1,0 +1,12 @@
+{
+  "status": "pending",
+  "baseline": "9a81dee03e4d6256caf45f98c8eaa62640fbbaff",
+  "appsScriptVersionBefore": 165,
+  "sourcePreflightSha256LF": "c4251d5f0b9600aee17fc2e4edc562d8839dd457ed68356fa52288a4d8680724",
+  "flagsBefore": {
+    "LEMBRETES_CONSULTA_ATIVOS": "true",
+    "LEMBRETES_CONSULTA_CONTRATO_SEGURO_ATIVO": null
+  },
+  "netlifyUnchanged": "6ad253ae7b4cafb02a15a633",
+  "patientTestMessagesSent": 0
+}

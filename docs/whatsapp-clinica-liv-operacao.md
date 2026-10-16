@@ -1,5 +1,13 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+## Lembrete único 24 horas antes — preparação em 16/10/2026
+
+Solicitação autorizada: ativar lembrete para todos os agendamentos elegíveis, inclusive confirmados. O alvo passa a ser o horário da consulta menos 24 horas, conservando minutos; execução no ciclo existente de 15 minutos, somente entre 09h e 19h. Consulta criada tardiamente ou alvo fora da janela pode ser processado no próximo ciclo permitido antes da consulta. Recusas, bloqueio ao robô, cancelamentos, profissional, vínculo vivo de Calendar e recibos anteriores continuam obrigatórios. Sem segundo lembrete, replay, mudança de preço, campanha ou conversão. A chave geral estava true, mas a chave do contrato seguro estava ausente: a rotina retornava sem enviar. Ativação somente após teste, commit, publicação e comparação do código.
+
+Um agendamento autorizado foi confirmado e reconciliado em Consultas, CRM e Calendar, sem reenviar a confirmação já feita pela equipe. Evidência com identidade permanece privada. A sincronização inicial encontrou validação incompatível na origem; a linha parcial foi concluída e o único evento vivo conferido. Revisar a validação de origem e de resultado de agendamento em pacote separado.
+
+Estado deste pacote: local, publicação/ativação e projeções Drive pendentes. Preservado o release paralelo 9a81dee0, Netlify 6ad253ae7b4cafb02a15a633. Monitorar primeiro ciclo natural, 48h e consulta seguinte pela supervisão existente. Rollback: desativar somente o lembrete e reverter apenas este delta em novo commit; conservar dados, recibos e demais acionadores.
+
 ## Silêncio comercial e logística direta — publicado em 16/10/2026
 
 Ofertas de marketing, vendas e fornecedores conhecidos permanecem ignoradas, inclusive após conteúdo indisponível; uma nova procura pessoal explícita é reavaliada. Estacionamento pago no local e proximidade da estação Pinheiros do metrô foram confirmados por Daniel em 16/10/2026. Perguntas administrativas independentes com fatos aprovados recebem resposta direta, sem confirmação intermediária de recebimento ou promessa de retorno. Não inventar tarifa, gratuidade, reserva, distância, horário ou acessibilidade. Posse humana, espera vigente, urgência, veto semântico, preços e confirmação de agenda permanecem. Registro técnico de publicação abaixo e no recibo do pacote.

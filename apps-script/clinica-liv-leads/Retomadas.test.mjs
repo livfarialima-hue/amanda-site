@@ -3155,7 +3155,7 @@ test("care agenda consumes the same single reminder target as the sender", () =>
   assert.deepEqual(Object.keys(targets), ["principal"]);
   assert.equal(
     targets.principal.toISOString(),
-    "2026-09-01T13:00:00.000Z",
+    "2026-09-01T17:00:00.000Z",
   );
 
   const future = context.planejarLembretesConsultaFuturos_({
@@ -3167,7 +3167,7 @@ test("care agenda consumes the same single reminder target as the sender", () =>
   });
 
   assert.equal(future.length, 1);
-  assert.equal(future[0].horario, "10:00");
+  assert.equal(future[0].horario, "14:00");
   assert.equal(future[0].dataReferencia, "2026-09-01");
 });
 

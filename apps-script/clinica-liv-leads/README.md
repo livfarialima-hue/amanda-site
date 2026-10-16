@@ -1,5 +1,9 @@
 # Apps Script da Clínica LIV
 
+## Ajuste de lembrete em preparação — 16/10/2026
+
+Candidato de 24 horas antes; produção ainda v165. Publicar e comparar LembretesConsultas.gs antes de ativar o contrato seguro. Recibo: auditorias/lembretes-24h-2026-10-16/PUBLICACAO.json.
+
 ## Runtime publicado — revisão de conversas, 15/10/2026
 
 **Versão canônica atual: v165**, publicada em 15/10/2026 às 20:15 BRT a partir do commit aprovado `4a21792bc311c8220eb9908204e6fa80d6098847`. O deployment `AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A`, o projeto, a planilha e a URL canônicos foram preservados. `Code.gs`, `LeadClassification.gs`, `DataQualityRepair.gs` e `BusinessMilestones.gs` foram salvos, recarregados e comparados integralmente com o commit após normalização de quebras de linha para LF. O recibo privado `release-source-persisted-comparison.json` confirma igualdade dos quatro arquivos; diferenças de hash bruto por CRLF não são diferenças de código.

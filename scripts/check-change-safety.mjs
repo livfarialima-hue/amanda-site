@@ -158,12 +158,12 @@ export function validateAppointmentReminderContract(root) {
   }
 
   if (
-    !/singleReminderDaysBefore:\s*1\b/.test(apps) ||
-    !/singleReminderTime:\s*"10:00"/.test(apps)
+    !/singleReminderHoursBefore:\s*24\b/.test(apps) ||
+    /singleReminderDaysBefore|singleReminderTime/.test(apps)
   ) {
     fail(
       "REMINDER_OWNER_CADENCE_INVALID",
-      "O proprietário deve declarar um único lembrete às 10h da véspera.",
+      "O proprietário deve declarar um único lembrete 24 horas antes da consulta.",
     );
   }
 
