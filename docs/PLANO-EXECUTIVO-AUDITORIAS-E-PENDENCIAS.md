@@ -1,5 +1,9 @@
 # Plano executivo — auditorias, pendências e prazos
 
+## Continuidade das respostas — candidato de16/10/2026
+
+Daniel autorizou corrigir, publicar e continuar as dúvidas conhecidas após o lote. Três respostas administrativas foram entregues pelo WhatsApp Business, com evidência privada. O worker rodou, mas uma pergunta de avaliação foi bloqueada por valor; o teste reproduziu a ausência da prévia canônica de consulta no processador. Correção local em validação, sem retirar o gate monetário ou a espera humana. Imagens/decisões clínicas continuam em revisão. Não repetir o lote: continuidade única permanece PAUSED. Publicação e projeções ainda pendentes; ver auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json.
+
 ## Rodada concluída — retomadas manuais de 16/10/2026
 
 Daniel autorizou a execução individual das **78 mensagens preparadas** — 27 prioridades altas, 28 intermediárias e 23 opcionais — pelo WhatsApp oficial da Clínica LIV. Os 78 contatos foram conferidos em LEADS/CRM e 77 históricos ficaram disponíveis para revisão na interface. Entre **09h39 e 10h44 BRT**, foram tentadas e submetidas **76 mensagens**, todas com envio observado: **75 da Dra. Amanda e uma resposta administrativa do Dr. Daniel**. Na consolidação com a releitura posterior às **10h47min53s**, havia **56 entregas observadas, incluindo ao menos três leituras confirmadas**, e **20 apenas com envio observado**. As leituras já estão incluídas nas entregas: duas confirmações posteriores promoveram itens entregues a lidos sem aumentar o total de entregas. Essas contagens não comprovam conversão. Não houve falha de envio registrada.

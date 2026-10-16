@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-10-16.1",
-  "promptVersion": "bruna-concierge-2026-10-16.1",
+  "bundleVersion": "2026-10-16.2",
+  "promptVersion": "bruna-concierge-2026-10-16.2",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-10-16.1",
+  "knowledgeSnapshot": "kb-2026-10-16.2",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -48,17 +48,16 @@
   "replyContinuityContract": "reply-continuity",
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
-    "changeId": "BRUNA-PREFILL-PRECO-2026-10-16",
-    "status": "published_verified",
+    "changeId": "BRUNA-CONTINUIDADE-RETOMADAS-2026-10-16",
+    "status": "tested_local",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
     "liveModelScenarioCount": 25,
-    "baselineCommit": "4a21792bc311c8220eb9908204e6fa80d6098847",
-    "bundleVersion": "2026-10-16.1",
-    "baselineDeployId": "6ad15ebcc63792b19f648797",
+    "baselineCommit": "478a8d4a28ae097157a310cdb166b1f69f865055",
+    "baselineDeployId": "6ad1ec48cbd7eeb7c47f6351",
     "baselineAppsScriptVersion": 165,
-    "note": "Publicado e verificado no SHA478a8d4;25/25modelo2historicos3/3audio. Mesmas projecoes Drive iguais ao commit71f7edc; zero envio de paciente, Novo/Ads preservados. Intervencao humana do contato original continua sinalizada.",
-    "sourceCommit": "478a8d4a28ae097157a310cdb166b1f69f865055"
+    "bundleVersion": "2026-10-16.2",
+    "note": "Mesmo conteúdo aprovado e modelo; alteração do adaptador da continuidade. Gates hospedados preservados. Sem ampliação de autonomia ou mídia."
   }
 }

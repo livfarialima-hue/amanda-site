@@ -28,7 +28,13 @@ import {
   updateHumanResumeDeliveryState,
 } from "./lib/human-resume-queue.mjs";
 import { runOpenAIShadow } from "./lib/openai-shadow.mjs";
-import { shouldSendOpenAIPatientReply, buildAdministrativeSideAnswer } from "./lib/patient-replies.mjs";
+import {
+  shouldSendOpenAIPatientReply,
+  buildAdministrativeSideAnswer,
+  buildConsultationInformationReply,
+  hasConsultationExplanationInConversation,
+  hasClinicLocationInConversation,
+} from "./lib/patient-replies.mjs";
 import { approvedPartialAnswer, knowledgeRuleId, buildUnknownHoldingReply, isUnknownReviewDecision } from "./lib/knowledge-learning.mjs";
 import {
   appendConversationTurn,
@@ -763,8 +769,25 @@ export async function processHumanResumeJob(
 
   const consultationBundle = buildConsultationQuestionBundle({plan:enrichedPlan, text:job.text,
     recentConversation:job.recentConversation, patientName:job.patientName, introduceBruna:false});
+  // Resume the same approved consultation facts used at inbound. A human
+  // message changes ownership/timing, not the institution's consultation fee.
+  // Semantic confirmation and the final outbound gate remain mandatory.
+  const consultationInformationReply = enrichedPlan.reason === 'consultation_information_request' &&
+    enrichedPlan.professional === 'amanda' && enrichedPlan.consultationPriceRequested === true
+    ? buildConsultationInformationReply({
+        patientName: job.patientName,
+        procedure: enrichedPlan.procedure || job.procedure,
+        consultationNextStep: conversationAction.replyContract?.consultationNextStep || 'answer_only',
+        consultationContextPreviouslyShared: hasConsultationExplanationInConversation(job.recentConversation),
+        consultationPriceRequested: enrichedPlan.consultationPriceRequested === true,
+        conversionExperienceEnabled: isBrunaConversionExperienceEnabled(env),
+        locationRequested: conversationAction.replyContract?.unresolvedIntents?.includes('location') === true,
+        locationPreviouslyShared: hasClinicLocationInConversation(job.recentConversation),
+        introduceBruna: false,
+      }) : '';
   const acceptedProcedurePriceReply = buildAcceptedProcedurePriceReply({plan:enrichedPlan,currentText:job.text,recentConversation:job.recentConversation});
   const approvedPriceReplyKind = consultationBundle ? 'consultation_bundle' :
+    consultationInformationReply ? 'consultation_information' :
     enrichedPlan.reason === "price_initial_information"
       ? "initial_information"
       : enrichedPlan.reason === "lifting_price_range_direct" &&
@@ -779,7 +802,9 @@ export async function processHumanResumeJob(
           ? "lipo_papada_range"
         : "";
   const approvedPriceReplyCode = consultationBundle?.candidate.decision.replyCode || (
-    approvedPriceReplyKind === "lifting_range"
+    approvedPriceReplyKind === 'consultation_information'
+      ? 'AMANDA-CONSULTA-INFO-01'
+    : approvedPriceReplyKind === "lifting_range"
       ? "LIFTING-PRICE-RANGE-01"
       : approvedPriceReplyKind === "otoplasty_range"
         ? "OTOPLASTY-PRICE-RANGE-01"
@@ -788,7 +813,7 @@ export async function processHumanResumeJob(
       : approvedPriceReplyKind === "initial_information"
         ? "SURGICAL-PRICE-INITIAL-01"
         : "");
-  const approvedPriceReply = consultationBundle?.body || acceptedProcedurePriceReply?.decision.suggestedReply || (
+  const approvedPriceReply = consultationBundle?.body || consultationInformationReply || acceptedProcedurePriceReply?.decision.suggestedReply || (
     approvedPriceReplyKind === "initial_information"
       ? buildSurgicalInitialPriceReply({
           patientName: job.patientName,
@@ -882,7 +907,7 @@ export async function processHumanResumeJob(
   const deterministicReplyContextMismatch = Boolean(
     approvedPriceReplyCandidate &&
       aiResult.status === "completed" &&
-      (consultationBundle && aiResult.decision?.route === 'standard_reply' || ["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01"].includes(
+      ((consultationBundle || consultationInformationReply) && aiResult.decision?.route === 'standard_reply' || ["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01"].includes(
         aiResult.decision?.replyCode,
       )) &&
       !approvedPriceReplyConfirmed,

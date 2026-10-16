@@ -16,6 +16,45 @@ const ACTIVE_ENV = {
 const INITIAL_PRICE_REPLY =
   "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 
+for (const scenario of ['approved', 'invalid_amount', 'semantic_veto', 'new_human']) {
+  test(`consultation price after human outreach uses the canonical preview: ${scenario}`, async () => {
+    const deps = dependencies();
+    let preview = '';
+    deps.runOpenAIShadowImpl = async input => {
+      preview = input.policyHints.deterministicReplyPreview;
+      assert.equal(input.policyHints.deterministicReplyCode, 'AMANDA-CONSULTA-INFO-01');
+      assert.match(preview, /A consulta presencial com a Dra\. Amanda custa R\$ 500\./);
+      assert.doesNotMatch(preview, /Quais dias|Sou a Bruna|Na avaliação/);
+      return {status:'completed', decision:{route:scenario === 'semantic_veto' ? 'human_review' : 'standard_reply',
+        confidence:'high', automaticAllowed:scenario !== 'semantic_veto', urgent:false, professional:'amanda',
+        procedure:'lifting_facial', replyCode:'AMANDA-CONSULTA-INFO-01', replyWording:'contextual',
+        suggestedReply:scenario === 'invalid_amount' ? 'A avaliação custa R$ 700.' : preview,
+        reviewReason:scenario === 'semantic_veto' ? 'needs_human_review' : ''}};
+    };
+    if (scenario === 'new_human') deps.readConversationTurnsImpl = async () => ({status:'completed', turns:[
+      {role:'assistant', source:'equipe_humana', text:'Já respondi à dúvida.', at:'2026-07-28T15:20:00Z'},
+    ]});
+    const result = await processHumanResumeJob(job({text:'Quanto custa a avaliação de vocês?', recentConversation:[
+      {role:'assistant', source:'equipe_humana', text:'Na consulta, a Dra. Amanda avalia o rosto e explica as possibilidades. Ficou alguma dúvida sobre a avaliação?', at:'2026-07-28T14:50:00Z'},
+    ]}), {env:ACTIVE_ENV, now:NOW, ...deps});
+    if (scenario === 'semantic_veto') {
+      assert.equal(result.status, 'waiting_human');
+      assert.ok(deps.alerts.length > 0);
+      assert.ok(deps.patientMessages.every(message => !/R\$/.test(message.body)));
+      return;
+    }
+    if (scenario === 'new_human') {
+      assert.equal(deps.patientMessages.length, 0, JSON.stringify(result));
+      return;
+    }
+    assert.equal(deps.patientMessages.length, 1, JSON.stringify(result));
+    assert.equal(deps.patientMessages[0].body, preview);
+    assert.doesNotMatch(deps.patientMessages[0].body, /R\$ 700/);
+    assert.equal(deps.alerts.length, 0);
+    assert.equal(result.status, 'bruna_resumed');
+  });
+}
+
 test('resumed teleconsultation price uses the approved bundle without creating human pending work',async()=>{
   const deps=dependencies();
   deps.runOpenAIShadowImpl=async payload=>({status:'completed',decision:{route:'standard_reply',confidence:'high',automaticAllowed:true,urgent:false,

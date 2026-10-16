@@ -1,69 +1,105 @@
 {
   "schemaVersion": 1,
-  "changeId": "RETOMADAS-MANUAIS-2026-10-16",
-  "title": "Registrar a execução individual das retomadas e reconciliar o Plano Executivo",
-  "status": "published_verified",
-  "baseCommit": "6980c8281b0acaf03b744344e1809f996d810a60",
+  "changeId": "BRUNA-CONTINUIDADE-RETOMADAS-2026-10-16",
+  "title": "Restabelecer resposta canônica de consulta após atendimento humano",
+  "status": "tested_local",
+  "baseCommit": "1219ec81a85bb0e64340b658a2a405b96a528298",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Autorização expressa do pedido atual cobre execução individual, encerramento da continuidade e atualização do Plano e da mesma projeção Drive. O preflight vincula o commit documental D a esse escopo; não é autorização para publicar runtime."
+    "note": "Daniel pediu corrigir, publicar e continuar as respostas conhecidas. O preflight vinculará essa autorização ao commit exato; não autoriza novo lote ou alteração de campanha."
   },
   "risk": {
     "level": "high",
-    "patientEffects": false,
-    "externalWritesPerformed": true,
-    "note": "Efeito documental externo: substituição da mesma projeção Drive, com readback igual ao commit D. A operação manual foi encerrada e possui recibos privados. Nenhuma nova publicação de runtime."
+    "patientEffects": true,
+    "externalWritesPerformed": false,
+    "note": "Uma composição já aprovada passa a ser consumida também pelo processador após atendimento humano. Sem ampliar valores, posse, horário, consentimento, transporte ou filas."
   },
   "scope": {
     "files": [
-      "auditorias/bruna-prefill-preco-2026-10-16/PUBLICACAO.json",
-      "auditorias/retomadas-manuais-2026-10-16/PUBLICACAO.json",
+      "auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json",
+      "auditorias/bruna-continuidade-retomadas-2026-10-16/RELATORIO.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
+      "docs/estrategia-abordagem-bruna.md",
+      "netlify/functions/human-resume.mjs",
+      "netlify/functions/lib/bruna-policy/CHANGELOG.md",
+      "netlify/functions/lib/bruna-policy/manifest.json",
+      "netlify/functions/lib/human-resume-processor.test.mjs",
       "ops/CHANGE-CANDIDATE.json",
       "ops/IMPACT-REGISTRY.json"
     ],
     "contracts": [
       "change-governance",
+      "bruna-conversation-safety",
       "bruna-regression-governance"
     ],
-    "note": "Seis arquivos. Normalizar aliases factuais do recibo técnico já publicado e corrigir a contagem exata 25 no teste; criar recibo próprio do lote operacional. Sem alteração de runtime, manual, manifesto, preços, classificações, Ads ou agendas."
+    "note": "Correção limitada à prévia canônica de consulta no processador de continuidade, regressões e documentação. Regras de mídia e reservas clínicas permanecem humanas."
   },
   "impact": {
     "consumers": [
       "AGENTS.md",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "apps-script/clinica-liv-leads/Code.gs",
+      "apps-script/clinica-liv-leads/LeadClassification.gs",
+      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
+      "apps-script/clinica-liv-leads/Retomadas.gs",
+      "netlify/functions/human-resume.mjs",
+      "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/lead-classifier.mjs",
+      "netlify/functions/lib/whatsapp-automation.mjs",
+      "netlify/functions/ycloud-webhook.mjs",
+      "netlify/functions/lib/patient-replies.mjs",
+      "netlify/functions/lib/surgical-price-review.mjs",
+      "netlify/functions/lib/appointment-suggestions.mjs",
+      "netlify/functions/lib/appointment-confirmation.mjs",
+      "netlify/functions/lib/extreme-night-policy.mjs",
+      "netlify/functions/lib/knowledge-learning.mjs",
+      "netlify/functions/lib/consultation-question-bundle.mjs",
+      "netlify/functions/lib/lifting-information.mjs",
+      "netlify/functions/lib/openai-shadow.mjs",
+      "netlify/functions/lib/professional-fact-review.mjs",
+      "netlify/functions/appointment-review.mjs",
+      "netlify/functions/lib/inbound-message-kind.mjs",
+      "netlify/functions/lib/extract-inbound-text.mjs",
+      "netlify/functions/lib/bruna-conversion-experience.mjs",
+      "netlify/functions/lib/outbound-reply-gate.mjs",
+      "netlify/functions/lib/knowledge-wording.mjs",
+      "netlify/functions/lib/semantic-reply-policy.mjs",
       "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
       "netlify/functions/lib/bruna-policy/rules.jsonl"
     ],
     "preservedInvariants": [
-      "Cada envio exige identidade, profissional, conversa atual, preferências, cuidado, responsabilidade e duplicidade conferidos no WhatsApp oficial.",
-      "Um contato por destinatário nesta rodada; o envio anterior de 15/10 às 18h49 permanece fora do novo lote.",
-      "Preparado, tentado, submetido, enviado e entregue têm contagens separadas; ausência de prova é N/D.",
-      "O contato original do incidente, se respondido, fica separado do denominador 78.",
-      "Recibo do incidente prova somente sua publicação técnica; este lote possui autorização, contagens, evidências e recibo próprios.",
-      "Runtime 478a8d4, Netlify 6ad1ec48cbd7eeb7c47f6351, Apps Script 165, manifesto e projeção do manual permanecem inalterados.",
-      "Nenhum dado pessoal, telefone/hash, mensagem, ID de oportunidade/provedor, segredo ou caminho privado entra no repositório.",
-      "A continuidade única foi colocada em PAUSED com recibo atual; a rotina periódica de supervisão permanece separada.",
-      "Estado published_verified somente após commit documental, mesma projeção Drive relida e recibo próprio; nenhuma simulação de publicação."
+      "A espera humana de dez minutos, nova atividade, opt-out, cuidado, pendências e janela continuam revalidados antes do envio.",
+      "O modelo precisa confirmar código, profissional e procedimento; veto semântico não é contornado.",
+      "Preço da consulta continua R$500; nenhum novo preço, desconto, cobertura de convênio, indicação ou confirmação de agenda.",
+      "O gate monetário permanece intacto; a resposta usa os mesmos fatos canônicos já aprovados no webhook.",
+      "Nenhum replay de evento concluído, limpeza de recibo, reenvio de retomada ou mudança de fase/Google Ads.",
+      "Identidades e conversas reais ficam somente nas evidências privadas; testes usam cenários sintéticos.",
+      "As respostas manuais desta tarefa são verificadas na interface e registradas separadamente do lote anterior."
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "change-governance",
         "status": "verified",
-        "source": "git status, rev-parse e ls-remote; snapshots canônicos de LEADS/CRM/mensagens/operação em 16/10",
-        "observedAt": "2026-10-16T12:47:44Z",
-        "evidence": "No preflight, worktree limpo e HEAD/origin/remoto em 6980c828. Fontes operacionais relidas em 09h36–09h39BRT; a rodada ainda estava em andamento naquele corte. O resultado final e o readback da continuidade estão no recibo próprio deste lote."
+        "source": "Git, Netlify observabilidade, WhatsApp oficial, LEADS/CRM e alerta operacional autenticados",
+        "observedAt": "2026-10-16T14:12:51Z",
+        "evidence": "HEAD e remoto1219ec81 limpos; runtime478a8d4/deploy6ad1ec48. Worker executou a continuidade, com bloqueio unapproved_monetary_amount confirmado no alerta. Teste sintético reproduziu ausência de prévia de consulta: três falhas e um bloqueio humano preservado. Sem acesso à redação bruta rejeitada; não atribuir uma formulação específica ao modelo."
+      },
+      {
+        "contract": "bruna-conversation-safety",
+        "status": "verified",
+        "source": "Git, Netlify observabilidade, WhatsApp oficial, LEADS/CRM e alerta operacional autenticados",
+        "observedAt": "2026-10-16T14:12:51Z",
+        "evidence": "HEAD e remoto1219ec81 limpos; runtime478a8d4/deploy6ad1ec48. Worker executou a continuidade, com bloqueio unapproved_monetary_amount confirmado no alerta. Teste sintético reproduziu ausência de prévia de consulta: três falhas e um bloqueio humano preservado. Sem acesso à redação bruta rejeitada; não atribuir uma formulação específica ao modelo."
       },
       {
         "contract": "bruna-regression-governance",
         "status": "verified",
-        "source": "Manifesto e recibo de produção do incidente anterior; teste local somente leitura",
-        "observedAt": "2026-10-16T12:47:44Z",
-        "evidence": "Manifesto já publicado exige 25 cenários; recibo confirma 25/25, 2 históricos, 3/3 áudios. Teste basal reproduziu 25!==21; aliases ausentes no recibo impedem candidato independente. Não houve nova chamada paga ou nova publicação."
+        "source": "Git, Netlify observabilidade, WhatsApp oficial, LEADS/CRM e alerta operacional autenticados",
+        "observedAt": "2026-10-16T14:12:51Z",
+        "evidence": "HEAD e remoto1219ec81 limpos; runtime478a8d4/deploy6ad1ec48. Worker executou a continuidade, com bloqueio unapproved_monetary_amount confirmado no alerta. Teste sintético reproduziu ausência de prévia de consulta: três falhas e um bloqueio humano preservado. Sem acesso à redação bruta rejeitada; não atribuir uma formulação específica ao modelo."
       }
     ]
   },
@@ -73,93 +109,81 @@
       "npm.cmd run architecture:check",
       "npm.cmd run change:check",
       "npm.cmd test",
+      "node --test netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+      "node --test netlify/functions/lib/bruna-autonomia.integration.test.mjs apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-preco-direto.integration.test.mjs netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/price-journey.integration.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
+      "node --test netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-procedimento-contextual.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-procedimento-preco-recuperacao.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
+      "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+      "node --test netlify/functions/lib/interaction-continuity.test.mjs",
+      "node --test netlify/functions/lib/knowledge-learning.test.mjs",
+      "node --test netlify/functions/lib/overnight-webhook.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs",
+      "node --test netlify/functions/lib/protected-facts.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs",
       "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
       "node --test scripts/check-bruna-model-live.test.mjs",
-      "node --test scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
+      "npm.cmd run site:build",
+      "npm.cmd run site:check",
       "npm.cmd run ops:check"
     ],
     "status": "passed_local",
     "results": {
-      "fullSuite": "2303/2303 passed",
-      "focusedGovernance": "15/15 passed",
-      "crossConsumersAndModelHarnessOffline": "112/112 passed",
-      "changeCheck": "passed; exact six-file scope",
-      "architectureCheck": "passed",
-      "diffCheck": "passed",
-      "independentReview": "passed; no open blocker in the six-file documentary delta",
-      "opsCheck": "Preflight local SYNC_PENDING confirmado; verificação final após commit e integração registrada no fechamento da tarefa."
-    },
-    "note": "Testes locais e gates aprovados; rodada concluída com adiamentos; continuidade PAUSED com readback; Plano de D substituído no mesmo Drive ID e igual em bytes/SHA256. ops:check final é executado após commit e integração na branch canônica limpa."
+      "reproduction": "3/4 casos falharam no baseline por prévia ausente; nova saída humana já bloqueava corretamente.",
+      "focused": "239/239 passed; includes4new cases; semantic veto permits only the existing receipt after alert, never the answer price",
+      "fullSuite": "2307/2307 passed, including every declared contract test file",
+      "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
+      "change": "CHANGE_SAFETY_STATUS=OK;10exact files",
+      "artifact": "193files;54pages;sitecheck passed",
+      "ops": "SYNC_PENDING expected while publication and Drive receipts remain pending"
+    }
   },
-  "externalChecksPending": [],
+  "externalChecksPending": [
+    "Publicação do commit exato no Netlify com os gates hospedados existentes",
+    "Readback do deploy e sondas sem efeitos",
+    "Mesmas projeções Drive do Plano e manual"
+  ],
   "rollback": {
-    "local": "Reverter somente o delta documental/teste deste candidato por novo commit, preservando trabalho paralelo e recibos históricos.",
-    "production": "Não há publicação de runtime neste pacote. Se o registro estiver errado, corrigir a documentação e a mesma projeção por novo commit. Não apagar mensagens, dados ou evidências; mensagem enviada não é reversível por rollback técnico."
+    "local": "Reverter somente a composição adicionada neste pacote, por novo commit, preservando alterações paralelas.",
+    "production": "Novo build do delta reverso para comportamento478a8d4/deploy6ad1ec48; nunca apagar dados ou recibos, reexecutar webhook ou repetir mensagem."
   },
   "monitoring": {
-    "owner": "Daniel/equipe, com execução individual pelo agente principal nesta conversa",
-    "window": "Rodada encerrada em 16/10; acompanhamento das duas demandas administrativas sem resposta posterior, das preferências de localização, dos dois adiamentos e da divergência de espelhamento pela equipe e supervisão periódica existente.",
+    "owner": "Daniel/equipe; Aníbal nesta conversa",
+    "window": "Primeiro ciclo natural elegível, 48h e revisão22/10 pela rotina existente",
     "signals": [
-      "Interromper o item diante de nova resposta, pausa, recusa, cuidado ativo ou ambiguidade de identidade.",
-      "Registrar efeitos reais e entrega observável sem inferir conversão.",
-      "Manter a continuidade única PAUSED; nenhum adiamento autoriza reenvio automático.",
-      "Revisar uma entrada não espelhada em conversa fora do lote, sem inventar evento ou reprocessar webhook.",
-      "Acompanhar pelo fluxo existente os 61 arquivos de conversa ainda não observados no corte do Drive; não inferir perda nem reenviar mensagens."
+      "Bloqueios monetários indevidos",
+      "Perguntas respondidas por completo sem repetição",
+      "Nenhum conflito com atendimento humano, preço não aprovado ou mensagem duplicada",
+      "Imagem e decisões clínicas continuam com revisão humana"
     ]
   },
   "baselineCandidateReference": {
-    "commit": "6980c8281b0acaf03b744344e1809f996d810a60",
+    "commit": "1219ec81a85bb0e64340b658a2a405b96a528298",
     "path": "ops/CHANGE-CANDIDATE.json",
-    "note": "Candidato técnico do incidente preservado por ancestralidade e pelo seu próprio recibo."
+    "note": "Lote anterior fechado e continuidade única PAUSED; recibos preservados por ancestralidade."
   },
   "runtimeBaseline": {
-    "changed": false,
+    "changed": true,
     "approvedCommit": "478a8d4a28ae097157a310cdb166b1f69f865055",
     "netlifyDeployId": "6ad1ec48cbd7eeb7c47f6351",
-    "appsScriptVersion": 165,
-    "receiptPath": "auditorias/bruna-prefill-preco-2026-10-16/PUBLICACAO.json",
-    "observedAt": "2026-10-16T09:24:50.627Z",
-    "note": "Referência histórica herdada; não é prova de envio deste lote nem declaração de nova publicação."
-  },
-  "operationalExecution": {
-    "status": "completed_with_deferrals",
-    "receiptPath": "auditorias/retomadas-manuais-2026-10-16/PUBLICACAO.json",
-    "prepared": 78,
-    "finalCountsAvailable": true,
-    "reviewedInLeadsCrm": 78,
-    "reviewedInChannel": 77,
-    "attempted": 76,
-    "submitted": 76,
-    "sentObserved": 76,
-    "deliveredObservedInclusive": 56,
-    "readObserved": 3,
-    "readCountIsObservedMinimum": true,
-    "sentOnlyObserved": 20,
-    "deferred": 2,
-    "failed": 0,
-    "automaticPending": 0,
-    "oneOffFinalState": "PAUSED"
+    "appsScriptVersion": 165
   },
   "documentationCloseout": {
-    "status": "written_verified",
+    "status": "pending",
     "canonicalLocalPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-    "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "sourceCommit": "cf8158dd7082e211659ec5e1e4e36af0e2636db2",
-    "sameFileDriveReadback": true,
-    "executivePlanSha256": "204244a988ab5db3ef6ac4b22e7aec8b4e56026663d2b69f03cbaf2c716bb6a0",
-    "readbackAt": "2026-10-16T13:54:20.7685845Z",
-    "bytes": 47056,
-    "beforeRevision": "0B1ooePcDNIPVdEtvTjRZNm82VTBKZ2ZEbkN6Yit6YlAvRXVFPQ",
-    "afterRevision": "0B1ooePcDNIPVSGtJVEo5RXdGZjNMZzFyK0YrTlpmTnM4bVlnPQ"
+    "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO"
   },
   "release": {
-    "approvedCommit": "cf8158dd7082e211659ec5e1e4e36af0e2636db2",
-    "documentationSourceCommit": "cf8158dd7082e211659ec5e1e4e36af0e2636db2",
-    "receiptPath": "auditorias/retomadas-manuais-2026-10-16/PUBLICACAO.json",
-    "netlifyDeployId": "6ad1ec48cbd7eeb7c47f6351",
-    "appsScriptVersion": 165,
-    "verifiedAt": "2026-10-16T13:54:20.7685845Z",
-    "drivePlanSha256": "204244a988ab5db3ef6ac4b22e7aec8b4e56026663d2b69f03cbaf2c716bb6a0",
-    "note": "Publicação somente documental. Netlify e Apps Script são baselines herdados, sem republicação."
+    "status": "pending",
+    "receiptPath": "auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json"
   }
 }

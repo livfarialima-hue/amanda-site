@@ -273,7 +273,9 @@
         "scripts/check-journey-module-boundaries.mjs",
         "scripts/check-operational-consistency.mjs",
         "scripts/check-operational-consistency.test.mjs",
-        "scripts/run-tests.mjs"
+        "scripts/run-tests.mjs",
+        "auditorias/bruna-continuidade-retomadas-2026-10-16/RELATORIO.md",
+        "auditorias/bruna-continuidade-retomadas-2026-10-16/PUBLICACAO.json"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",

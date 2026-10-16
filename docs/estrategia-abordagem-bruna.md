@@ -1,5 +1,9 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+## Continuidade após atendimento humano — candidato16/10/2026
+
+A pergunta isolada sobre a consulta ou seu valor deve receber os mesmos fatos aprovados também na continuidade após atendimento humano: human-resume consome patient-replies, com confirmação semântica e seleção protegida. Não reinicia apresentação nem repete a explicação já dada. Dez minutos de preferência humana, janela, novas atividades, pendências, opt-out e gate final continuam obrigatórios. Imagens de convênio não autorizam análise de cobertura: informações administrativas confirmadas podem ser respondidas manualmente pela equipe. Este ajuste não amplia preços, agenda, mídia ou autonomia.
+
 ## Pedido de faixa no primeiro contato — publicado em 16/10/2026
 
 Commit funcional aprovado 478a8d4a28ae097157a310cdb166b1f69f865055; Netlify de produção 6ad1ec48cbd7eeb7c47f6351, READY e publicado em 2026-10-16T09:24:24.822Z (06h24 BRT). O log real confirmou25/25 cenários, dois históricos completos e3/3 áudios em 2026-10-16T09:24:08.686Z; primeiro pedido de faixa sem nome/histórico respondeu com uma chamada e gate aprovado. 2303/2303 testes locais. Quinze funções e seis programações preservadas. Domínio e URL imutável tiveram página/saúde200 e rejeição de POST sem assinatura401 em 2026-10-16T09:24:50.627Z. Apps Script v165 preservado, sem republicação. Rollback restrito por novo commit/build para4a21792bc311c8220eb9908204e6fa80d6098847 /6ad15ebcc63792b19f648797, mantendo dados, filas e recibos; sem replay. Igualdade das mesmas projeções Drive e fechamento final são registrados em auditorias/bruna-prefill-preco-2026-10-16/PUBLICACAO.json. Publicação técnica não comprova resposta entregue ao contato original nem nova conversa natural.
@@ -118,7 +122,7 @@ O histórico documental integral anterior foi arquivado em área restrita. Esta 
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste conteúdo. Estratégia de aquisição e estado vivo seguem suas fontes próprias.
 
-**Versão:** 2026-10-16.1
+**Versão:** 2026-10-16.2
 
 Projeção ativa: 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF. O identificador não concede acesso; as permissões existentes são preservadas.
 

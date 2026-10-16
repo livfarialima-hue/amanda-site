@@ -1,0 +1,25 @@
+{
+  "changeId": "BRUNA-CONTINUIDADE-RETOMADAS-2026-10-16",
+  "status": "tested_local",
+  "bundleVersion": "2026-10-16.2",
+  "runtimeBaseline": {
+    "commit": "478a8d4a28ae097157a310cdb166b1f69f865055",
+    "deployId": "6ad1ec48cbd7eeb7c47f6351",
+    "appsScriptVersion": 165
+  },
+  "manualContinuation": {
+    "answered": 3,
+    "deliveryObserved": 3,
+    "automaticReplay": false
+  },
+  "note": "Recibos serão preenchidos somente após efeitos verificados.",
+  "localValidation": {
+    "reproduction": "3/4 casos falharam no baseline por prévia ausente; nova saída humana já bloqueava corretamente.",
+    "focused": "239/239 passed; includes4new cases; semantic veto permits only the existing receipt after alert, never the answer price",
+    "fullSuite": "2307/2307 passed, including every declared contract test file",
+    "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
+    "change": "CHANGE_SAFETY_STATUS=OK;10exact files",
+    "artifact": "193files;54pages;sitecheck passed",
+    "ops": "SYNC_PENDING expected while publication and Drive receipts remain pending"
+  }
+}
