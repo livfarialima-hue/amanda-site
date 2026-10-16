@@ -1,5 +1,11 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+## Primeiro pedido de faixa — publicado em 16/10/2026
+
+Commit funcional aprovado 478a8d4a28ae097157a310cdb166b1f69f865055; Netlify de produção 6ad1ec48cbd7eeb7c47f6351, READY e publicado em 2026-10-16T09:24:24.822Z (06h24 BRT). O log real confirmou25/25 cenários, dois históricos completos e3/3 áudios em 2026-10-16T09:24:08.686Z; primeiro pedido de faixa sem nome/histórico respondeu com uma chamada e gate aprovado. 2303/2303 testes locais. Quinze funções e seis programações preservadas. Domínio e URL imutável tiveram página/saúde200 e rejeição de POST sem assinatura401 em 2026-10-16T09:24:50.627Z. Apps Script v165 preservado, sem republicação. Rollback restrito por novo commit/build para4a21792bc311c8220eb9908204e6fa80d6098847 /6ad15ebcc63792b19f648797, mantendo dados, filas e recibos; sem replay. Igualdade das mesmas projeções Drive e fechamento final são registrados em auditorias/bruna-prefill-preco-2026-10-16/PUBLICACAO.json. Publicação técnica não comprova resposta entregue ao contato original nem nova conversa natural.
+
+O marcador do site continua sendo proveniência para classificação; o pedido explícito autorizado pode ser respondido. O guard de apresentação não acrescenta pergunta de nome quando maxQuestions=0. Preservar veto semântico, urgência, tomada humana e envio único. Contato original aguarda resposta humana contextual, com cartão privado; retomadas 78 continuam pausadas.
+
 ## Runtime publicado — revisão de conversas, 15/10/2026
 
 Apps Script **v165** publicado em 15/10/2026 às 20:15 BRT, a partir do commit aprovado `4a21792bc311c8220eb9908204e6fa80d6098847`, no mesmo deployment `AKfycby-ylkJVFEcq5cfABOkazHBIszpissNJh2P8CEqYFMo0Hog5XP-e5KT3bcbSZuBUKX79A`. Projeto e planilha canônicos preservados. Os quatro arquivos alterados foram recarregados e comparados integralmente ao commit com normalização LF. Em `2026-10-15T23:16:04.1644112Z`, saúde GET HTTP 200/`ok:true` e cancelamento com token inválido rejeitado com segurança, HTTP 200. Evidências privadas: `release-source-persisted-comparison.json` e `release-apps-script-v165.json`.

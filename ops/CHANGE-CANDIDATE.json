@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-PREFILL-PRECO-2026-10-16",
   "title": "Responder pedido explicito aprovado no primeiro contato sem criar perguntas incompatíveis",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "80cea30fbdeeb46ecfee8a4bb2ec643a11d9fdae",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "note": "Somente interpretacao no adaptador/prompt e cobertura hospedada. Preservar veto semantico, precos, classificacao e transporte."
   },
   "scope": {
@@ -24,6 +24,7 @@
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
       "netlify/functions/lib/conversation-guidelines.mjs",
@@ -42,7 +43,7 @@
       "bruna-model-runtime",
       "bruna-global-price-reference"
     ],
-    "note": "Uma decisao: o marcador de proveniencia nao deve suprimir pedido explicito que o owner autorizou. Sem alteracao Apps Script, Ads, site ou estado de paciente. O guard de apresentacao respeita maxQuestions=0 ao acrescentar pergunta de nome; contrato e veto final preservados."
+    "note": "Uma decisao: o marcador de proveniencia nao deve suprimir pedido explicito que o owner autorizou. Sem alteracao Apps Script, Ads, site ou estado de paciente. O guard de apresentacao respeita maxQuestions=0 ao acrescentar pergunta de nome; contrato e veto final preservados. Fechamento acrescenta somente manual operacional (16 paths acumulados); nenhum runtime novo apos478a8d4."
   },
   "impact": {
     "consumers": [
@@ -185,7 +186,7 @@
       "npm.cmd run ops:check"
     ],
     "status": "passed_local",
-    "note": "2303/2303 testes integrais locais;133 focados do adaptador e228 testes independentes sobrepostos. Build/check193arquivos/54URLs semerro. change:check15paths, arquitetura e diffcheckOK. Modelo25cenarios/audio3 aguardam build hospedado; nenhuma chamada local real e zero mensagens de paciente."
+    "note": "2303/2303 testes integrais locais;133 focados do adaptador e228 testes independentes sobrepostos. Build/check193arquivos/54URLs semerro. change:check15paths, arquitetura e diffcheckOK. Modelo25cenarios/audio3 aguardam build hospedado; nenhuma chamada local real e zero mensagens de paciente. Gate hospedado lido diretamente no log:25/25, historicos2, audio3/3; primeiro pedido de faixa aprovado com1chamada. Publicado09:24:24Z; smoke09:24:50Z200/401,15funcoes6programacoes. Igualdade Drive ainda pendente."
   },
   "rollback": {
     "local": "Reverter apenas o delta deste candidato em novo commit; preservar trabalho paralelo.",
@@ -205,5 +206,35 @@
     "commit": "80cea30fbdeeb46ecfee8a4bb2ec643a11d9fdae",
     "path": "ops/CHANGE-CANDIDATE.json",
     "note": "Pacote anterior e recibos preservados por ancestralidade."
+  },
+  "release": {
+    "approvedCommit": "478a8d4a28ae097157a310cdb166b1f69f865055",
+    "netlifyDeployId": "6ad1ec48cbd7eeb7c47f6351",
+    "appsScriptVersion": 165,
+    "verifiedAt": "2026-10-16T09:24:50.627Z",
+    "receiptPath": "auditorias/bruna-prefill-preco-2026-10-16/PUBLICACAO.json",
+    "liveModel": {
+      "status": "passed",
+      "checkedAt": "2026-10-16T09:24:08.686Z",
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "passed": 25,
+      "total": 25,
+      "fullHistoryPassed": 2,
+      "firstPrice": {
+        "passed": true,
+        "modelRequests": 1,
+        "elapsedMs": 10970,
+        "replyCode": "LIFTING-PRICE-RANGE-01",
+        "gateAllowed": true
+      },
+      "audio": {
+        "passed": 3,
+        "total": 3,
+        "model": "whisper-1"
+      },
+      "syntheticOnly": true,
+      "patientMessagesSent": 0
+    }
   }
 }

@@ -15,6 +15,18 @@
     "internalWhatsappAlert": "failed"
   },
   "limits": "O motivo original da decisao semantica foi substituido pelo wrapper. Nao afirmar divergencia de procedimento. Nenhuma escrita ou chamada de teste ao paciente.",
-  "releasePreflight": "pending_fresh_readback",
+  "releasePreflight": {
+    "status": "OK",
+    "approvedCommit": "478a8d4a28ae097157a310cdb166b1f69f865055",
+    "approvedAt": "2026-10-16T09:19:47.9572958Z",
+    "reference": "current-thread:Cheque-pq-nao-entrou-Corrija-e-publique",
+    "liveContactReadbackAt": "2026-10-16T09:19:16Z",
+    "remoteBefore": "80cea30fbdeeb46ecfee8a4bb2ec643a11d9fdae",
+    "driveBefore": {
+      "manualSha256": "dc450be42b637704108575ce304758582d3ac00bf5a37cf9306c2d34d8aa672f",
+      "planSha256": "9c85431605daa1309a04bf04daecba191db0e1e7bb00dae223bb7ea0ca88c11e",
+      "verifiedInBytes": true
+    }
+  },
   "reproducedDefect": "FirstReplyGreetingGuard appended a name question despite maxQuestions=0; real adapter with exact preview entered human_review. Unknown profile and zero history covered."
 }

@@ -1,6 +1,8 @@
 # Arquitetura da jornada da paciente
 
-## Distinção entre proveniência e pedido explícito — 16/10/2026, candidato local
+## Distinção entre proveniência e pedido explícito — 16/10/2026, publicado e verificado
+
+Commit funcional aprovado 478a8d4a28ae097157a310cdb166b1f69f865055; Netlify de produção 6ad1ec48cbd7eeb7c47f6351, READY e publicado em 2026-10-16T09:24:24.822Z (06h24 BRT). O log real confirmou25/25 cenários, dois históricos completos e3/3 áudios em 2026-10-16T09:24:08.686Z; primeiro pedido de faixa sem nome/histórico respondeu com uma chamada e gate aprovado. 2303/2303 testes locais. Quinze funções e seis programações preservadas. Domínio e URL imutável tiveram página/saúde200 e rejeição de POST sem assinatura401 em 2026-10-16T09:24:50.627Z. Apps Script v165 preservado, sem republicação. Rollback restrito por novo commit/build para4a21792bc311c8220eb9908204e6fa80d6098847 /6ad15ebcc63792b19f648797, mantendo dados, filas e recibos; sem replay. Igualdade das mesmas projeções Drive e fechamento final são registrados em auditorias/bruna-prefill-preco-2026-10-16/PUBLICACAO.json. Publicação técnica não comprova resposta entregue ao contato original nem nova conversa natural.
 
 **Falha reproduzida no adaptador:** no primeiro contato sem nome pessoal utilizável, o guard de apresentação acrescentava “Como posso te chamar?” mesmo com maxQuestions=0. Essa pergunta criada pelo próprio código provocava revisão de estilo e podia impedir a resposta aprovada. O guard passa a respeitar o contrato ao acrescentar perguntas, mantendo saudação e apresentação. A regressão usa a prévia integral, sem ajustar o mock para esconder a falha. O motivo bruto do evento natural não foi recuperado; essa reprodução prova o defeito, sem atribuir ao modelo bruto uma decisão não observada.
 
