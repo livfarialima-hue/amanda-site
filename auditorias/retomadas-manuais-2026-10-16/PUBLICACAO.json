@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "changeId": "RETOMADAS-MANUAIS-2026-10-16",
+  "status": "IN_PROGRESS",
+  "statusNote": "Rodada operacional concluída com dois adiamentos; fechamento documental ainda depende do commit e da mesma projeção Drive relida.",
+  "scope": "Execução individual autorizada e fechamento documental do lote; sem nova publicação de runtime.",
+  "baseCommit": "6980c8281b0acaf03b744344e1809f996d810a60",
+  "authorization": {
+    "reference": "current-thread:executar-retomadas-atualizar-plano-e-encerrar-continuidade-unica",
+    "scope": "Conferir cada conversa e enviar pelo WhatsApp oficial; atualizar o Plano existente e sua mesma projeção Drive; encerrar a continuidade única após a rodada.",
+    "documentaryApprovedCommit": null,
+    "documentaryPreflightStatus": "pending"
+  },
+  "operation": {
+    "status": "completed_with_deferrals",
+    "timezone": "America/Sao_Paulo",
+    "date": "2026-10-16",
+    "channel": "WhatsApp Web oficial da Clínica LIV",
+    "executionMode": "individual_with_current_conversation_review",
+    "sendWindowLocal": {
+      "from": "2026-10-16T09:39:00-03:00",
+      "through": "2026-10-16T10:44:00-03:00",
+      "precision": "minute"
+    },
+    "prepared": {
+      "uniqueRecipients": 78,
+      "highPriority": 27,
+      "intermediatePriority": 28,
+      "optionalPriority": 23,
+      "amanda": 77,
+      "danielAdministrative": 1
+    },
+    "finalCounts": {
+      "status": "reconciled",
+      "cutoff": "2026-10-16T13:47:53Z",
+      "ledgerCutoff": "2026-10-16T13:45:36.4039435Z",
+      "reviewedInLeadsCrm": 78,
+      "reviewedInChannel": 77,
+      "channelHistoryUnavailable": 1,
+      "attempted": 76,
+      "submitted": 76,
+      "sentObserved": 76,
+      "deliveredObserved": 56,
+      "deliveredCountIncludesRead": true,
+      "deliveredWithoutReadConfirmation": 53,
+      "readObserved": 3,
+      "readCountIsObservedMinimum": true,
+      "sentOnlyObserved": 20,
+      "deferred": 2,
+      "failed": 0,
+      "notAttempted": 2,
+      "notAttemptedDefinition": "Os mesmos dois itens adiados; não somar novamente ao denominador.",
+      "automaticPending": 0,
+      "sentByProfessional": {
+        "amanda": 75,
+        "danielAdministrative": 1
+      },
+      "note": "O ledger original tinha 55 entregas sem confirmação de leitura e uma leitura. O postflight da interface confirmou mais duas leituras desses itens, preservando 56 entregas inclusivas e 20 apenas enviados."
+    },
+    "deferrals": [
+      {
+        "count": 1,
+        "reason": "Conteúdo de uma saída anterior não recuperável com segurança no export ou na interface.",
+        "action": "Revisão manual; nenhuma tentativa de envio realizada."
+      },
+      {
+        "count": 1,
+        "reason": "Identidade confirmada, mas histórico atual indisponível na interface.",
+        "action": "Revisão manual; nenhuma mensagem digitada ou enviada."
+      }
+    ],
+    "previousMessage": {
+      "date": "2026-10-15",
+      "deliveredAtLocal": "18:49:38",
+      "excludedFromCurrentBatch": true,
+      "note": "Envio anterior já comprovado; não repetir nem contabilizar como novo envio de 16/10."
+    },
+    "originalIncidentContact": {
+      "outsideBatchDenominator": true,
+      "status": "not_contacted_in_this_round"
+    },
+    "privateEvidence": {
+      "location": "Espaço privado autenticado da tarefa; identidades e mensagens fora do repositório.",
+      "finalManifestSha256": "3d973ffa73271a7556e714d1bef8797c16b91f3344ef39c962a9fb590527132e",
+      "reconciliationStatus": "verified",
+      "laterUiReadbackSha256": "0726391695753489cd3d3a7a69acfba2c0cc24223cb701fd61fb9051d385cc9e",
+      "laterUiReadbackAt": "2026-10-16T13:47:53Z"
+    }
+  },
+  "oneOffContinuation": {
+    "id": "executar-retomadas-revisadas-da-cl-nica-liv",
+    "requestedAction": "close_after_execution",
+    "status": "closed_by_pause_verified",
+    "readbackAt": "2026-10-16T13:46:32.0821035Z",
+    "finalState": "PAUSED",
+    "toolUpdateAndReadbackConfirmed": true,
+    "automationTomlSha256": "2db09ef1fe9ecb95082b3ef2217a026cada7be785378d7e713f1a9b6a0eb1b63",
+    "newRoutinesCreated": false,
+    "periodicSupervisionChanged": false
+  },
+  "dataEffects": {
+    "patientMessages": "76 sent observed; 56 delivered inclusive; at least 3 read observed; 2 deferred without sending",
+    "leadClassificationChanged": false,
+    "googleAdsConversionsChanged": false,
+    "appointmentsChanged": false,
+    "webhookReplay": false,
+    "paidAiReviewInvoked": false,
+    "newRuntimePublication": false
+  },
+  "runtimeBaseline": {
+    "changed": false,
+    "approvedCommit": "478a8d4a28ae097157a310cdb166b1f69f865055",
+    "netlifyDeployId": "6ad1ec48cbd7eeb7c47f6351",
+    "appsScriptVersion": 165,
+    "receiptPath": "auditorias/bruna-prefill-preco-2026-10-16/PUBLICACAO.json",
+    "observedAt": "2026-10-16T09:24:50.627Z",
+    "note": "Produção técnica herdada. Seu recibo não comprova mensagens ou fechamento deste lote operacional."
+  },
+  "governanceRepair": {
+    "baselineTest": "6/7; published manifest count 25 differed from hard-coded 21",
+    "change": "Fixar 25 no teste do pacote publicado e exigir o recibo histórico completo ao trocar o candidato ativo; adicionar somente aliases factuais ao recibo do incidente.",
+    "runtimeChanged": false,
+    "verificationStatus": "passed_local",
+    "verification": {
+      "fullSuite": "2303/2303 passed",
+      "focusedGovernance": "15/15 passed",
+      "crossConsumersAndModelHarnessOffline": "112/112 passed",
+      "changeCheck": "passed; exact six-file scope",
+      "architectureCheck": "passed",
+      "diffCheck": "passed",
+      "independentReview": "passed; no open blocker in the six-file documentary delta",
+      "opsCheck": "SYNC_PENDING; expected before commit and Drive readback",
+      "paidCalls": false
+    }
+  },
+  "documentation": {
+    "status": "pending",
+    "sourceCommit": null,
+    "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+    "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "sameExistingFile": true,
+    "beforeRevision": null,
+    "sha256": null,
+    "bytes": null,
+    "readbackAt": null,
+    "equal": false,
+    "manualProjectionChanged": false
+  },
+  "postflight": {
+    "canonicalEchoAndArchive": {
+      "status": "verified_with_partial_archive_coverage",
+      "readStartedAt": "2026-10-16T13:45:42Z",
+      "canonicalReadFinishedAt": "2026-10-16T13:48:44Z",
+      "archiveReadFinishedAt": "2026-10-16T13:49:27Z",
+      "privateReceiptSha256": "0401b8b56c9f561ef684ccc97fc939f6545e68e5729e7165528681d3a1ce9ca9",
+      "expectedSent": 76,
+      "exactOutboundEcho": 76,
+      "humanLedgerEcho": 76,
+      "driveRawArchiveVerified": 15,
+      "driveRawArchiveNotYetObserved": 61,
+      "driveValidation": "Bytes brutos, hash de revisão, identidade, evento e texto correspondentes.",
+      "newInboundEvents": 10,
+      "newInboundContacts": 5,
+      "inboundEventIdentityMatches": 10,
+      "readOnly": true,
+      "note": "Corte único; cobertura parcial do arquivamento assíncrono não prova perda nem cobertura integral. Eco e arquivo comprovam registro, não entrega ou leitura. Não houve polling, replay ou acionamento do worker."
+    },
+    "laterUi": {
+      "checkedAt": "2026-10-16T13:47:53Z",
+      "additionalReadConfirmations": 2,
+      "newPatientMessagesSent": 0,
+      "responsesObserved": 2,
+      "administrativeDemandPendingHumanReply": 1,
+      "locationMismatchReported": 1,
+      "teamAlerted": true
+    },
+    "followupResponses": {
+      "observed": 5,
+      "administrativeDemandsWithoutLaterClinicReply": 2,
+      "locationMismatchesReported": 2,
+      "acknowledgements": 1,
+      "teamAlerted": true,
+      "newMessagesSentByPostflight": 0,
+      "note": "Agregado da interface e do postflight canônico; os dois itens da seção laterUi são parte deste total, não adicionais."
+    },
+    "outOfBatchInboundGap": {
+      "status": "requires_review",
+      "count": 1,
+      "note": "Entrada observada na interface de conversa fora do lote não apareceu nas fontes canônicas consultadas. Verificar espelhamento e necessidade de atendimento; sem evento fabricado, replay ou novo envio automático."
+    }
+  },
+  "limitations": [
+    "Dos 78 contatos preparados, 76 tiveram envio observado e dois foram adiados sem tentativa; nenhum item fica autorizado para envio automático posterior.",
+    "Entregas incluem leituras; três leituras são o mínimo comprovado, não o total de pessoas que necessariamente leram. Vinte itens têm somente envio observado no corte.",
+    "A continuidade única está PAUSED com readback; a supervisão periódica é independente e não foi alterada.",
+    "O postflight confirmou todos os ecos, mas somente 15 dos 76 arquivos brutos foram observados e validados no corte; 61 permanecem para acompanhamento pelo fluxo existente, sem inferir perda ou reenviar.",
+    "Não houve reclassificação integral do CRM, varredura de todo o arquivo histórico ou interpretação da imagem recebida; respostas não implicam consulta, qualificação, conversão ou elegibilidade Ads.",
+    "Este recibo ainda não tem commit documental aprovado nem igualdade da projeção Drive."
+  ]
+}

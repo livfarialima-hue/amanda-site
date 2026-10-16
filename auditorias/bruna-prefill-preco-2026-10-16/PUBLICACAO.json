@@ -172,5 +172,13 @@
     "changeCheck": "passed_16_paths",
     "architecture": "passed",
     "runtimeUnchangedAfterApprovedCommit": true
+  },
+  "bundleVersion": "2026-10-16.1",
+  "netlifyDeployId": "6ad1ec48cbd7eeb7c47f6351",
+  "liveAudio": {
+    "status": "passed",
+    "passed": 3,
+    "total": 3,
+    "model": "whisper-1"
   }
 }

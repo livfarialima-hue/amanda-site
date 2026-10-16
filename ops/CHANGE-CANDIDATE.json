@@ -1,145 +1,69 @@
 {
   "schemaVersion": 1,
-  "changeId": "BRUNA-PREFILL-PRECO-2026-10-16",
-  "title": "Responder pedido explicito aprovado no primeiro contato sem criar perguntas incompatíveis",
-  "status": "published_verified",
-  "baseCommit": "80cea30fbdeeb46ecfee8a4bb2ec643a11d9fdae",
+  "changeId": "RETOMADAS-MANUAIS-2026-10-16",
+  "title": "Registrar a execução individual das retomadas e reconciliar o Plano Executivo",
+  "status": "implementing_local",
+  "baseCommit": "6980c8281b0acaf03b744344e1809f996d810a60",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel pediu Cheque pq nao entrou. Corrija e publique nesta conversa. Autorizacao sera vinculada ao SHA exato no preflight externo."
+    "note": "Daniel autorizou nesta conversa executar as retomadas revisadas, atualizar o Plano e a mesma projeção Drive e encerrar a continuidade única. O commit documental exato será vinculado no preflight externo; a autorização do incidente anterior não cobre este recibo."
   },
   "risk": {
     "level": "high",
-    "patientEffects": true,
-    "externalWritesPerformed": true,
-    "note": "Somente interpretacao no adaptador/prompt e cobertura hospedada. Preservar veto semantico, precos, classificacao e transporte."
+    "patientEffects": false,
+    "externalWritesPerformed": false,
+    "note": "A operação manual registrada envolve pacientes e ocorre separadamente pelo responsável autorizado. Este candidato altera somente documentação, recibos e teste de governança; não envia mensagens, altera dados de pacientes nem publica runtime. A projeção Drive ainda não foi escrita."
   },
   "scope": {
     "files": [
-      "auditorias/bruna-prefill-preco-2026-10-16/PREFLIGHT.json",
       "auditorias/bruna-prefill-preco-2026-10-16/PUBLICACAO.json",
-      "auditorias/bruna-prefill-preco-2026-10-16/RELATORIO.md",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "auditorias/retomadas-manuais-2026-10-16/PUBLICACAO.json",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-      "docs/estrategia-abordagem-bruna.md",
-      "docs/whatsapp-clinica-liv-operacao.md",
-      "netlify/functions/lib/bruna-policy/manifest.json",
-      "netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
-      "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/openai-shadow.mjs",
-      "netlify/functions/lib/openai-shadow.test.mjs",
+      "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "scripts/check-bruna-model-live.mjs",
-      "scripts/check-bruna-model-live.test.mjs"
+      "ops/IMPACT-REGISTRY.json"
     ],
     "contracts": [
       "change-governance",
-      "bruna-conversation-safety",
-      "bruna-conversion-experience",
-      "bruna-regression-governance",
-      "bruna-model-runtime",
-      "bruna-global-price-reference"
+      "bruna-regression-governance"
     ],
-    "note": "Uma decisao: o marcador de proveniencia nao deve suprimir pedido explicito que o owner autorizou. Sem alteracao Apps Script, Ads, site ou estado de paciente. O guard de apresentacao respeita maxQuestions=0 ao acrescentar pergunta de nome; contrato e veto final preservados. Fechamento acrescenta somente manual operacional (16 paths acumulados); nenhum runtime novo apos478a8d4."
+    "note": "Seis arquivos. Normalizar aliases factuais do recibo técnico já publicado e corrigir a contagem exata 25 no teste; criar recibo próprio do lote operacional. Sem alteração de runtime, manual, manifesto, preços, classificações, Ads ou agendas."
   },
   "impact": {
     "consumers": [
       "AGENTS.md",
-      "apps-script/clinica-liv-leads/Code.gs",
-      "apps-script/clinica-liv-leads/LeadClassification.gs",
-      "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
-      "apps-script/clinica-liv-leads/Retomadas.gs",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
-      "netlify.toml",
-      "netlify/functions/appointment-review.mjs",
-      "netlify/functions/classify-leads-background.mjs",
-      "netlify/functions/classify-leads.mjs",
-      "netlify/functions/human-resume.mjs",
-      "netlify/functions/lib/appointment-confirmation.mjs",
-      "netlify/functions/lib/appointment-suggestions.mjs",
-      "netlify/functions/lib/bruna-conversion-experience.mjs",
       "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-      "netlify/functions/lib/bruna-policy/rules.jsonl",
-      "netlify/functions/lib/consultation-question-bundle.mjs",
-      "netlify/functions/lib/conversation-action-controller.mjs",
-      "netlify/functions/lib/conversation-guidelines.mjs",
-      "netlify/functions/lib/extract-inbound-text.mjs",
-      "netlify/functions/lib/extreme-night-policy.mjs",
-      "netlify/functions/lib/human-resume-processor.mjs",
-      "netlify/functions/lib/inbound-message-kind.mjs",
-      "netlify/functions/lib/knowledge-learning.mjs",
-      "netlify/functions/lib/knowledge-wording.mjs",
-      "netlify/functions/lib/lead-classifier.mjs",
-      "netlify/functions/lib/lifting-information.mjs",
-      "netlify/functions/lib/openai-shadow.mjs",
-      "netlify/functions/lib/outbound-reply-gate.mjs",
-      "netlify/functions/lib/patient-replies.mjs",
-      "netlify/functions/lib/professional-fact-review.mjs",
-      "netlify/functions/lib/scheduled-followup-context-review.mjs",
-      "netlify/functions/lib/semantic-reply-policy.mjs",
-      "netlify/functions/lib/surgical-price-review.mjs",
-      "netlify/functions/lib/whatsapp-automation.mjs",
-      "netlify/functions/scheduled-followup.mjs",
-      "netlify/functions/ycloud-webhook.mjs",
-      "scripts/check-bruna-model-live.mjs"
+      "netlify/functions/lib/bruna-policy/rules.jsonl"
     ],
     "preservedInvariants": [
-      "Prefill isolado continua Novo e nao gera conversao qualificada Google Ads.",
-      "Resposta informativa nao confirma interesse pessoal, consulta, indicacao, cirurgia nem pagamento.",
-      "Somente owner de preco vigente autoriza procedimento/faixa; template ou origem sozinhos nao autorizam numero.",
-      "Confirmacao semantica, urgencia, cuidado ativo, tomada humana, opt-out, prazo e idempotencia preservados.",
-      "Sem reprocessar contato real, resetar recovery, reenviar mensagem ou fabricar evento.",
-      "Primeiro contato generico segue abertura breve; dado ausente nao inventa identidade, procedimento, valor ou agenda.",
-      "PII, conteudo real identificavel e segredos permanecem fora do repositorio.",
-      "Apps Script v165, campanhas, atribuicao, classificacao, arquivos e retomadas pendentes preservados.",
-      "Apresentacao permanece no primeiro contato; ausencia de nome nao acrescenta pergunta quando contrato proibe perguntas. Nenhuma resposta da IA ganha permissao extra."
+      "Cada envio exige identidade, profissional, conversa atual, preferências, cuidado, responsabilidade e duplicidade conferidos no WhatsApp oficial.",
+      "Um contato por destinatário nesta rodada; o envio anterior de 15/10 às 18h49 permanece fora do novo lote.",
+      "Preparado, tentado, submetido, enviado e entregue têm contagens separadas; ausência de prova é N/D.",
+      "O contato original do incidente, se respondido, fica separado do denominador 78.",
+      "Recibo do incidente prova somente sua publicação técnica; este lote possui autorização, contagens, evidências e recibo próprios.",
+      "Runtime 478a8d4, Netlify 6ad1ec48cbd7eeb7c47f6351, Apps Script 165, manifesto e projeção do manual permanecem inalterados.",
+      "Nenhum dado pessoal, telefone/hash, mensagem, ID de oportunidade/provedor, segredo ou caminho privado entra no repositório.",
+      "A continuidade única foi colocada em PAUSED com recibo atual; a rotina periódica de supervisão permanece separada.",
+      "Estado published_verified somente após commit documental, mesma projeção Drive relida e recibo próprio; nenhuma simulação de publicação."
     ],
     "liveReadOnlyPreflight": [
       {
         "contract": "change-governance",
         "status": "verified",
-        "source": "Readback autenticado LEADS/CRM, email de revisao e logs Netlify do baseline publicado",
-        "observedAt": "2026-10-16T09:14:00Z",
-        "evidence": "Entrada, atribuicao e Novo integram as fontes operacionais. Silencio apos decisao semantica human_review e deterministic_context_mismatch; zero OUT ao contato. Conflito comprovado no prompt entre template de proveniencia e pedido explicito aprovado. IDs privados fora do repositorio; revalidar antes da publicacao."
-      },
-      {
-        "contract": "bruna-conversation-safety",
-        "status": "verified",
-        "source": "Readback autenticado LEADS/CRM, email de revisao e logs Netlify do baseline publicado",
-        "observedAt": "2026-10-16T09:14:00Z",
-        "evidence": "Entrada, atribuicao e Novo integram as fontes operacionais. Silencio apos decisao semantica human_review e deterministic_context_mismatch; zero OUT ao contato. Conflito comprovado no prompt entre template de proveniencia e pedido explicito aprovado. IDs privados fora do repositorio; revalidar antes da publicacao."
-      },
-      {
-        "contract": "bruna-conversion-experience",
-        "status": "verified",
-        "source": "Readback autenticado LEADS/CRM, email de revisao e logs Netlify do baseline publicado",
-        "observedAt": "2026-10-16T09:14:00Z",
-        "evidence": "Entrada, atribuicao e Novo integram as fontes operacionais. Silencio apos decisao semantica human_review e deterministic_context_mismatch; zero OUT ao contato. Conflito comprovado no prompt entre template de proveniencia e pedido explicito aprovado. IDs privados fora do repositorio; revalidar antes da publicacao."
+        "source": "git status, rev-parse e ls-remote; snapshots canônicos de LEADS/CRM/mensagens/operação em 16/10",
+        "observedAt": "2026-10-16T12:47:44Z",
+        "evidence": "No preflight, worktree limpo e HEAD/origin/remoto em 6980c828. Fontes operacionais relidas em 09h36–09h39BRT; a rodada ainda estava em andamento naquele corte. O resultado final e o readback da continuidade estão no recibo próprio deste lote."
       },
       {
         "contract": "bruna-regression-governance",
         "status": "verified",
-        "source": "Readback autenticado LEADS/CRM, email de revisao e logs Netlify do baseline publicado",
-        "observedAt": "2026-10-16T09:14:00Z",
-        "evidence": "Entrada, atribuicao e Novo integram as fontes operacionais. Silencio apos decisao semantica human_review e deterministic_context_mismatch; zero OUT ao contato. Conflito comprovado no prompt entre template de proveniencia e pedido explicito aprovado. IDs privados fora do repositorio; revalidar antes da publicacao."
-      },
-      {
-        "contract": "bruna-model-runtime",
-        "status": "verified",
-        "source": "Readback autenticado LEADS/CRM, email de revisao e logs Netlify do baseline publicado",
-        "observedAt": "2026-10-16T09:14:00Z",
-        "evidence": "Entrada, atribuicao e Novo integram as fontes operacionais. Silencio apos decisao semantica human_review e deterministic_context_mismatch; zero OUT ao contato. Conflito comprovado no prompt entre template de proveniencia e pedido explicito aprovado. IDs privados fora do repositorio; revalidar antes da publicacao."
-      },
-      {
-        "contract": "bruna-global-price-reference",
-        "status": "verified",
-        "source": "Readback autenticado LEADS/CRM, email de revisao e logs Netlify do baseline publicado",
-        "observedAt": "2026-10-16T09:14:00Z",
-        "evidence": "Entrada, atribuicao e Novo integram as fontes operacionais. Silencio apos decisao semantica human_review e deterministic_context_mismatch; zero OUT ao contato. Conflito comprovado no prompt entre template de proveniencia e pedido explicito aprovado. IDs privados fora do repositorio; revalidar antes da publicacao."
+        "source": "Manifesto e recibo de produção do incidente anterior; teste local somente leitura",
+        "observedAt": "2026-10-16T12:47:44Z",
+        "evidence": "Manifesto já publicado exige 25 cenários; recibo confirma 25/25, 2 históricos, 3/3 áudios. Teste basal reproduziu 25!==21; aliases ausentes no recibo impedem candidato independente. Não houve nova chamada paga ou nova publicação."
       }
     ]
   },
@@ -149,102 +73,82 @@
       "npm.cmd run architecture:check",
       "npm.cmd run change:check",
       "npm.cmd test",
-      "node --test netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
-      "node --test netlify/functions/lib/bruna-autonomia.integration.test.mjs apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
-      "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-preco-direto.integration.test.mjs netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/price-journey.integration.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
-      "node --test netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-procedimento-contextual.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-procedimento-preco-recuperacao.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
-      "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
-      "node --test netlify/functions/lib/interaction-continuity.test.mjs",
-      "node --test netlify/functions/lib/knowledge-learning.test.mjs",
-      "node --test netlify/functions/lib/overnight-webhook.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs",
-      "node --test netlify/functions/lib/protected-facts.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs",
-      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
-      "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
-      "node --test netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
-      "node --test netlify/functions/lib/appointment-suggestions.test.mjs",
       "node --test netlify/functions/lib/professional-registry.test.mjs netlify/functions/lib/external-professional-context.test.mjs netlify/functions/lib/appointment-confirmation.test.mjs netlify/functions/lib/human-review-envelope.test.mjs apps-script/clinica-liv-leads/OperationalEvents.test.mjs apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/LembretesConsultas.test.mjs netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
       "node --test scripts/check-bruna-model-live.test.mjs",
-      "node --test netlify/functions/lib/bruna-sol61.integration.test.mjs",
-      "node --test netlify/functions/lib/bruna-runtime.test.mjs",
-      "node --test netlify/functions/lib/surgical-price-policy.test.mjs netlify/functions/lib/bruna-preco-direto.integration.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs",
-      "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs scripts/check-bruna-model-live.test.mjs",
-      "npm.cmd run site:build",
-      "npm.cmd run site:check",
+      "node --test scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
       "npm.cmd run ops:check"
     ],
-    "status": "passed_published",
-    "note": "2303/2303 testes integrais locais;133 focados do adaptador e228 testes independentes sobrepostos. Build/check193arquivos/54URLs semerro. change:check15paths, arquitetura e diffcheckOK. Modelo25cenarios/audio3 aguardam build hospedado; nenhuma chamada local real e zero mensagens de paciente. Gate hospedado lido diretamente no log:25/25, historicos2, audio3/3; primeiro pedido de faixa aprovado com1chamada. Publicado09:24:24Z; smoke09:24:50Z200/401,15funcoes6programacoes. Mesmas duas projecoes Drive substituidas e relidas iguais aos bytes do commit documental71f7edc."
+    "status": "passed_local",
+    "results": {
+      "fullSuite": "2303/2303 passed",
+      "focusedGovernance": "15/15 passed",
+      "crossConsumersAndModelHarnessOffline": "112/112 passed",
+      "changeCheck": "passed; exact six-file scope",
+      "architectureCheck": "passed",
+      "diffCheck": "passed",
+      "independentReview": "passed; no open blocker in the six-file documentary delta",
+      "opsCheck": "SYNC_PENDING; implementing_local, worktree branch and uncommitted documentary changes"
+    },
+    "note": "Validação local sem chamadas pagas. Rodada operacional reconciliada e continuidade única PAUSED com readback. Postflight confirmou 76/76 ecos canônicos e humanos; arquivo bruto Drive validado em 15/76, com 61 ainda não observados no corte. O candidato permanece implementing_local: commit documental e readback do Plano no Drive ainda pendentes."
   },
+  "externalChecksPending": [
+    "Reler metadados/revisão do mesmo arquivo Drive antes da substituição.",
+    "Comparar bytes e SHA256 do Plano no Drive com o commit documental D."
+  ],
   "rollback": {
-    "local": "Reverter apenas o delta deste candidato em novo commit; preservar trabalho paralelo.",
-    "production": "Novo commit/build restrito para comportamento4a21792bc311c8220eb9908204e6fa80d6098847 / deploy6ad15ebcc63792b19f648797, sem replay, dados ou Apps Script."
+    "local": "Reverter somente o delta documental/teste deste candidato por novo commit, preservando trabalho paralelo e recibos históricos.",
+    "production": "Não há publicação de runtime neste pacote. Se o registro estiver errado, corrigir a documentação e a mesma projeção por novo commit. Não apagar mensagens, dados ou evidências; mensagem enviada não é reversível por rollback técnico."
   },
   "monitoring": {
-    "owner": "Daniel/equipe via Anibal nesta conversa e rotina existente",
-    "window": "Primeira entrada natural apos publicacao; integridade16/10 e48h, revisao22/10.",
+    "owner": "Daniel/equipe, com execução individual pelo agente principal nesta conversa",
+    "window": "Rodada encerrada em 16/10; acompanhamento das duas demandas administrativas sem resposta posterior, das preferências de localização, dos dois adiamentos e da divergência de espelhamento pela equipe e supervisão periódica existente.",
     "signals": [
-      "Pedido explicito de faixa recebe resposta aprovada sem qualificacao automatica.",
-      "Entradas genericas nao recebem preco espontaneo; vetos clinicos/humanos preservados.",
-      "Contar revisoes indevidas, silencio, duplicidade e consulta real separadamente.",
-      "Caso original aguarda resposta humana; nao liberar lote de retomadas por este incidente."
+      "Interromper o item diante de nova resposta, pausa, recusa, cuidado ativo ou ambiguidade de identidade.",
+      "Registrar efeitos reais e entrega observável sem inferir conversão.",
+      "Manter a continuidade única PAUSED; nenhum adiamento autoriza reenvio automático.",
+      "Revisar uma entrada não espelhada em conversa fora do lote, sem inventar evento ou reprocessar webhook.",
+      "Acompanhar pelo fluxo existente os 61 arquivos de conversa ainda não observados no corte do Drive; não inferir perda nem reenviar mensagens."
     ]
   },
   "baselineCandidateReference": {
-    "commit": "80cea30fbdeeb46ecfee8a4bb2ec643a11d9fdae",
+    "commit": "6980c8281b0acaf03b744344e1809f996d810a60",
     "path": "ops/CHANGE-CANDIDATE.json",
-    "note": "Pacote anterior e recibos preservados por ancestralidade."
+    "note": "Candidato técnico do incidente preservado por ancestralidade e pelo seu próprio recibo."
   },
-  "release": {
+  "runtimeBaseline": {
+    "changed": false,
     "approvedCommit": "478a8d4a28ae097157a310cdb166b1f69f865055",
     "netlifyDeployId": "6ad1ec48cbd7eeb7c47f6351",
     "appsScriptVersion": 165,
-    "verifiedAt": "2026-10-16T09:24:50.627Z",
     "receiptPath": "auditorias/bruna-prefill-preco-2026-10-16/PUBLICACAO.json",
-    "liveModel": {
-      "status": "passed",
-      "checkedAt": "2026-10-16T09:24:08.686Z",
-      "model": "gpt-6.1-sol",
-      "effort": "medium",
-      "passed": 25,
-      "total": 25,
-      "fullHistoryPassed": 2,
-      "firstPrice": {
-        "passed": true,
-        "modelRequests": 1,
-        "elapsedMs": 10970,
-        "replyCode": "LIFTING-PRICE-RANGE-01",
-        "gateAllowed": true
-      },
-      "audio": {
-        "passed": 3,
-        "total": 3,
-        "model": "whisper-1"
-      },
-      "syntheticOnly": true,
-      "patientMessagesSent": 0
-    },
-    "drivePlanSha256": "a67edd9987d7e12a208a092337e74d5720061f4614876533627ec24638986287",
-    "documentationSourceCommit": "71f7edc54a5e95faf0f7a90a1943fe5246f987b9",
-    "documentationVerifiedAt": "2026-10-16T09:27:30.606Z"
+    "observedAt": "2026-10-16T09:24:50.627Z",
+    "note": "Referência histórica herdada; não é prova de envio deste lote nem declaração de nova publicação."
+  },
+  "operationalExecution": {
+    "status": "completed_with_deferrals",
+    "receiptPath": "auditorias/retomadas-manuais-2026-10-16/PUBLICACAO.json",
+    "prepared": 78,
+    "finalCountsAvailable": true,
+    "reviewedInLeadsCrm": 78,
+    "reviewedInChannel": 77,
+    "attempted": 76,
+    "submitted": 76,
+    "sentObserved": 76,
+    "deliveredObservedInclusive": 56,
+    "readObserved": 3,
+    "readCountIsObservedMinimum": true,
+    "sentOnlyObserved": 20,
+    "deferred": 2,
+    "failed": 0,
+    "automaticPending": 0,
+    "oneOffFinalState": "PAUSED"
   },
   "documentationCloseout": {
-    "sourceCommit": "71f7edc54a5e95faf0f7a90a1943fe5246f987b9",
-    "sameFileDriveReadback": true,
-    "manualSha256": "de297b2596219dd71006ea1d40a18363a1701829134062af3adc3351bf9db239",
-    "executivePlanSha256": "a67edd9987d7e12a208a092337e74d5720061f4614876533627ec24638986287",
-    "runtimeUnchangedFromApprovedCommit": true
+    "status": "pending",
+    "canonicalLocalPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+    "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+    "sourceCommit": null,
+    "sameFileDriveReadback": false,
+    "executivePlanSha256": null
   }
 }

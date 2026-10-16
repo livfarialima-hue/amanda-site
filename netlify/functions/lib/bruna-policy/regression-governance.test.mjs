@@ -124,7 +124,7 @@ test("the published manifest matches the current bundle and closes its own candi
       assert.equal(manifest.pendingRelease.liveModelCheckRequired, true);
       assert.equal(manifest.pendingRelease.audioTranscriptionCheckRequired, true);
       assert.equal(manifest.pendingRelease.fullHistoryCheckRequired, true);
-      assert.equal(manifest.pendingRelease.liveModelScenarioCount, 21);
+      assert.equal(manifest.pendingRelease.liveModelScenarioCount, 25);
     } else {
       assert.equal(manifest.pendingRelease.changeId, candidate.changeId);
       assert.notEqual(manifest.release.bundleVersion, manifest.bundleVersion);
@@ -163,23 +163,25 @@ test("a different active candidate cannot hide a missing or altered Bruna public
   await assert.rejects(publishedReceipt({ ...manifest, pendingRelease: { ...manifest.pendingRelease, status: "implementing_local" } }, candidate), { name: "AssertionError" });
 });
 
-test("the expanded Bruna gate requires all 21 scenarios in its own publication receipt", async () => {
+test("the expanded Bruna gate requires all 25 scenarios in its own publication receipt", async () => {
   const manifest = {
     bundleVersion: "test-expanded-bundle",
-    pendingRelease: { changeId: "BRUNA-EXPANDED-TEST", status: "published_verified", liveModelScenarioCount: 21 },
+    pendingRelease: { changeId: "BRUNA-EXPANDED-TEST", status: "published_verified", liveModelScenarioCount: 25 },
     release: { functionalCommit: "a".repeat(40), functionalDeployId: "b".repeat(24) },
   };
   const candidate = { changeId: "INDEPENDENT-SITE-CANDIDATE", status: "tested_local" };
   const receipt = {
     status: "published_verified", changeId: "BRUNA-EXPANDED-TEST", bundleVersion: "test-expanded-bundle",
     approvedCommit: "a".repeat(40), netlifyDeployId: "b".repeat(24),
-    liveModel: { status: "passed", passed: 21, total: 21, fullHistoryPassed: 2 },
+    liveModel: { status: "passed", passed: 25, total: 25, fullHistoryPassed: 2 },
     liveAudio: { status: "passed", passed: 3, total: 3 },
   };
   assert.equal(await publishedReceipt(manifest, candidate, async () => receipt), receipt);
-  await assert.rejects(publishedReceipt(manifest, candidate, async () => ({
-    ...receipt, liveModel: { ...receipt.liveModel, passed: 19, total: 19 },
-  })), { name: "AssertionError" });
+  for (const count of [19, 21, 24]) {
+    await assert.rejects(publishedReceipt(manifest, candidate, async () => ({
+      ...receipt, liveModel: { ...receipt.liveModel, passed: count, total: count },
+    })), { name: "AssertionError" });
+  }
 });
 
 test("Bruna's patient-facing identity stays human-readable and technology-neutral", async () => {
