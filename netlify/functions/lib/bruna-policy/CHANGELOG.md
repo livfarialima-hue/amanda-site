@@ -1,6 +1,6 @@
-## 2026-10-16.3 — candidato
+## 2026-10-16.3 — publicado
 
-Silêncio preservado para fornecedor conhecido após conteúdo indisponível. Resposta direta sobre estacionamento pago e estação Pinheiros; mesma prévia canônica em entrada/retomada, sem recibo genérico. Gates humanos e semânticos preservados. Publicação depende do recibo do pacote.
+Silêncio preservado para fornecedor conhecido após conteúdo indisponível. Resposta direta sobre estacionamento pago e estação Pinheiros; mesma prévia canônica em entrada/retomada, sem recibo genérico. Gates humanos e semânticos preservados. Commit funcional f8753f985a5b3eca15c521e311e1eee56c9046d8, deploy de produção 6ad253ae7b4cafb02a15a633, publicado em 16/10/2026 às 13h45 BRT. 2318 testes locais; gate obrigatório de 27 cenários, dois históricos e três áudios confirmado pelo sucesso do build, sem leitura direta do log. Saúde e assinatura verificadas. Recibo em auditorias/bruna-admin-silencio-2026-10-16/PUBLICACAO.json.
 
 ## 2026-10-16.2 — publicado
 

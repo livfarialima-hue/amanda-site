@@ -1,6 +1,6 @@
 # Silêncio comercial e respostas administrativas diretas — 16/10/2026
 
-Estado: testado localmente —2318/2318 testes, arquitetura, escopo e artefato aprovados; publicação ainda não comprovada.
+Estado: produção publicada no commit f8753f985a5b3eca15c521e311e1eee56c9046d8, deploy 6ad253ae7b4cafb02a15a633, em 2026-10-16T16:45:22.642Z. Saúde e proteção de assinatura verificadas no domínio e URL imutável em 2026-10-16T17:24:01.328949Z. 2318/2318 testes locais, arquitetura, escopo e artefato aprovados. Fechamento documental e igualdade das mesmas projeções Drive seguem PUBLICACAO.json.
 
 O proprietário confirmou ignorar ofertas de marketing, vendas e fornecedores, inclusive quando uma mensagem posterior não tiver conteúdo disponível. O contexto comercial não expira só porque o envelope está vazio; uma nova intenção assistencial explícita permite reavaliação. whatsapp-automation mantém a intenção da última entrada substantiva, e conversation-action-controller mantém o estado fechado antes do fallback de conteúdo indisponível. Os consumidores de entrada e retomada compartilham essas regras, sem novo canal ou fila.
 
@@ -13,3 +13,8 @@ Baseline: produção a11d020856622a24e114de8968e409a6230ccf71, deploy 6ad2313581
 Validação: testes do proprietário, transporte webhook, continuidade após humano, conteúdo comercial antigo/indisponível, nova procura pessoal, urgência, fato desconhecido e gates cruzados. Gate hospedado ampliado de25 para27 cenários, mantendo dois históricos completos e3áudios. Sem chamadas pagas para diagnóstico; o gate hospedado obrigatório só roda no build de publicação autorizado.
 
 Publicação: seguir candidato ativo e recibo PUBLICACAO.json. Monitorar primeiro caso natural,48h eD+7 pela supervisão existente, sem nova automação. Reversão por novo commit/build do delta reverso, preservando trabalho paralelo, dados e recibos, sem replay ou envio de teste.
+
+
+Commit funcional f8753f985a5b3eca15c521e311e1eee56c9046d8; Netlify de produção 6ad253ae7b4cafb02a15a633, READY e publicado em 2026-10-16T16:45:22.642Z (13h45 BRT). Validação local: 2318/2318 testes, arquitetura, escopo e artefato aprovados. O sucesso do build de produção no SHA exato confirma o gate obrigatório definido no commit: 27 cenários, dois históricos completos e três áudios sintéticos. Essa contagem é inferida do contrato executado; as linhas do log hospedado não foram recuperadas, e não houve repetição paga para obtê-las. Domínio e URL imutável responderam página/saúde 200 e rejeitaram POST sem assinatura com 401 em 2026-10-16T17:24:01.328949Z. Quinze funções e seis programações preservadas. Apps Script v165 permanece por recibo, sem republicação ou inspeção do editor nesta tarefa.
+
+Rollback somente por novo commit/build restrito para o comportamento a11d020856622a24e114de8968e409a6230ccf71 / deploy6ad231358102a7e6a3f30726, preservando dados, filas, recibos e trabalho paralelo, sem replay. Nenhuma mensagem a paciente, escrita operacional ou nova automação foi executada neste pacote. O primeiro caso natural após a publicação e o impacto em conversão ainda são N/D. Monitorar o primeiro caso elegível, integridade em 48h e maturação em 23/10 pela supervisão existente. Igualdade das mesmas projeções Drive e fechamento documental ficam no recibo auditorias/bruna-admin-silencio-2026-10-16/PUBLICACAO.json.
