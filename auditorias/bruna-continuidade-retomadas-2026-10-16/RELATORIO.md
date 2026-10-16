@@ -1,6 +1,6 @@
 # Continuidade após retomadas — 16/10/2026
 
-Runtime publicado e verificado; fechamento das mesmas projeções documentais será registrado em PUBLICACAO.json.
+Runtime e mesmas projeções documentais publicados e verificados; recibos e limites em PUBLICACAO.json.
 
 Commit funcional aprovado a11d020856622a24e114de8968e409a6230ccf71; Netlify de produção 6ad231358102a7e6a3f30726, READY e publicado em 2026-10-16T14:18:43.506Z (11h18 BRT). O log hospedado confirmou 25/25 cenários, dois históricos completos e 3/3 áudios em 2026-10-16T14:18:27.228Z. Validação local: 239/239 testes focados e 2307/2307 integrais. As 15 funções e seis programações permanecem; somente human-resume e human-resume-background mudaram de artefato. Domínio e URL imutável responderam saúde 200 e rejeitaram POST sem assinatura com 401. Apps Script v165 preservado, sem republicação. Rollback por novo commit/build restrito para comportamento 478a8d4a28ae097157a310cdb166b1f69f865055 / deploy6ad1ec48cbd7eeb7c47f6351, preservando dados, filas e recibos, sem replay.
 

@@ -1,6 +1,6 @@
 {
   "changeId": "BRUNA-CONTINUIDADE-RETOMADAS-2026-10-16",
-  "status": "runtime_published_documentation_pending",
+  "status": "published_verified",
   "bundleVersion": "2026-10-16.2",
   "runtimeBaseline": {
     "commit": "478a8d4a28ae097157a310cdb166b1f69f865055",
@@ -20,15 +20,16 @@
     "humanAppointmentContinuation": "Equipe ofereceu opções e houve escolha; confirmação operacional depende da equipe.",
     "pauseRespect": "Orçamento e intenção de retornar depois respeitados, sem insistência."
   },
-  "note": "Publicação técnica verificada. Documentação aguarda commit fonte, mesmas projeções e readback. Não há prova de novo ciclo natural automático após o deploy.",
+  "note": "Runtime, quatro respostas manuais e as mesmas duas projeções Drive verificados. Primeiro ciclo natural automático após o deploy ainda não observado; isso não impede o fechamento técnico, mas limita a alegação de entrega automática.",
   "localValidation": {
     "reproduction": "3/4 casos falharam no baseline por prévia ausente; nova saída humana já bloqueava corretamente.",
     "focused": "239/239 passed; includes4new cases; semantic veto permits only the existing receipt after alert, never the answer price",
     "fullSuite": "2307/2307 passed, including every declared contract test file",
     "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-    "change": "Fechamento documental inclui manual operacional obrigatório; onze arquivos exatos, gate novamente antes do commit.",
+    "change": "CHANGE_SAFETY_STATUS=OK; onze arquivos exatos no fechamento, incluindo o manual operacional obrigatório.",
     "artifact": "193files;54pages;sitecheck passed",
-    "ops": "SYNC_PENDING expected while publication and Drive receipts remain pending"
+    "ops": "SYNC_PENDING antes do recibo/commit; executar novamente no checkout canônico limpo após integração.",
+    "documentaryRegression": "11/11 passed"
   },
   "approvedCommit": "a11d020856622a24e114de8968e409a6230ccf71",
   "netlifyDeployId": "6ad231358102a7e6a3f30726",
@@ -65,9 +66,50 @@
     "observedAt": "2026-10-16T14:22:41.771Z"
   },
   "documentation": {
-    "status": "pending_drive",
+    "status": "written_verified",
+    "sourceCommit": "a1c8c21d8ece44f260a317ae32b4c4c9eb48cdf9",
     "sameExistingFiles": true,
-    "planId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "manualId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF"
-  }
+    "plan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sourceCommit": "a1c8c21d8ece44f260a317ae32b4c4c9eb48cdf9",
+      "sha256": "f832c672c660de3d46f8610f0ec8414b7a61d270c48a4acc0b90b2be816a8d41",
+      "bytes": 49562,
+      "equal": true,
+      "readbackAt": "2026-10-16T14:27:39.498Z",
+      "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "beforeSha256": "204244a988ab5db3ef6ac4b22e7aec8b4e56026663d2b69f03cbaf2c716bb6a0",
+      "beforeModifiedAt": "2026-10-16T13:53:50.934Z",
+      "afterModifiedAt": "2026-10-16T14:26:45.779Z"
+    },
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sourceCommit": "a1c8c21d8ece44f260a317ae32b4c4c9eb48cdf9",
+      "sha256": "1741b8dbc2bf99eda421d5ed6b2e7aafaebebdea094571c06bfb5aa15c91035d",
+      "bytes": 94345,
+      "equal": true,
+      "readbackAt": "2026-10-16T14:27:39.554Z",
+      "driveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "beforeSha256": "de297b2596219dd71006ea1d40a18363a1701829134062af3adc3351bf9db239",
+      "beforeModifiedAt": "2026-10-16T09:27:11.475Z",
+      "afterModifiedAt": "2026-10-16T14:26:49.569Z"
+    },
+    "method": "files.update nos mesmos IDs; download bruto comparado byte a byte com git show do commit documental e arquivos locais."
+  },
+  "authorization": {
+    "reference": "current-thread:arrume-publique-continue-interacao",
+    "runtimeApprovedCommit": "a11d020856622a24e114de8968e409a6230ccf71",
+    "documentaryApprovedCommit": "a1c8c21d8ece44f260a317ae32b4c4c9eb48cdf9",
+    "note": "Autorização expressa do pedido atual aplicada aos commits exatos; não autoriza nova rodada de retomadas, pagamento ou mudança de campanha."
+  },
+  "appsScriptVersion": 165,
+  "lastVerifiedAt": "2026-10-16T14:27:39.554Z",
+  "naturalPostReleaseResponse": {
+    "observed": false,
+    "note": "Não reexecutar webhook nem criar mensagem sintética a paciente para obter prova."
+  },
+  "oneOffContinuation": {
+    "state": "PAUSED",
+    "unchanged": true
+  },
+  "periodicSupervisionChanged": false
 }
