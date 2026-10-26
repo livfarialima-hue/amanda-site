@@ -6,6 +6,7 @@ import { appendConversationTurn } from "./conversation-memory.mjs";
 import {
   CONVERSATION_ACTIONS,
   isExplicitDeferralWithoutRequest,
+  isPatientDecisionPause,
   isReplyToHumanContextWithoutStandaloneRequest,
   isSimpleConversationClosing,
 } from "./conversation-action-controller.mjs";
@@ -599,6 +600,11 @@ export function validateOutboundReply({
         "CONTEXT-CLARIFY-01",
       ].includes(String(conversationAction?.semanticReplyCode || "")),
   );
+
+  // Semantic continuation and stale queued candidates cannot override a pause.
+  if (isPatientDecisionPause(currentText, recentConversation)) {
+    return { allowed: false, reason: "patient_decision_pause" };
+  }
 
   if (
     (

@@ -1,5 +1,12 @@
 # Plano executivo — auditorias, pendências e prazos
 
+## Pausa de decisão — correção autorizada em 26/10/2026
+
+Daniel autorizou corrigir e publicar a insistência após recusa de agendamento ou pedido de mais tempo. Candidato BRUNA-PAUSA-DECISAO-2026-10-26: controlador único de pausa, preservação diante de respostas vagas, guarda final contra candidato semântico e veto no endpoint existente de retomadas comerciais. Novas dúvidas concretas permanecem elegíveis; identidade, opt-out, atendimento humano, cuidados e confirmação de agenda permanecem nos contratos atuais. Nenhum envio de teste ou replay.
+
+Estado: 2352/2352 testes locais aprovados em America/Sao_Paulo; arquitetura, escopo e artefato de 193 arquivos/54 páginas aprovados. Publicação ainda não verificada. Baseline operacional 7e5d33cae9e03b68d2c1a158611039d680fe4ae4; Netlify funcional f8753f985a5b3eca15c521e311e1eee56c9046d8 / deploy 6ad253ae7b4cafb02a15a633 observado READY. Apps Script v166 por recibo canônico, sem acesso ao editor nem alteração neste pacote. Testes cobrem pausa, fragmentação, resposta vaga, nova iniciativa, retomada humana e bloqueio final com zero efeitos externos. Evidência individual permanece privada. Monitorar o primeiro caso natural e 48 horas pela supervisão existente; conversão N/D. Rollback por novo commit/build restrito, preservando dados, recibos e trabalho paralelo.
+
+
 ## Lembrete único 24 horas antes — publicado e ativado em 16/10/2026
 
 Solicitação autorizada: ativar lembrete para todos os agendamentos elegíveis, inclusive confirmados. O alvo passa a ser o horário da consulta menos 24 horas, conservando minutos; execução no ciclo existente de 15 minutos, somente entre 09h e 19h. Consulta criada tardiamente ou alvo fora da janela pode ser processado no próximo ciclo permitido antes da consulta. Recusas, bloqueio ao robô, cancelamentos, profissional, vínculo vivo de Calendar e recibos anteriores continuam obrigatórios. Sem segundo lembrete, replay, mudança de preço, campanha ou conversão. A chave geral estava true, mas a chave do contrato seguro estava ausente: a rotina retornava sem enviar. Publicação v166 do commit 71d14078580165ac6f3fb3e0917b0c0897f8ce2a verificada por igualdade integral LF do arquivo persistido. Ativação canônica concluída às 16h08 de 16/10; ambas as chaves true, um acionador de lembretes e onze no total. Saúde HTTP 200; 2320/2320 testes, arquitetura, escopo e artefato aprovados.

@@ -873,7 +873,7 @@ test("a semantic reopen still cannot override a closing or deferral", () => {
   });
 
   assert.equal(result.allowed, false);
-  assert.equal(result.reason, "patient_closed_or_deferred");
+  assert.equal(result.reason, "patient_decision_pause");
 });
 
 test("a validated context clarification gets one question but no link or CTA", () => {

@@ -41,6 +41,11 @@ const EXPLICIT_RETURN_LATER_PATTERN =
   /\b(?:qualquer\s+coisa\s+(?:eu\s+)?volto|qlq(?:r)?\s+coisa\s+(?:eu\s+)?volto|depois\s+(?:eu\s+)?volto|entro\s+em\s+contato\s+(?:mais\s+)?(?:pra\s+frente|adiante|tarde)|quando\s+decidir\s*[,]?\s*(?:eu\s+)?(?:volto|retorno|aviso|chamo)|se\s+eu\s+decidir\s*[,]?\s*(?:eu\s+)?(?:volto|retorno|aviso|chamo)|vou\s+(?:pensar|avaliar|analisar|decidir)(?:\s+com\s+calma)?\s+e\s+(?:depois\s+)?(?:volto|retorno|aviso|chamo))\b/i;
 const PATIENT_DECLINE_PATTERN =
   /\b(?:n[ãa]o\s+(?:tenho\s+)?interesse|prefiro\s+n[ãa]o|n[ãa]o\s+quero|desisti|vou\s+deixar\s+(?:pra|para)\s+(?:depois|mais\s+pra\s+frente)|fora\s+do\s+meu\s+or[cç]amento|acima\s+do\s+meu\s+or[cç]amento|n[ãa]o\s+cabe\s+no\s+meu\s+or[cç]amento|muito\s+car[oa]\s+(?:pra|para)\s+mim|vou\s+me\s+programar\s+e\s+(?:retorno|volto))\b/i;
+const DECISION_TIME_PATTERN = /\b(?:(?:estou|t[oô])\s+precisando|preciso|quero|necessito)\s+(?:de\s+)?(?:um\s+pouco\s+(?:de\s+)?)?mais\s+(?:de\s+)?tempo(?:\s+(?:para|pra)\s+(?:pensar|avaliar|decidir|me\s+programar))?\b/i;
+const DECISION_DECLINE_PATTERN = /^(?:n[ãa]o\s+quero|prefiro\s+n[ãa]o)\s+(?:agendar|marcar|ver\s+hor[áa]rios?)(?:\s+(?:agora|por\s+enquanto))?[,!.\s]*(?:(?:obrigad[ao]|obg)[,!.\s]*)?$/i;
+const CONTEXTUAL_NOT_READY_PATTERN = /^(?:ainda\s+n[ãa]o|agora\s+n[ãa]o|por\s+enquanto\s+n[ãa]o|n[ãa]o(?:\s+agora)?)[,!.\s]*(?:(?:obrigad[ao]|obg)[,!.\s]*)?$/i;
+const DECISION_PAUSE_ACK_PATTERN = /^(?:(?:tamb[ée]m|sim|isso|pois\s+[ée]|[ée]|ainda\s+n[ãa]o|agora\s+n[ãa]o|por\s+enquanto\s+n[ãa]o|n[ãa]o|(?:estou\s+precisando|preciso)(?:\s+de)?\s+um\s+pouco\s+mais)[,!.\s]*)+$/i;
+const DECISION_INVITATION_PATTERN = /\b(?:quer|gostaria|posso|podemos|vamos|voc[êe]\s+(?:j[áa]\s+)?decidiu)\b[\s\S]{0,150}\b(?:agendar|agendamento|marcar|hor[áa]rios?|datas?|decidir|decis[ãa]o)\b/i;
 const KNOWN_PROCEDURE_PATTERN =
   /\b(?:lifting|mini[-\s]?lifting|cervicoplastia|lipo(?:aspira[cç][ãa]o)?(?:\s+de\s+papada)?|papada|blefaroplastia|p[áa]lpebra|otoplastia|orelha|rinoplastia|mamoplastia|mastopexia|pr[óo]tese|abdominoplastia|braquioplastia|cruroplastia|ninfoplastia|ginecomastia)\b/i;
 const PAYMENT_PATTERN =
@@ -290,14 +295,56 @@ export function isSimpleConversationClosing(text) {
 export function isExplicitDeferralWithoutRequest(text) {
   const value = normalized(text);
   const explicitNightPause = isExplicitNightPause(value);
+  // "Preciso de mais tempo" asks for a pause, not for further information.
+  const remaining = value.replace(DECISION_TIME_PATTERN, "").replace(/^[,!.;\s]+|[,!.;\s]+$/g, "");
+  const timeRequest = DECISION_TIME_PATTERN.test(value) &&
+    (!remaining || isSimpleConversationClosing(remaining));
   return (
     Boolean(value) &&
-    (EXPLICIT_DEFERRAL_PATTERN.test(value) || explicitNightPause) &&
+    (EXPLICIT_DEFERRAL_PATTERN.test(value) || explicitNightPause || timeRequest) &&
     (
-      explicitNightPause ||
+      explicitNightPause || timeRequest ||
       !hasDirectPatientRequest(value)
     )
   );
+}
+
+// A clinic question cannot reopen a pause chosen by the patient. Only new
+// substantive patient content can do that; short acknowledgements cannot.
+// Also accepts the IN/OUT envelope used by the existing follow-up endpoint.
+export function isPatientDecisionPause(text, recentConversation = []) {
+  const turns = Array.isArray(recentConversation) ? [...recentConversation] : [];
+  if (turns.length && turns.every(turn => Number.isFinite(Date.parse(turn?.at)))) {
+    turns.sort((left, right) => Date.parse(left.at) - Date.parse(right.at));
+  }
+  let paused = false;
+  let clinicText = "";
+  const readPatientTurn = value => {
+    if (!value) return;
+    const deferred = !isExplicitNightPause(value) && (
+      isExplicitDeferralWithoutRequest(value) ||
+      isExplicitReturnLaterClosing(value) || isPatientDeclineWithoutRequest(value) || DECISION_DECLINE_PATTERN.test(value)
+    );
+    // Inbound bursts can join "not yet" with the next fragmented sentence.
+    const parts = value.split(/\n+/).map(part => part.trim()).filter(Boolean);
+    const notReady = DECISION_INVITATION_PATTERN.test(clinicText) &&
+      CONTEXTUAL_NOT_READY_PATTERN.test(parts[0] || "") &&
+      parts.slice(1).every(part => DECISION_PAUSE_ACK_PATTERN.test(part) || isExplicitDeferralWithoutRequest(part));
+    if (deferred || notReady) paused = true;
+    else if (!isSimpleConversationClosing(value) && !DECISION_PAUSE_ACK_PATTERN.test(value)) paused = false;
+  };
+  for (const turn of turns) {
+    if (turn?.role === "assistant" || turn?.direction === "OUT" ||
+        ["bruna", "human", "equipe_humana"].includes(turn?.source)) {
+      clinicText = normalized(turn.text);
+    } else if (["user", "patient"].includes(turn?.role) || turn?.direction === "IN" ||
+        ["patient", "paciente"].includes(turn?.source)) {
+      readPatientTurn(normalized(turn.text));
+    }
+  }
+  // Empty current text queries the accumulated pause for scheduled follow-ups.
+  readPatientTurn(normalized(text));
+  return paused;
 }
 
 export function isExplicitNightPause(text) {
@@ -333,7 +380,7 @@ export function hasUnresolvedPatientRequest(
   recentConversation = [],
 ) {
   const value = normalized(text);
-  if (!value || isExplicitDeferralWithoutRequest(value)) {
+  if (!value || isExplicitDeferralWithoutRequest(value) || isPatientDecisionPause(value, recentConversation)) {
     return false;
   }
 
@@ -758,6 +805,14 @@ export function decideConversationAction({
         humanTakeoverActive,
       },
     );
+  }
+
+  if (isPatientDecisionPause(value, recentConversation) &&
+      !isExplicitReturnLaterClosing(value) && !isPatientDeclineWithoutRequest(value)) {
+    return decide(CONVERSATION_ACTIONS.WAIT_PATIENT, "patient_deciding", {
+      followupPolicy: "patient_initiated",
+      minimumFollowupDelayHours: 24,
+    });
   }
 
   if (

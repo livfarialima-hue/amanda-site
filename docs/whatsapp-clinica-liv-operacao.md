@@ -1,5 +1,8 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+Correção autorizada de 26/10/2026 em validação: pausa comercial após recusa de agenda ou pedido de tempo, compartilhada por resposta imediata, retomada humana e endpoint de retomada comercial. Pacote 2026-10-26.1; publicação e recibos serão reconciliados após verificação. Apps Script v166 preservado, sem envios de teste.
+
+
 ## Lembrete único 24 horas antes — publicado e ativado em 16/10/2026
 
 Solicitação autorizada: ativar lembrete para todos os agendamentos elegíveis, inclusive confirmados. O alvo passa a ser o horário da consulta menos 24 horas, conservando minutos; execução no ciclo existente de 15 minutos, somente entre 09h e 19h. Consulta criada tardiamente ou alvo fora da janela pode ser processado no próximo ciclo permitido antes da consulta. Recusas, bloqueio ao robô, cancelamentos, profissional, vínculo vivo de Calendar e recibos anteriores continuam obrigatórios. Sem segundo lembrete, replay, mudança de preço, campanha ou conversão. A chave geral estava true, mas a chave do contrato seguro estava ausente: a rotina retornava sem enviar. Publicação v166 do commit 71d14078580165ac6f3fb3e0917b0c0897f8ce2a verificada por igualdade integral LF do arquivo persistido. Ativação canônica concluída às 16h08 de 16/10; ambas as chaves true, um acionador de lembretes e onze no total. Saúde HTTP 200; 2320/2320 testes, arquitetura, escopo e artefato aprovados.

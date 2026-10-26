@@ -1,67 +1,123 @@
 {
   "schemaVersion": 1,
-  "changeId": "LEMBRETES-24H-2026-10-16",
-  "title": "Lembrete único 24 horas antes e ativação do contrato seguro",
-  "status": "published_verified",
-  "baseCommit": "9a81dee03e4d6256caf45f98c8eaa62640fbbaff",
+  "changeId": "BRUNA-PAUSA-DECISAO-2026-10-26",
+  "title": "Pausa de decisão sem insistência; nova iniciativa concreta preservada",
+  "status": "tested_local",
+  "baseCommit": "7e5d33cae9e03b68d2c1a158611039d680fe4ae4",
   "authorization": {
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Daniel autorizou publicar e ativar lembrete com 24h de antecedência para todos os agendamentos elegíveis."
+    "note": "Daniel: corrigir e publicar a pausa de decisão nesta conversa; sem contato externo, alteração de preço, campanha ou agenda."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": true,
-    "note": "Agendamento confirmado com autorização; ativação dos lembretes ainda pendente."
+    "externalWritesPerformed": false,
+    "note": "Restringe iniciativa comercial nos consumidores existentes; não altera contatos, identidade, preços, cuidados ou agenda."
   },
   "scope": {
     "files": [
-      "apps-script/clinica-liv-leads/LembretesConsultas.gs",
-      "apps-script/clinica-liv-leads/LembretesConsultas.test.mjs",
-      "apps-script/clinica-liv-leads/README.md",
-      "apps-script/clinica-liv-leads/Retomadas.test.mjs",
-      "apps-script/clinica-liv-leads/production-target.json",
-      "auditorias/lembretes-24h-2026-10-16/PUBLICACAO.json",
+      "auditorias/bruna-pausa-decisao-2026-10-26/PREFLIGHT.json",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "docs/estrategia-abordagem-bruna.md",
       "docs/whatsapp-clinica-liv-operacao.md",
+      "netlify/functions/lib/bruna-pausa-decisao.integration.test.mjs",
+      "netlify/functions/lib/bruna-policy/CHANGELOG.md",
+      "netlify/functions/lib/bruna-policy/manifest.json",
+      "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/conversation-guidelines.mjs",
+      "netlify/functions/lib/human-resume-processor.test.mjs",
+      "netlify/functions/lib/outbound-reply-gate.mjs",
+      "netlify/functions/lib/outbound-reply-gate.test.mjs",
+      "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "netlify/functions/scheduled-followup.mjs",
       "ops/CHANGE-CANDIDATE.json",
-      "ops/IMPACT-REGISTRY.json",
-      "scripts/check-change-safety.mjs",
-      "scripts/check-change-safety.test.mjs"
+      "ops/IMPACT-REGISTRY.json"
     ],
     "contracts": [
-      "change-governance",
-      "appointment-reminders"
+      "bruna-conversation-safety",
+      "bruna-conversion-experience",
+      "patient-journey-funnel-followups",
+      "change-governance"
     ]
   },
   "impact": {
     "consumers": [
       "AGENTS.md",
-      "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
-      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
-      "apps-script/clinica-liv-leads/AgendaCuidados.gs",
+      "apps-script/clinica-liv-leads/CentralAtendimento.gs",
       "apps-script/clinica-liv-leads/Code.gs",
+      "apps-script/clinica-liv-leads/GoogleAdsFunnelReview.gs",
+      "apps-script/clinica-liv-leads/KnowledgeBase.gs",
+      "apps-script/clinica-liv-leads/LeadClassification.gs",
+      "apps-script/clinica-liv-leads/MetaAdsFunnelReview.gs",
       "apps-script/clinica-liv-leads/PainelDecisoesDiarias.gs",
       "apps-script/clinica-liv-leads/Retomadas.gs",
-      "netlify/functions/appointment-reminder.mjs",
-      "apps-script/clinica-liv-leads/CuidadosProgramados.gs"
+      "docs/ARQUITETURA-JORNADA-PACIENTE.md",
+      "docs/GOVERNANCA-OPERACIONAL-LOCAL-E-DRIVE.md",
+      "netlify/functions/appointment-review.mjs",
+      "netlify/functions/classify-leads-background.mjs",
+      "netlify/functions/classify-leads.mjs",
+      "netlify/functions/human-resume-background.mjs",
+      "netlify/functions/human-resume.mjs",
+      "netlify/functions/lib/appointment-confirmation.mjs",
+      "netlify/functions/lib/appointment-suggestions.mjs",
+      "netlify/functions/lib/bruna-conversion-experience.mjs",
+      "netlify/functions/lib/consultation-question-bundle.mjs",
+      "netlify/functions/lib/conversation-action-controller.mjs",
+      "netlify/functions/lib/extract-inbound-text.mjs",
+      "netlify/functions/lib/extreme-night-policy.mjs",
+      "netlify/functions/lib/human-resume-dispatch.mjs",
+      "netlify/functions/lib/inbound-message-kind.mjs",
+      "netlify/functions/lib/knowledge-learning.mjs",
+      "netlify/functions/lib/knowledge-wording.mjs",
+      "netlify/functions/lib/lead-classifier.mjs",
+      "netlify/functions/lib/lifting-information.mjs",
+      "netlify/functions/lib/openai-shadow.mjs",
+      "netlify/functions/lib/outbound-reply-gate.mjs",
+      "netlify/functions/lib/patient-replies.mjs",
+      "netlify/functions/lib/professional-fact-review.mjs",
+      "netlify/functions/lib/semantic-reply-policy.mjs",
+      "netlify/functions/lib/surgical-price-review.mjs",
+      "netlify/functions/lib/whatsapp-automation.mjs",
+      "netlify/functions/scheduled-followup.mjs",
+      "netlify/functions/ycloud-webhook.mjs"
     ],
     "preservedInvariants": [
-      "Um lembrete por agendamento, inclusive confirmado, sem apagar recibos ou repetir tentativa ambígua.",
-      "09h–19h, ciclo de 15min, profissional explícito, consentimento e bloqueios preservados.",
-      "Calendar vivo deve coincidir com a consulta; nenhum evento artificial ou conversão Ads.",
-      "AgendaCuidados consome o proprietário; tipo legado 48h permanece compatível com endpoint e template.",
-      "Release cloud integrado sem sobrescrita; nenhuma nova rotina ou assinatura."
+      "Pausa não é perda nem opt-out global; nova dúvida concreta permanece elegível.",
+      "Sem recibo, alerta ou retomada automática por resposta vaga após pausa.",
+      "Autoria, confirmação humana, mídia, cuidados, agenda, antidupla-entrega e gates hospedados preservados.",
+      "Nenhuma mensagem real de teste, replay ou escrita operacional.",
+      "Trabalho desktop paralelo preservado; atualização fast-forward com expectativa de baseline."
     ],
     "liveReadOnlyPreflight": [
       {
-        "contract": "appointment-reminders",
+        "contract": "change-governance",
         "status": "verified",
-        "observedAt": "2026-10-16T19:04:07.907Z",
-        "source": "Editor Apps Script canônico, propriedades, acionadores, Netlify env, Consultas/CRM e Calendar",
-        "evidence": "LembretesConsultas vivo igual ao baseline LF c4251d5f; flag geral true, contrato seguro ausente. Um acionador já instalado; endpoint Netlify habilitado. Evento e linha autorizados reconciliados; evidência privada."
+        "observedAt": "2026-10-26T22:16:50.716717+00:00",
+        "source": "auditorias/bruna-pausa-decisao-2026-10-26/PREFLIGHT.json",
+        "evidence": "Branch operacional, deploy READY, alvo canônico Apps Script por recibo e recorte privado do incidente; demais consumidores cobertos por testes, sem edição externa."
+      },
+      {
+        "contract": "bruna-conversation-safety",
+        "status": "verified",
+        "observedAt": "2026-10-26T22:16:50.716717+00:00",
+        "source": "auditorias/bruna-pausa-decisao-2026-10-26/PREFLIGHT.json",
+        "evidence": "Branch operacional, deploy READY, alvo canônico Apps Script por recibo e recorte privado do incidente; demais consumidores cobertos por testes, sem edição externa."
+      },
+      {
+        "contract": "patient-journey-funnel-followups",
+        "status": "verified",
+        "observedAt": "2026-10-26T22:16:50.716717+00:00",
+        "source": "auditorias/bruna-pausa-decisao-2026-10-26/PREFLIGHT.json",
+        "evidence": "Branch operacional, deploy READY, alvo canônico Apps Script por recibo e recorte privado do incidente; demais consumidores cobertos por testes, sem edição externa."
+      },
+      {
+        "contract": "bruna-conversion-experience",
+        "status": "verified",
+        "observedAt": "2026-10-26T22:16:50.716717+00:00",
+        "source": "auditorias/bruna-pausa-decisao-2026-10-26/PREFLIGHT.json",
+        "evidence": "Branch operacional, deploy READY, alvo canônico Apps Script por recibo e recorte privado do incidente; demais consumidores cobertos por testes, sem edição externa."
       }
     ]
   },
@@ -71,67 +127,82 @@
       "npm.cmd run architecture:check",
       "npm.cmd run change:check",
       "npm.cmd test",
-      "node --test apps-script/clinica-liv-leads/LembretesConsultas.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/ycloud-appointment-reminder.test.mjs netlify/functions/lib/appointment-reminder-endpoint.test.mjs",
+      "node --test netlify/functions/lib/bruna-aprendizado-clinico.integration.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+      "node --test netlify/functions/lib/bruna-autonomia.integration.test.mjs apps-script/clinica-liv-leads/KnowledgeBase.test.mjs",
+      "node --test netlify/functions/lib/bruna-conversa-natural.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-dois-assuntos.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-entrada-acolhedora.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-marketing-care.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-perguntas-simples.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-ponte-consulta.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-preco-acolhedor.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-preco-direto.integration.test.mjs netlify/functions/lib/surgical-price-review.test.mjs netlify/functions/lib/price-journey.integration.test.mjs netlify/functions/lib/whatsapp-automation.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
+      "node --test netlify/functions/lib/bruna-preco-fotos.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-procedimento-contextual.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-procedimento-preco-recuperacao.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-reacoes.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-teleconsulta.integration.test.mjs",
+      "node --test netlify/functions/lib/human-resume-policy.test.mjs netlify/functions/lib/human-resume-queue.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs",
+      "node --test netlify/functions/lib/interaction-continuity.test.mjs",
+      "node --test netlify/functions/lib/knowledge-learning.test.mjs",
+      "node --test netlify/functions/lib/overnight-webhook.test.mjs netlify/functions/lib/ycloud-review-alert.test.mjs",
+      "node --test netlify/functions/lib/protected-facts.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/semantic-reply-policy.test.mjs",
+      "node --test netlify/functions/lib/bruna-pausa-decisao.integration.test.mjs",
+      "node --test apps-script/clinica-liv-leads/Code.schema.test.mjs apps-script/clinica-liv-leads/DataQualityRepair.test.mjs apps-script/clinica-liv-leads/BusinessMilestones.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
+      "node --test apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs netlify/functions/lib/commercial-contact.test.mjs netlify/functions/lib/procedure-context.test.mjs",
+      "node --test apps-script/clinica-liv-leads/ConversationProcess.integration.test.mjs apps-script/clinica-liv-leads/CentralAtendimento.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs apps-script/clinica-liv-leads/Retomadas.test.mjs apps-script/clinica-liv-leads/Code.schema.test.mjs netlify/functions/lib/profile-name.test.mjs netlify/functions/lib/conversation-ledger.test.mjs netlify/functions/lib/lead-classifier.test.mjs netlify/functions/lib/classify-leads.test.mjs",
+      "node --test netlify/functions/lib/human-resume-runtime.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-ledger.test.mjs",
+      "node --test netlify/functions/lib/patient-relationship.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+      "node --test netlify/functions/lib/scheduled-followup-context-review.test.mjs netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
+      "npm.cmd run ops:check",
       "npm.cmd run site:build",
       "npm.cmd run site:check",
-      "node --test apps-script/clinica-liv-leads/AgendaCuidados.test.mjs apps-script/clinica-liv-leads/PainelDecisoesDiarias.test.mjs scripts/check-change-safety.test.mjs scripts/check-operational-consistency.test.mjs",
-      "npm.cmd run ops:check"
+      "node --test netlify/functions/lib/bruna-conversion-experience.test.mjs netlify/functions/lib/patient-replies.test.mjs netlify/functions/lib/conversation-action-controller.test.mjs netlify/functions/lib/outbound-reply-gate.test.mjs netlify/functions/lib/conversation-guidelines.test.mjs netlify/functions/lib/openai-shadow.test.mjs netlify/functions/lib/bruna-conversation-evals.test.mjs netlify/functions/lib/human-resume-processor.test.mjs",
+      "node --test netlify/functions/lib/lifting-information.test.mjs netlify/functions/lib/interaction-continuity.test.mjs",
+      "node --test netlify/functions/lib/bruna-acolhimento.integration.test.mjs",
+      "node --test netlify/functions/lib/bruna-perguntas-conjuntas.integration.test.mjs netlify/functions/lib/human-resume-processor.test.mjs netlify/functions/lib/price-holding-webhook.test.mjs",
+      "node --test netlify/functions/lib/appointment-suggestions.test.mjs"
     ],
-    "status": "passed_local_and_external",
+    "status": "passed_local",
     "results": {
-      "fullSuite": "2320/2320 passed",
-      "focused": "161/162 initial; planner expectation corrected to 14:00 and covered in full passing suite",
-      "artifact": "193 files, 54 pages, build/check passed",
+      "fullSuite": "2352/2352 passed",
+      "timezone": "America/Sao_Paulo",
+      "focused": "264/264 passed",
       "architecture": "JOURNEY_MODULE_BOUNDARIES=OK",
-      "change": "12 exact files; change:check before commit",
+      "change": "16 exact files; CHANGE_SAFETY_STATUS=OK",
+      "artifact": "193 files, 54 pages, build/check passed",
       "patientTestMessagesSent": 0,
-      "production": "v166, fonte igual LF, flags true, 11 acionadores/1 lembrete, saúde 200"
+      "operationalWrites": 0,
+      "commandPortability": "npm.cmd commands executed with npm on Linux; full suite covers every required test file."
     }
   },
-  "externalChecksPending": [],
+  "externalChecksPending": [
+    "production_build",
+    "production_smoke",
+    "same_drive_projections"
+  ],
   "rollback": {
-    "local": "Novo commit revertendo somente este delta; preservar trabalho paralelo.",
-    "production": "Desativar somente lembretes em caso de guarda violada; restaurar proprietário do baseline sem apagar recibos ou reexecutar mensagens."
+    "local": "Novo commit revertendo somente o delta deste pacote.",
+    "production": "Novo commit/build restrito ao comportamento anterior; preservar dados, filas, recibos, Apps Script e trabalho paralelo, sem replay."
   },
   "monitoring": {
-    "owner": "Daniel/equipe e Aníbal pela supervisão existente",
-    "window": "Primeiro ciclo natural, 48h e próxima consulta",
+    "owner": "Daniel/equipe e supervisão existente via Aníbal",
+    "window": "Primeiro caso natural e 48 horas",
     "signals": [
-      "Não enviar antes de 24h",
-      "Nenhuma duplicidade ou consulta cancelada",
-      "Falha de provedor permanece para revisão humana"
+      "Zero respostas ou retomadas comerciais após pausa sem nova iniciativa concreta.",
+      "Novas dúvidas concretas seguem atendidas.",
+      "Nenhuma duplicação; cuidados e agenda preservados."
     ]
   },
   "baselineCandidateReference": {
-    "commit": "9a81dee03e4d6256caf45f98c8eaa62640fbbaff",
+    "commit": "7e5d33cae9e03b68d2c1a158611039d680fe4ae4",
     "path": "ops/CHANGE-CANDIDATE.json"
   },
   "runtimeBaseline": {
-    "changed": true,
+    "changed": false,
     "approvedCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
     "netlifyDeployId": "6ad253ae7b4cafb02a15a633",
-    "appsScriptVersion": 165
-  },
-  "release": {
-    "status": "published_verified",
-    "approvedCommit": "71d14078580165ac6f3fb3e0917b0c0897f8ce2a",
-    "appsScriptVersion": 166,
-    "netlifyDeployId": "6ad253ae7b4cafb02a15a633",
-    "netlifyChanged": false,
-    "publishedAt": "2026-10-16T19:07:00Z",
-    "publishedTimePrecision": "minute",
-    "activatedAt": "2026-10-16T19:08:36Z",
-    "verifiedAt": "2026-10-16T19:12:55.123Z",
-    "drivePlanSha256": "262382ab248dca7c0efccd5cae9c1053b9a85de0fd86e5381c29f079ddbcd5f0",
-    "documentationSourceCommit": "97e66a8525a643e9f93b56fe098ea1d364689a94",
-    "receiptPath": "auditorias/lembretes-24h-2026-10-16/PUBLICACAO.json"
-  },
-  "documentationCloseout": {
-    "status": "written_verified",
-    "canonicalLocalPath": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
-    "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-    "sourceCommit": "97e66a8525a643e9f93b56fe098ea1d364689a94",
-    "sha256": "262382ab248dca7c0efccd5cae9c1053b9a85de0fd86e5381c29f079ddbcd5f0",
-    "readbackAt": "2026-10-16T19:12:55.123Z"
+    "appsScriptVersion": 166
   }
 }

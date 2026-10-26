@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-10-16.3",
-  "promptVersion": "bruna-concierge-2026-10-16.3",
+  "bundleVersion": "2026-10-26.1",
+  "promptVersion": "bruna-concierge-2026-10-26.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-10-16.3",
+  "knowledgeSnapshot": "kb-2026-10-26.1",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -36,31 +36,28 @@
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
     "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "a40d8b74809cb0d1ffc6f60e67f2030e49247508598c78f428fd7948dc607023",
+    "driveProjectionSha256": "24a27eff1e777a45d0fab8b6895b33d29fb94ae26513db6d2dd144fd18a61d53",
     "driveProjectionVerifiedAt": "2026-10-16T17:27:48.921007+00:00",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
-    "status": "written_verified",
+    "status": "local_pending",
     "sourceCommit": "d7d0a39f32efe9f66162620621397c2eddc24928",
-    "note": "Same Drive file replaced and authenticated raw bytes compared exactly with documentary source commit; functional runtime commit remains separate."
+    "note": "Candidato local; a mesma projeção Drive será substituída após publicação verificada."
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
-    "changeId": "BRUNA-ADMIN-SILENCIO-2026-10-16",
-    "status": "published_verified",
+    "changeId": "BRUNA-PAUSA-DECISAO-2026-10-26",
+    "status": "tested_local",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
     "liveModelScenarioCount": 27,
-    "baselineCommit": "a11d020856622a24e114de8968e409a6230ccf71",
-    "baselineDeployId": "6ad231358102a7e6a3f30726",
-    "baselineAppsScriptVersion": 165,
-    "bundleVersion": "2026-10-16.3",
-    "note": "Silêncio comercial contextual; fatos de estacionamento pago e estação Pinheiros confirmados pelo proprietário, sem preço ou agenda nova. Gates hospedados preservados.",
-    "sourceCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
-    "netlifyDeployId": "6ad253ae7b4cafb02a15a633",
-    "publishedAt": "2026-10-16T16:45:22.642Z"
+    "baselineCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
+    "baselineDeployId": "6ad253ae7b4cafb02a15a633",
+    "baselineAppsScriptVersion": 166,
+    "bundleVersion": "2026-10-26.1",
+    "note": "Pausa contextual sem insistência; nova iniciativa concreta preservada. Gates hospedados existentes mantidos."
   }
 }

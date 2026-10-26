@@ -712,7 +712,7 @@ test("approved second follow-up reuses the first review when nobody spoke later"
   assert.equal(sends, 1);
 });
 
-test("patient or human activity after the first follow-up requires a fresh review", async () => {
+test("patient pause stops follow-up locally; other activity requires a fresh review", async () => {
   const firstFollowupId = "scheduled-followup-first-plan";
   const laterTurns = [
     {
@@ -780,7 +780,7 @@ test("patient or human activity after the first follow-up requires a fresh revie
     });
 
     assert.equal(response.status, 409);
-    assert.equal(semanticReviews, 1);
+    assert.equal(semanticReviews, laterTurn.direction === "IN" ? 0 : 1);
     assert.equal(sends, 0);
   }
 });

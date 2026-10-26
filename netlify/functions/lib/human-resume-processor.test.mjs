@@ -16,6 +16,21 @@ const ACTIVE_ENV = {
 const INITIAL_PRICE_REPLY =
   "Os valores cirúrgicos são definidos individualmente após a avaliação e o planejamento. Veja o que compõe o valor: https://draamandaschroeder.com.br/conteudos/quanto-custa-lifting-facial-sao-paulo/";
 
+for (const text of ["Ainda não", "Estou precisando um pouco mais", "Também"]) {
+  test(`queued resumption respects patient decision pause without a model, receipt or alert: ${text}`, async () => {
+    const deps = dependencies();
+    deps.runOpenAIShadowImpl = async () => assert.fail("pause must not request another reply");
+    const history = [{ role: "assistant", source: "equipe_humana", text: "Gostaria de verificar datas para agendamento?" }];
+    if (text !== "Ainda não") history.push({ role: "user", text: "Ainda não" });
+    if (text === "Também") history.push({ role: "assistant", source: "bruna", text: "Quer mais tempo para decidir ou mais informações?" });
+    const result = await processHumanResumeJob(job({ text, recentConversation: history }), { env: ACTIVE_ENV, now: NOW, ...deps });
+    assert.equal(result.status, "no_action");
+    assert.equal(deps.patientMessages.length, 0);
+    assert.equal(deps.alerts.length, 0);
+    assert.equal(deps.completions.length, 1);
+  });
+}
+
 for (const messageType of ["unsupported", "audio", "image"]) {
   test(`known supplier with unavailable ${messageType} has no receipt, alert or model call`, async () => {
     const deps = dependencies();

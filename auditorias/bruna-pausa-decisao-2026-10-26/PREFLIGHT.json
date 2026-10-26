@@ -1,0 +1,27 @@
+{
+  "changeId": "BRUNA-PAUSA-DECISAO-2026-10-26",
+  "status": "read_only_verified",
+  "observedAt": "2026-10-26T22:16:50.716717+00:00",
+  "operationalCommit": "7e5d33cae9e03b68d2c1a158611039d680fe4ae4",
+  "netlify": {
+    "siteId": "c33facb6-eafc-4635-99d6-068bf8707227",
+    "deployId": "6ad253ae7b4cafb02a15a633",
+    "commit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
+    "state": "ready",
+    "functionCount": 15,
+    "scheduleCount": 6
+  },
+  "appsScript": {
+    "version": 166,
+    "evidence": "production-target.json receipt only; editor not inspected",
+    "changed": false
+  },
+  "diagnosis": {
+    "source": "LEADS original, headers and bounded message/operation/delivery ranges",
+    "finding": "Two replies followed a contextual refusal and vague acknowledgement, through human resumption and ordinary webhook. A later concrete patient request remains eligible.",
+    "identitiesExcluded": true
+  },
+  "authorization": "Daniel: corrigir e publicar a pausa de decisão nesta conversa; sem contato externo, alteração de preço, campanha ou agenda.",
+  "patientTestMessagesSent": 0,
+  "operationalWrites": 0
+}

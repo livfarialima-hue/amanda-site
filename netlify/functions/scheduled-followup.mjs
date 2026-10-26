@@ -1,4 +1,5 @@
 import { handleScheduledCare } from "./lib/scheduled-care.mjs";
+import { isPatientDecisionPause } from "./lib/conversation-action-controller.mjs";
 import { timingSafeEqual } from "node:crypto";
 import { getBusinessNumber } from "./lib/business-number-registry.mjs";
 import { appendConversationTurn } from "./lib/conversation-memory.mjs";
@@ -500,6 +501,11 @@ export async function handleScheduledFollowup(
 
   if (!payload.planId || !payload.patientPhone || !payload.body) {
     return json({ ok: false, error: "invalid_payload" }, 400);
+  }
+
+  if (isPatientDecisionPause("", payload.recentConversation)) {
+    return json({ ok: false, sent: false, error: "semantic_context_review_required",
+      semanticReason: "conversation_changed", ignoreReason: "patient_decision_pause" }, 409);
   }
 
   if (
