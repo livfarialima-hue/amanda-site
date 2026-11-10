@@ -1,6 +1,6 @@
 {
   "changeId": "BRUNA-PENDENCIAS-LOCAIS-2026-11-10",
-  "status": "runtime_verified_documentation_pending",
+  "status": "published_verified",
   "bundleVersion": "2026-11-10.1",
   "approvedCommit": "a2c25c3d9e4f5d49e267bbb259ec78d0ce475fed",
   "netlifyDeployId": "6af368511bde0c08349f21d6",
@@ -57,10 +57,33 @@
     "note": "No replay or artificial patient message."
   },
   "documentation": {
-    "status": "pending"
+    "status": "written_verified",
+    "sourceCommit": "f9d2096551ee70380cfe28168fdc9307be7f5863",
+    "sameExistingFiles": true,
+    "method": "Authenticated raw downloads compared byte for byte with committed files.",
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "driveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sourceCommit": "f9d2096551ee70380cfe28168fdc9307be7f5863",
+      "sha256": "644737abb0094c549b20888b0e1df8314795e4f4334f5fcfb40df7bd873720d6",
+      "bytes": 98878,
+      "equal": true,
+      "modifiedAt": "2026-11-10T18:59:20.390Z",
+      "readbackAt": "2026-11-10T19:00:35.965Z"
+    },
+    "plan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sourceCommit": "f9d2096551ee70380cfe28168fdc9307be7f5863",
+      "sha256": "5029b4dba32e17bde5730e855eb066c57b3aa1551fb6a8fac966b0291d561271",
+      "bytes": 57714,
+      "equal": true,
+      "modifiedAt": "2026-11-10T18:59:23.590Z",
+      "readbackAt": "2026-11-10T19:00:35.965Z"
+    }
   },
   "publishedAt": "2026-11-10T18:57:37.341Z",
-  "verifiedAt": "2026-11-10T18:58:46.566Z",
+  "verifiedAt": "2026-11-10T19:00:35.965Z",
   "liveModel": {
     "status": "passed",
     "passed": 27,
@@ -70,7 +93,288 @@
     "evidenceMethod": "Netlify visible build log BRUNA_MODEL_PREFLIGHT",
     "checkedAt": "2026-11-10T18:57:21.351Z",
     "syntheticOnly": true,
-    "patientMessagesSent": 0
+    "patientMessagesSent": 0,
+    "scenarios": [
+      {
+        "name": "first_price_prefill_with_legacy_template",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 7729,
+        "timeoutMs": 20000,
+        "replyCode": "LIFTING-PRICE-RANGE-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "first_generic_prefill_lifting_facial",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 6201,
+        "timeoutMs": 20000,
+        "replyCode": "MARKETING-PREFILL-OPENING-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "first_generic_prefill_lifting_cervical",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 6178,
+        "timeoutMs": 20000,
+        "replyCode": "MARKETING-PREFILL-OPENING-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "first_prefill_urgency_preserves_review",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 3605,
+        "timeoutMs": 20000,
+        "replyCode": "ALERT-URG-01",
+        "modelRequests": 1
+      },
+      {
+        "name": "remote_assessment_after_price_audio_context",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 12795,
+        "timeoutMs": 20000,
+        "replyCode": "",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "pure_appointment_request",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 5160,
+        "timeoutMs": 20000,
+        "replyCode": "",
+        "modelRequests": 1
+      },
+      {
+        "name": "consultation_contextual",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 8572,
+        "timeoutMs": 20000,
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "lifting_information",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 4363,
+        "timeoutMs": 20000,
+        "replyCode": "LIFTING-FACIAL-INFORMATION-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "personal_question_with_reference",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 8362,
+        "timeoutMs": 20000,
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "accepted_information_offer",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 8313,
+        "timeoutMs": 20000,
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "corrected_procedure",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 7086,
+        "timeoutMs": 20000,
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "unknown_clinic_fact",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 8707,
+        "timeoutMs": 20000,
+        "replyCode": "UNKNOWN-REVIEW-01",
+        "modelRequests": 1
+      },
+      {
+        "name": "semantic_approved_knowledge",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 2818,
+        "timeoutMs": 20000,
+        "replyCode": "KB:SYNTHETIC-INVOICE",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "simple_parking_direct",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 2539,
+        "timeoutMs": 20000,
+        "replyCode": "ADMIN-SIDE-PARKING-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "simple_transit_direct",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 3035,
+        "timeoutMs": 20000,
+        "replyCode": "ADMIN-SIDE-TRANSIT-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "human_clinical_task_administrative_question",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 5687,
+        "timeoutMs": 20000,
+        "replyCode": "ADMIN-SIDE-LOCATION-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "consultation_preparation",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 6883,
+        "timeoutMs": 20000,
+        "replyCode": "",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "clinical_urgency",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 3592,
+        "timeoutMs": 20000,
+        "replyCode": "ALERT-URG-01",
+        "modelRequests": 1
+      },
+      {
+        "name": "approved_price_with_photo_request",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 12240,
+        "timeoutMs": 20000,
+        "replyCode": "LIFTING-PRICE-RANGE-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "full_history_name_correction",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 10141,
+        "timeoutMs": 20000,
+        "replyCode": "AMANDA-CONSULTA-INFO-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "full_history_resolved_human_task",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 3514,
+        "timeoutMs": 20000,
+        "replyCode": "",
+        "modelRequests": 1
+      },
+      {
+        "name": "remote_consultation_price_continuation_1",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 4421,
+        "timeoutMs": 20000,
+        "replyCode": "",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "remote_consultation_price_continuation_2",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 5979,
+        "timeoutMs": 20000,
+        "replyCode": "",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "lipo_papada_complete_requested_answer",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 8968,
+        "timeoutMs": 20000,
+        "replyCode": "LIPO-PAPADA-PRICE-RANGE-01",
+        "gateAllowed": true,
+        "gateReason": "allowed",
+        "modelRequests": 1
+      },
+      {
+        "name": "lipo_papada_association_not_isolated_range",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 3772,
+        "timeoutMs": 20000,
+        "replyCode": "UNKNOWN-REVIEW-01",
+        "modelRequests": 1
+      },
+      {
+        "name": "classification",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 4585,
+        "timeoutMs": 15000,
+        "modelRequests": 1
+      },
+      {
+        "name": "followup_declined",
+        "passed": true,
+        "status": "completed",
+        "elapsedMs": 2280,
+        "timeoutMs": 12000,
+        "modelRequests": 1
+      }
+    ]
   },
   "liveAudio": {
     "status": "passed",
@@ -82,7 +386,15 @@
   "runtimeComparison": {
     "functions": 15,
     "schedules": 6,
-    "schedulesIdentical": true
+    "schedulesIdentical": true,
+    "changedFunctions": [
+      "appointment-review",
+      "human-resume",
+      "human-resume-background",
+      "ycloud-recovery",
+      "ycloud-recovery-background",
+      "ycloud-webhook"
+    ]
   },
   "smoke": {
     "domainPage": 200,
@@ -92,5 +404,6 @@
     "unsignedPost": 401,
     "observedAt": "2026-11-10T18:58:46.566Z"
   },
-  "immutableUrl": "https://6af368511bde0c08349f21d6--inspiring-sprite-b35ca4.netlify.app"
+  "immutableUrl": "https://6af368511bde0c08349f21d6--inspiring-sprite-b35ca4.netlify.app",
+  "lastVerifiedAt": "2026-11-10T19:00:35.965Z"
 }

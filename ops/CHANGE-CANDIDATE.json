@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-PENDENCIAS-LOCAIS-2026-11-10",
   "title": "Corrigir seleção pendente, preservar a data realizada e validar a saudação da Bruna",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "83eb9805a7227245ffd66fed7f1ad85c7410e5c6",
   "authorization": {
     "required": true,
@@ -14,7 +14,7 @@
     "level": "high",
     "patientEffects": true,
     "externalWritesPerformed": true,
-    "note": "A seleção continua dependendo de confirmação humana. Não há reparo retroativo de consultas nem envio de teste."
+    "note": "Seleção exige confirmação humana. Uma migração de cabeçalhos; sem alterações de linhas de pacientes, reparo retroativo de consultas ou envio de teste."
   },
   "scope": {
     "files": [
@@ -175,13 +175,12 @@
       "change": "CHANGE_SAFETY_STATUS=OK; 13 arquivos exatos",
       "artifact": "193 arquivos, 54 URLs, build e inspeção aprovados",
       "patientTestMessagesSent": 0,
-      "operationalWrites": 0
+      "operationalWrites": "One header-only update A1:J1; 32 data rows identical",
+      "hostedModel": "27/27, full history 2/2, audio 3/3; directly observed build log",
+      "drive": "Both existing file IDs, exact raw-byte equality"
     }
   },
-  "externalChecksPending": [
-    "netlify_production_publish_and_readback",
-    "same_drive_projections"
-  ],
+  "externalChecksPending": [],
   "rollback": {
     "local": "Reverter este commit preservando a correção cloud de pausa.",
     "production": "Restaurar o mesmo deployment Apps Script à v166 e o comportamento Netlify de 83eb9805. Preservar dados e cabeçalhos alinhados; não reprocessar eventos."
@@ -200,9 +199,17 @@
     "path": "ops/CHANGE-CANDIDATE.json"
   },
   "runtimeBaseline": {
-    "changed": false,
-    "approvedCommit": "83eb9805a7227245ffd66fed7f1ad85c7410e5c6",
-    "netlifyDeployId": "6ae09cbdac0c5fed4c97010c",
-    "appsScriptVersion": 166
+    "changed": true,
+    "approvedCommit": "a2c25c3d9e4f5d49e267bbb259ec78d0ce475fed",
+    "netlifyDeployId": "6af368511bde0c08349f21d6",
+    "appsScriptVersion": 167
+  },
+  "release": {
+    "approvedCommit": "a2c25c3d9e4f5d49e267bbb259ec78d0ce475fed",
+    "netlifyDeployId": "6af368511bde0c08349f21d6",
+    "appsScriptVersion": 167,
+    "verifiedAt": "2026-11-10T19:00:35.965Z",
+    "drivePlanSha256": "5029b4dba32e17bde5730e855eb066c57b3aa1551fb6a8fac966b0291d561271",
+    "receiptPath": "auditorias/bruna-pendencias-locais-2026-11-10/PUBLICACAO.json"
   }
 }
