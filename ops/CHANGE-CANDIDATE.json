@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-COERENCIA-LOGICA-2026-11-10",
   "title": "Transparência, continuidade de pendências e versões efetivas",
-  "status": "committed",
+  "status": "published_verified",
   "baseCommit": "e69bf442f51a5652022151d6d7d80cb1c50dd158",
   "authorization": {
     "required": true,
@@ -14,7 +14,7 @@
     "level": "high",
     "patientEffects": true,
     "externalWritesPerformed": true,
-    "note": "Netlify com efeitos de resposta; Apps Script preparado e testado localmente, sem acesso para publicar. Sem mensagens reais, flags, preços ou migração."
+    "note": "Netlify e Apps Script publicados nas implantações canônicas. Sem mensagens reais, alterações de dados, acionadores, flags, preços ou migração."
   },
   "scope": {
     "files": [
@@ -25,11 +25,14 @@
       "apps-script/clinica-liv-leads/ConsultasSync.test.mjs",
       "apps-script/clinica-liv-leads/ConversationArchive.gs",
       "apps-script/clinica-liv-leads/ConversationArchive.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
       "apps-script/clinica-liv-leads/WhatsAppCosts.gs",
       "apps-script/clinica-liv-leads/WhatsAppCosts.test.mjs",
+      "apps-script/clinica-liv-leads/production-target.json",
       "auditorias/bruna-coerencia-logica-2026-11-10/PUBLICACAO.json",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/lib/appointment-review-webhook.test.mjs",
       "netlify/functions/lib/appointment-suggestions.mjs",
       "netlify/functions/lib/automation-identity-guard.test.mjs",
@@ -289,13 +292,15 @@
       "siteBuild": "passed",
       "siteCheck": "passed",
       "diffCheck": "passed",
-      "opsCheck": "SYNC_PENDING",
-      "appsScriptRuntime": "not_inspected_not_published"
+      "opsCheck": "OK",
+      "appsScriptRuntime": "v168_published_verified",
+      "appsScriptFocusedTests": {
+        "passed": 133,
+        "total": 133
+      }
     }
   },
-  "externalChecksPending": [
-    "Apps Script: acesso autenticado, comparação de fontes e publicação no deployment canônico."
-  ],
+  "externalChecksPending": [],
   "rollback": {
     "local": "Reverter somente arquivos do delta após e69bf442.",
     "production": "Novo commit/build com comportamento do baseline e69bf442, preservando Apps Script v167, dados, filas e recibos; sem replay."
@@ -313,13 +318,25 @@
     "commit": "83eb9805a7227245ffd66fed7f1ad85c7410e5c6",
     "path": "ops/CHANGE-CANDIDATE.json"
   },
-  "partialPublication": {
-    "status": "published_verified",
-    "deployId": "6af38567abdf034950290235",
-    "buildId": "6af38567abdf034950290233",
-    "publishedAt": "2026-11-10T21:02:07.825Z",
-    "availableFunctions": 15,
-    "schedules": 6,
-    "hostedModelGate": "Build succeeded with mandatory gate enabled; final scenario counts inferred from committed contract, not read directly from final hosted log."
+  "release": {
+    "approvedCommit": "9de9f447c8888edcd8fc057477e02adad2e50cc9",
+    "netlifyDeployId": "6af38567abdf034950290235",
+    "appsScriptVersion": 168,
+    "verifiedAt": "2026-11-10T21:40:43.035266+00:00",
+    "drivePlanSha256": "aa633747480cbf71423d3185e58dc41664a0d32e96bf3fd5826de9499802ba74",
+    "liveModel": {
+      "status": "passed",
+      "passed": 27,
+      "total": 27,
+      "fullHistoryPassed": 2,
+      "evidence": "Inferred from mandatory production build gate on the exact deployed commit; final log counters not directly retrieved."
+    },
+    "liveAudio": {
+      "status": "passed",
+      "passed": 3,
+      "total": 3,
+      "evidence": "Inferred from mandatory production build gate on the exact deployed commit; final log counters not directly retrieved."
+    },
+    "receipt": "auditorias/bruna-coerencia-logica-2026-11-10/PUBLICACAO.json"
   }
 }

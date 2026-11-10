@@ -1,8 +1,8 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
-## Pacote 2026-11-10.2 — Netlify publicado, Apps Script pendente
+## Pacote 2026-11-10.2 — Netlify e Apps Script publicados
 
-Implementação autorizada por Daniel. Identidade virtual explícita, proteção contra falsa identidade humana, reuso de obrigação para fragmentos de preço vinculados, mídia sem recibo genérico e telemetria do manifesto embarcado. Testes locais: 2371/2371; arquitetura, escopo e artefato aprovados. Netlify publicado em 10/11 às 18h02 BRT: commit 9de9f447c8888edcd8fc057477e02adad2e50cc9, deploy 6af38567abdf034950290235 READY. Projeções Drive serão verificadas no recibo de publicação parcial. Apps Script v167 continua a última versão comprovada; correções administrativas locais aguardam acesso ao editor canônico.
+Implementação autorizada por Daniel. Identidade virtual explícita, proteção contra falsa identidade humana, reuso de obrigação para fragmentos de preço vinculados, mídia sem recibo genérico e telemetria do manifesto embarcado. Testes locais: 2371/2371; arquitetura, escopo e artefato aprovados. Netlify publicado em 10/11 às 18h02 BRT: commit 9de9f447c8888edcd8fc057477e02adad2e50cc9, deploy 6af38567abdf034950290235 READY. Apps Script v168 publicado em 10/11/2026 às 18h37 BRT na implantação canônica, com a mesma URL, conta de execução e acesso. Antes da escrita, 28 fontes visíveis coincidiram com a base e69bf442; após salvar e recarregar, as quatro fontes alteradas coincidiram por SHA-256 com 9de9f447c8888edcd8fc057477e02adad2e50cc9. Saúde GET 200 e POST sem segredo recusado. 133/133 testes focados e 2371/2371 na validação integral original. Sem execução de rotinas, mensagens, mudanças de acionadores ou edições de dados. Recibo: auditorias/bruna-coerencia-logica-2026-11-10/PUBLICACAO.json.
 
 ## Pendências locais da Bruna — publicadas em 10/11/2026
 

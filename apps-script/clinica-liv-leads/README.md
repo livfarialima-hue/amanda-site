@@ -1,5 +1,11 @@
 # Apps Script da Clínica LIV
 
+## Pacote de coerência da lógica — 10/11/2026
+
+Commit funcional 9de9f447c8888edcd8fc057477e02adad2e50cc9; Netlify 6af38567abdf034950290235, pacote 2026-11-10.2. Apps Script v168 publicado em 10/11/2026 às 18h37 BRT na implantação canônica, com a mesma URL, conta de execução e acesso. Antes da escrita, 28 fontes visíveis coincidiram com a base e69bf442; após salvar e recarregar, as quatro fontes alteradas coincidiram por SHA-256 com 9de9f447c8888edcd8fc057477e02adad2e50cc9. Saúde GET 200 e POST sem segredo recusado. 133/133 testes focados e 2371/2371 na validação integral original. Sem execução de rotinas, mensagens, mudanças de acionadores ou edições de dados.
+
+Rollback: Apps Script v167 na mesma implantação; se necessário, Netlify pelo comportamento do commit a2c25c3d9e4f5d49e267bbb259ec78d0ce475fed e deploy 6af368511bde0c08349f21d6, preservando dados e recibos. Monitorar o primeiro caso natural e 48h pelo fluxo existente. Recibo: auditorias/bruna-coerencia-logica-2026-11-10/PUBLICACAO.json.
+
 ## Pendências locais da Bruna — publicadas em 10/11/2026
 
 Commit funcional aprovado a2c25c3d9e4f5d49e267bbb259ec78d0ce475fed; Apps Script v167 no mesmo deployment canônico e Netlify 6af368511bde0c08349f21d6, READY e publicado às 15h57 BRT (2026-11-10T18:57:37.341Z). As duas fontes Apps Script foram recarregadas e coincidiram com o commit. Cabeçalhos de _AGENDAMENTOS_PENDENTES realinhados em A:I; as 32 linhas de dados permaneceram idênticas. A data realizada registrada é preservada e respostas como “não”, “sim” e “ok” deixam de ser aceitas como nome na saudação.

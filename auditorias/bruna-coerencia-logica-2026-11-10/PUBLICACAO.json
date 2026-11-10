@@ -1,6 +1,6 @@
 {
   "changeId": "BRUNA-COERENCIA-LOGICA-2026-11-10",
-  "status": "published_partial",
+  "status": "published_verified",
   "bundleVersion": "2026-11-10.2",
   "functionalCommit": "9de9f447c8888edcd8fc057477e02adad2e50cc9",
   "netlify": {
@@ -10,18 +10,48 @@
     "publishedAt": "2026-11-10T21:02:07.825Z",
     "availableFunctions": 15,
     "schedules": 6,
-    "hostedModelGate": "Build succeeded with mandatory gate enabled; final scenario counts inferred from committed contract, not read directly from final hosted log."
+    "hostedModelGate": "Build succeeded with mandatory gate enabled; final scenario counts inferred from committed contract, not read directly from final hosted log.",
+    "currentProductionReverifiedAt": "2026-11-10T21:40:43.035266+00:00"
   },
   "appsScript": {
-    "status": "source_tested_not_deployed",
-    "lastVerifiedVersion": 167,
-    "blocker": "Connected browser lacks originating context; cloud browser not authenticated to canonical editor.",
-    "sources": [
-      "CentralAtendimento.gs",
-      "ConsultasSync.gs",
-      "ConversationArchive.gs",
-      "WhatsAppCosts.gs"
-    ]
+    "status": "published_verified",
+    "previousVersion": 167,
+    "version": 168,
+    "publishedAtDisplayed": "2026-11-10T18:37-03:00",
+    "publishedTimePrecision": "Apps Script UI, minute",
+    "verifiedAt": "2026-11-10T21:39:49.765743+00:00",
+    "sameProjectDeploymentAndSpreadsheet": true,
+    "sameExecutionIdentityAndAccess": true,
+    "preWriteVisibleSourceMatches": 28,
+    "sourceReadback": "Reloaded editor; normalized LF and trailing whitespace; exact SHA-256 match with approved commit.",
+    "sources": {
+      "CentralAtendimento.gs": "913d2abb34676059cf1ef467d1884d677221c7b61f6d9f62e6a00a76679fbbce",
+      "ConsultasSync.gs": "73e558b724397525ab9a79e138fe08e495aad0a1c5bd8e5c22e42eda364f682b",
+      "ConversationArchive.gs": "36869babec896108b2dde0f5ff2eef2175508935b81a55debeb50d8d538cb888",
+      "WhatsAppCosts.gs": "e38aa5aefd5263137881b693c9dd06121382db414a4ae7594dea65f32a8bfb7d"
+    },
+    "health": {
+      "get": {
+        "status": 200,
+        "body": {
+          "ok": true,
+          "service": "clinica-liv-leads",
+          "deduplication": "one_open_opportunity_per_contact_and_professional"
+        }
+      },
+      "unauthenticatedPost": {
+        "status": 200,
+        "body": {
+          "ok": false,
+          "error": "unauthorized"
+        }
+      }
+    },
+    "focusedTests": {
+      "passed": 133,
+      "total": 133
+    },
+    "rollbackVersion": 167
   },
   "localTests": {
     "passed": 2371,
@@ -34,20 +64,22 @@
     "status": "written_verified",
     "sameExistingFiles": true,
     "method": "Raw authenticated Drive downloads compared byte-for-byte with committed local files.",
-    "verifiedAt": "2026-11-10T21:06:04.029035+00:00",
+    "verifiedAt": "2026-11-10T21:40:43.035266+00:00",
     "manual": {
       "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "5c0399fcdfa73f47cdb66026b9e1d39621bf671495db6299052dad008b728db4",
+      "bytes": 99402,
+      "equal": true,
       "driveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
-      "sha256": "a160feb472967899b1f62c76fa903d3f19cd48d433bfefd2a80a36226cc3a2e5",
-      "bytes": 99015,
-      "equal": true
+      "modifiedAt": "2026-11-10T21:40:01.609Z"
     },
     "plan": {
       "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "aa633747480cbf71423d3185e58dc41664a0d32e96bf3fd5826de9499802ba74",
+      "bytes": 60636,
+      "equal": true,
       "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
-      "sha256": "aa7669cade19d19aa5c7069551116780224ba33100cfd9ccefdd0e2baee6d752",
-      "bytes": 60188,
-      "equal": true
+      "modifiedAt": "2026-11-10T21:40:04.356Z"
     }
   },
   "monitoring": "First natural eligible case and 48h through existing supervision; no replay.",
@@ -119,5 +151,22 @@
       "url": "https://6af38567abdf034950290235--inspiring-sprite-b35ca4.netlify.app/api/ycloud/webhook",
       "unsignedPostStatus": 401
     }
-  ]
+  ],
+  "approvedCommit": "9de9f447c8888edcd8fc057477e02adad2e50cc9",
+  "netlifyDeployId": "6af38567abdf034950290235",
+  "appsScriptVersion": 168,
+  "verifiedAt": "2026-11-10T21:40:43.035266+00:00",
+  "liveModel": {
+    "status": "passed",
+    "passed": 27,
+    "total": 27,
+    "fullHistoryPassed": 2,
+    "evidence": "Inferred from mandatory production build gate on the exact deployed commit; final log counters not directly retrieved."
+  },
+  "liveAudio": {
+    "status": "passed",
+    "passed": 3,
+    "total": 3,
+    "evidence": "Inferred from mandatory production build gate on the exact deployed commit; final log counters not directly retrieved."
+  }
 }
