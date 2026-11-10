@@ -2358,6 +2358,20 @@ function registrarMarcoAdministrativoClassificado_(spreadsheet, input) {
   const currentStatus = String(
     valorDaLinhaConsultas_(row, columns, CONSULTAS_SYNC_HEADERS.status) || "",
   );
+  const completedDate = valorDaLinhaConsultas_(
+    row,
+    columns,
+    CONSULTAS_SYNC_HEADERS.completedDate,
+  );
+  const hasRecordedCompletion = completedDate !== "" && completedDate != null;
+  if (
+    outcome === "attended" &&
+    hasRecordedCompletion &&
+    statusConsultaRealizada_(normalizarTextoConsultasSync_(currentStatus))
+  ) {
+    return { ok: true, updated: false, reason: "appointment_already_attended" };
+  }
+
   if (outcome === "missed") {
     const scheduledAt = dataHoraAgendadaConsulta_(row, columns);
     if (scheduledAt && scheduledAt.getTime() > now.getTime() + 5 * 60 * 1000) {
@@ -2426,13 +2440,15 @@ function registrarMarcoAdministrativoClassificado_(spreadsheet, input) {
       ),
     );
   } else if (outcome === "attended") {
-    definirValorConsulta_(
-      sheet,
-      rowNumber,
-      columns,
-      CONSULTAS_SYNC_HEADERS.completedDate,
-      now,
-    );
+    if (!hasRecordedCompletion) {
+      definirValorConsulta_(
+        sheet,
+        rowNumber,
+        columns,
+        CONSULTAS_SYNC_HEADERS.completedDate,
+        now,
+      );
+    }
     definirValorConsulta_(
       sheet,
       rowNumber,

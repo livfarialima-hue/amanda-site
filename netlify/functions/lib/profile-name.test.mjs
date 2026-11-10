@@ -111,3 +111,12 @@ test("a canonical patient name keeps the complete validated value", () => {
   assert.equal(usableKnownPatientName("Não informado"), "");
   assert.equal(usableKnownPatientName("=IMPORTXML(...)"), "");
 });
+
+test("a conversational reply cannot become a profile, self-declared or CRM name", () => {
+  for (const reply of ["não", "NÃO.", "nao sei", "sim", "OK"]) {
+    assert.equal(usableProfileName(reply), "");
+    assert.equal(usableKnownPatientName(reply), "");
+    assert.equal(resolveContactIdentity({ currentText: "Me chamo " + reply }).name, "");
+  }
+  assert.equal(usableProfileName("Simone"), "Simone");
+});

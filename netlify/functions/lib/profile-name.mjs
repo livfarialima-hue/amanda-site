@@ -7,6 +7,14 @@ const NONPERSONAL_NAME_PATTERN = /\b(?:solu[cç][oõ]es|servi[cç]os|digital|dig
 // instead of extracting a plausible first word from a business display name.
 const BUSINESS_DESCRIPTION_PATTERN = /\b(?:imove(?:l|is)|corretor(?:a|es|as)?|corretagem|consultoria|seguros?|engenharia|construc(?:ao|oes)|transportes?|turismo|viagens|confeitaria|padaria|farmacia|cosmeticos|perfumaria|atacado|varejo)\b/;
 
+function startsWithConversationalReply(name) {
+  const firstToken = name.split(/\s+/)[0]
+    .toLocaleLowerCase("pt-BR")
+    .normalize("NFD")
+    .replace(/\p{M}|\./gu, "");
+  return ["nao", "sim", "ok"].includes(firstToken);
+}
+
 export function usableKnownPatientName(value) {
   const name = Array.from(String(value || "").trim())
     .slice(0, MAX_KNOWN_PATIENT_NAME_LENGTH + 1)
@@ -22,6 +30,7 @@ export function usableKnownPatientName(value) {
   if (
     !name ||
     name.length > MAX_KNOWN_PATIENT_NAME_LENGTH ||
+    startsWithConversationalReply(name) ||
     !/^[\p{L}\p{M}][\p{L}\p{M}'’.-]*(?:\s+[\p{L}\p{M}][\p{L}\p{M}'’.-]*)*$/u.test(
       name,
     ) ||
@@ -71,6 +80,7 @@ export function usableProfileName(value) {
     !profileName ||
     boundedProfileName.length > MAX_PROFILE_NAME_LENGTH ||
     !PERSONAL_NAME_CHARACTER_PATTERN.test(profileName) ||
+    startsWithConversationalReply(profileName) ||
     NONPERSONAL_NAME_PATTERN.test(profileName) ||
     BUSINESS_DESCRIPTION_PATTERN.test(normalizedProfileName) ||
     suspiciousProfilePattern.test(profileName)

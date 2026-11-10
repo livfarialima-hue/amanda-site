@@ -75,3 +75,18 @@ test('semantic input does not expose the business profile as an approved persona
   });
   assert.equal(input.whatsappProfileName,'');
 });
+
+test('negative input never becomes a vocative in the first reply', () => {
+  const result = applyFirstReplyGreetingGuard({
+    route: 'standard_reply',
+    suggestedReply: 'Olá, não! Posso te orientar sobre a consulta.',
+  }, {
+    patientProfileName: 'não',
+    recentConversation: [],
+    replyContract: { maxQuestions: 0 },
+  });
+
+  assert.match(result.suggestedReply, /^Olá! Eu sou a Bruna/);
+  assert.match(result.suggestedReply, /Posso te orientar sobre a consulta\./);
+  assert.doesNotMatch(result.suggestedReply, /Olá, não/i);
+});

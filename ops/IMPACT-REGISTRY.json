@@ -779,7 +779,9 @@
         "netlify/functions/lib/patient-relationship.mjs",
         "netlify/functions/lib/procedure-context.mjs",
         "netlify/functions/lib/scheduled-followup-context-review.mjs",
-        "netlify/functions/lib/whatsapp-automation.mjs"
+        "netlify/functions/lib/whatsapp-automation.mjs",
+        "apps-script/clinica-liv-leads/ConsultasSync.gs",
+        "apps-script/clinica-liv-leads/OpportunityStore.gs"
       ],
       "consumerFiles": [
         "apps-script/clinica-liv-leads/CentralAtendimento.gs",
@@ -793,7 +795,10 @@
         "netlify/functions/human-resume.mjs",
         "netlify/functions/lib/human-resume-dispatch.mjs",
         "netlify/functions/scheduled-followup.mjs",
-        "netlify/functions/ycloud-webhook.mjs"
+        "netlify/functions/ycloud-webhook.mjs",
+        "apps-script/clinica-liv-leads/Code.gs",
+        "apps-script/clinica-liv-leads/LeadClassification.gs",
+        "apps-script/clinica-liv-leads/LembretesConsultas.gs"
       ],
       "coveredPaths": [
         "apps-script/clinica-liv-leads/BusinessMilestones.gs",
@@ -857,7 +862,11 @@
         "netlify/functions/lib/whatsapp-automation.mjs",
         "netlify/functions/lib/whatsapp-automation.test.mjs",
         "netlify/functions/scheduled-followup.mjs",
-        "netlify/functions/ycloud-webhook.mjs"
+        "netlify/functions/ycloud-webhook.mjs",
+        "apps-script/clinica-liv-leads/ConsultasSync.gs",
+        "apps-script/clinica-liv-leads/ConsultasSync.test.mjs",
+        "apps-script/clinica-liv-leads/OpportunityStore.gs",
+        "apps-script/clinica-liv-leads/OpportunityStore.test.mjs"
       ],
       "requiredTestFiles": [
         "apps-script/clinica-liv-leads/BusinessMilestones.test.mjs",
@@ -884,7 +893,9 @@
         "netlify/functions/lib/scheduled-followup-context-review.test.mjs",
         "netlify/functions/lib/scheduled-followup-endpoint.test.mjs",
         "netlify/functions/lib/webhook-intake-observability.test.mjs",
-        "netlify/functions/lib/whatsapp-automation.test.mjs"
+        "netlify/functions/lib/whatsapp-automation.test.mjs",
+        "apps-script/clinica-liv-leads/ConsultasSync.test.mjs",
+        "apps-script/clinica-liv-leads/OpportunityStore.test.mjs"
       ],
       "requiredCommands": [
         "node --test apps-script/clinica-liv-leads/Code.schema.test.mjs apps-script/clinica-liv-leads/DataQualityRepair.test.mjs apps-script/clinica-liv-leads/BusinessMilestones.test.mjs apps-script/clinica-liv-leads/GoogleAdsFunnelReview.test.mjs apps-script/clinica-liv-leads/MetaAdsFunnelReview.test.mjs",
@@ -901,7 +912,8 @@
         "npm.cmd run ops:check",
         "npm.cmd run site:build",
         "npm.cmd run site:check",
-        "npm.cmd test"
+        "npm.cmd test",
+        "node --test apps-script/clinica-liv-leads/ConsultasSync.test.mjs apps-script/clinica-liv-leads/OpportunityStore.test.mjs apps-script/clinica-liv-leads/LeadClassification.test.mjs"
       ],
       "liveSystems": [
         "Apps Script",

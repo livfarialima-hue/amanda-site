@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-10-26.1",
-  "promptVersion": "bruna-concierge-2026-10-26.1",
+  "bundleVersion": "2026-11-10.1",
+  "promptVersion": "bruna-concierge-2026-11-10.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-10-26.1",
+  "knowledgeSnapshot": "kb-2026-11-10.1",
   "identityRole": "assistente_ou_concierge_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -18,9 +18,9 @@
   "release": {
     "status": "published",
     "functionalCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
-    "lastObservedProductionCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
+    "lastObservedProductionCommit": "83eb9805a7227245ffd66fed7f1ad85c7410e5c6",
     "functionalDeployId": "6ad253ae7b4cafb02a15a633",
-    "lastObservedProductionDeployId": "6ad253ae7b4cafb02a15a633",
+    "lastObservedProductionDeployId": "6ae09cbdac0c5fed4c97010c",
     "rollbackCommit": "a11d020856622a24e114de8968e409a6230ccf71",
     "rollbackDeployId": "6ad231358102a7e6a3f30726",
     "rollbackConstraint": "Novo commit/build restrito para o comportamento anterior, preservando dados, filas, recibos, Apps Script e trabalho paralelo; sem replay.",
@@ -41,23 +41,23 @@
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
     "status": "local_pending",
     "sourceCommit": "d7d0a39f32efe9f66162620621397c2eddc24928",
-    "note": "Candidato local; a mesma projeção Drive será substituída após publicação verificada."
+    "note": "A projeção do pacote cloud 2026-10-26.1 não foi reconciliada. A mesma projeção será atualizada após publicação autorizada e verificada do candidato."
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
-    "changeId": "BRUNA-PAUSA-DECISAO-2026-10-26",
+    "changeId": "BRUNA-PENDENCIAS-LOCAIS-2026-11-10",
     "status": "tested_local",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
     "liveModelScenarioCount": 27,
-    "baselineCommit": "f8753f985a5b3eca15c521e311e1eee56c9046d8",
-    "baselineDeployId": "6ad253ae7b4cafb02a15a633",
+    "baselineCommit": "83eb9805a7227245ffd66fed7f1ad85c7410e5c6",
+    "baselineDeployId": "6ae09cbdac0c5fed4c97010c",
     "baselineAppsScriptVersion": 166,
-    "bundleVersion": "2026-10-26.1",
-    "note": "Pausa contextual sem insistência; nova iniciativa concreta preservada. Gates hospedados existentes mantidos."
+    "bundleVersion": "2026-11-10.1",
+    "note": "Validação de nome para saudação e correções no Apps Script. Gates hospedados existentes mantidos."
   }
 }

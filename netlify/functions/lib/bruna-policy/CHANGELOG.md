@@ -1,4 +1,11 @@
+# 2026-11-10.1 — candidato local
+
+- A validação compartilhada descarta respostas curtas tratadas como nome, preservando a saudação sem vocativo.
+- No Apps Script, a seleção pendente corrige o deslocamento conhecido de cabeçalhos e a classificação preserva a data realizada já registrada.
+
 # 2026-10-26.1 — pausa de decisão
+
+Deploy ativo observado em 10/11/2026: 6ae09cbdac0c5fed4c97010c, commit 83eb9805, publicado em 27/10 às 09h49 BRT. A conferência das projeções do Drive permanece pendente.
 
 - Pausa após recusa contextual de agenda ou pedido de tempo; respostas vagas não reabrem a conversa.
 - Nova dúvida concreta permanece elegível. Controlador, retomada humana, gate final e retomada comercial compartilham o mesmo proprietário.

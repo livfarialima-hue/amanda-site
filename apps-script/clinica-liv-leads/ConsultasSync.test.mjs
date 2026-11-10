@@ -1043,3 +1043,53 @@ test("classifies only the operational type of a pending task", () => {
     "documents_or_exams",
   );
 });
+
+test("classified attendance preserves a previously recorded completion and its pending action", () => {
+  const sandbox = vm.createContext({ Date });
+  vm.runInContext(source, sandbox);
+  sandbox.garantirEstruturaSincronizacaoConsultas_ = () => {};
+  const headers = ["ID da consulta", "Telefone (E.164)", "Profissional", "Status",
+    "Data realizada", "Próxima ação"];
+  const originalCompletion = new Date("2026-06-15T15:00:00Z");
+  const row = ["synthetic-id", "+5511999990101", "Dra. Amanda", "Realizada",
+    originalCompletion, "Conferir orçamento"];
+  const writes = [];
+  const sheet = {
+    getLastRow: () => 2,
+    getLastColumn: () => headers.length,
+    getRange(rowNumber, columnNumber, rowCount) {
+      if (rowNumber === 1) return { getDisplayValues: () => [headers] };
+      if (rowCount) return { getValues: () => [row] };
+      return {
+        setValue(value) {
+          writes.push([columnNumber, value]);
+          row[columnNumber - 1] = value;
+        },
+      };
+    },
+  };
+  const spreadsheet = { getSheetByName: () => sheet };
+  const classified = {
+    phone: row[1],
+    professional: row[2],
+    outcome: "attended",
+    at: new Date("2026-11-04T15:00:00Z"),
+    confidence: "high",
+  };
+  const apply = () => sandbox.registrarMarcoAdministrativoClassificado_(spreadsheet, classified);
+
+  assert.equal(apply().reason, "appointment_already_attended");
+  assert.deepEqual(writes, []);
+  assert.equal(row[4], originalCompletion);
+  assert.equal(row[5], "Conferir orçamento");
+
+  row[3] = "Confirmada";
+  assert.equal(apply().updated, true);
+  assert.equal(row[4], originalCompletion);
+  assert.equal(writes.some(([column]) => column === 5), false);
+
+  row[3] = "Confirmada";
+  row[4] = "";
+  assert.equal(apply().updated, true);
+  assert.equal(row[4], classified.at);
+});

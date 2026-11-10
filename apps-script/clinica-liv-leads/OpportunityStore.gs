@@ -2286,6 +2286,38 @@ function migrarOportunidadesExistentesLeads() {
   return stats;
 }
 
+function alinharCabecalhosSelecaoPendente_(sheet, headers) {
+  const width = Math.min(sheet.getMaxColumns(), headers.length + 1);
+  const range = sheet.getRange(1, 1, 1, width);
+  const [current] = range.getValues();
+  if (headers.every((header, index) => current[index] === header)) {
+    return true;
+  }
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    return true;
+  }
+
+  // The deployed writer has always stored pending selections in A:I.
+  // Only repair the observed B:J header shift, leaving all data rows intact.
+  if (
+    width !== headers.length + 1 ||
+    current[0] !== "" ||
+    !headers.every((header, index) => current[index + 1] === header) ||
+    range.getFormulas()[0].some(Boolean)
+  ) {
+    return false;
+  }
+
+  const dataRows = sheet.getLastRow() - 1;
+  if (dataRows && !sheet.getRange(2, width, dataRows, 1).isBlank()) {
+    return false;
+  }
+
+  range.setValues([[...headers, ""]]);
+  return true;
+}
+
 function registrarSelecaoPendenteAgendamento_(input) {
   const phone = normalizePhone_(input && input.phone);
   const professional = normalizarProfissionalOportunidade_(
@@ -2334,7 +2366,9 @@ function registrarSelecaoPendenteAgendamento_(input) {
     sheet.setFrozenRows(1);
     sheet.hideSheet();
   }
-  garantirCabecalhosAditivos_(sheet, headers);
+  if (!alinharCabecalhosSelecaoPendente_(sheet, headers)) {
+    return { ok: false, error: "pending_appointment_schema_mismatch" };
+  }
   const eventId = String(input.eventId || "");
   const duplicate = eventId && sheet.getLastRow() >= 2
     ? Boolean(

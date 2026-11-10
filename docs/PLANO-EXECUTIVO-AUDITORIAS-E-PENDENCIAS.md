@@ -1,10 +1,16 @@
 # Plano executivo — auditorias, pendências e prazos
 
+## Pendências locais da Bruna — 10/11/2026
+
+Candidato local baseado em 83eb9805. O gravador de seleções pendentes realinha somente o cabeçalho legado deslocado de B:J, quando a coluna J não contém dados, e bloqueia esquemas divergentes. A reclassificação de um atendimento já realizado preserva a data registrada. A validação de nome descarta respostas curtas como “não”, “sim” e “ok”, mantendo a apresentação aprovada da Bruna. Sem edição de registros ou envio de teste.
+
+Permanecem para reconciliação operacional a identificação dos vínculos ambíguos de Consultas/Calendar, cancelamentos já acolhidos, investigação dos alertas internos e recuperação de saídas ausentes pelo ID original. A causa do incidente natural de saudação continua indeterminada. O ajuste local cobre a reprodução com entrada não nominal.
+
 ## Pausa de decisão — correção autorizada em 26/10/2026
 
 Daniel autorizou corrigir e publicar a insistência após recusa de agendamento ou pedido de mais tempo. Candidato BRUNA-PAUSA-DECISAO-2026-10-26: controlador único de pausa, preservação diante de respostas vagas, guarda final contra candidato semântico e veto no endpoint existente de retomadas comerciais. Novas dúvidas concretas permanecem elegíveis; identidade, opt-out, atendimento humano, cuidados e confirmação de agenda permanecem nos contratos atuais. Nenhum envio de teste ou replay.
 
-Estado: 2352/2352 testes locais aprovados em America/Sao_Paulo; arquitetura, escopo e artefato de 193 arquivos/54 páginas aprovados. Publicação ainda não verificada. Baseline operacional 7e5d33cae9e03b68d2c1a158611039d680fe4ae4; Netlify funcional f8753f985a5b3eca15c521e311e1eee56c9046d8 / deploy 6ad253ae7b4cafb02a15a633 observado READY. Apps Script v166 por recibo canônico, sem acesso ao editor nem alteração neste pacote. Testes cobrem pausa, fragmentação, resposta vaga, nova iniciativa, retomada humana e bloqueio final com zero efeitos externos. Evidência individual permanece privada. Monitorar o primeiro caso natural e 48 horas pela supervisão existente; conversão N/D. Rollback por novo commit/build restrito, preservando dados, recibos e trabalho paralelo.
+Estado: 2352/2352 testes locais aprovados em America/Sao_Paulo; arquitetura, escopo e artefato de 193 arquivos/54 páginas aprovados. Netlify observado em produção em 10/11: deploy 6ae09cbdac0c5fed4c97010c READY, commit 83eb9805 (mesma árvore de b023e75f), publicado em 27/10 às 09h49 BRT. A igualdade das projeções no Drive continua pendente. Baseline operacional 7e5d33cae9e03b68d2c1a158611039d680fe4ae4; Netlify funcional f8753f985a5b3eca15c521e311e1eee56c9046d8 / deploy 6ad253ae7b4cafb02a15a633 observado READY. Apps Script v166 por recibo canônico, sem acesso ao editor nem alteração neste pacote. Testes cobrem pausa, fragmentação, resposta vaga, nova iniciativa, retomada humana e bloqueio final com zero efeitos externos. Evidência individual permanece privada. Monitorar o primeiro caso natural e 48 horas pela supervisão existente; conversão N/D. Rollback por novo commit/build restrito, preservando dados, recibos e trabalho paralelo.
 
 
 ## Lembrete único 24 horas antes — publicado e ativado em 16/10/2026

@@ -69,7 +69,7 @@ function load({
     sandbox.reconciliarConversaoGoogleAdsComFase_ = reconcileGoogleAds;
   }
   vm.runInNewContext(
-    `${source}\nglobalThis.__test = { resolverRotaLead_, resolverRotaLeadComContexto_, criarOpportunityId_, resolverLinhaLeadCanonica_, resolverFaseSincronizada_, sincronizarFaseOportunidadeELead_, aplicarAtribuicaoOportunidade_, lerAtribuicaoOportunidade_, atribuicaoLegadaOportunidade_, normalizarAtribuicaoOportunidade_, vincularOportunidadeAoLead_, migrarPseudonimosIdentidadeLead, migrarSchemaAtribuicaoV1, garantirEstruturaIntegradaLead_, OPPORTUNITY_STORE_CONFIG, OPPORTUNITY_HEADERS, OPPORTUNITY_ALL_HEADERS, OPPORTUNITY_ATTRIBUTION_HEADERS, OPPORTUNITY_STAGE_VALUES, LEAD_INTEGRATION_HEADERS, LEAD_ALL_INTEGRATION_HEADERS, LEAD_PROFILE_HEADERS };`,
+    `${source}\nglobalThis.__test = { resolverRotaLead_, resolverRotaLeadComContexto_, criarOpportunityId_, resolverLinhaLeadCanonica_, resolverFaseSincronizada_, sincronizarFaseOportunidadeELead_, aplicarAtribuicaoOportunidade_, lerAtribuicaoOportunidade_, atribuicaoLegadaOportunidade_, normalizarAtribuicaoOportunidade_, vincularOportunidadeAoLead_, migrarPseudonimosIdentidadeLead, migrarSchemaAtribuicaoV1, garantirEstruturaIntegradaLead_, alinharCabecalhosSelecaoPendente_, OPPORTUNITY_STORE_CONFIG, OPPORTUNITY_HEADERS, OPPORTUNITY_ALL_HEADERS, OPPORTUNITY_ATTRIBUTION_HEADERS, OPPORTUNITY_STAGE_VALUES, LEAD_INTEGRATION_HEADERS, LEAD_ALL_INTEGRATION_HEADERS, LEAD_PROFILE_HEADERS };`,
     sandbox,
   );
   return sandbox.__test;
@@ -103,6 +103,10 @@ function makeSheet(name, headers, rows) {
             data[row - 1 + rowOffset]?.[column - 1 + columnOffset] ?? "",
           ),
         ),
+        getFormulas: () => range.getValues().map((values) =>
+          values.map((value) => typeof value === "string" && value.startsWith("=") ? value : ""),
+        ),
+        isBlank: () => range.getValues().every((values) => values.every((value) => value === "")),
         getDisplayValues: () => Array.from(
           { length: rowCount },
           (_, rowOffset) => Array.from(
@@ -1032,4 +1036,35 @@ test("automatic sync refuses an equal-rank qualified/non-qualified conflict", ()
     }).reason,
     "ambiguous_stage_conflict",
   );
+});
+
+test("aligns the known pending appointment headers without moving existing data", () => {
+  const { alinharCabecalhosSelecaoPendente_ } = load();
+  const headers = ["Event ID", "Opportunity ID", "Telefone", "Profissional",
+    "Data escolhida", "Horário escolhido", "Estado", "Criado em", "Confirmado em"];
+  const row = ["synthetic-event", "synthetic-opportunity", "+5511999990101", "amanda",
+    "2026-11-20", "15:00", "selected_pending_human", new Date("2026-11-10T14:00:00Z"), ""];
+  const sheet = makeSheet("_AGENDAMENTOS_PENDENTES", ["", ...headers, "Extra"], [[...row, "", "other"]]);
+
+  assert.equal(alinharCabecalhosSelecaoPendente_(sheet, headers), true);
+  assert.deepEqual(sheet.data, [[...headers, "", "Extra"], [...row, "", "other"]]);
+  assert.equal(alinharCabecalhosSelecaoPendente_(sheet, headers), true);
+  assert.equal(sheet.getWriteCount(), 1);
+});
+
+test("leaves unknown pending appointment layouts and populated column J untouched", () => {
+  const { alinharCabecalhosSelecaoPendente_ } = load();
+  const headers = ["Event ID", "Opportunity ID", "Telefone", "Profissional",
+    "Data escolhida", "Horário escolhido", "Estado", "Criado em", "Confirmado em"];
+  const altered = ["Extra", ...headers];
+  const occupied = ["", ...headers];
+  const sheetWithOtherHeaders = makeSheet("_AGENDAMENTOS_PENDENTES", altered, []);
+  const sheetWithDataInJ = makeSheet("_AGENDAMENTOS_PENDENTES", occupied, [
+    Array(9).fill("").concat("preserve-me"),
+  ]);
+
+  for (const sheet of [sheetWithOtherHeaders, sheetWithDataInJ]) {
+    assert.equal(alinharCabecalhosSelecaoPendente_(sheet, headers), false);
+    assert.equal(sheet.getWriteCount(), 0);
+  }
 });
