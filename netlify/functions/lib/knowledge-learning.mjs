@@ -1,3 +1,4 @@
+import { BRUNA_INTRODUCTION } from "./patient-facing-identity.mjs";
 import { usableProfileFirstName } from "./profile-name.mjs";
 import { preservesKnowledgeLiterals } from "./knowledge-wording.mjs";
 import { isPatientPhotoAssessmentRequest, consultationQuestionTopics } from "./patient-turn-context.mjs";
@@ -315,7 +316,7 @@ export function buildUnknownHoldingReply({
   const firstName = usableProfileFirstName(patientName);
   const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
   const introduction = introduceBruna
-    ? " Eu sou a Bruna, concierge da Clínica LIV Faria Lima."
+    ? ` ${BRUNA_INTRODUCTION}`
     : "";
   // This is only a handoff acknowledgement, never a way around a semantic
   // veto. Name an assessment only when it is the stated reason for review,
@@ -374,7 +375,7 @@ export function buildPediatricReviewAcknowledgement({
   const firstName = usableProfileFirstName(patientName);
   const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
   const introduction = introduceBruna
-    ? " Eu sou a Bruna, concierge da Clínica LIV Faria Lima."
+    ? ` ${BRUNA_INTRODUCTION}`
     : "";
   const nameQuestion =
     !firstName && introduceBruna && allowNameQuestion

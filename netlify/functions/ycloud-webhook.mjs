@@ -1,3 +1,4 @@
+import { BRUNA_RUNTIME_VERSION } from "./lib/bruna-runtime-version.mjs";
 import { archiveEnabled, archiveRecordFromEnvelope, queueConversationArchive } from "./lib/conversation-archive-outbox.mjs";
 import { isReactionMessageType } from "./lib/inbound-message-kind.mjs";
 import { extractInboundText } from "./lib/extract-inbound-text.mjs";
@@ -227,6 +228,7 @@ import {
   blocksAutomatedPatientMessages,
   isKnownPatientRelationship,
   buildPatientCommitment,
+  reusablePriceCommitment,
   buildRelationshipAlertMessage,
   normalizePatientRelationship,
   patientRelationshipPromptContext,
@@ -1305,9 +1307,9 @@ function operationalDecisionMetadata({
         : "low",
     gateResult: gateResult || (isReview ? "review" : "passed"),
     gateReason: gateReason || "",
-    policyVersion: process.env.BRUNA_POLICY_VERSION || "unversioned",
-    promptVersion: process.env.BRUNA_PROMPT_VERSION || "unversioned",
-    knowledgeSnapshot: process.env.BRUNA_KB_SNAPSHOT || "unversioned",
+    policyVersion: BRUNA_RUNTIME_VERSION.policyVersion,
+    promptVersion: BRUNA_RUNTIME_VERSION.promptVersion,
+    knowledgeSnapshot: BRUNA_RUNTIME_VERSION.knowledgeSnapshot,
     model: model || "unversioned",
     latencyMs: operationalLatencyMs(receivedAt),
     reviewOwner: isReview
@@ -1459,10 +1461,10 @@ function logOpenAIResult(eventId, result, executionMode = "shadow") {
         suggestedReplyLength: String(
           result.decision.suggestedReply || "",
         ).length,
-        policyVersion: process.env.BRUNA_POLICY_VERSION || "unversioned",
-        promptVersion: process.env.BRUNA_PROMPT_VERSION || "unversioned",
+        policyVersion: BRUNA_RUNTIME_VERSION.policyVersion,
+        promptVersion: BRUNA_RUNTIME_VERSION.promptVersion,
         knowledgeSnapshot:
-          process.env.BRUNA_KB_SNAPSHOT || "unversioned",
+          BRUNA_RUNTIME_VERSION.knowledgeSnapshot,
         conversionExperience:
           isBrunaConversionExperienceEnabled(process.env)
             ? BRUNA_CONVERSION_EXPERIENCE_VERSION
@@ -2909,6 +2911,17 @@ async function completeOpenAIActive({
       fields: { status: semanticStateResult.status },
     });
 
+    const existingPriceTask = reusablePriceCommitment({
+      text: input.text, procedure: activeResult.decision.procedure,
+      professional: input.professional, opportunityId: input.opportunityId,
+      pendingCommitments: input.pendingCommitments, recentConversation: input.recentConversation,
+      decision: activeResult.decision,
+    });
+    if (existingPriceTask) {
+      return { status: "completed_no_reply", replySent: false,
+        commitmentSyncStatus: "reused_pending", priceHoldingStatus: "existing_commitment_scope_clarification" };
+    }
+
     if (deterministicReplyContextMismatch) {
       writeOperationalLog({
         source: "openai_active_deterministic_context_mismatch",
@@ -4034,6 +4047,7 @@ export async function handleYCloudWebhook(
     return json({
       ok: true,
       service: "ycloud-webhook",
+      ...BRUNA_RUNTIME_VERSION,
       apiKeyConfigured: Boolean(process.env.YCLOUD_API_KEY),
       signatureProtection: webhookSecret ? "active" : "setup_pending",
       sheetsWebhookConfigured: Boolean(
@@ -5793,7 +5807,7 @@ export async function handleYCloudWebhook(
     unresolvedSemanticRoute &&
       !shouldQueueSemanticRouteClarification,
   );
-  const shouldQueueReviewAlert =
+  let shouldQueueReviewAlert =
     (delivery.ok || alertInput.urgent) &&
     !pendingHumanCommitmentAcknowledgement &&
     !extremeNightDeferral &&
@@ -5827,7 +5841,7 @@ export async function handleYCloudWebhook(
     conversationAction.allowHoldingReply;
   const outsideHumanServiceHours =
     isOutsideHumanServiceHours(contactAt);
-  const shouldQueuePriceHolding =
+  let shouldQueuePriceHolding =
     delivery.ok &&
     !extremeNightDeferral &&
     !humanTakeoverActive &&
@@ -6014,7 +6028,20 @@ export async function handleYCloudWebhook(
     }
   }
 
+  const reusedPriceCommitment = shouldQueuePriceHolding && semanticReviewAssessment?.status === "completed"
+    ? reusablePriceCommitment({ text, procedure: automationPlan.procedure,
+        professional: delivery.professional, opportunityId: delivery.opportunityId,
+        pendingCommitments: delivery.pendingCommitments, recentConversation: conversationHistory,
+        decision: semanticReviewAssessment.decision }) : null;
+  if (reusedPriceCommitment) {
+    shouldQueuePriceHolding = false;
+    shouldQueueReviewAlert = false;
+    commitmentSyncStatus = "reused_pending";
+    priceHoldingStatus = "existing_commitment_scope_clarification";
+  }
+
   const patientCommitment =
+    !reusedPriceCommitment &&
     delivery.ok &&
     !suppressExactDuplicate &&
     conversationAction.allowAlert
@@ -6703,6 +6730,7 @@ export async function handleYCloudWebhook(
           ),
         learningContext,
         replyContract: openAIConversationAction.replyContract,
+        pendingCommitments: delivery.pendingCommitments,
         hasPendingHumanObligation: Boolean(
           delivery.pendingCommitments?.length || humanTakeoverActive || patientRelationship?.hasPendingHumanTask,
         ),
@@ -6744,6 +6772,10 @@ export async function handleYCloudWebhook(
     const registerActiveOutcome = (outcome) => {
       aiActiveStatus = outcome?.status || "failed";
       aiActiveReplySent = outcome?.replySent === true;
+      if (outcome?.commitmentSyncStatus === "reused_pending") {
+        commitmentSyncStatus = outcome.commitmentSyncStatus;
+        priceHoldingStatus = outcome.priceHoldingStatus;
+      }
 
       if (outcome?.replyKind === "appointment_preference") {
         appointmentPreferenceReplySent =

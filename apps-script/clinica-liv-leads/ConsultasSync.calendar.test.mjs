@@ -742,3 +742,57 @@ test("clears the confirmed-deleted old link when cross-calendar creation then fa
   assert.equal(row[headers.indexOf(HEADERS.calendarId)], "");
   assert.equal(row[headers.indexOf(HEADERS.calendarEventId)], "");
 });
+
+test("missing linked event is not silently recreated in the same room", () => {
+  const { context, CONFIG, HEADERS, mapearCabecalhosConsultas_, sincronizarConsultaComAgendaNaLinha_ } =
+    loadCalendarSync();
+  const headers = [
+    HEADERS.opportunityId,
+    HEADERS.professional,
+    HEADERS.room,
+    HEADERS.consultationType,
+    HEADERS.location,
+    HEADERS.scheduledDate,
+    HEADERS.scheduledTime,
+    HEADERS.durationMinutes,
+    HEADERS.status,
+    HEADERS.calendarId,
+    HEADERS.calendarEventId,
+    HEADERS.calendarSyncStatus,
+    HEADERS.calendarSyncError,
+  ];
+  const oldCalendarId = CONFIG.roomCalendars["Sala 1"];
+  const row = buildRow(headers, {
+    [HEADERS.opportunityId]: "opp-amanda-remote-failure",
+    [HEADERS.professional]: "Dra. Amanda",
+    [HEADERS.room]: "Sala 1",
+    [HEADERS.consultationType]: "Consulta",
+    [HEADERS.location]: "Clínica LIV",
+    [HEADERS.scheduledDate]: "2026-08-04",
+    [HEADERS.scheduledTime]: "10:00",
+    [HEADERS.durationMinutes]: 60,
+    [HEADERS.status]: "Confirmada",
+    [HEADERS.calendarId]: oldCalendarId,
+    [HEADERS.calendarEventId]: "missing-room-event",
+  });
+  const writes = [];
+  context.CalendarApp = {
+    getCalendarById: () => ({ getEvents: () => [], getEventById: () => null, createEvent: () => { throw new Error("unexpected_creation"); } }),
+  };
+
+  const result = sincronizarConsultaComAgendaNaLinha_(
+    writableSheet(row, writes),
+    9,
+    mapearCabecalhosConsultas_(headers),
+    row,
+  );
+
+  assert.equal(result.ok, false);
+  assert.equal(result.error, "calendar_event_not_found");
+  assert.equal(row[headers.indexOf(HEADERS.room)], "Sala 1");
+  assert.equal(row[headers.indexOf(HEADERS.calendarId)], oldCalendarId);
+  assert.equal(
+    row[headers.indexOf(HEADERS.calendarEventId)],
+    "missing-room-event",
+  );
+});

@@ -5,10 +5,9 @@
   "identityContract": {
     "name": "Bruna",
     "clinicRole": [
-      "assistente da Clinica LIV",
-      "concierge da Clinica LIV"
+      "assistente virtual da Clinica LIV"
     ],
-    "patientFacingTechnologyDisclosureRequired": false
+    "patientFacingTechnologyDisclosureRequired": true
   },
   "lockedScenarioIds": [
     "marketing_generic_opening",

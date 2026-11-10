@@ -1093,3 +1093,28 @@ test("classified attendance preserves a previously recorded completion and its p
   assert.equal(apply().updated, true);
   assert.equal(row[4], classified.at);
 });
+
+test("iCalUID suffix does not make an existing event conflict with itself", () => {
+  context.CalendarApp = {
+    getCalendarById() {
+      return {
+        getEvents() {
+          return [{ getId: () => "same-appointment-event@google.com" }];
+        },
+      };
+    },
+  };
+
+  const result = context.escolherSalaDisponivelConsulta_({
+    professional: "Dra. Amanda",
+    scheduledDate: "2026-09-24",
+    scheduledTime: "14:00",
+    currentRoom: "Sala 1",
+    calendarEventId: "same-appointment-event",
+    allowRoomConflict: true,
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.room, "Sala 1");
+  assert.equal(result.roomConflict, false);
+});

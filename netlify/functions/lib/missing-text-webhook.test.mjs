@@ -173,7 +173,7 @@ test("a text event with an omitted body receives one safe clarification", async 
     assert.equal(patientMessages.length, 1);
     assert.match(
       patientMessages[0].text.body,
-      /Eu sou a Bruna, concierge da Clínica LIV Faria Lima/i,
+      /Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima/i,
     );
     assert.match(
       patientMessages[0].text.body,
@@ -328,7 +328,7 @@ test("an unsupported inbound event receives one safe clarification without infer
     assert.equal(patientMessages.length, 1);
     assert.equal(
       patientMessages[0].text.body,
-      "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.\n\n" +
+      "Olá, Rosana! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima.\n\n" +
         "A Dra. Amanda Schroeder é cirurgiã plástica e atende aqui na clínica. " +
         "Me conta: o que você gostaria de avaliar ou melhorar?",
     );

@@ -64,7 +64,7 @@ test("asks for context naturally when the provider omits the inbound text", () =
 
   assert.equal(
     reply,
-    "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.\n\n" +
+    "Olá, Rosana! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima.\n\n" +
       "A Dra. Amanda Schroeder é cirurgiã plástica e atende aqui na clínica. " +
       "Me conta: o que você gostaria de avaliar ou melhorar?",
   );
@@ -104,7 +104,7 @@ test("asks for routing context without sounding like an administrative menu", ()
     patientName: "Marina",
     introduceBruna: true,
   });
-  assert.match(firstReply, /^Olá, Marina! Eu sou a Bruna, concierge/i);
+  assert.match(firstReply, /^Olá, Marina! Eu sou a Bruna, assistente virtual/i);
 });
 
 test("acknowledges a patient photo gently without interpreting it", () => {
@@ -114,7 +114,7 @@ test("acknowledges a patient photo gently without interpreting it", () => {
 
   assert.match(
     firstReply,
-    /^Olá, Mariana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
+    /^Olá, Mariana! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima\./,
   );
   assert.match(firstReply, /Obrigada por compartilhar sua foto e confiar na gente/i);
   assert.doesNotMatch(firstReply, /boas abordagens que podem ajudar a tratar|melhor opção|indicado para você/i);
@@ -220,7 +220,7 @@ test("opens a prefilled site inquiry without assuming scheduling intent", () => 
 
   assert.equal(
     reply,
-      "Olá, Fabrícia! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Olá, Fabrícia! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre avaliação facial. " +
       "O que você gostaria de entender primeiro?",
   );
@@ -236,7 +236,7 @@ test("future otoplasty prefills receive a conversational response without agenda
 
   assert.equal(
     reply,
-    "Olá, Carla! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+    "Olá, Carla! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre otoplastia. O que você gostaria de entender primeiro?",
   );
   assert.doesNotMatch(reply, /agenda|agendar|horário|manhã|tarde/i);
@@ -250,7 +250,7 @@ test("a ninfoplastia prefill names the procedure and adds privacy without reques
 
   assert.equal(
     reply,
-    "Olá, Gessica! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+    "Olá, Gessica! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre ninfoplastia. Essa conversa é tratada com privacidade e cuidado. " +
       "O que você gostaria de entender primeiro?",
   );
@@ -266,7 +266,7 @@ test("uses the patient-recognized cervical name without treating the prefill as 
 
   assert.equal(
     reply,
-    "Olá, Maria! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+    "Olá, Maria! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre cervicoplastia (lifting cervical). " +
       "O que mais chamou sua atenção no pescoço quando decidiu procurar uma avaliação?",
   );
@@ -283,7 +283,7 @@ test("answers the procedure and asks the name when the profile identifier is not
 
   assert.equal(
     reply,
-      "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Olá! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre lifting facial. Como posso te chamar?",
   );
   assert.doesNotMatch(reply, /Soniamariamontoromenezes/i);
@@ -298,7 +298,7 @@ test("does not use a business profile as a name and asks the contact name", () =
 
   assert.equal(
     reply,
-    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+    "Olá! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre lifting facial. Como posso te chamar?",
   );
   assert.doesNotMatch(reply, /Monah|Semijoias/i);
@@ -314,7 +314,7 @@ test("a decorated acronym is never used as a name in a lifting prefill", () => {
 
   assert.equal(
     reply,
-    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+    "Olá! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre lifting facial. Como posso te chamar?",
   );
   assert.doesNotMatch(reply, /SVS/i);
@@ -330,7 +330,7 @@ test("a clear personal name with a trailing emoji personalizes the lifting prefi
 
   assert.equal(
     reply,
-    "Olá, Mariza! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+    "Olá, Mariza! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre cervicoplastia (lifting cervical). " +
       "O que mais chamou sua atenção no pescoço quando decidiu procurar uma avaliação?",
   );
@@ -348,7 +348,7 @@ test("conversion opening names the procedure once and asks one concise question"
 
   assert.equal(
     reply,
-    "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+    "Olá, Rosana! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
       "Posso te orientar sobre lifting facial. " +
       "Qual é a sua principal dúvida?",
   );
@@ -411,7 +411,7 @@ test("explains the campaign reference directly and uses natural name casing", ()
   assert.match(reply, /^Olá, Marina!/);
   assert.equal(
     reply,
-    "Olá, Marina! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+    "Olá, Marina! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
       "Pode desconsiderar essa referência. Ela não muda seu atendimento.",
   );
   assert.doesNotMatch(reply, /Olá, MARINA/);
@@ -430,7 +430,7 @@ test("builds a natural routing greeting without internal codes", () => {
   assert.match(reply, /^Olá, Maria!/);
   assert.match(
     reply,
-    /Eu sou a Bruna, concierge da Clínica LIV Faria Lima/,
+    /Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima/,
   );
   assert.match(reply, /Dra\. Amanda/);
   assert.match(reply, /Dr\. Daniel/);
@@ -487,7 +487,7 @@ test("explains the consultation gradually without anticipating price or a link",
 
   assert.match(
     reply,
-    /^Olá, Rô! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
+    /^Olá, Rô! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima\./,
   );
   assert.match(reply, /avaliação de lifting facial começa com uma conversa/);
   assert.match(reply, /face e o pescoço em repouso e em movimento/);
@@ -619,7 +619,7 @@ test("recognizes a previously shared clinic location in recent conversation turn
       {
         role: "assistant",
         source: "bruna",
-        text: "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+        text: "Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima.",
       },
     ]),
     false,
@@ -701,7 +701,7 @@ test("the ninfoplastia evaluation is reserved, procedural and conversational", (
 
   assert.equal(
     reply,
-    "Olá, Gessica! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+    "Olá, Gessica! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
       "A avaliação de ninfoplastia é feita de forma individual e reservada. " +
       "A Dra. Amanda começa entendendo o que você busca, avalia a região com cuidado e explica as possibilidades, os limites e como seria a recuperação. " +
       "Você não precisa decidir nada nesse momento.\n\n" +

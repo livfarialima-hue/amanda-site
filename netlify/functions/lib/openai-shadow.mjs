@@ -1,3 +1,4 @@
+import { falseHumanIdentityReason, BRUNA_INTRODUCTION } from "./patient-facing-identity.mjs";
 import { createHash, randomUUID } from "node:crypto";
 import { normalizeAIUsage, summarizeAIExecution } from "./ai-usage.mjs";
 import { writeOperationalLog } from "./operational-log.mjs";
@@ -301,7 +302,7 @@ export function applyReturningPatientReplyGuard(
 
   const suggestedReply = String(decision.suggestedReply)
     .replace(
-      /^((?:(?:ol[aá]|oi|bom\s+dia|boa\s+tarde|boa\s+noite)(?:,\s*[^!?.\n]+)?[!?.]?\s*)?)(?:Eu\s+sou|Aqui\s+[eé])\s+(?:a\s+)?Bruna,\s*(?:(?:concierge\s+)?da\s+)?Cl[ií]nica\s+LIV\s+Faria\s+Lima[.!]?\s*/iu,
+      /^((?:(?:ol[aá]|oi|bom\s+dia|boa\s+tarde|boa\s+noite)(?:,\s*[^!?.\n]+)?[!?.]?\s*)?)(?:Eu\s+sou|Aqui\s+[eé])\s+(?:a\s+)?Bruna,\s*(?:(?:(?:concierge|assistente\s+virtual)\s+)?da\s+)?Cl[ií]nica\s+LIV\s+Faria\s+Lima[.!]?\s*/iu,
       (_match, greeting) =>
         knownPatient
           ? `${greeting || ""}Que bom falar com você novamente. `
@@ -466,7 +467,7 @@ export function applyFirstReplyGreetingGuard(
   const firstName = usableProfileFirstName(patientProfileName);
   const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
   const introduction =
-    "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.";
+    BRUNA_INTRODUCTION;
   const knownPatient = patientRelationship?.knownPatient === true;
   let body = String(decision.suggestedReply)
     .trim()
@@ -481,6 +482,10 @@ export function applyFirstReplyGreetingGuard(
     !/\b(?:eu\s+sou|aqui\s+[ée])\s+(?:a\s+)?Bruna\b/iu.test(body)
   ) {
     body = `${introduction} ${body}`.trim();
+  }
+
+  if (!knownPatient && !/assistente\s+virtual/iu.test(body)) {
+    body = body.replace(/\b((?:eu\s+sou|aqui\s+[ée])\s+(?:a\s+)?Bruna)\b/iu, "$1, assistente virtual");
   }
 
   if (!knownPatient && !firstName && replyContract?.maxQuestions !== 0) {
@@ -507,26 +512,10 @@ export function applyFirstReplyGreetingGuard(
   };
 }
 
-const AUTOMATION_IDENTITY_PATTERN =
-  /(?:^|[\s([{"'“])(?:bot|rob[oô]|automa[cç][aã]o|intelig[eê]ncia\s+artificial|IA|assistente\s+virtual|secret[aá]ria\s+virtual)(?=$|[\s)\]}"'”.,;:!?])/iu;
-
 export function applyAutomationIdentityGuard(decision) {
-  if (
-    decision?.route !== "standard_reply" ||
-    !decision?.suggestedReply ||
-    !AUTOMATION_IDENTITY_PATTERN.test(String(decision.suggestedReply))
-  ) {
-    return decision;
-  }
-
-  return {
-    ...decision,
-    route: "human_review",
-    automaticAllowed: false,
-    suggestedReply: "",
-    replyCode: "IDENTITY-REVIEW-01",
-    reviewReason: "automation_identity_disclosure_blocked",
-  };
+  if (decision?.route !== "standard_reply" || !falseHumanIdentityReason(decision?.suggestedReply)) return decision;
+  return { ...decision, route: "human_review", automaticAllowed: false, suggestedReply: "",
+    replyCode: "IDENTITY-REVIEW-01", reviewReason: "false_human_identity" };
 }
 
 export function applyContextClarificationGuard(decision) {

@@ -1,3 +1,4 @@
+import { falseHumanIdentityReason } from "./patient-facing-identity.mjs";
 import { createHash, randomUUID } from "node:crypto";
 import { isDirectSiteRequest, isUnrequestedRepeatedSiteUrl } from "./site-content.mjs";
 import { assessReplyContinuity, patientRequestsRepetition } from "./reply-continuity.mjs";
@@ -255,12 +256,8 @@ function semanticUnsafeReplyReason(
     if (policyLanguageReason) return policyLanguageReason;
   }
 
-  if (
-    /\b(?:sou|aqui\s+e|este\s+atendimento\s+e)\s+(?:uma?\s+)?(?:automa[cç][aã]o|rob[oô]|bot|intelig[eê]ncia\s+artificial|assistente\s+virtual)\b/i.test(raw) ||
-    /\b(?:como|enquanto)\s+(?:uma?\s+)?(?:automa[cç][aã]o|rob[oô]|bot|intelig[eê]ncia\s+artificial|assistente\s+virtual)\b/i.test(raw)
-  ) {
-    return "automation_identity_disclosure";
-  }
+  const identityReason = falseHumanIdentityReason(raw);
+  if (identityReason) return identityReason;
 
   const genericTeamCheck =
     /\b(?:vou|vamos)\s+(?:conferir|confirmar|alinhar|verificar)\s+(?:essa|esta|a)\s+(?:informa[cç][aã]o|quest[aã]o|ponto)\s+com\s+(?:a\s+)?equipe\b/i.test(raw);

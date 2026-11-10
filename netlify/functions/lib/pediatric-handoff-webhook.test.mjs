@@ -205,7 +205,7 @@ test("a pediatric review sends one bounded acknowledgement only after the intern
     assert.equal(patientRequests.length, 1);
     assert.equal(
       patientRequests[0].text.body,
-      "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Obrigada por explicar. Como se trata de uma criança, vou encaminhar sua mensagem para a equipe responsável confirmar a orientação mais adequada para esse caso. Como posso te chamar?",
+      "Olá! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. Obrigada por explicar. Como se trata de uma criança, vou encaminhar sua mensagem para a equipe responsável confirmar a orientação mais adequada para esse caso. Como posso te chamar?",
     );
     assert.doesNotMatch(
       patientRequests[0].text.body,

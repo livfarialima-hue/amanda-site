@@ -426,14 +426,12 @@ export const HUMAN_RESUME_HOLDING_MESSAGE =
 
 export function buildDelayedHumanReceipt({ text, messageType = "text", reason, recentConversation = [] } = {}) {
   if (isKnownSimpleAdministrativeQuestion(text)) return "";
-  if (isReactionMessageType(messageType)) return "";
+  if (isReactionMessageType(messageType) || isMaterialMessageType(messageType)) return "";
   if (reason === "possible_urgent_symptoms" || reason === "contact_preference_no_bot") return "";
   if (messageType === "text" && !hasUnresolvedPatientRequest(text, recentConversation)) return "";
   const subject = reason === "scheduling_or_confirmation"
     ? "seu pedido sobre o agendamento"
-    : isMaterialMessageType(messageType)
-      ? "o material que você enviou"
-      : "sua mensagem";
+    : "sua mensagem";
   return `Recebi ${subject}. A equipe foi avisada para conferir e retornar por aqui assim que possível.`;
 }
 

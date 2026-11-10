@@ -27,7 +27,7 @@ function load(extra = {}) {
   };
   vm.runInNewContext(
     `${source}\nglobalThis.__test = { ` +
-      "WHATSAPP_COST_HEADERS, normalizarStatusMensagemYCloud_, " +
+      "WHATSAPP_COST_HEADERS, garantirPlanilhaTecnicaCustoWhatsApp_, normalizarStatusMensagemYCloud_, " +
       "mesclarStatusMensagemYCloud_, registrarStatusMensagemYCloud_, " +
       "resumirCustosWhatsAppLinhas_, normalizarEventoTemplateYCloud_ };",
     sandbox,
@@ -218,7 +218,7 @@ test("idempotent storage updates the existing provider-key row", () => {
   const sheet = {
     getMaxColumns: () => 30,
     getLastColumn: () => headers.length,
-    getLastRow: () => rows.length + 1,
+    getLastRow: () => headers.length ? rows.length + 1 : 0,
     getRange: range,
     appendRow: (values) => rows.push(values.slice()),
   };
@@ -306,4 +306,12 @@ test("monthly diagnosis deduplicates keys and separates category and currency", 
   assert.equal(result.groups[0].pricingModel, "pmp");
   assert.equal(result.groups[0].pricingType, "free_customer_service");
   assert.equal(result.groups[0].serviceFreeTierReference, 1000);
+});
+
+test('positional cost writer rejects displaced headers without changing data', () => {
+  let writes=0;
+  const sheet={getMaxColumns:()=>50,getLastRow:()=>2,getRange:()=>({getDisplayValues:()=>[['','A']],setValues:()=>writes++})};
+  const {garantirPlanilhaTecnicaCustoWhatsApp_}=load();
+  assert.throws(()=>garantirPlanilhaTecnicaCustoWhatsApp_({getSheetByName:()=>sheet},'synthetic',['A','B']),/whatsapp_cost_schema_mismatch/);
+  assert.equal(writes,0);
 });

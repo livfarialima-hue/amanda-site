@@ -1,3 +1,4 @@
+import { BRUNA_INTRODUCTION } from "./lib/patient-facing-identity.mjs";
 import processYCloudWebhook from "./ycloud-webhook.mjs";
 import { dispatchInboundRecovery } from "./lib/inbound-recovery-dispatch.mjs";
 export { dispatchInboundRecovery } from "./lib/inbound-recovery-dispatch.mjs";
@@ -62,7 +63,7 @@ function recoveryAlert(job, reason) {
         "Ação interna: conferir o roteamento na planilha LEADS, cadastrar o contato manualmente se ainda faltar e verificar se a paciente recebeu resposta.",
       reason ? "SEM SUGESTÃO PRONTA — conferir o contexto atual antes de responder."
         : "Sugestão para copiar somente se a paciente ainda estiver sem resposta:",
-      reason ? "" : `${greeting} Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Obrigada pela mensagem e desculpe a demora. Posso te ajudar por aqui.`,
+      reason ? "" : `${greeting} ${BRUNA_INTRODUCTION} Obrigada pela mensagem e desculpe a demora. Posso te ajudar por aqui.`,
     ].join("\n"),
   };
 }

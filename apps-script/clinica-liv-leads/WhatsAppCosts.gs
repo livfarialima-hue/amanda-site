@@ -260,10 +260,13 @@ function garantirPlanilhaTecnicaCustoWhatsApp_(spreadsheet, name, headers) {
       headers.length - sheet.getMaxColumns(),
     );
   }
-  if (typeof garantirCabecalhosAditivos_ === "function") {
-    garantirCabecalhosAditivos_(sheet, headers);
-  } else {
+  if (sheet.getLastRow() === 0) {
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+  } else {
+    const actual = sheet.getRange(1, 1, 1, headers.length).getDisplayValues()[0];
+    if (headers.some(function (header, index) { return String(actual[index] || "").trim() !== header; })) {
+      throw new Error("whatsapp_cost_schema_mismatch");
+    }
   }
   return sheet;
 }

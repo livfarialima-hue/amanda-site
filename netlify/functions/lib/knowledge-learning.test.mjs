@@ -184,7 +184,7 @@ test("a pediatric handoff acknowledges the child without giving clinical guidanc
 
   assert.equal(
     reply,
-    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Obrigada por explicar. Como se trata de uma criança, vou encaminhar sua mensagem para a equipe responsável confirmar a orientação mais adequada para esse caso. Como posso te chamar?",
+    "Olá! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. Obrigada por explicar. Como se trata de uma criança, vou encaminhar sua mensagem para a equipe responsável confirmar a orientação mais adequada para esse caso. Como posso te chamar?",
   );
   assert.doesNotMatch(
     reply,

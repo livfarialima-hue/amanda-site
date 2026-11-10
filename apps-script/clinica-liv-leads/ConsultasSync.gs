@@ -264,6 +264,20 @@ function intervaloConsultaAgenda_(dateValue, timeValue, durationValue) {
   return { start, end, durationMinutes };
 }
 
+function normalizarIdEventoConsulta_(value) {
+  return textoConsultasSync_(value, 240).replace(/@google\.com$/, "");
+}
+
+function localizarEventoConsulta_(calendar, eventId) {
+  const id = textoConsultasSync_(eventId, 240);
+  if (!id) return null;
+  const event = calendar.getEventById(id);
+  if (event) return event;
+  if (id.indexOf("@") >= 0 && !/@google\.com$/.test(id)) return null;
+  const alternative = /@google\.com$/.test(id) ? normalizarIdEventoConsulta_(id) : id + "@google.com";
+  return calendar.getEventById(alternative);
+}
+
 function salaEstaLivreConsulta_(
   room,
   start,
@@ -280,7 +294,7 @@ function salaEstaLivreConsulta_(
   const events = calendar.getEvents(start, end);
   const ignored = textoConsultasSync_(ignoredEventId, 240);
   const conflictingEvents = events.filter(function (event) {
-    return !ignored || event.getId() !== ignored;
+    return !ignored || normalizarIdEventoConsulta_(event.getId()) !== normalizarIdEventoConsulta_(ignored);
   });
 
   return {
@@ -2778,7 +2792,7 @@ function excluirEventoAgendaConsulta_(calendarId, eventId) {
   const calendar = CalendarApp.getCalendarById(calendarId);
   if (!calendar) return false;
 
-  const event = calendar.getEventById(eventId);
+  const event = localizarEventoConsulta_(calendar, eventId);
   if (!event) return false;
 
   event.deleteEvent();
@@ -3097,7 +3111,8 @@ function sincronizarConsultaComAgendaNaLinha_(
       currentEventId &&
       currentCalendarId === selection.calendarId
     ) {
-      event = selection.calendar.getEventById(currentEventId);
+      event = localizarEventoConsulta_(selection.calendar, currentEventId);
+      if (!event) throw new Error("calendar_event_not_found");
     }
 
     if (!event) {

@@ -25,9 +25,9 @@ test("reactions never produce a delayed receipt, including stale scheduling clas
   }
 });
 
-test("material receipt requires an actual media type; unsupported events remain neutral", () => {
+test("media requires human inspection and does not generate a generic receipt", () => {
   for (const messageType of ["image", "video", "document", "audio"]) {
-    assert.match(buildDelayedHumanReceipt({ messageType }), /material que você enviou/);
+    assert.equal(buildDelayedHumanReceipt({ messageType }), "");
     assert.equal(planAutomation({ messageType }).route, "human_review");
   }
   for (const messageType of ["unsupported", "unknown", "sticker", "contacts", "location"]) {

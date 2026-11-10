@@ -332,7 +332,7 @@ test("creates the approved lifting price reply for direct patient delivery", () 
 
   assert.match(
     reply,
-    /^Olá, Maria! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
+    /^Olá, Maria! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima\./,
   );
   assert.match(reply, /Minilifting: entre R\$ 18 mil e R\$ 25 mil/);
   assert.match(reply, /[Ll]ifting facial(?:\:| tem uma referência) entre R\$ 26 mil e R\$ 42 mil/);
@@ -360,7 +360,7 @@ test("creates the approved otoplasty range once for direct delivery", () => {
 
   assert.match(
     reply,
-    /^Olá, Maria! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
+    /^Olá, Maria! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima\./,
   );
   assert.match(reply, /otoplastia tem uma referência entre R\$ 8 mil e R\$ 14 mil/i);
   assert.match(reply, /referência para planejamento/i);
@@ -420,7 +420,7 @@ test("acknowledges a price request while the approved value is pending", () => {
       {
         role: "assistant",
         source: "bruna",
-        text: "Olá, Van! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+        text: "Olá, Van! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima.",
       },
     ],
   });
@@ -470,7 +470,7 @@ test("generic facial price asks one neutral clarification without promising a re
 
   assert.match(
     reply,
-    /^Olá, Karina! Eu sou a Bruna, concierge da Clínica LIV Faria Lima\./,
+    /^Olá, Karina! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima\./,
   );
   assert.match(reply, /pálpebras, rosto ou pescoço\/papada/i);
   assert.equal((reply.match(/\?/g) || []).length, 1);

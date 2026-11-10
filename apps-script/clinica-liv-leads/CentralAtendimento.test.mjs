@@ -2217,3 +2217,28 @@ test("verified routine response eligibility is distinct from human work and care
   const careItems={}; c.projetarDecisoesCanonicasCentral_(careItems,{[phone]:{...decision,relationship:"active_postop"}},messages,{},{},new Date());
   assert.equal(careItems[phone].owner,"Equipe");assert.equal(careItems[phone].mode,"Manual");
 });
+
+test('canonical revision carries only the latest note from the exact opportunity', () => {
+  const context=loadContext();
+  const item={sourceKey:'crm:synthetic:op:3:300:300',owner:'Bruna',status:'Aguardando',approveBruna:false,finalMessage:''};
+  const result=context.aplicarControleCentral_(item, {
+    'crm:synthetic:op:1:100:100':{teamNote:'Nota antiga',lastTeamActionAt:new Date('2026-11-10T10:00:00Z')},
+    'crm:synthetic:op:2:200:200':{teamNote:'Nota atual',lastTeamActionAt:new Date('2026-11-10T11:00:00Z'),status:'Concluído',approveBruna:true,finalMessage:'Não copiar',owner:'Outro'},
+    'crm:another:op:9:900:900':{teamNote:'Outra oportunidade',lastTeamActionAt:new Date('2026-11-10T12:00:00Z')}
+  },new Date());
+  assert.equal(result.teamNote,'Nota atual');assert.equal(result.owner,'Bruna');assert.equal(result.status,'Aguardando');
+  assert.equal(result.approveBruna,false);assert.equal(result.finalMessage,'');
+});
+
+test('fresh nonpatient decision suppresses a clinical queue but a newer request requires review', () => {
+  const c=loadContext(),phone='+5511999999999';
+  const decision=canonicalDecision({professional:'nonpatient',expectedParty:'none',relationship:'unknown'});
+  for (const newer of [false,true]) {
+    const items={ [phone]:c.criarItemCentral_({phone,queue:'Resposta agora',sourceKey:'conversation:synthetic',suggestion:'Resposta clínica antiga'}) };
+    const conversations={ [phone]:[{dataHora:new Date(newer?'2026-09-14T13:00:00Z':'2026-09-14T11:00:00Z'),direcao:'IN',texto:newer?'Quero marcar uma consulta':'Contato comercial'}]};
+    c.projetarDecisoesCanonicasCentral_(items,{[phone]:decision},conversations,{}, {},new Date());
+    const projected=Object.values(items).find(x=>x.sourceKey.startsWith('crm:'));
+    assert.ok(projected);assert.equal(projected.mode,newer?'Manual':'Silêncio');
+    assert.equal(projected.suggestion,'');assert.equal(projected.approvalBrunaEligible,false);
+  }
+});

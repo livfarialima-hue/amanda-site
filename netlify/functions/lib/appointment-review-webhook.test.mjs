@@ -319,7 +319,7 @@ test("a structured lifting prefill never asks for schedule preference", async ()
     assert.equal(patientRequests.length, 1);
     assert.equal(
       JSON.parse(patientRequests[0].options.body).text.body,
-      "Olá, Arlete! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Olá, Arlete! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
         "Posso te orientar sobre lifting facial. " +
         "O que você gostaria de entender primeiro?",
     );

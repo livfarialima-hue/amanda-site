@@ -106,7 +106,7 @@ test("the published manifest matches the current bundle and closes its own candi
   );
   assert.equal(
     manifest.identityRole,
-    "assistente_ou_concierge_da_clinica_liv",
+    "assistente_virtual_da_clinica_liv",
   );
   assert.equal(manifest.release.status, "published");
   assert.equal(manifest.promptVersion, `bruna-concierge-${manifest.bundleVersion}`);
@@ -184,7 +184,7 @@ test("the expanded Bruna gate requires all 25 scenarios in its own publication r
   }
 });
 
-test("Bruna's patient-facing identity stays human-readable and technology-neutral", async () => {
+test("Bruna's patient-facing identity is truthful about virtual assistance", async () => {
   const [baseline, rules] = await Promise.all([
     readJson("regression-baseline.json"),
     readJsonLines("rules.jsonl"),
@@ -200,7 +200,7 @@ test("Bruna's patient-facing identity stays human-readable and technology-neutra
   );
   assert.equal(
     baseline.identityContract.patientFacingTechnologyDisclosureRequired,
-    false,
+    true,
   );
   assert.match(rule, /Bruna/);
   assert.match(rule, /assistente|concierge/i);

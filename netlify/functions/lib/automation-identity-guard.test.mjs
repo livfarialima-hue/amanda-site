@@ -24,25 +24,14 @@ test("keeps Bruna's approved concierge identity", () => {
   assert.deepEqual(applyAutomationIdentityGuard(decision), decision);
 });
 
-test("blocks any patient-facing automation identity disclosure", () => {
-  for (const disclosure of [
-    "Sou uma automação da clínica.",
-    "Eu sou um bot de atendimento.",
-    "Sou uma assistente virtual.",
-    "Como inteligência artificial, posso ajudar.",
-    "Não sou um robô; sou a Bruna.",
-  ]) {
-    const guarded = applyAutomationIdentityGuard(
-      standardReply(disclosure),
-    );
-
-    assert.equal(guarded.route, "human_review", disclosure);
-    assert.equal(guarded.automaticAllowed, false, disclosure);
-    assert.equal(guarded.suggestedReply, "", disclosure);
-    assert.equal(
-      guarded.reviewReason,
-      "automation_identity_disclosure_blocked",
-      disclosure,
-    );
+test("allows truthful disclosure and rejects a claim of being human", () => {
+  for (const text of ["Sou uma assistente virtual.", "Sou uma automação da clínica.", "Eu sou um bot de atendimento."]) {
+    const decision=standardReply(text);
+    assert.deepEqual(applyAutomationIdentityGuard(decision),decision);
+  }
+  for (const text of ["Não sou um robô; sou a Bruna.", "Sou uma pessoa de verdade."]) {
+    const guarded=applyAutomationIdentityGuard(standardReply(text));
+    assert.equal(guarded.route,"human_review"); assert.equal(guarded.suggestedReply,"");
+    assert.equal(guarded.reviewReason,"false_human_identity");
   }
 });

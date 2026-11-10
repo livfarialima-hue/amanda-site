@@ -1,3 +1,4 @@
+import { BRUNA_INTRODUCTION } from "./patient-facing-identity.mjs";
 import { usableProfileFirstName } from "./profile-name.mjs";
 import { assessBrunaReplyExperience, classifyBrunaCta, BRUNA_CTA_TYPES } from "./bruna-conversion-experience.mjs";
 
@@ -139,7 +140,7 @@ export function buildAppointmentPreferenceCollectionReply({
   const firstName = usableProfileFirstName(patientName);
   const greeting = firstName ? `Olá, ${firstName}!` : "Olá!";
   const introduction = introduceBruna
-    ? " Eu sou a Bruna, concierge da Clínica LIV Faria Lima."
+    ? ` ${BRUNA_INTRODUCTION}`
     : "";
 
   return `${greeting}${introduction} Claro, posso te ajudar com o agendamento. Quais dias da semana e qual período — manhã ou tarde — costumam funcionar melhor para você?`;

@@ -1,3 +1,4 @@
+import { BRUNA_INTRODUCTION } from "./patient-facing-identity.mjs";
 import { usableProfileFirstName } from "./profile-name.mjs";
 import {
   CONTEXT_CLARIFICATION_CODE,
@@ -173,7 +174,7 @@ export function buildOfficialChannelsReply({
   introduceBruna = false,
 }) {
   const opening = introduceBruna
-    ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Claro!`
+    ? `${greeting(patientName)} ${BRUNA_INTRODUCTION} Claro!`
     : "Claro!";
 
   return `${opening} Este é o Instagram oficial da Dra. Amanda:\n${AMANDA_INSTAGRAM_URL}`;
@@ -184,7 +185,7 @@ export function buildCampaignReferenceExplanationReply({
   introduceBruna = false,
 }) {
   const opening = introduceBruna
-    ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
+    ? `${greeting(patientName)} ${BRUNA_INTRODUCTION}`
     : "";
 
   return [
@@ -204,7 +205,7 @@ export function buildMarketingPrefilledOpeningReply({
   const procedureLabel = PROCEDURE_LABELS[procedure] || "";
   const hasUsableName = Boolean(firstName(patientName));
   const introduction = introduceBruna
-    ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
+    ? `${greeting(patientName)} ${BRUNA_INTRODUCTION}`
     : "Claro.";
   const microvalue = conversionExperienceEnabled && SENSITIVE_PROCEDURES.has(procedure)
     ? procedureOpeningMicrovalue(procedure)
@@ -296,7 +297,7 @@ export function buildInsuranceAcceptanceReply({
     ? `ao plano ${insurer}`
     : "ao seu plano de saúde";
   const introduction = introduceBruna
-    ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
+    ? `${greeting(patientName)} ${BRUNA_INTRODUCTION}`
     : "Claro.";
 
   if (professional === "amanda") {
@@ -364,7 +365,7 @@ export function buildConsultationInformationReply({
   const introduction = introduceBruna
     ? [
         greeting(patientName),
-        "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+        BRUNA_INTRODUCTION,
       ].join(" ")
     : "Claro.";
   const consultationContext = consultationPriceRequested
@@ -452,7 +453,7 @@ export function buildImageAcknowledgementReply({
   const opening = [
     greetPatient ? greeting(patientName) : "",
     introduceBruna
-      ? "Eu sou a Bruna, concierge da Clínica LIV Faria Lima."
+      ? BRUNA_INTRODUCTION
       : "",
   ].filter(Boolean).join(" ");
   const acknowledgement = [
@@ -474,7 +475,7 @@ export function buildMissingInboundTextClarificationReply({
     String(professional || "").trim().toLowerCase(),
   );
   return [
-    `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`,
+    `${greeting(patientName)} ${BRUNA_INTRODUCTION}`,
     canIntroduceAmanda
       ? "A Dra. Amanda Schroeder é cirurgiã plástica e atende aqui na clínica. Me conta: o que você gostaria de avaliar ou melhorar?"
       : "Como posso ajudar com seu atendimento?",
@@ -486,7 +487,7 @@ export function buildContextRoutingClarificationReply({
   introduceBruna = false,
 } = {}) {
   const opening = introduceBruna
-    ? `${greeting(patientName)} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
+    ? `${greeting(patientName)} ${BRUNA_INTRODUCTION}`
     : "";
   return [
     opening,
@@ -518,7 +519,7 @@ export function buildPatientReply({
   if (replyCode === "ORG-DIR-01") {
     return [
       hello,
-      "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+      BRUNA_INTRODUCTION,
       "Você procura uma avaliação com a Dra. Amanda ou uma consulta de cardiologia com o Dr. Daniel?",
     ].join(" ");
   }
@@ -526,7 +527,7 @@ export function buildPatientReply({
   if (replyCode === "DANIEL-ENC-01") {
     return [
       hello,
-      "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+      BRUNA_INTRODUCTION,
       "Recebemos sua procura pela cardiologia com o Dr. Daniel.",
       "Em breve continuaremos o atendimento por aqui.",
     ].join(" ");
@@ -541,7 +542,7 @@ export function buildPatientReply({
           : "o lifting cervical e o lifting facial";
     return [
       hello,
-      "Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+      BRUNA_INTRODUCTION,
       `Sim. Com a equipe da Dra. Amanda, ${procedureLabel} ${
         procedure ? "é uma cirurgia realizada" : "são cirurgias realizadas"
       } em hospital, com anestesista e equipe cirúrgica.`,

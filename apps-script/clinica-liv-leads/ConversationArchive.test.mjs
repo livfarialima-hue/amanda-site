@@ -13,7 +13,7 @@ function harness() {
   const properties = new Map(), files = new Map(); let serial = 0;
   const state = { folderAccess: "PRIVATE", corruptReadback: false, failState: false, locked: false, files, properties };
   const folder = { getId: () => "synthetic-private-folder", isTrashed: () => false, getSharingAccess: () => state.folderAccess,
-    getFilesByName: name => { let consumed = false; return { hasNext: () => !consumed && files.has(name), next: () => { consumed = true; return files.get(name); } }; },
+    getFilesByName: name => { const found = files.has(name) ? [files.get(name)].flat() : []; let index = 0; return { hasNext: () => index < found.length, next: () => found[index++] }; },
     createFile: (name, content, mime) => {
       assert.equal(state.locked, false, "Drive I/O must not block patient writes"); assert.equal(mime, "text/plain");
       const id = "file-" + ++serial;
@@ -76,3 +76,18 @@ test("diagnostics return metadata only and empty initialization is not a backup 
   assert.equal(h.run([]).status, "caught_up"); assert.equal(h.files.size, 0);
   assert.equal(h.context.diagnosticarArquivoConversas_().lastReceipt, undefined);
 });
+
+for (const mode of ['empty_and_valid','two_valid','only_empty','corrupt_and_valid']) {
+  test(`archive duplicate reconciliation: ${mode}`, () => {
+    const h = harness(), entries = [entry('synthetic-duplicate','Texto sintético')];
+    h.run(entries);
+    const [name, valid] = [...h.files.entries()][0];
+    const empty = { ...valid, getId: () => 'empty-file', getBlob: () => ({getDataAsString: () => ''}) };
+    const corrupt = { ...empty, getBlob: () => ({getDataAsString: () => 'corrupt'}) };
+    h.files.set(name, mode === 'empty_and_valid' ? [empty,valid] : mode === 'two_valid' ? [valid,valid] : mode === 'only_empty' ? [empty] : [corrupt,valid]);
+    const result = h.run(entries);
+    assert.equal(result.ok, mode === 'empty_and_valid');
+    if (result.ok) assert.equal(result.receipts[0].fileId, valid.getId());
+    assert.equal(h.files.size,1,'no duplicate file created or deleted');
+  });
+}

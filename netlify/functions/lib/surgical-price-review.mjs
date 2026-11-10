@@ -1,3 +1,4 @@
+import { BRUNA_INTRODUCTION } from "./patient-facing-identity.mjs";
 import { usableProfileFirstName } from "./profile-name.mjs";
 import { resolveOfferedInformationChoice, consultationQuestionTopics } from "./patient-turn-context.mjs";
 import { approvedProcedureInformationFacts } from "./lifting-information.mjs";
@@ -212,7 +213,7 @@ function directPriceGreeting(
   }
 
   const hello = name ? `Olá, ${name}!` : "Olá!";
-  return `${hello} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`;
+  return `${hello} ${BRUNA_INTRODUCTION}`;
 }
 
 function roundedThousands(value) {

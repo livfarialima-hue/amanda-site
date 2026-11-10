@@ -9,6 +9,31 @@ const SHEETS_URL = "https://sheets.example.test/webhook";
 const YCLOUD_URL =
   "https://api.ycloud.com/v2/whatsapp/messages";
 
+test('fragmented price scope keeps one obligation and emits no second holding or alert', async t => {
+  const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,
+    GOOGLE_SHEETS_WEBHOOK_SECRET:'synthetic',WHATSAPP_AUTOMATION_MODE:'active',WHATSAPP_INBOUND_BACKGROUND_ENABLED:'true',
+    WHATSAPP_HUMAN_REPLY_GUARD_MS:'0',WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS:'0',WHATSAPP_REPLY_DEBOUNCE_AI_MS:'0',
+    OPENAI_API_KEY:'synthetic',WHATSAPP_ALERT_NUMBER:'+5511900000002',YCLOUD_ALERT_TEMPLATE_NAME:'synthetic_review',YCLOUD_ALERT_TEMPLATE_LANGUAGE:'pt_BR'};
+  const previous=Object.fromEntries(Object.keys(settings).map(k=>[k,process.env[k]]));Object.assign(process.env,settings);
+  t.after(()=>{for(const[k,v]of Object.entries(previous)){if(v===undefined)delete process.env[k];else process.env[k]=v;}});
+  t.mock.method(console,'log',()=>{});
+  const turns=[{role:'user',source:'patient',eventId:'synthetic-origin',at:'2026-11-10T16:00:00Z',text:'Qual o valor da blefaroplastia?'},
+    {role:'assistant',source:'bruna',eventId:'synthetic-origin:price-holding',at:'2026-11-10T16:01:00Z',text:'Vou confirmar o valor da blefaroplastia com a equipe e retorno por aqui.'}];
+  const task={eventId:'synthetic-origin',requestId:'synthetic-origin',kind:'procedure_price',status:'pending',opportunityId:'synthetic-op',professional:'amanda',dueAt:'2026-11-10T20:00:00Z'};
+  const actions=[],sends=[];
+  t.mock.method(globalThis,'fetch',async(url,options)=>{
+    const data=JSON.parse(options.body);
+    if(url===SHEETS_URL){actions.push(data);return Response.json({ok:true,updated:true,routed:true,routeStatus:'resolved',professional:'amanda',opportunityId:'synthetic-op',humanTakeoverToday:false,patientRelationship:{found:false},turns,pendingCommitments:[task]});}
+    if(url==='https://api.openai.com/v1/responses')return Response.json({model:'synthetic',output_text:JSON.stringify({route:'human_review',confidence:'high',automaticAllowed:false,urgent:false,professional:'amanda',procedure:'blefaroplastia',replyCode:'',suggestedReply:'',reviewReason:'surgical_price_review',conversationState:{activeTopic:'blefaroplastia',patientAct:'question',refersToEventId:'synthetic-origin',lastClinicQuestion:'',lastClinicOffer:'',unresolvedQuestions:['valor para inferior e superior'],factsAlreadyProvided:[],owner:'human_team',nextExpectedAction:'responder escopo do valor',ambiguity:'',contextConfidence:'high'}})});
+    assert.equal(url,YCLOUD_URL);sends.push(data);return Response.json({status:'accepted'});
+  });
+  const result=await (await handleYCloudWebhook(requestFor({id:'synthetic-fragment',type:'whatsapp.inbound_message.received',createTime:'2026-11-10T16:02:00Z',whatsappInboundMessage:{id:'synthetic-fragment-message',from:'+5511900000000',to:'+5511900000001',sendTime:'2026-11-10T16:02:00Z',type:'text',text:{body:'Inferior e superior?'}}}),{livInboundBackground:true},{registerInboundRecoveryImpl:async()=>({status:'completed'}),refreshInboundReplyContextImpl:input=>refreshInboundReplyContext(input,{readConversationTurnsImpl:async()=>({status:'completed',turns})})})).json();
+  assert.equal(result.commitmentSyncStatus,'reused_pending',JSON.stringify(result));
+  assert.equal(result.priceHoldingSent,false);assert.equal(result.reviewAlertQueued,false);
+  assert.equal(actions.filter(x=>x.action==='record_patient_commitment').length,0);
+  assert.equal(sends.length,0);assert.equal(task.dueAt,'2026-11-10T20:00:00Z');
+});
+
 for(const scenario of ['complete','price_only','semantic_veto','minor_veto','association','association_duplicate_commitment','association_alert_failed','association_commitment_failed','association_commitment_unconfirmed','association_commitment_ignored','association_commitment_string']) {
   test(`isolated lipo webhook answers the requested topics and preserves human review: ${scenario}`,async t=>{
     const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,

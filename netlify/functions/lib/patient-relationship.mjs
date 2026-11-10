@@ -263,3 +263,27 @@ export function buildPatientCommitment({
     source: "WhatsApp — revisão humana",
   };
 }
+
+// Reuse only a short scope clarification tied to one exact pending price task.
+// This never answers the question, resolves the task, changes its deadline or
+// grants consent. The new inbound remains in the canonical conversation.
+export function reusablePriceCommitment({ text, procedure, professional, opportunityId,
+  pendingCommitments = [], recentConversation = [], decision } = {}) {
+  const state = decision?.conversationState;
+  const fragment = String(text || '').normalize('NFD').replace(/\p{M}/gu,'').toLowerCase().trim();
+  if (!procedure || !opportunityId || !professional || decision?.route !== 'human_review' ||
+      decision?.urgent === true || decision?.confidence !== 'high' ||
+      decision?.professional !== professional || decision?.procedure !== procedure ||
+      state?.contextConfidence !== 'high' || state?.ambiguity || !state?.refersToEventId ||
+      !/^(?:(?:e |a |as |o |os |das |dos |para |seria |seriam |so |somente )*)(?:inferior(?:es)?|superior(?:es)?|inferior(?:es)? e superior(?:es)?|superior(?:es)? e inferior(?:es)?|ambas?|ambos?|as duas|os dois|bilateral|unilateral)[?.! ]*$/.test(fragment)) return null;
+  const matches = pendingCommitments.filter(item => item.status === 'pending' &&
+    item.kind === 'procedure_price' && item.opportunityId === opportunityId && item.professional === professional);
+  if (matches.length !== 1) return null;
+  const task = matches[0];
+  const origin = recentConversation.find(turn => turn.eventId === task.eventId || turn.eventId === task.requestId);
+  if (!origin || !['user','patient'].includes(origin.role) || !['patient','paciente'].includes(origin.source)) return null;
+  const reference = recentConversation.find(turn => turn.eventId === state.refersToEventId);
+  const linked = state.refersToEventId === origin.eventId ||
+    (reference?.source === 'bruna' && [task.eventId + ':price-holding',task.eventId + '-price-holding'].includes(reference.eventId));
+  return linked ? task : null;
+}

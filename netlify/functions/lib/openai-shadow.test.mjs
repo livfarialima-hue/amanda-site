@@ -509,7 +509,7 @@ test("returning-patient guard removes a repeated Bruna introduction", () => {
   const guarded = applyReturningPatientReplyGuard(
     validDecision({
       suggestedReply:
-        "Olá, Ana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Como posso ajudar?",
+        "Olá, Ana! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. Como posso ajudar?",
     }),
     {
       knownPatient: true,
@@ -531,7 +531,7 @@ test("continuity guard removes a repeated Bruna introduction from an engaged lea
   const guarded = applyReturningPatientReplyGuard(
     validDecision({
       suggestedReply:
-        "Boa noite, Vera! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Entendi que a flacidez aparece no pescoço e nos braços.",
+        "Boa noite, Vera! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. Entendi que a flacidez aparece no pescoço e nos braços.",
     }),
     { knownPatient: false, state: "engaged_lead" },
     {
@@ -599,7 +599,7 @@ test("known prior interaction removes a repeated introduction without conversati
   const guarded = applyReturningPatientReplyGuard(
     validDecision({
       suggestedReply:
-        "Olá, Isabel! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Claro, posso explicar melhor.",
+        "Olá, Isabel! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. Claro, posso explicar melhor.",
     }),
     { knownPatient: false, state: "engaged_lead" },
     { priorInteractionKnown: true },
@@ -640,7 +640,7 @@ test("response parser applies continuity protections together", () => {
     validResponse(
       validDecision({
         suggestedReply:
-          "Olá, Vera! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Entendo que essas mudanças no pescoço e nos braços possam incomodar. Posso te orientar sobre a cervicoplastia e também conversar sobre a região dos braços. A Dra. Amanda pode avaliar as duas regiões com cuidado. O que você gostaria de entender primeiro?",
+          "Olá, Vera! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. Entendo que essas mudanças no pescoço e nos braços possam incomodar. Posso te orientar sobre a cervicoplastia e também conversar sobre a região dos braços. A Dra. Amanda pode avaliar as duas regiões com cuidado. O que você gostaria de entender primeiro?",
       }),
     ),
     "fallback-model",
@@ -684,7 +684,7 @@ test("first acquisition reply always starts with a human greeting and Bruna intr
   const guarded = applyFirstReplyGreetingGuard(
     validDecision({
       suggestedReply:
-        "Eu sou a Bruna, concierge da Clínica LIV Faria Lima. O lifting facial reposiciona tecidos da face e do pescoço.",
+        "Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. O lifting facial reposiciona tecidos da face e do pescoço.",
     }),
     {
       patientProfileName: "Rosana Macedo",
@@ -695,7 +695,7 @@ test("first acquisition reply always starts with a human greeting and Bruna intr
 
   assert.equal(
     guarded.suggestedReply,
-    "Olá, Rosana! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. O lifting facial reposiciona tecidos da face e do pescoço.",
+    "Olá, Rosana! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. O lifting facial reposiciona tecidos da face e do pescoço.",
   );
 });
 
@@ -713,7 +713,7 @@ test("first acquisition reply inserts the introduction when the model omits it",
 
   assert.equal(
     guarded.suggestedReply,
-    "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Posso te orientar sobre o lifting facial. Como posso te chamar?",
+    "Olá! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. Posso te orientar sobre o lifting facial. Como posso te chamar?",
   );
   assert.doesNotMatch(guarded.suggestedReply, /Olá, SVS/i);
 });
@@ -1480,7 +1480,7 @@ test("a known WhatsApp profile name prevents asking the name again", () => {
     validResponse(
       validDecision({
         suggestedReply:
-          "Boa tarde! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Como posso te chamar?",
+          "Boa tarde! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. Como posso te chamar?",
       }),
     ),
     "fallback-model",
@@ -1490,7 +1490,7 @@ test("a known WhatsApp profile name prevents asking the name again", () => {
   assert.equal(result.status, "completed");
   assert.equal(
     result.decision.suggestedReply,
-    "Boa tarde! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Como posso ajudar?",
+    "Boa tarde! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. Como posso ajudar?",
   );
 });
 
@@ -1499,7 +1499,7 @@ test("a personal WhatsApp profile with a trailing emoji still supplies the name"
     validResponse(
       validDecision({
         suggestedReply:
-          "Boa tarde! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Como posso te chamar?",
+          "Boa tarde! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. Como posso te chamar?",
       }),
     ),
     "fallback-model",
@@ -1509,7 +1509,7 @@ test("a personal WhatsApp profile with a trailing emoji still supplies the name"
   assert.equal(result.status, "completed");
   assert.equal(
     result.decision.suggestedReply,
-    "Boa tarde! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. Como posso ajudar?",
+    "Boa tarde! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. Como posso ajudar?",
   );
 });
 
@@ -1965,7 +1965,7 @@ test("the model receives bounded mechanical hints as non-authoritative context",
         replyCode: "G-LIFT-CERV-01",
         deterministicReplyCode: "MARKETING-PREFILL-OPENING-01",
         deterministicReplyPreview:
-          "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+          "Olá! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima.",
         deterministicReplyProfessional: "amanda",
         deterministicReplyProcedure: "lifting_cervical",
         professional: "amanda",
@@ -2000,7 +2000,7 @@ test("the model receives bounded mechanical hints as non-authoritative context",
     professional: "amanda",
     procedure: "lifting_cervical",
     deterministicReplyPreview:
-      "Olá! Eu sou a Bruna, concierge da Clínica LIV Faria Lima.",
+      "Olá! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima.",
     automaticAllowed: true,
     semanticRoutePending: true,
   });
@@ -2618,7 +2618,7 @@ test("active mode sends only the high-confidence OpenAI reply", async () => {
     assert.equal(patientBody.type, "text");
     assert.equal(
       patientBody.text.body,
-      "Olá, Maria! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. A avaliação é individual. O que você deseja melhorar?",
+      "Olá, Maria! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. A avaliação é individual. O que você deseja melhorar?",
     );
     const operationalRequest = requests.find((request) => {
       if (request.url !== process.env.GOOGLE_SHEETS_WEBHOOK_URL) return false;
@@ -2923,7 +2923,7 @@ test("the real multi-part lifting question uses the approved complete reply inst
               {
                 role: "assistant",
                 source: "bruna",
-                text: "Olá, Dani! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. O que você gostaria de entender primeiro sobre o lifting facial?",
+                text: "Olá, Dani! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. O que você gostaria de entender primeiro sobre o lifting facial?",
                 eventId: "lifting-information-opening",
                 at: "2026-08-19T19:35:42.000Z",
               },
@@ -3472,7 +3472,7 @@ test("a structured lipo prefill recovers one transient Sheets failure without ju
     ).text.body;
     assert.equal(
       patientReply,
-      "Olá, Fabrícia! Eu sou a Bruna, concierge da Clínica LIV Faria Lima. " +
+      "Olá, Fabrícia! Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima. " +
         "Posso te orientar sobre lipo de papada. " +
         "O que você gostaria de entender primeiro?",
     );

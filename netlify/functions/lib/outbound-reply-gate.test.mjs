@@ -1257,7 +1257,7 @@ test("a team holding reply requires a real pending request", () => {
 
 test("semantic validation blocks unsafe medical, commercial and contextual claims", () => {
   const cases = [
-    ["Sou uma assistente virtual da clínica.", "automation_identity_disclosure"],
+    ["Sou uma pessoa de verdade.", "false_human_identity"],
     ["Vou confirmar essa informação com a equipe.", "generic_holding_reply"],
     ["O valor da consulta será abatido da cirurgia.", "consultation_credit_claim"],
     ["A nota permite abatimento no Imposto de Renda.", "tax_benefit_claim"],

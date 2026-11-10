@@ -739,7 +739,7 @@ test("image webhook acknowledges the photo as Bruna and keeps human review", asy
     assert.ok(patientReply);
     assert.match(
       patientReply.text.body,
-      /Eu sou a Bruna, concierge da Clínica LIV Faria Lima/,
+      /Eu sou a Bruna, assistente virtual da Clínica LIV Faria Lima/,
     );
     assert.match(
       patientReply.text.body,

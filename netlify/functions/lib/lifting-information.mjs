@@ -1,3 +1,4 @@
+import { BRUNA_INTRODUCTION } from "./patient-facing-identity.mjs";
 import { usableProfileFirstName } from "./profile-name.mjs";
 import { informationRequestText, isProcedureExplanationInquiry } from "./patient-turn-context.mjs";
 
@@ -227,7 +228,7 @@ export function buildLiftingFacialInformationReply({
   const name = formattedFirstName(patientName);
   if (approved.topics.some(topic => ["deep_plane", "procedure_explanation", "scars", "anesthesia", "hospital"].includes(topic))) {
     const opening = introduceBruna
-      ? `${name ? `Olá, ${name}!` : "Olá!"} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
+      ? `${name ? `Olá, ${name}!` : "Olá!"} ${BRUNA_INTRODUCTION}`
       : "";
     return [opening, ...approved.facts.map(fact => fact.statement)].filter(Boolean).join("\n\n");
   }
@@ -236,7 +237,7 @@ export function buildLiftingFacialInformationReply({
     approved.topics[0] === "scope_comparison"
   ) {
     const opening = introduceBruna
-      ? `${name ? `Olá, ${name}!` : "Olá!"} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
+      ? `${name ? `Olá, ${name}!` : "Olá!"} ${BRUNA_INTRODUCTION}`
       : name
         ? `Claro, ${name}.`
         : "Claro.";
@@ -248,7 +249,7 @@ export function buildLiftingFacialInformationReply({
 
   const greeting = name ? `Olá, ${name}!` : "Olá!";
   const opening = introduceBruna
-    ? `${greeting} Eu sou a Bruna, concierge da Clínica LIV Faria Lima.`
+    ? `${greeting} ${BRUNA_INTRODUCTION}`
     : greeting;
   const introduction = approved.topics.length > 1
     ? "Essas são dúvidas muito válidas, principalmente quando você ainda está entendendo se a cirurgia faz sentido."

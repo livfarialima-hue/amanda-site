@@ -338,7 +338,7 @@ function carregarDecisoesCanonicasCentral_(spreadsheet, conversations) {
     const phone = normalizarTelefoneCentral_(get("Telefone (E.164)"));
     const opportunityId = textoCentral_(get("Opportunity ID"), 120);
     const professional = String(get("Profissional") || "");
-    if (!phone || !opportunityId || !["amanda", "daniel"].includes(professional)) return;
+    if (!phone || !opportunityId || !["amanda", "daniel", "nonpatient"].includes(professional)) return;
     (grouped[phone] || (grouped[phone] = [])).push({ phone, opportunityId, professional,
       state: String(get("Estado") || ""), stage: String(get("Fase") || ""),
       relationship: String(get("Relacionamento") || "unknown"), owner: String(get("Responsável atual") || ""),
@@ -374,7 +374,8 @@ function projetarDecisoesCanonicasCentral_(items, decisions, conversations, lead
     const last = messages[messages.length - 1];
     const lastAt = last && dataCentralValida_(last.dataHora);
     const stale = !decision.updatedAt || Boolean(lastAt && lastAt.getTime() > decision.updatedAt.getTime());
-    const uncertain = stale || decision.ambiguous || !["clinic", "patient"].includes(decision.expectedParty);
+    const confirmedNonpatient = decision.professional === "nonpatient" && !stale && !decision.ambiguous;
+    const uncertain = stale || decision.ambiguous || (!confirmedNonpatient && !["clinic", "patient"].includes(decision.expectedParty));
     if (stale) counts.stale += 1;
     if (decision.ambiguous) counts.ambiguous += 1;
     const profile = profiles[phone] || {};
@@ -382,9 +383,9 @@ function projetarDecisoesCanonicasCentral_(items, decisions, conversations, lead
     const current = items[phone];
     if (!current && !messages.length && decision.expectedParty !== "clinic") return;
     const care = ["active_postop", "surgical_planning", "appointment_scheduled", "consultation_completed", "known_patient", "former_patient"].includes(decision.relationship);
-    const closed = !care && (decision.stage === "Não qualificado" || ["closed", "archived"].includes(decision.state));
+    const closed = !care && (confirmedNonpatient || decision.stage === "Não qualificado" || ["closed", "archived"].includes(decision.state));
     const pause = /(?:iniciativa (?:da|d[eo])|sem nova a[cç][aã]o comercial|aguardar retorno informado|aguardar.*fim do m[eê]s)/i.test(decision.nextAction);
-    const clinic = uncertain || decision.expectedParty === "clinic";
+    const clinic = !confirmedNonpatient && (uncertain || decision.expectedParty === "clinic");
     const protectedItem = current && (/^(?:care:|appointment:|consultation:|commitment:)/.test(current.sourceKey) ||
       current.source === "Jornada de cuidado");
     if (protectedItem && !clinic) return;
@@ -400,6 +401,7 @@ function projetarDecisoesCanonicasCentral_(items, decisions, conversations, lead
       ? decision.ambiguous
         ? "Revisar quem será atendido e a oportunidade correta antes de orientar a próxima ação."
         : "Revisar as mensagens mais recentes e atualizar a classificação antes de confirmar a próxima ação."
+      : confirmedNonpatient ? "Contato não paciente; sem abordagem clínica ou retomada comercial automática."
       : decision.nextAction || (waiting ? "Aguardar manifestação da pessoa" : "Conferir a solicitação pendente e responder");
     const technical = stale && !decision.ambiguous && !care && !protectedItem;
     const safeBruna = !uncertain && !care && !protectedItem && decision.owner === "bruna" &&
@@ -1678,7 +1680,19 @@ function adicionarItemCentral_(itemsByPatient, item) {
 }
 
 function aplicarControleCentral_(item, controls, now) {
-  const control = controls[item.sourceKey];
+  let control = controls[item.sourceKey];
+  if (!control && String(item.sourceKey || "").indexOf("crm:") === 0) {
+    // Preserve only a team's note across revisions of this exact opportunity.
+    // A draft, approval, owner or status from another revision is never inherited.
+    const opportunityKey = String(item.sourceKey).replace(/:[^:]+:[^:]+:[^:]+$/, "");
+    const notes = Object.keys(controls).filter(function (key) {
+      return key.indexOf("crm:") === 0 && key.replace(/:[^:]+:[^:]+:[^:]+$/, "") === opportunityKey && controls[key].teamNote;
+    }).map(function (key) { return controls[key]; });
+    notes.sort(function (a, b) {
+      return (new Date(b.lastTeamActionAt).getTime() || 0) - (new Date(a.lastTeamActionAt).getTime() || 0);
+    });
+    if (notes.length) control = { teamNote: notes[0].teamNote, lastTeamActionAt: notes[0].lastTeamActionAt };
+  }
 
   if (!control) return item;
 

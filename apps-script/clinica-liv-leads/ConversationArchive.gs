@@ -75,8 +75,20 @@ function arquivarLoteConversasNoDrive_(input) {
       mediaFilesIncluded: false, authority: "read_only_projection" }) + "\n" + JSON.stringify(record) + "\n";
     const digest = hashArquivoConversas_(content), name = "conversa_" + entry.revision + ".jsonl";
     const files = folder.getFilesByName(name);
-    let file = files.hasNext() ? files.next() : null;
-    if (files.hasNext()) return { ok: false, error: "ambiguous_archive_file" };
+    let file = null, inspected = 0, emptyDuplicates = 0;
+    while (files.hasNext()) {
+      if (++inspected > 10) return { ok: false, error: "ambiguous_archive_file" };
+      const candidate = files.next();
+      if (candidate.isTrashed() || candidate.getSharingAccess() !== DriveApp.Access.PRIVATE)
+        return { ok: false, error: "archive_readback_failed" };
+      const candidateContent = candidate.getBlob().getDataAsString("UTF-8");
+      if (candidateContent === "") { emptyDuplicates++; continue; }
+      if (file || hashArquivoConversas_(candidateContent) !== digest)
+        return { ok: false, error: "ambiguous_archive_file" };
+      file = candidate;
+    }
+    // Leave empty artifacts untouched. Only one verified nonempty revision is authoritative.
+    if (!file && emptyDuplicates) return { ok: false, error: "archive_empty_file_requires_review" };
     if (!file) file = folder.createFile(name, content, "text/plain");
     if (file.isTrashed() || file.getSharingAccess() !== DriveApp.Access.PRIVATE ||
         hashArquivoConversas_(file.getBlob().getDataAsString("UTF-8")) !== digest) return { ok: false, error: "archive_readback_failed" };

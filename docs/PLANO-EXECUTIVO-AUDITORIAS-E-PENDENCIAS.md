@@ -1,5 +1,15 @@
 # Plano executivo — auditorias, pendências e prazos
 
+## Coerência da lógica — implementação autorizada em 10/11/2026
+
+Candidato BRUNA-COERENCIA-LOGICA-2026-11-10, baseline e69bf442. Daniel autorizou implementar os ajustes remanescentes e publicar. Pacote Netlify 2026-11-10.2: identidade virtual explícita e veto a falsa identidade humana; uma obrigação para fragmentos de preço semanticamente correlacionados; mídia sem leitura não gera recibo genérico; versões de telemetria vêm do manifesto embarcado. Não altera preços, campanhas, flags, aprovação humana ou cadências.
+
+Apps Script preparado: evento vinculado ausente exige reconciliação sem recriação; equivalência do sufixo iCalUID; notas da equipe persistem entre versões da mesma oportunidade sem copiar aprovações; arquivo vazio duplicado não impede reutilizar uma única revisão privada com hash válido; escritor de custos recusa cabeçalhos deslocados sem sobrescrever dados. Editor canônico indisponível nesta sessão: navegador local sem conexão e navegador cloud sem autenticação. v167 permanece a última publicação comprovada por recibo; estas correções Apps Script não são runtime verificado.
+
+Revisão das propostas anteriores: pausa/opt-out, perguntas administrativas simples, contexto de procedimento, confirmação humana, preservação de data realizada, validação de nome, cabeçalhos de agendamento e fechamento de promessa por identidade já têm implementação e testes. Não republicar v167 como pendente. Divergências individuais de agenda, confirmação de entrega, conciliação de compromissos humanos e correção de cabeçalhos de custos dependem de evidência operacional e não são resolvidas por inferência ou migração automática. A causa das falhas de alertas não foi demonstrada.
+
+2371/2371 testes locais aprovados, arquitetura, contrato e artefato aprovados. Contato não paciente com classificação canônica atual também deixa de gerar fila clínica; mensagem posterior volta à revisão humana. Publicação Netlify em andamento, Apps Script bloqueado por acesso. Monitorar primeiro caso natural e 48h; rollback restrito ao delta, preservando dados e recibos. Nenhum replay ou mensagem real de teste.
+
 ## Pendências locais da Bruna — publicadas em 10/11/2026
 
 Commit funcional aprovado a2c25c3d9e4f5d49e267bbb259ec78d0ce475fed; Apps Script v167 no mesmo deployment canônico e Netlify 6af368511bde0c08349f21d6, READY e publicado às 15h57 BRT (2026-11-10T18:57:37.341Z). As duas fontes Apps Script foram recarregadas e coincidiram com o commit. Cabeçalhos de _AGENDAMENTOS_PENDENTES realinhados em A:I; as 32 linhas de dados permaneceram idênticas. A data realizada registrada é preservada e respostas como “não”, “sim” e “ok” deixam de ser aceitas como nome na saudação.
