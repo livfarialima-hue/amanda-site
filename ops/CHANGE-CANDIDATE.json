@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-FAIXA-BLEFAROPLASTIA-2026-11-10",
   "title": "Faixa de referência de blefaroplastia no WhatsApp",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "cc13d12ad0bc836740250d740b6ca8f24ccdd2f5",
   "authorization": {
     "required": true,
@@ -13,14 +13,16 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
-    "note": "Exposição de referência numérica a pacientes após publicação; guardas preservadas. Nenhum efeito externo nesta preparação."
+    "externalWritesPerformed": true,
+    "note": "Approved Netlify deployment; no patient messages or operational data writes."
   },
   "scope": {
     "files": [
+      "auditorias/bruna-faixa-blefaroplastia-2026-11-10/PUBLICACAO.json",
       "campanhas/NORTE-ESTRATEGICO-GOOGLE-ADS.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/human-resume.mjs",
       "netlify/functions/lib/bruna-policy/manifest.json",
       "netlify/functions/lib/bruna-policy/regression-governance.test.mjs",
@@ -43,6 +45,7 @@
       "netlify/functions/lib/whatsapp-automation.test.mjs",
       "netlify/functions/ycloud-webhook.mjs",
       "ops/CHANGE-CANDIDATE.json",
+      "ops/IMPACT-REGISTRY.json",
       "scripts/check-bruna-model-live.mjs",
       "scripts/check-bruna-model-live.test.mjs"
     ],
@@ -370,13 +373,11 @@
       "siteBuild": "passed",
       "siteCheck": "passed",
       "diffCheck": "passed",
-      "opsCheck": "SYNC_PENDING",
-      "hostedModelGate": "pending_release_authorization"
+      "opsCheck": "OK",
+      "hostedModelGate": "passed_28_of_28"
     }
   },
-  "externalChecksPending": [
-    "Autorização explícita para o commit; revalidar produção, executar build hospedado e verificar saúde/recibos."
-  ],
+  "externalChecksPending": [],
   "rollback": {
     "local": "Descartar o candidato isolado.",
     "production": "Restaurar comportamento do deploy 6af38567abdf034950290235 e manter dados, recibos e Apps Script v168."
@@ -392,5 +393,28 @@
   "baselineCandidateReference": {
     "commit": "cc13d12ad0bc836740250d740b6ca8f24ccdd2f5",
     "path": "ops/CHANGE-CANDIDATE.json"
+  },
+  "release": {
+    "approvedCommit": "793a73e5c0031b61a2029fce6a9848ee53bb9a67",
+    "originalApprovedCommit": "e3753a13b4357f962e4d93caabc13f6708a50a8f",
+    "approvedTree": "58698b6e18efde4a45ccd9326dbfb06eb868bc78",
+    "netlifyDeployId": "6af3a78c941d4b4d83a68b42",
+    "appsScriptVersion": 168,
+    "verifiedAt": "2026-11-10T23:28:45+00:00",
+    "drivePlanSha256": "92b17d82394a165a7933fa4765f6f286dfc3d3795ba2b747ba7dff69042fbc08",
+    "liveModel": {
+      "status": "passed",
+      "passed": 28,
+      "total": 28,
+      "fullHistoryPassed": 2,
+      "evidence": "Final production build log observed directly in Netlify."
+    },
+    "liveAudio": {
+      "status": "passed",
+      "passed": 3,
+      "total": 3,
+      "evidence": "Final production build log observed directly in Netlify."
+    },
+    "receipt": "auditorias/bruna-faixa-blefaroplastia-2026-11-10/PUBLICACAO.json"
   }
 }

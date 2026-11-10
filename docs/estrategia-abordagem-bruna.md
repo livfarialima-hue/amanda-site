@@ -1,8 +1,10 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
-## Candidato 2026-11-10.3 — blefaroplastia, aguardando publicação
+## Pacote 2026-11-10.3 — blefaroplastia publicada
 
-Após publicação, pedido explícito de preço de blefaroplastia genérica ou de pálpebras superiores e inferiores pode receber, uma vez, referência **para a blefaroplastia superior e inferior juntas** entre R$ 10 mil e R$ 18 mil, sem preço individual prévio. Ressalva canônica no mesmo envio: valor global de referência, não orçamento fechado; equipe, hospital, anestesia, materiais e itens discriminados após avaliação. Explicar o propósito da consulta e oferecer explicação da avaliação uma vez, quando pertinente. Não agendar nem oferecer turno sem intenção de agenda. Para variante isolada, revisão ou combinação, não atribuir a faixa; termos específicos exigem verificação. Sem envio proativo, faixa no site ou em anúncio, mudança das outras faixas ou reprocessamento.
+Pedido explícito de preço de blefaroplastia genérica ou de pálpebras superiores e inferiores pode receber, uma vez, referência **para a blefaroplastia superior e inferior juntas** entre R$ 10 mil e R$ 18 mil, sem preço individual prévio. Ressalva canônica no mesmo envio: valor global de referência, não orçamento fechado; equipe, hospital, anestesia, materiais e itens discriminados após avaliação. Explicar o propósito da consulta e oferecer explicação da avaliação uma vez, quando pertinente. Não agendar nem oferecer turno sem intenção de agenda. Para variante isolada, revisão ou combinação, não atribuir a faixa; termos específicos exigem verificação. Sem envio proativo, faixa no site ou em anúncio, mudança das outras faixas ou reprocessamento.
+
+Publicado e verificado: pacote 2026-11-10.3, commit funcional 793a73e5c0031b61a2029fce6a9848ee53bb9a67, Netlify 6af3a78c941d4b4d83a68b42, publicado em 2026-11-10T23:27:11.802Z. Conteúdo idêntico ao candidato e3753a13b4357f962e4d93caabc13f6708a50a8f aprovado por Daniel; árvore 58698b6e18efde4a45ccd9326dbfb06eb868bc78. 2377/2377 testes locais. Gate hospedado: 28/28 cenários, dois históricos completos e 3/3 áudios sintéticos, conforme log observado. Saúde 200 e POST sem assinatura 401 no domínio e URL imutável; quinze funções e seis programações preservadas. Apps Script v168 preservado por recibo, sem republicação ou nova inspeção do editor. Nenhuma mensagem real de teste, replay ou escrita de dados operacionais. Recibo: auditorias/bruna-faixa-blefaroplastia-2026-11-10/PUBLICACAO.json.
 
 ## Pacote 2026-11-10.2 — Netlify e Apps Script publicados
 

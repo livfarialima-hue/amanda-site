@@ -17,31 +17,31 @@
   "humanConfirmationRequiredForAppointments": true,
   "release": {
     "status": "published",
-    "functionalCommit": "9de9f447c8888edcd8fc057477e02adad2e50cc9",
-    "lastObservedProductionCommit": "9de9f447c8888edcd8fc057477e02adad2e50cc9",
-    "functionalDeployId": "6af38567abdf034950290235",
-    "lastObservedProductionDeployId": "6af38567abdf034950290235",
-    "rollbackCommit": "a2c25c3d9e4f5d49e267bbb259ec78d0ce475fed",
-    "rollbackDeployId": "6af368511bde0c08349f21d6",
+    "functionalCommit": "793a73e5c0031b61a2029fce6a9848ee53bb9a67",
+    "lastObservedProductionCommit": "793a73e5c0031b61a2029fce6a9848ee53bb9a67",
+    "functionalDeployId": "6af3a78c941d4b4d83a68b42",
+    "lastObservedProductionDeployId": "6af3a78c941d4b4d83a68b42",
+    "rollbackCommit": "9de9f447c8888edcd8fc057477e02adad2e50cc9",
+    "rollbackDeployId": "6af38567abdf034950290235",
     "rollbackConstraint": "Novo commit/build restrito para o comportamento anterior, preservando dados, filas, recibos, Apps Script e trabalho paralelo; sem replay.",
-    "publishedAt": "2026-11-10T21:02:07.825Z",
+    "publishedAt": "2026-11-10T23:27:11.802Z",
     "publishedTimePrecision": "Netlify API published_at",
-    "lastVerifiedAt": "2026-11-10T21:40:43.035266+00:00",
-    "candidateChangeId": "BRUNA-COERENCIA-LOGICA-2026-11-10",
+    "lastVerifiedAt": "2026-11-10T23:27:49+00:00",
+    "candidateChangeId": "BRUNA-FAIXA-BLEFAROPLASTIA-2026-11-10",
     "candidateStatus": "published_verified",
-    "bundleVersion": "2026-11-10.2",
+    "bundleVersion": "2026-11-10.3",
     "appsScriptVersion": 168,
-    "note": "Apps Script v168 verified at the unchanged canonical deployment; rollback to v167."
+    "note": "Netlify-only change; Apps Script v168 retained from verified previous receipt."
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
     "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "5c0399fcdfa73f47cdb66026b9e1d39621bf671495db6299052dad008b728db4",
-    "driveProjectionVerifiedAt": "2026-11-10T21:40:43.035266+00:00",
+    "driveProjectionSha256": "1d0e39bfc29f5600d64f6050e3cf3a7b374bd5323cbc1e3e2cfd21c33b3f07d9",
+    "driveProjectionVerifiedAt": "2026-11-10T23:28:45+00:00",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
-    "status": "pending_projection",
-    "note": "Candidato local; projeção vigente permanece no pacote publicado até autorização e fechamento."
+    "status": "written_verified",
+    "note": "Same existing manual projection verified byte for byte."
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -49,7 +49,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-FAIXA-BLEFAROPLASTIA-2026-11-10",
-    "status": "tested_local",
+    "status": "published_verified",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
@@ -58,6 +58,7 @@
     "baselineDeployId": "6af38567abdf034950290235",
     "baselineAppsScriptVersion": 168,
     "bundleVersion": "2026-11-10.3",
-    "note": "Somente extensão de faixa privada para blefaroplastia superior e inferior. Não publicada."
+    "note": "Approved identical content tree published and verified.",
+    "sourceCommit": "793a73e5c0031b61a2029fce6a9848ee53bb9a67"
   }
 }

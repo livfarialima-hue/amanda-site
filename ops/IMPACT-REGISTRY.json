@@ -280,7 +280,8 @@
         "scripts/run-tests.mjs",
         "auditorias/lembretes-24h-2026-10-16/PUBLICACAO.json",
         "auditorias/bruna-pendencias-locais-2026-11-10/PUBLICACAO.json",
-        "auditorias/bruna-coerencia-logica-2026-11-10/PUBLICACAO.json"
+        "auditorias/bruna-coerencia-logica-2026-11-10/PUBLICACAO.json",
+        "auditorias/bruna-faixa-blefaroplastia-2026-11-10/PUBLICACAO.json"
       ],
       "requiredTestFiles": [
         "scripts/check-change-safety.test.mjs",

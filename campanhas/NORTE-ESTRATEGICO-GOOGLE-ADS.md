@@ -1,8 +1,8 @@
 # Norte estratégico de aquisição e conversão
 
-## Decisão de 10/11/2026 — referência de blefaroplastia no WhatsApp, candidata
+## Decisão de 10/11/2026 — referência de blefaroplastia no WhatsApp, publicada
 
-Daniel solicitou extensão da política privada de resposta a preço, com base em resposta humana que descreveu o procedimento superior e inferior em conjunto. Referência global: R$ 10 mil a R$ 18 mil, exclusivamente em resposta a pedido de preço elegível no WhatsApp após publicação da mudança. Não anunciar essa faixa em página, criativo ou anúncio, nem atribuí-la a pálpebra isolada, revisão ou combinação. Orçamento individual após avaliação. Sem mudança de campanha, qualificação ou atribuição.
+Daniel solicitou extensão da política privada de resposta a preço, com base em resposta humana que descreveu o procedimento superior e inferior em conjunto. Referência global: R$ 10 mil a R$ 18 mil, exclusivamente em resposta a pedido de preço elegível no WhatsApp; publicada no pacote 2026-11-10.3. Não anunciar essa faixa em página, criativo ou anúncio, nem atribuí-la a pálpebra isolada, revisão ou combinação. Orçamento individual após avaliação. Sem mudança de campanha, qualificação ou atribuição.
 
 Hipótese: clareza sobre composição e avaliação reduz pedidos repetidos e facilita continuidade voluntária. Conferir primeiras conversas e sete dias após implantação: respostas completas por pedido elegível, intervenções, aceites e consultas confirmadas/realizadas na mesma coorte. Sem ganho causal presumido; reverter diante de valor incompatível, promessa ou repetição indevida.
 

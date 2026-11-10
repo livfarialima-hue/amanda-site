@@ -1,5 +1,11 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+## Blefaroplastia — referência privada publicada em 10/11/2026
+
+Publicado e verificado: pacote 2026-11-10.3, commit funcional 793a73e5c0031b61a2029fce6a9848ee53bb9a67, Netlify 6af3a78c941d4b4d83a68b42, publicado em 2026-11-10T23:27:11.802Z. Conteúdo idêntico ao candidato e3753a13b4357f962e4d93caabc13f6708a50a8f aprovado por Daniel; árvore 58698b6e18efde4a45ccd9326dbfb06eb868bc78. 2377/2377 testes locais. Gate hospedado: 28/28 cenários, dois históricos completos e 3/3 áudios sintéticos, conforme log observado. Saúde 200 e POST sem assinatura 401 no domínio e URL imutável; quinze funções e seis programações preservadas. Apps Script v168 preservado por recibo, sem republicação ou nova inspeção do editor. Nenhuma mensagem real de teste, replay ou escrita de dados operacionais. Recibo: auditorias/bruna-faixa-blefaroplastia-2026-11-10/PUBLICACAO.json.
+
+Referência automática de R$ 10 mil a R$ 18 mil para superior e inferior juntas mediante pedido elegível, com ressalva de valor global e avaliação individual. Preservar controle humano, veto semântico, uso único e bloqueio de variante isolada/revisão/combinação. Monitorar primeiro caso natural, integridade em 48 horas e coorte em 17/11/2026 pela supervisão existente. Rollback por novo commit/build para 9de9f447c8888edcd8fc057477e02adad2e50cc9 / 6af38567abdf034950290235, preservando Apps Script v168, dados e recibos.
+
 ## Pacote de coerência da lógica — 10/11/2026
 
 Commit funcional 9de9f447c8888edcd8fc057477e02adad2e50cc9; Netlify 6af38567abdf034950290235, pacote 2026-11-10.2. Apps Script v168 publicado em 10/11/2026 às 18h37 BRT na implantação canônica, com a mesma URL, conta de execução e acesso. Antes da escrita, 28 fontes visíveis coincidiram com a base e69bf442; após salvar e recarregar, as quatro fontes alteradas coincidiram por SHA-256 com 9de9f447c8888edcd8fc057477e02adad2e50cc9. Saúde GET 200 e POST sem segredo recusado. 133/133 testes focados e 2371/2371 na validação integral original. Sem execução de rotinas, mensagens, mudanças de acionadores ou edições de dados.

@@ -1,0 +1,152 @@
+{
+  "changeId": "BRUNA-FAIXA-BLEFAROPLASTIA-2026-11-10",
+  "status": "published_verified",
+  "bundleVersion": "2026-11-10.3",
+  "functionalCommit": "793a73e5c0031b61a2029fce6a9848ee53bb9a67",
+  "approvedCommit": "793a73e5c0031b61a2029fce6a9848ee53bb9a67",
+  "originalApprovedCommit": "e3753a13b4357f962e4d93caabc13f6708a50a8f",
+  "approvedTree": "58698b6e18efde4a45ccd9326dbfb06eb868bc78",
+  "netlifyDeployId": "6af3a78c941d4b4d83a68b42",
+  "appsScriptVersion": 168,
+  "verifiedAt": "2026-11-10T23:28:45+00:00",
+  "drivePlanSha256": "92b17d82394a165a7933fa4765f6f286dfc3d3795ba2b747ba7dff69042fbc08",
+  "liveModel": {
+    "status": "passed",
+    "passed": 28,
+    "total": 28,
+    "fullHistoryPassed": 2,
+    "evidence": "Final production build log observed directly in Netlify."
+  },
+  "liveAudio": {
+    "status": "passed",
+    "passed": 3,
+    "total": 3,
+    "evidence": "Final production build log observed directly in Netlify."
+  },
+  "receipt": "auditorias/bruna-faixa-blefaroplastia-2026-11-10/PUBLICACAO.json",
+  "netlify": {
+    "status": "published_verified",
+    "deployId": "6af3a78c941d4b4d83a68b42",
+    "buildId": "6af3a78c941d4b4d83a68b40",
+    "publishedAt": "2026-11-10T23:27:11.802Z",
+    "availableFunctions": 15,
+    "schedules": 6
+  },
+  "approval": {
+    "by": "Daniel",
+    "reference": "Conversa atual: Sim para publicar o candidato e3753a1",
+    "originalCommit": "e3753a13b4357f962e4d93caabc13f6708a50a8f",
+    "transportCommit": "793a73e5c0031b61a2029fce6a9848ee53bb9a67",
+    "identicalTree": "58698b6e18efde4a45ccd9326dbfb06eb868bc78"
+  },
+  "appsScript": {
+    "version": 168,
+    "status": "unchanged_from_previous_verified_release",
+    "evidence": "auditorias/bruna-coerencia-logica-2026-11-10/PUBLICACAO.json"
+  },
+  "localTests": {
+    "passed": 2377,
+    "total": 2377
+  },
+  "postReleaseHealth": [
+    {
+      "url": "https://draamandaschroeder.com.br/api/ycloud/webhook",
+      "getStatus": 200,
+      "body": {
+        "ok": true,
+        "service": "ycloud-webhook",
+        "policyVersion": "2026-11-10.3",
+        "promptVersion": "bruna-concierge-2026-11-10.3",
+        "knowledgeSnapshot": "kb-2026-11-10.3",
+        "apiKeyConfigured": true,
+        "signatureProtection": "active",
+        "sheetsWebhookConfigured": true,
+        "sheetsSecretConfigured": true,
+        "openAIConfigured": true,
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled",
+        "reviewAlertConfigured": true,
+        "appointmentReviewEnabled": true,
+        "automationMode": "active",
+        "conversionExperience": "bruna-conversion-v1",
+        "processingMode": "durable_background_intake",
+        "contactPreferencesGuard": "active",
+        "internalPhoneExclusionConfigured": true,
+        "leadDeliveryRetry": "single_idempotent_transient",
+        "leadDeliveryFallback": "acquisition_only",
+        "leadFailureEmailAlert": "required_after_retries",
+        "messageCostObservability": "delivered_event_idempotent"
+      },
+      "verifiedAt": "2026-11-10T23:27:36+00:00",
+      "unsignedPostStatus": 401
+    },
+    {
+      "url": "https://6af3a78c941d4b4d83a68b42--inspiring-sprite-b35ca4.netlify.app/api/ycloud/webhook",
+      "getStatus": 200,
+      "body": {
+        "ok": true,
+        "service": "ycloud-webhook",
+        "policyVersion": "2026-11-10.3",
+        "promptVersion": "bruna-concierge-2026-11-10.3",
+        "knowledgeSnapshot": "kb-2026-11-10.3",
+        "apiKeyConfigured": true,
+        "signatureProtection": "active",
+        "sheetsWebhookConfigured": true,
+        "sheetsSecretConfigured": true,
+        "openAIConfigured": true,
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled",
+        "reviewAlertConfigured": true,
+        "appointmentReviewEnabled": true,
+        "automationMode": "active",
+        "conversionExperience": "bruna-conversion-v1",
+        "processingMode": "durable_background_intake",
+        "contactPreferencesGuard": "active",
+        "internalPhoneExclusionConfigured": true,
+        "leadDeliveryRetry": "single_idempotent_transient",
+        "leadDeliveryFallback": "acquisition_only",
+        "leadFailureEmailAlert": "required_after_retries",
+        "messageCostObservability": "delivered_event_idempotent"
+      },
+      "verifiedAt": "2026-11-10T23:27:49+00:00",
+      "unsignedPostStatus": 401
+    }
+  ],
+  "documentation": {
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "sha256": "1d0e39bfc29f5600d64f6050e3cf3a7b374bd5323cbc1e3e2cfd21c33b3f07d9",
+      "bytes": 101053,
+      "equal": true,
+      "driveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "modifiedAt": "2026-11-10T23:28:12.517Z"
+    },
+    "plan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "sha256": "92b17d82394a165a7933fa4765f6f286dfc3d3795ba2b747ba7dff69042fbc08",
+      "bytes": 62564,
+      "equal": true,
+      "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "modifiedAt": "2026-11-10T23:28:15.186Z"
+    },
+    "status": "written_verified",
+    "sameExistingFiles": true,
+    "method": "Raw authenticated downloads compared byte for byte.",
+    "verifiedAt": "2026-11-10T23:28:45+00:00"
+  },
+  "patientMessagesSent": 0,
+  "operationalDataWrites": 0,
+  "monitoring": {
+    "firstNaturalCase": "pending",
+    "integrityReview": "2026-11-12",
+    "cohortReview": "2026-11-17",
+    "mechanism": "Existing supervision; no new automation",
+    "conversionEffect": "N/D"
+  },
+  "rollback": {
+    "method": "Forward corrective commit/build preserving operational records, no replay",
+    "functionalCommit": "9de9f447c8888edcd8fc057477e02adad2e50cc9",
+    "deployId": "6af38567abdf034950290235",
+    "appsScriptVersion": 168
+  }
+}
