@@ -29,7 +29,7 @@ export function hasApprovedSurgicalPriceDisclosure(value) {
   return concise || legacy;
 }
 // Numeric permission is independent of the internal reference table.
-const AUTOMATIC_PROCEDURES = new Set(['lifting_facial', 'lifting_cervical', 'otoplastia', 'lipo_papada']);
+const AUTOMATIC_PROCEDURES = new Set(['lifting_facial', 'lifting_cervical', 'otoplastia', 'lipo_papada', 'blefaroplastia']);
 export function isAutomaticSurgicalPriceProcedure(procedure) {
   return AUTOMATIC_PROCEDURES.has(procedure);
 }
@@ -87,9 +87,47 @@ export function earPriceScope(currentText, recentConversation = []) {
   return '';
 }
 
+// The approved reference describes upper and lower eyelids together. A generic
+// blepharoplasty request can hear that explicitly labelled example; single
+// regions, revision and combined procedures never inherit its amounts.
+export function hasBlefaroplastiaRangeScope(currentText, recentConversation = []) {
+  const texts = [currentText, ...[...recentConversation].reverse()
+    .filter(t => t?.role === 'user' || ['patient', 'paciente'].includes(t?.source))
+    .map(t => t.text)];
+  let namedBlefaroplastia = false;
+  let explicitBoth = false;
+  for (const raw of texts) {
+    const value = String(raw || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+    const named = detectNamedProcedure(raw);
+    if (hasUnresolvedNamedProcedure(raw)) return namedBlefaroplastia && explicitBoth;
+    if (named && named.key !== 'blefaroplastia') break;
+    if (/\b(?:revisao|revisional|reoper\w*|refazer|retoque|secundari[ao]|associad[ao]|combinad[ao]|transconjuntival)\b/.test(value) ||
+        /\b(?:com|mais|junto com)\s+(?:(?:a|o|uma?)\s+)?(?:laser|botox|toxina|preenchimento|cantopexia|cantoplastia|lifting|ptose|retirada|correcao|enxerto|enxertia|suspensao)\b|\+/.test(value)) {
+      if (!explicitBoth) return false;
+      break;
+    }
+    if (named?.key === 'blefaroplastia') namedBlefaroplastia = true;
+    if (!explicitBoth && /\b(?:superior(?:es)?|inferior(?:es)?|palpebras? de (?:cima|baixo))\b/.test(value)) {
+      const both = /\b(?:superior(?:es)?\s+(?:e|mais)\s+(?:(?:as|os)\s+)?inferior(?:es)?|inferior(?:es)?\s+(?:e|mais)\s+(?:(?:as|os)\s+)?superior(?:es)?)\b/.test(value);
+      if (!both || /\b(?:so|apenas|somente|sem|nao|separad[ao]s?)\b.{0,60}\b(?:superior(?:es)?|inferior(?:es)?)\b/.test(value)) return false;
+      explicitBoth = true;
+    }
+    if (namedBlefaroplastia && explicitBoth) return true;
+  }
+  return namedBlefaroplastia;
+}
+
+export const BLEFAROPLASTIA_PRICE_LINE =
+  'Para te dar uma ideia de investimento, a blefaroplastia superior e inferior tem uma faixa de referência entre R$ 10 mil e R$ 18 mil.';
+
+export function containsPreviouslySharedBlefaroplastiaRange(body) {
+  return /(?<![\d.,])(?:r\$\s*)?10(?:[.,]000(?:,00)?|\s*mil)?\s*(?:a|ate|e|[-–])\s*(?:r\$\s*)?18(?:[.,]000(?:,00)?|\s*mil)\b/i
+    .test(String(body || '').normalize('NFD').replace(/\p{M}/gu, ''));
+}
+
 export function resolveSurgicalPricePlan(plan, recentConversation = []) {
   if (!plan || !['price_initial_information', 'surgical_price_review',
-    'price_without_confirmed_procedure', 'lifting_price_range_direct', 'otoplasty_price_range_direct', 'lipo_papada_price_range_direct'].includes(plan.reason)) return plan;
+    'price_without_confirmed_procedure', 'lifting_price_range_direct', 'otoplasty_price_range_direct', 'lipo_papada_price_range_direct', 'blefaroplastia_price_range_direct'].includes(plan.reason)) return plan;
   const scope = !plan.procedure || plan.procedure === 'otoplastia'
     ? earPriceScope(plan.currentText, recentConversation) : '';
   if (scope) return {...plan, route:'human_review', reason:'surgical_price_review',
@@ -99,15 +137,20 @@ export function resolveSurgicalPricePlan(plan, recentConversation = []) {
     return {...plan, route:'human_review', reason:'surgical_price_review', automaticAllowed:false, replyCode:null};
   }
   const requestsAmount = plan.priceRequestKind === 'amount' || /price_range_direct$/.test(plan.reason);
+  if (plan.procedure === 'blefaroplastia' &&
+      (!requestsAmount || !hasBlefaroplastiaRangeScope(plan.currentText, recentConversation))) {
+    return {...plan, route:'human_review', reason:'surgical_price_review', automaticAllowed:false, replyCode:null};
+  }
   if (!requestsAmount) return plan;
   const sent = recentConversation.some(t => (t?.role === 'assistant' ||
     ['bruna','human','human_team','equipe_humana'].includes(t?.source)) &&
     (containsApprovedSurgicalRange(t.text, plan.procedure) ||
-      (plan.procedure === 'lipo_papada' && containsPreviouslySharedLipoPapadaRange(t.text))));
-  const prefix = plan.procedure === 'otoplastia' ? 'otoplasty' : plan.procedure === 'lipo_papada' ? 'lipo_papada' : 'lifting';
+      (plan.procedure === 'lipo_papada' && containsPreviouslySharedLipoPapadaRange(t.text)) ||
+      (plan.procedure === 'blefaroplastia' && containsPreviouslySharedBlefaroplastiaRange(t.text))));
+  const prefix = plan.procedure === 'otoplastia' ? 'otoplasty' : plan.procedure === 'lipo_papada' ? 'lipo_papada' : plan.procedure === 'blefaroplastia' ? 'blefaroplastia' : 'lifting';
   return {...plan, route:sent ? 'human_review' : 'standard_reply',
     reason:sent ? `${prefix}_price_range_already_sent_review` : `${prefix}_price_range_direct`,
-    replyCode:sent ? null : plan.procedure === 'otoplastia' ? 'OTOPLASTY-PRICE-RANGE-01' : plan.procedure === 'lipo_papada' ? 'LIPO-PAPADA-PRICE-RANGE-01' : 'LIFTING-PRICE-RANGE-01',
+    replyCode:sent ? null : plan.procedure === 'otoplastia' ? 'OTOPLASTY-PRICE-RANGE-01' : plan.procedure === 'lipo_papada' ? 'LIPO-PAPADA-PRICE-RANGE-01' : plan.procedure === 'blefaroplastia' ? 'BLEFAROPLASTIA-PRICE-RANGE-01' : 'LIFTING-PRICE-RANGE-01',
     automaticAllowed:!sent};
 }
 
@@ -116,6 +159,7 @@ export const APPROVED_SURGICAL_RANGE_PATTERNS = Object.freeze({
   facial: /lifting\s+facial[^\d\n]{0,100}R\$\s*26\s*mil\s+e\s+R\$\s*42\s*mil/i,
   cervical: /cervicoplastia(?:\s*\(lifting\s+cervical\))?[^\d\n]{0,180}R\$\s*18\s*mil\s+e\s+R\$\s*26\s*mil/i,
   otoplasty: /otoplastia[^\d\n]{0,180}R\$\s*8\s*mil\s+e\s+R\$\s*14\s*mil/i,
+  blefaroplastia: /blefaroplastia\s+superior\s+e\s+inferior[^\d\n]{0,100}R\$\s*10\s*mil\s+e\s+R\$\s*18\s*mil/i,
   lipoPapada: /lipo\s+de\s+papada\s+isolada[^\d\n]{0,100}R\$\s*12\s*mil\s+e\s+R\$\s*18\s*mil/i,
 });
 
@@ -133,6 +177,7 @@ export function containsApprovedSurgicalRange(body, procedure) {
   if (procedure === 'lifting_cervical') return p.cervical.test(body);
   if (procedure === 'otoplastia') return p.otoplasty.test(body);
   if (procedure === 'lipo_papada') return p.lipoPapada.test(body);
+  if (procedure === 'blefaroplastia') return p.blefaroplastia.test(body);
   return false;
 }
 
@@ -145,7 +190,7 @@ export function hasOnlyApprovedSurgicalAmounts(body, { allowConsultationPrice = 
     // fee of 500, duplicate, alternative price or extension of numeric policy.
     remaining = remaining.replace(/A consulta (?:presencial|online) com a Dra\. Amanda custa R\$ 500\./, '');
   }
-  const groups = ['lifting_facial', 'lifting_cervical', 'otoplastia', 'lipo_papada']
+  const groups = ['lifting_facial', 'lifting_cervical', 'otoplastia', 'lipo_papada', 'blefaroplastia']
     .filter(procedure => containsApprovedSurgicalRange(remaining, procedure));
   if (groups.length !== 1) return false;
   for (const pattern of Object.values(APPROVED_SURGICAL_RANGE_PATTERNS)) {

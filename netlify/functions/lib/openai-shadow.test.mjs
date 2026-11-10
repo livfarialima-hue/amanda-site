@@ -3582,7 +3582,7 @@ test("a later price question with an updated lead does not reintroduce Bruna whe
         customerProfile: { name: "Maria" },
         text: {
           body:
-            "Qual o valor da blefaroplastia? Pode me passar uma média?",
+            "Qual o valor da blefaroplastia superior? Pode me passar uma média?",
         },
       },
     });
@@ -3658,7 +3658,7 @@ test("a later price question with an updated lead does not reintroduce Bruna whe
       .join("\n");
     assert.match(alertText, /PREÇO CIRÚRGICO — REVISAR/);
     assert.match(alertText, /blefaroplastia/i);
-    assert.match(alertText, /R\$ 18 mil e R\$ 23 mil/i);
+    assert.match(alertText, /R\$ 14 mil e R\$ 18 mil/i);
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;

@@ -1,5 +1,9 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+## Candidato 2026-11-10.3 — blefaroplastia, aguardando publicação
+
+Após publicação, pedido explícito de preço de blefaroplastia genérica ou de pálpebras superiores e inferiores pode receber, uma vez, referência **para a blefaroplastia superior e inferior juntas** entre R$ 10 mil e R$ 18 mil, sem preço individual prévio. Ressalva canônica no mesmo envio: valor global de referência, não orçamento fechado; equipe, hospital, anestesia, materiais e itens discriminados após avaliação. Explicar o propósito da consulta e oferecer explicação da avaliação uma vez, quando pertinente. Não agendar nem oferecer turno sem intenção de agenda. Para variante isolada, revisão ou combinação, não atribuir a faixa; termos específicos exigem verificação. Sem envio proativo, faixa no site ou em anúncio, mudança das outras faixas ou reprocessamento.
+
 ## Pacote 2026-11-10.2 — Netlify e Apps Script publicados
 
 Implementação autorizada por Daniel. Identidade virtual explícita, proteção contra falsa identidade humana, reuso de obrigação para fragmentos de preço vinculados, mídia sem recibo genérico e telemetria do manifesto embarcado. Testes locais: 2371/2371; arquitetura, escopo e artefato aprovados. Netlify publicado em 10/11 às 18h02 BRT: commit 9de9f447c8888edcd8fc057477e02adad2e50cc9, deploy 6af38567abdf034950290235 READY. Apps Script v168 publicado em 10/11/2026 às 18h37 BRT na implantação canônica, com a mesma URL, conta de execução e acesso. Antes da escrita, 28 fontes visíveis coincidiram com a base e69bf442; após salvar e recarregar, as quatro fontes alteradas coincidiram por SHA-256 com 9de9f447c8888edcd8fc057477e02adad2e50cc9. Saúde GET 200 e POST sem segredo recusado. 133/133 testes focados e 2371/2371 na validação integral original. Sem execução de rotinas, mensagens, mudanças de acionadores ou edições de dados. Recibo: auditorias/bruna-coerencia-logica-2026-11-10/PUBLICACAO.json.
@@ -148,7 +152,7 @@ O histórico documental integral anterior foi arquivado em área restrita. Esta 
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste conteúdo. Estratégia de aquisição e estado vivo seguem suas fontes próprias.
 
-**Versão:** 2026-11-10.2
+**Versão:** 2026-11-10.3
 
 Projeção ativa: 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF. O identificador não concede acesso; as permissões existentes são preservadas.
 

@@ -21,7 +21,7 @@ export function selectConfirmedReplyText(semanticResult, approvedResult) {
   // Wording is flexible, not the approved commercial facts. The outbound
   // gate still checks procedure-specific amounts, clinical claims and effects.
   if ((hasApprovedSurgicalPriceDisclosure(approved) ||
-      ["LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01"].includes(approvedResult.decision.replyCode)) &&
+      ["LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01", "BLEFAROPLASTIA-PRICE-RANGE-01"].includes(approvedResult.decision.replyCode)) &&
       !hasApprovedSurgicalPriceDisclosure(draft)) return approved;
   if (hasApprovedGlobalSurgicalPriceDisclosure(approved) &&
       !hasApprovedGlobalSurgicalPriceDisclosure(draft)) return approved;
@@ -119,7 +119,7 @@ export function prepareSemanticContextContinuationAction(
 ) {
   const currentContract = conversationAction?.replyContract || {};
   const approvedPricePath = Boolean(
-    ["price_initial_information", "lifting_price_range_direct", "otoplasty_price_range_direct", "lipo_papada_price_range_direct"].includes(
+    ["price_initial_information", "lifting_price_range_direct", "otoplasty_price_range_direct", "lipo_papada_price_range_direct", "blefaroplastia_price_range_direct"].includes(
       currentContract.sourceReason,
     ),
   );
@@ -165,7 +165,7 @@ export function semanticDecisionConfirmsDeterministicReply(
 // the existing outbound gate still checks its amounts, ownership and safety.
 export function deterministicReplyCoversPatientQuestions(candidate, conversationAction) {
   const code = candidate?.decision?.replyCode;
-  if (!["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01"].includes(code)) return true;
+  if (!["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01", "BLEFAROPLASTIA-PRICE-RANGE-01"].includes(code)) return true;
   return (conversationAction?.replyContract?.unresolvedIntents || []).every(
     intent => ["price_surgery", "price_consultation"].includes(intent) || candidate?.coveredIntents?.includes(intent),
   );

@@ -90,6 +90,7 @@ const PRICE_REVIEW_REASONS = new Set([
   "price_range_without_confirmed_procedure",
   "surgical_price_terms_review",
   "lipo_papada_price_range_already_sent_review",
+  "blefaroplastia_price_range_already_sent_review",
 ]);
 
 function timeMs(value) {
@@ -800,7 +801,8 @@ export async function processHumanResumeJob(
           ? "otoplasty_range"
         : enrichedPlan.reason === "lipo_papada_price_range_direct" && enrichedPlan.procedure === "lipo_papada"
           ? "lipo_papada_range"
-        : "";
+          : enrichedPlan.reason === "blefaroplastia_price_range_direct" && enrichedPlan.procedure === "blefaroplastia"
+            ? "blefaroplastia_range" : "";
   const approvedPriceReplyCode = consultationBundle?.candidate.decision.replyCode || (
     approvedPriceReplyKind === 'consultation_information'
       ? 'AMANDA-CONSULTA-INFO-01'
@@ -810,6 +812,8 @@ export async function processHumanResumeJob(
         ? "OTOPLASTY-PRICE-RANGE-01"
       : approvedPriceReplyKind === "lipo_papada_range"
         ? "LIPO-PAPADA-PRICE-RANGE-01"
+      : approvedPriceReplyKind === "blefaroplastia_range"
+        ? "BLEFAROPLASTIA-PRICE-RANGE-01"
       : approvedPriceReplyKind === "initial_information"
         ? "SURGICAL-PRICE-INITIAL-01"
         : "");
@@ -822,7 +826,7 @@ export async function processHumanResumeJob(
           currentText: job.text,
           introduceBruna: false,
         })
-      : ["lifting_range", "otoplasty_range", "lipo_papada_range"].includes(
+      : ["lifting_range", "otoplasty_range", "lipo_papada_range", "blefaroplastia_range"].includes(
           approvedPriceReplyKind,
         )
         ? buildSurgicalPriceSuggestedReply({
@@ -907,7 +911,7 @@ export async function processHumanResumeJob(
   const deterministicReplyContextMismatch = Boolean(
     approvedPriceReplyCandidate &&
       aiResult.status === "completed" &&
-      ((consultationBundle || consultationInformationReply) && aiResult.decision?.route === 'standard_reply' || ["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01"].includes(
+      ((consultationBundle || consultationInformationReply) && aiResult.decision?.route === 'standard_reply' || ["SURGICAL-PRICE-INITIAL-01", "LIFTING-PRICE-RANGE-01", "OTOPLASTY-PRICE-RANGE-01", "LIPO-PAPADA-PRICE-RANGE-01", "BLEFAROPLASTIA-PRICE-RANGE-01"].includes(
         aiResult.decision?.replyCode,
       )) &&
       !approvedPriceReplyConfirmed,

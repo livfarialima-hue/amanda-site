@@ -1344,7 +1344,7 @@ test("another surgical price still waits for human review with a complete sugges
     job({
       eventId: "patient-price-blefaroplasty",
       procedure: "blefaroplastia",
-      text: "Quanto custa a blefaroplastia?",
+      text: "Quanto custa a blefaroplastia superior?",
       recentConversation: [
         {
           role: "assistant",
@@ -1354,7 +1354,7 @@ test("another surgical price still waits for human review with a complete sugges
         {
           role: "patient",
           source: "paciente",
-          text: "Quanto custa a blefaroplastia?",
+          text: "Quanto custa a blefaroplastia superior?",
         },
       ],
     }),
@@ -1371,11 +1371,32 @@ test("another surgical price still waits for human review with a complete sugges
   assert.doesNotMatch(deps.patientMessages[0].body, /R\$/);
   assert.doesNotMatch(deps.patientMessages[0].body, /Eu sou a Bruna|^Ol[áa]/i);
   assert.equal(deps.alerts.length, 1);
-  assert.match(deps.alerts[0].messageText, /entre R\$ 18 mil e R\$ 23 mil/);
+  assert.match(deps.alerts[0].messageText, /entre R\$ 14 mil e R\$ 18 mil/);
   assert.match(deps.alerts[0].messageText, /não é um orçamento fechado/);
   assert.match(deps.alerts[0].messageText, /Base histórica interna/);
   assert.match(deps.alerts[0].messageText, /confirmar valores atuais/);
   assert.doesNotMatch(deps.alerts[0].messageText, /Prefere manhã ou tarde/);
+});
+
+test('blefaroplastia resumption honors the approved scope and semantic veto', async () => {
+  for (const veto of [false,true]) {
+    const deps = dependencies();
+    deps.runOpenAIShadowImpl = async input => {
+      assert.equal(input.policyHints.deterministicReplyCode,'BLEFAROPLASTIA-PRICE-RANGE-01');
+      return {status:'completed',decision:{route:veto?'human_review':'standard_reply',confidence:'high',
+        automaticAllowed:!veto,urgent:false,professional:'amanda',procedure:'blefaroplastia',
+        replyCode:'BLEFAROPLASTIA-PRICE-RANGE-01',suggestedReply:input.policyHints.deterministicReplyPreview}};
+    };
+    const result = await processHumanResumeJob(job({text:'Qual o valor da blefaroplastia superior e inferior?',
+      procedure:'blefaroplastia'}), {env:ACTIVE_ENV,now:NOW,...deps});
+    if (veto) {
+      assert.ok(deps.patientMessages.every(m=>!/R\$/.test(m.body)),JSON.stringify(result));
+    } else {
+      assert.equal(deps.patientMessages.length,1,JSON.stringify(result));
+      assert.match(deps.patientMessages[0].body,/superior e inferior.*R\$ 10 mil e R\$ 18 mil/);
+      assert.equal(deps.alerts.length,0);
+    }
+  }
 });
 
 test("direct lifting price resume does not repeat the composition guide", async () => {

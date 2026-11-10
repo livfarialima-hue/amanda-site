@@ -148,7 +148,7 @@ test("a nighttime price request for another surgery alerts and acknowledges rece
           type: "text",
           customerProfile: { name: "Maria" },
           text: {
-            body: "Quanto custa a blefaroplastia?",
+            body: "Quanto custa a blefaroplastia superior?",
           },
         },
       }),
@@ -201,7 +201,7 @@ test("a nighttime price request for another surgery alerts and acknowledges rece
       .join("\n");
     assert.match(alertText, /PREÇO CIRÚRGICO — REVISAR/);
     assert.match(alertText, /blefaroplastia/i);
-    assert.match(alertText, /R\$ 18 mil e R\$ 23 mil/i);
+    assert.match(alertText, /R\$ 14 mil e R\$ 18 mil/i);
   } finally {
     globalThis.fetch = originalFetch;
     console.log = originalLog;

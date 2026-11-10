@@ -773,7 +773,7 @@ test("lifting links remain complete and free of invisible characters", () => {
 test("price review alert contains the original question and a copyable answer", () => {
   const alert = buildPriceReviewAlert({
     patientName: "Maria",
-    patientMessage: "Qual o valor da blefaroplastia?",
+    patientMessage: "Qual o valor da blefaroplastia superior?",
     procedure: "blefaroplastia",
   });
 
@@ -781,7 +781,7 @@ test("price review alert contains the original question and a copyable answer", 
   assert.match(alert, /Qual o valor da blefaroplastia/);
   assert.match(alert, /VALOR NÃO ENVIADO/);
   assert.match(alert, /Revise e copie manualmente/);
-  assert.match(alert, /entre R\$ 18 mil e R\$ 23 mil/);
+  assert.match(alert, /entre R\$ 14 mil e R\$ 18 mil/);
   assert.doesNotMatch(alert, /R\$ 19\.900|R\$ 21\.000/);
   assert.doesNotMatch(alert, /parcelamento antecipado|desconto à vista/);
   assert.match(alert, /Base histórica interna/);
@@ -796,7 +796,7 @@ test("price review alert contains the original question and a copyable answer", 
 test("price review alert preserves the one-guide-per-conversation rule", () => {
   const alert = buildPriceReviewAlert({
     patientName: "Maria",
-    patientMessage: "Qual o valor da blefaroplastia?",
+    patientMessage: "Qual o valor da blefaroplastia superior?",
     procedure: "blefaroplastia",
     recentConversation: [
       {
@@ -807,7 +807,7 @@ test("price review alert preserves the one-guide-per-conversation rule", () => {
     ],
   });
 
-  assert.match(alert, /entre R\$ 18 mil e R\$ 23 mil/);
+  assert.match(alert, /entre R\$ 14 mil e R\$ 18 mil/);
   assert.doesNotMatch(
     alert,
     /quanto-custa-cirurgia-plastica-facial-sao-paulo/,

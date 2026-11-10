@@ -40,11 +40,11 @@ test('explicit minilifting uses its own range without anchoring a different surg
 });
 
 test('internal price draft has a historical source, proposed range and assessment caveat', () => {
-  const alert = buildPriceReviewAlert({patientName:'Teste',patientMessage:'Qual o valor da blefaroplastia completa?',procedure:'blefaroplastia'});
+  const alert = buildPriceReviewAlert({patientName:'Teste',patientMessage:'Qual o valor da blefaroplastia superior?',procedure:'blefaroplastia'});
   assert.match(alert, /2025/);
   assert.match(alert, /histórica|histórico/i);
   assert.match(alert, /confirmar valores atuais/i);
-  assert.match(alert, /18 mil e R\$ 23 mil/);
+  assert.match(alert, /14 mil e R\$ 18 mil/);
   assert.match(alert, /não é um orçamento fechado/i);
   assert.match(alert, /após avaliação, conforme o plano cirúrgico/i);
   assert.match(alert, /VALOR NÃO ENVIADO/);

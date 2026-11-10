@@ -17,7 +17,7 @@ import { recordDurableConversationTurn, prepareConversationLedgerReceipt,
 import { hasInternalReferenceExposure } from "./internal-reference-guard.mjs";
 import { withoutNegatedSchedulingMentions } from "./patient-turn-context.mjs";
 import { hasAssertedProtectedClaim } from "./protected-facts.mjs";
-import { APPROVED_SURGICAL_RANGE_PATTERNS, containsApprovedSurgicalRange, containsPreviouslySharedLipoPapadaRange, hasIsolatedLipoPapadaScope, hasOnlyApprovedSurgicalAmounts, hasApprovedGlobalSurgicalPriceDisclosure } from "./surgical-price-policy.mjs";
+import { APPROVED_SURGICAL_RANGE_PATTERNS, containsApprovedSurgicalRange, containsPreviouslySharedLipoPapadaRange, containsPreviouslySharedBlefaroplastiaRange, hasBlefaroplastiaRangeScope, hasIsolatedLipoPapadaScope, hasOnlyApprovedSurgicalAmounts, hasApprovedGlobalSurgicalPriceDisclosure } from "./surgical-price-policy.mjs";
 import {
   BRUNA_CONVERSION_EXPERIENCE_VERSION,
   BRUNA_CTA_TYPES,
@@ -226,12 +226,23 @@ function semanticUnsafeReplyReason(
   );
   const protectedLipoPapadaRange = containsApprovedSurgicalRange(raw, 'lipo_papada') &&
     hasApprovedGlobalSurgicalPriceDisclosure(raw) && urls(raw).every(url => FACIAL_PRICE_GUIDE_PATTERN.test(url));
+  const hasBlefaroplastiaRange = containsApprovedSurgicalRange(raw, 'blefaroplastia');
+  const protectedBlefaroplastiaRange = hasBlefaroplastiaRange &&
+    hasApprovedGlobalSurgicalPriceDisclosure(raw) && urls(raw).every(url => FACIAL_PRICE_GUIDE_PATTERN.test(url));
   const protectedApprovedRange =
-    protectedLiftingRange || protectedCervicalRange || protectedOtoplastyRange || protectedLipoPapadaRange;
+    protectedLiftingRange || protectedCervicalRange || protectedOtoplastyRange || protectedLipoPapadaRange || protectedBlefaroplastiaRange;
   const bundleRangeAuthorized = contract.questionBundle === true && contract.sourceReason === 'consultation_question_bundle' &&
-    ['lifting_price_range_direct', 'otoplasty_price_range_direct', 'lipo_papada_price_range_direct'].includes(contract.surgicalPriceReason) &&
+    ['lifting_price_range_direct', 'otoplasty_price_range_direct', 'lipo_papada_price_range_direct', 'blefaroplastia_price_range_direct'].includes(contract.surgicalPriceReason) &&
     contract.unresolvedIntents?.includes('price_surgery');
   const allowConsultationPrice = bundleRangeAuthorized && contract.unresolvedIntents?.includes('price_consultation');
+  if (containsPreviouslySharedBlefaroplastiaRange(raw)) {
+    const authorizedReason = contract.sourceReason === 'blefaroplastia_price_range_direct' ||
+      (bundleRangeAuthorized && contract.surgicalPriceReason === 'blefaroplastia_price_range_direct');
+    if (!protectedBlefaroplastiaRange || !authorizedReason || contract.procedure !== 'blefaroplastia' ||
+        !hasBlefaroplastiaRangeScope(currentText, recentConversation)) return 'surgical_range_not_authorized';
+    if (recentConversation.some(turn => (turn?.role === 'assistant' || ['bruna','human','human_team','equipe_humana'].includes(turn?.source)) &&
+        containsPreviouslySharedBlefaroplastiaRange(turn.text))) return 'surgical_range_already_sent';
+  }
   if (protectedLipoPapadaRange) {
     if ((!bundleRangeAuthorized && contract.sourceReason !== 'lipo_papada_price_range_direct') ||
         contract.procedure !== 'lipo_papada' || !hasIsolatedLipoPapadaScope(currentText, recentConversation)) return 'surgical_range_not_authorized';
@@ -242,7 +253,7 @@ function semanticUnsafeReplyReason(
     return "unapproved_monetary_amount";
   }
   if (protectedApprovedRange && contract.sourceReason &&
-      !['lifting_price_range_direct', 'otoplasty_price_range_direct', 'lipo_papada_price_range_direct'].includes(contract.sourceReason) && !bundleRangeAuthorized) {
+      !['lifting_price_range_direct', 'otoplasty_price_range_direct', 'lipo_papada_price_range_direct', 'blefaroplastia_price_range_direct'].includes(contract.sourceReason) && !bundleRangeAuthorized) {
     return 'surgical_range_not_authorized';
   }
   if (protectedApprovedRange && contract.procedure && !containsApprovedSurgicalRange(raw, contract.procedure)) {

@@ -2,7 +2,7 @@ import { BRUNA_INTRODUCTION } from "./patient-facing-identity.mjs";
 import { usableProfileFirstName } from "./profile-name.mjs";
 import { resolveOfferedInformationChoice, consultationQuestionTopics } from "./patient-turn-context.mjs";
 import { approvedProcedureInformationFacts } from "./lifting-information.mjs";
-import { isAutomaticSurgicalPriceProcedure, hasIsolatedLipoPapadaScope, facialPriceLines, earPriceScope, SURGICAL_PRICE_DISCLOSURE } from "./surgical-price-policy.mjs";
+import { isAutomaticSurgicalPriceProcedure, hasIsolatedLipoPapadaScope, hasBlefaroplastiaRangeScope, BLEFAROPLASTIA_PRICE_LINE, facialPriceLines, earPriceScope, SURGICAL_PRICE_DISCLOSURE } from "./surgical-price-policy.mjs";
 import { isDirectSiteRequest } from "./site-content.mjs";
 import {
   buildConsultationInformationReply,
@@ -501,7 +501,10 @@ export function buildSurgicalPriceSuggestedReply({
   if ((!procedure || procedure === 'otoplastia') && earPriceScope(currentText, recentConversation)) {
     return buildSurgicalPriceHoldingReply({patientName, procedure, recentConversation, currentText, introduceBruna});
   }
-  if (directToPatient && !isAutomaticSurgicalPriceProcedure(procedure)) {
+  const approvedBlefaroplastia = procedure === 'blefaroplastia' &&
+    hasBlefaroplastiaRangeScope(currentText, recentConversation);
+  if (directToPatient && (!isAutomaticSurgicalPriceProcedure(procedure) ||
+      (procedure === 'blefaroplastia' && !approvedBlefaroplastia))) {
     return buildSurgicalPriceHoldingReply({patientName, procedure, recentConversation, currentText, introduceBruna});
   }
   if (procedure === 'lipo_papada' && !hasIsolatedLipoPapadaScope(currentText, recentConversation)) {
@@ -510,18 +513,20 @@ export function buildSurgicalPriceSuggestedReply({
   const paymentContext = /parcel|pagamento|desconto|[àa]\s+vista|quantas?\s+vezes/i.test(currentText)
     ? "O pagamento pode ser parcelado antecipadamente, com quitação antes da cirurgia, e há desconto à vista."
     : "";
-  if (directToPatient || procedure === 'lipo_papada') {
+  if (directToPatient || procedure === 'lipo_papada' || approvedBlefaroplastia) {
     const range = procedure === 'lifting_facial'
       ? facialReferenceParagraph(currentText, recentConversation)
       : procedure === 'lifting_cervical'
         ? 'Para você ter uma noção de valores, a cervicoplastia (lifting cervical) tem uma referência entre R$ 18 mil e R$ 26 mil.'
         : procedure === 'lipo_papada'
           ? 'Para você ter uma noção de valores, a lipo de papada isolada tem uma referência entre R$ 12 mil e R$ 18 mil.'
+          : approvedBlefaroplastia ? BLEFAROPLASTIA_PRICE_LINE
           : 'Para você ter uma noção de valores, a otoplastia tem uma referência entre R$ 8 mil e R$ 14 mil.';
     return [
       includeGreeting ? directPriceGreeting(patientName, recentConversation, introduceBruna) : '',
       range,
       SURGICAL_PRICE_DISCLOSURE,
+      approvedBlefaroplastia ? 'Na avaliação, a Dra. Amanda ouve o que te incomoda e examina as pálpebras para definir o que faz sentido para você. Você também pode esclarecer como será o acompanhamento pós-operatório.' : '',
       ...otoplastyOverviewParagraphs({procedure,currentText,recentConversation}),
       paymentContext,
       LOCATION_REQUEST_PATTERN.test(currentText) && !hasClinicLocationInConversation(recentConversation) ? CLINIC_LOCATION_REPLY.split('\n')[0] : '',
@@ -615,7 +620,7 @@ export function buildAcceptedProcedurePriceReply({plan, currentText, recentConve
   // new natural three-part preview belongs to isolated lipo; explicit selection
   // of the offered pair retains the previously approved shared path.
   if (!choice && plan?.procedure !== 'lipo_papada') return null;
-  if (!['lifting_price_range_direct','otoplasty_price_range_direct','lipo_papada_price_range_direct'].includes(plan?.reason) || plan.automaticAllowed !== true ||
+  if (!['lifting_price_range_direct','otoplasty_price_range_direct','lipo_papada_price_range_direct','blefaroplastia_price_range_direct'].includes(plan?.reason) || plan.automaticAllowed !== true ||
       !isAutomaticSurgicalPriceProcedure(plan.procedure) ||
       (plan.procedure === 'lipo_papada' && !hasIsolatedLipoPapadaScope(currentText,recentConversation))) return null;
   const approved = approvedProcedureInformationFacts({text:currentText,procedure:plan.procedure,recentConversation});
@@ -748,7 +753,8 @@ export function buildPendingHospitalQuoteAlert({
 
 export function buildPriceReviewSourceNote({procedure, currentText = "", recentConversation = []}) {
   const reference = internalPriceReferenceForConversation(procedure, currentText, recentConversation);
-  if (isAutomaticSurgicalPriceProcedure(procedure) && (procedure !== 'lipo_papada' || hasIsolatedLipoPapadaScope(currentText, recentConversation))) {
+  if (isAutomaticSurgicalPriceProcedure(procedure) && (procedure !== 'lipo_papada' || hasIsolatedLipoPapadaScope(currentText, recentConversation)) &&
+      (procedure !== 'blefaroplastia' || hasBlefaroplastiaRangeScope(currentText, recentConversation))) {
     return "Base: faixa operacional já autorizada para este procedimento. Reenvio ou negociação continuam sujeitos à sua revisão.";
   }
   return reference

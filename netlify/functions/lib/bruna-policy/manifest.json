@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-11-10.2",
-  "promptVersion": "bruna-concierge-2026-11-10.2",
+  "bundleVersion": "2026-11-10.3",
+  "promptVersion": "bruna-concierge-2026-11-10.3",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-11-10.2",
+  "knowledgeSnapshot": "kb-2026-11-10.3",
   "identityRole": "assistente_virtual_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -40,35 +40,24 @@
     "driveProjectionSha256": "5c0399fcdfa73f47cdb66026b9e1d39621bf671495db6299052dad008b728db4",
     "driveProjectionVerifiedAt": "2026-11-10T21:40:43.035266+00:00",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
-    "status": "written_verified",
-    "note": "Same Drive files verified byte-for-byte; hashes and plan receipt in auditorias/bruna-coerencia-logica-2026-11-10/PUBLICACAO.json."
+    "status": "pending_projection",
+    "note": "Candidato local; projeção vigente permanece no pacote publicado até autorização e fechamento."
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
   "replyContinuityContract": "reply-continuity",
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
-    "changeId": "BRUNA-COERENCIA-LOGICA-2026-11-10",
-    "status": "published_verified",
+    "changeId": "BRUNA-FAIXA-BLEFAROPLASTIA-2026-11-10",
+    "status": "tested_local",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
-    "liveModelScenarioCount": 27,
-    "baselineCommit": "e69bf442f51a5652022151d6d7d80cb1c50dd158",
-    "baselineDeployId": "6af368511bde0c08349f21d6",
-    "baselineAppsScriptVersion": 167,
-    "bundleVersion": "2026-11-10.2",
-    "note": "Publicação verificada em Netlify e Apps Script v168; manter o gate de build.",
-    "sourceCommit": "9de9f447c8888edcd8fc057477e02adad2e50cc9",
-    "netlify": {
-      "status": "published_verified",
-      "deployId": "6af38567abdf034950290235",
-      "buildId": "6af38567abdf034950290233",
-      "publishedAt": "2026-11-10T21:02:07.825Z",
-      "availableFunctions": 15,
-      "schedules": 6,
-      "hostedModelGate": "Build succeeded with mandatory gate enabled; final scenario counts inferred from committed contract, not read directly from final hosted log.",
-      "currentProductionReverifiedAt": "2026-11-10T21:40:43.035266+00:00"
-    }
+    "liveModelScenarioCount": 28,
+    "baselineCommit": "cc13d12ad0bc836740250d740b6ca8f24ccdd2f5",
+    "baselineDeployId": "6af38567abdf034950290235",
+    "baselineAppsScriptVersion": 168,
+    "bundleVersion": "2026-11-10.3",
+    "note": "Somente extensão de faixa privada para blefaroplastia superior e inferior. Não publicada."
   }
 }

@@ -33,6 +33,7 @@ const SENSITIVE_REASONS = new Set([
   "price_range_without_confirmed_procedure",
   "surgical_price_terms_review",
   "lipo_papada_price_range_already_sent_review",
+  "blefaroplastia_price_range_already_sent_review",
   "possible_urgent_symptoms",
   "intense_appearance_distress",
   "existing_patient_administrative_followup",
@@ -352,6 +353,9 @@ export function classifyHumanResume({
         (
           enrichedPlan?.reason === "lipo_papada_price_range_direct" &&
           enrichedPlan?.procedure === "lipo_papada"
+        ) || (
+          enrichedPlan?.reason === "blefaroplastia_price_range_direct" &&
+          enrichedPlan?.procedure === "blefaroplastia"
         )
       ),
   );

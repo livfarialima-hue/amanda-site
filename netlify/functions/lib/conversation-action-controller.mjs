@@ -442,6 +442,7 @@ function inferUnresolvedIntents({
       "lifting_price_range_direct",
       "otoplasty_price_range_direct",
       "lipo_papada_price_range_direct",
+      "blefaroplastia_price_range_direct",
     ].includes(
       plan?.reason,
     ) &&
@@ -556,6 +557,7 @@ function buildReplyContract({
     "lifting_price_range_direct",
     "otoplasty_price_range_direct",
     "lipo_papada_price_range_direct",
+    "blefaroplastia_price_range_direct",
   ].includes(plan?.reason);
   const approvedLiftingInformation =
     plan?.procedure === "lifting_facial" &&

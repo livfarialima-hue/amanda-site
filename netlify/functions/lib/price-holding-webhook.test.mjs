@@ -34,8 +34,8 @@ test('fragmented price scope keeps one obligation and emits no second holding or
   assert.equal(sends.length,0);assert.equal(task.dueAt,'2026-11-10T20:00:00Z');
 });
 
-for(const scenario of ['complete','price_only','semantic_veto','minor_veto','association','association_duplicate_commitment','association_alert_failed','association_commitment_failed','association_commitment_unconfirmed','association_commitment_ignored','association_commitment_string']) {
-  test(`isolated lipo webhook answers the requested topics and preserves human review: ${scenario}`,async t=>{
+for(const scenario of ['complete','price_only','blefaroplastia_price','semantic_veto','minor_veto','association','association_duplicate_commitment','association_alert_failed','association_commitment_failed','association_commitment_unconfirmed','association_commitment_ignored','association_commitment_string']) {
+  test(`surgical price webhook answers the requested topics and preserves human review: ${scenario}`,async t=>{
     const settings={YCLOUD_WEBHOOK_SECRET:WEBHOOK_SECRET,YCLOUD_API_KEY:'synthetic',GOOGLE_SHEETS_WEBHOOK_URL:SHEETS_URL,
       GOOGLE_SHEETS_WEBHOOK_SECRET:'synthetic',WHATSAPP_AUTOMATION_MODE:'active',WHATSAPP_INBOUND_BACKGROUND_ENABLED:'true',
       WHATSAPP_HUMAN_REPLY_GUARD_MS:'0',WHATSAPP_REPLY_DEBOUNCE_DETERMINISTIC_MS:'0',WHATSAPP_REPLY_DEBOUNCE_AI_MS:'0',
@@ -45,9 +45,12 @@ for(const scenario of ['complete','price_only','semantic_veto','minor_veto','ass
     t.mock.method(console,'log',()=>{});
     const association=scenario.startsWith('association'),failed=scenario.endsWith('alert_failed'),commitmentFailure=scenario.endsWith('commitment_failed'),veto=scenario.endsWith('veto');
     const unconfirmed=scenario.endsWith('commitment_unconfirmed')||scenario.endsWith('commitment_ignored')||scenario.endsWith('commitment_string');
-    const scope=association?'lipo de papada com tratamento muscular':'lipo de papada';
+    const blefaroplastia=scenario==='blefaroplastia_price';
+    const procedure=blefaroplastia?'blefaroplastia':'lipo_papada';
+    const code=blefaroplastia?'BLEFAROPLASTIA-PRICE-RANGE-01':'LIPO-PAPADA-PRICE-RANGE-01';
+    const scope=blefaroplastia?'blefaroplastia superior e inferior':association?'lipo de papada com tratamento muscular':'lipo de papada';
     const origin=scenario==='minor_veto'?`Estou pesquisando ${scope} para minha filha de 13 anos.`:`Estou pesquisando ${scope} para minha esposa.`;
-    const text=scenario==='price_only'?'Qual o valor da lipo de papada?':'Gostaria de saber sobre o procedimento, valor e recuperação';
+    const text=blefaroplastia?'Qual o valor da blefaroplastia superior e inferior?':scenario==='price_only'?'Qual o valor da lipo de papada?':'Gostaria de saber sobre o procedimento, valor e recuperação';
     const turns=[{role:'user',source:'patient',text:origin,at:'2026-10-14T14:00:00Z',eventId:`lipo-${scenario}-origin`},
       {role:'assistant',source:'bruna',text:'Qual é a dúvida de vocês?',at:'2026-10-14T14:01:00Z',eventId:`lipo-${scenario}-intro`}];
     const sent=[],actions=[],order=[];
@@ -68,10 +71,10 @@ for(const scenario of ['complete','price_only','semantic_veto','minor_veto','ass
       }
       if(url==='https://api.openai.com/v1/responses'){
         const input=JSON.parse(data.input),review=association||veto;
-        if(!review){assert.equal(input.policyHints.deterministicReplyCode,'LIPO-PAPADA-PRICE-RANGE-01');
+        if(!review){assert.equal(input.policyHints.deterministicReplyCode,code);
           if(scenario==='complete')assert.match(input.policyHints.deterministicReplyPreview,/gordura.*inchaço.*R\$ 12 mil e R\$ 18 mil/s);}
         return Response.json({model:'synthetic',output_text:JSON.stringify({route:review?'human_review':'standard_reply',confidence:'high',automaticAllowed:!review,urgent:false,
-          professional:'amanda',procedure:'lipo_papada',replyCode:association?'UNKNOWN-REVIEW-01':veto?'':'LIPO-PAPADA-PRICE-RANGE-01',
+          professional:'amanda',procedure,replyCode:association?'UNKNOWN-REVIEW-01':veto?'':code,
           suggestedReply:review?'A equipe precisa conferir o escopo solicitado.':input.policyHints.deterministicReplyPreview,
           reviewReason:association?'unknown_digest:preco_associacao':veto?'clinical_detail_review':'',
           conversationState:{activeTopic:'procedimento, valor e recuperação',patientAct:'question',refersToEventId:'',lastClinicQuestion:'',lastClinicOffer:'',unresolvedQuestions:['procedimento','valor','recuperação'],factsAlreadyProvided:[],owner:review?'human_team':'bruna',nextExpectedAction:review?'revisar escopo':'responder os três assuntos',ambiguity:'',contextConfidence:'high'}})});
@@ -95,7 +98,7 @@ for(const scenario of ['complete','price_only','semantic_veto','minor_veto','ass
       assert.ok(order.indexOf('commitment')<order.indexOf('patient'));
       assert.ok(actions.some(action=>action.action==='record_patient_commitment'&&['procedure_price','human_review'].includes(action.commitment?.kind)));
     }else{
-      assert.match(body,/lipo de papada isolada.*R\$ 12 mil e R\$ 18 mil/);assert.match(body,/não é um orçamento fechado/);
+      assert.match(body,blefaroplastia?/superior e inferior.*R\$ 10 mil e R\$ 18 mil/:/lipo de papada isolada.*R\$ 12 mil e R\$ 18 mil/);assert.match(body,/não é um orçamento fechado/);
       if(scenario==='complete')assert.match(body,/gordura.*flacidez.*Dra\. Amanda.*inchaço.*sensibilidade.*roxos/s);
       assert.doesNotMatch(body,/cervicoplastia|Olá|sou a Bruna|confirmar.*equipe/);assert.equal(order.includes('alert'),false);
     }

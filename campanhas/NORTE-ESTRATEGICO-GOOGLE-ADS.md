@@ -1,5 +1,11 @@
 # Norte estratégico de aquisição e conversão
 
+## Decisão de 10/11/2026 — referência de blefaroplastia no WhatsApp, candidata
+
+Daniel solicitou extensão da política privada de resposta a preço, com base em resposta humana que descreveu o procedimento superior e inferior em conjunto. Referência global: R$ 10 mil a R$ 18 mil, exclusivamente em resposta a pedido de preço elegível no WhatsApp após publicação da mudança. Não anunciar essa faixa em página, criativo ou anúncio, nem atribuí-la a pálpebra isolada, revisão ou combinação. Orçamento individual após avaliação. Sem mudança de campanha, qualificação ou atribuição.
+
+Hipótese: clareza sobre composição e avaliação reduz pedidos repetidos e facilita continuidade voluntária. Conferir primeiras conversas e sete dias após implantação: respostas completas por pedido elegível, intervenções, aceites e consultas confirmadas/realizadas na mesma coorte. Sem ganho causal presumido; reverter diante de valor incompatível, promessa ou repetição indevida.
+
 ## 44. Complementos de comunicação no Google Ads — publicado em 15/10/2026
 
 **Decisão autorizada:** o usuário pediu fazer o restante das sugestões e manteve a autorização de publicar ao fim. Foram aplicados os 11 campos de reserva em lifting geral, lifting preço e otoplastia adulta, a descrição do sitelink de preço lifting e o destino adulto de proporção das orelhas. A leitura viva selecionou somente três textos de destaques de Conta, mantendo todos os status e associações. CO04 foi excluído porque a associação de campanha OTO inclui infantil; recursos de MARCA permanecem íntegros. Destaques de nível específico prevalecem sobre Conta, portanto não se infere dupla exibição nem cobertura uniforme. Plano exato em `auditorias/google-ads-complementos-2026-10-15/PLANO.json`; oito objetos reabertos e 16 campos conferidos após salvar sob o commit aprovado `66b881e46234d7d8b4a6936a8144dfd9edc90dd7` e gate anterior às escritas. Mesma projeção Drive atualizada e relida com igualdade documentada em `REVISAO.json`, com a publicação paralela Bruna reconciliada exclusivamente por sua autorização e seus recibos próprios.

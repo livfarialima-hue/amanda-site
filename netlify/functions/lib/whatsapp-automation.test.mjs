@@ -413,7 +413,7 @@ test("the bot does not send the full lifting range twice in the same recent cont
 
 test("a first price question for another surgery goes directly to human review", () => {
   const preliminaryPlan = planAutomation({
-    text: "Qual o valor da blefaroplastia?",
+    text: "Qual o valor da blefaroplastia inferior?",
     messageType: "text",
     reference: "WHATSAPP-DIRETO-SEM-CODIGO",
     platform: "WhatsApp direto",

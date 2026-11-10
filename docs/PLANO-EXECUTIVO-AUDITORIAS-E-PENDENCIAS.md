@@ -1,5 +1,11 @@
 # Plano executivo — auditorias, pendências e prazos
 
+## Blefaroplastia — referência privada solicitada em 10/11/2026
+
+Candidato BRUNA-FAIXA-BLEFAROPLASTIA-2026-11-10, somente Netlify. Daniel solicitou automatizar a referência de R$ 10 mil a R$ 18 mil; a resposta humana de referência da mesma data especifica blefaroplastia superior e inferior juntas. Explicar composição do valor global, orçamento individual após avaliação e oferecer uma única continuação informativa. Não aplicar a pálpebra isolada, revisão ou associação; não repetir referência já enviada, presumir indicação ou oferecer horário sem iniciativa. Site, Ads, preços dos demais procedimentos, Apps Script v168 e dados vivos permanecem.
+
+Próximo passo: validar e obter autorização explícita para publicação do commit. Revalidar produção e executar o gate de 28 cenários e áudio antes da troca. Acompanhar as primeiras conversas naturais e revisar em sete dias: respostas completas/solicitações elegíveis, erros de escopo, aceites da avaliação e consultas confirmadas/realizadas na mesma coorte. Sem inferir ganho. Uma faixa indevida ou duplicada justifica contenção e rollback ao comportamento cc13d12, Netlify 6af38567abdf034950290235, preservando recibos e Apps Script.
+
 ## Coerência da lógica — publicada em 10/11/2026
 
 Candidato BRUNA-COERENCIA-LOGICA-2026-11-10, baseline e69bf442. Daniel autorizou implementar os ajustes remanescentes e publicar. Pacote Netlify 2026-11-10.2: identidade virtual explícita e veto a falsa identidade humana; uma obrigação para fragmentos de preço semanticamente correlacionados; mídia sem leitura não gera recibo genérico; versões de telemetria vêm do manifesto embarcado. Não altera preços, campanhas, flags, aprovação humana ou cadências.

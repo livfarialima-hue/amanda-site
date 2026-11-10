@@ -2179,6 +2179,7 @@ export function isImmediateHumanContextContinuationCandidate(
 }
 
 function approvedPriceReplyKindForPlan(plan) {
+  if (plan?.reason === 'blefaroplastia_price_range_direct' && plan?.procedure === 'blefaroplastia') return 'blefaroplastia_range';
   if (plan?.reason === 'lipo_papada_price_range_direct' && plan?.procedure === 'lipo_papada') return 'lipo_papada_range';
   if (
     plan?.reason === "price_initial_information" &&
@@ -2576,7 +2577,7 @@ async function completeOpenAIActive({
             currentText: input.text,
             introduceBruna,
           })
-        : ["lifting_range", "otoplasty_range", "lipo_papada_range"].includes(
+        : ["lifting_range", "otoplasty_range", "lipo_papada_range", "blefaroplastia_range"].includes(
             approvedPriceReplyKind,
           )
           ? buildSurgicalPriceSuggestedReply({
@@ -2638,7 +2639,8 @@ async function completeOpenAIActive({
                   ? "OTOPLASTY-PRICE-RANGE-01"
                   : approvedPriceReplyKind === "lipo_papada_range"
                     ? "LIPO-PAPADA-PRICE-RANGE-01"
-                  : "SURGICAL-PRICE-INITIAL-01",
+                    : approvedPriceReplyKind === "blefaroplastia_range"
+                      ? "BLEFAROPLASTIA-PRICE-RANGE-01" : "SURGICAL-PRICE-INITIAL-01",
             suggestedReply: approvedPriceBody,
             reviewReason: "",
           },
@@ -6785,7 +6787,7 @@ export async function handleYCloudWebhook(
       }
 
       if (
-        ["initial_information", "lifting_range", "otoplasty_range"].includes(
+        ["initial_information", "lifting_range", "otoplasty_range", "blefaroplastia_range"].includes(
           outcome?.replyKind,
         )
       ) {

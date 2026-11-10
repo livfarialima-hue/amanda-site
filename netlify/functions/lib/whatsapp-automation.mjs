@@ -347,7 +347,7 @@ export function enrichAutomationPlanFromConversation(
     // context. Re-evaluate price permission after the patient's clarification.
     const pricePlan = ['price_initial_information', 'surgical_price_review',
       'price_without_confirmed_procedure', 'lifting_price_range_direct',
-      'otoplasty_price_range_direct', 'lipo_papada_price_range_direct'].includes(plan.reason);
+      'otoplasty_price_range_direct', 'lipo_papada_price_range_direct', 'blefaroplastia_price_range_direct'].includes(plan.reason);
     if (patientProcedure.unresolved) {
       const hospitalPlan = ['hospital_setting_request','hospital_setting_context_required'].includes(plan.reason);
       // Surgical ambiguity may block its own reply, but cannot erase a clinical
@@ -389,7 +389,7 @@ export function enrichAutomationPlanFromConversation(
       recentPatientProcedure?.key ||
       recentClinicProcedure?.key ||
       context.procedure;
-    if (procedure === 'lipo_papada') return resolveSurgicalPricePlan({...plan,
+    if (['lipo_papada','blefaroplastia'].includes(procedure)) return resolveSurgicalPricePlan({...plan,
       reason:'price_initial_information', procedure, professional:'amanda',
       currentText, priceRequestKind:'amount'}, recentConversation);
     const previousLiftingRangeReply = hasPreviousLiftingRangeReply(

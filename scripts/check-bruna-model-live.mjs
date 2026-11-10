@@ -103,6 +103,9 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
         {role:'user',source:'patient',text:'Estou pesquisando para minha esposa.',reference:'SITE-lifting-cervical'}] },
     { name:'lipo_papada_association_not_isolated_range', lipoAssociation:true, procedure:'lipo_papada',
       text:'Qual o valor da lipo de papada com platismoplastia?',recentConversation:[] },
+    { name:'blefaroplastia_complete_price', firstContact:true, blefaroplastiaPrice:true, procedure:'blefaroplastia',
+      code:'BLEFAROPLASTIA-PRICE-RANGE-01', text:'Quanto custa a blefaroplastia superior e inferior?',
+      recentConversation:[], priorInteractionKnown:false },
     { name: 'classification', classification: true },
     { name: 'followup_declined', followup: true },
   ];
@@ -155,7 +158,7 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       const replyContract = conversationAction.replyContract;
       const completePriceCandidate = scenario.lipoCompound ? buildAcceptedProcedurePriceReply({plan,currentText:scenario.text,recentConversation:scenarioHistory}) : null;
       const preview = scenario.genericPrefill ? buildMarketingPrefilledOpeningReply({ procedure: plan.procedure, introduceBruna: true, conversionExperienceEnabled: true })
-        : scenario.firstPrice ? buildSurgicalPriceSuggestedReply({ procedure: plan.procedure, currentText: scenario.text, recentConversation: scenarioHistory, directToPatient: true, introduceBruna: true })
+        : scenario.firstPrice || scenario.blefaroplastiaPrice ? buildSurgicalPriceSuggestedReply({ procedure: plan.procedure, currentText: scenario.text, recentConversation: scenarioHistory, directToPatient: true, introduceBruna: true })
         : scenario.lipoCompound ? completePriceCandidate?.decision.suggestedReply || '' : scenario.administrative ? buildAdministrativeSideAnswer({ text: scenario.text, professional: 'amanda' }).decision.suggestedReply : scenario.priceWithPhotos
         ? buildSurgicalPriceSuggestedReply({patientName:'Helena',procedure:plan.procedure,currentText:scenario.text,recentConversation:scenarioHistory,directToPatient:true,introduceBruna:false})
         : scenario.code === 'AMANDA-CONSULTA-INFO-01'
@@ -218,6 +221,10 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
           !/confirmar.*(?:valor|faixa)|R\$ 500|https?:\/\/|G26LIFT|JID|como posso te chamar|qual.*nome/i.test(selectedReply))) &&
         (!scenario.genericPrefill || (deterministicConfirmed === true &&
           !/R\$|\d[\d.,\s]*(?:mil|reais)|(?:faixa|referência) de valores|(?:ver|consultar|verificar) (?:os )?horários/i.test(selectedReply))) &&
+        (!scenario.blefaroplastiaPrice || (deterministicConfirmed === true &&
+          hasApprovedGlobalSurgicalPriceDisclosure(selectedReply) &&
+          /blefaroplastia superior e inferior[^\n]*R\$ 10 mil e R\$ 18 mil/i.test(selectedReply) &&
+          !/R\$ 500|confirmar.*(?:faixa|valor)|https?:/i.test(selectedReply))) &&
         (!scenario.lipoCompound || (hasApprovedGlobalSurgicalPriceDisclosure(selectedReply) && /lipo de papada isolada.*R\$ 12 mil e R\$ 18 mil/s.test(selectedReply) &&
           /gordura/i.test(selectedReply) && /flacidez/i.test(selectedReply) && /platisma/i.test(selectedReply) &&
           /inchaço/i.test(selectedReply) && /não é um orçamento fechado/i.test(selectedReply) &&

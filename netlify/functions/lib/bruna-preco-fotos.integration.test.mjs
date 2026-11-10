@@ -99,7 +99,7 @@ test('photo intent does not swallow a request for examples, marketing or a refus
 });
 
 test('photos never authorize another surgery, repeat range, or override a semantic veto',()=>{
-  const text='Quanto custa blefaroplastia? Posso mandar fotos minhas para avaliação?';
+  const text='Quanto custa blefaroplastia inferior? Posso mandar fotos minhas para avaliação?';
   assert.doesNotMatch(context(text).plan.reason,/price_range_direct$/);
   const first=reply('Qual o preço do lifting facial?');
   const repeated=context('Qual o valor? Posso enviar fotos minhas?', [...history,{role:'assistant',source:'bruna',text:first.body}]);

@@ -18,6 +18,7 @@ function replyFor(text, history=[]) {
 }
 
 for (const [text,procedure,range] of [
+  ['Quanto custa a blefaroplastia?','blefaroplastia',/10 mil e R\$ 18 mil/],
   ['Quanto custa a otoplastia?','otoplastia',/8 mil e R\$ 14 mil/],
   ['Qual o preço do lifting cervical?','lifting_cervical',/18 mil e R\$ 26 mil/],
   ['Qual o valor do lifting facial?','lifting_facial',/26 mil e R\$ 42 mil/],
@@ -152,5 +153,48 @@ test('other surgical procedures never receive another procedure range',()=>{
   for(const text of ['Qual o preço da blefaroplastia inferior?','Quanto custa reduzir o tamanho da orelha?','Quanto custa lipo de papada com tratamento muscular?','Quanto custa lipo de barriga?']) {
     const plan=planFor(text);
     assert.equal(plan.automaticAllowed,false,text);
+  }
+});
+
+
+test('blefaroplastia: the complete scope gets itemization and a gentle evaluation offer',()=>{
+  const text='Qual o valor da blefaroplastia superior e inferior?';
+  const {plan,body,validation}=replyFor(text);
+  assert.equal(plan.replyCode,'BLEFAROPLASTIA-PRICE-RANGE-01');
+  assert.match(body,/superior e inferior.*R\$ 10 mil e R\$ 18 mil/);
+  assert.match(body,/equipe, o hospital, a anestesia e os materiais/);
+  assert.match(body,/acompanhamento pós-operatório/);
+  assert.match(body,/Se quiser, posso te explicar como funciona a avaliação/);
+  assert.doesNotMatch(body,/R\$ 500|horário|parcel|https?:/);
+  assert.equal(validation.allowed,true,JSON.stringify(validation));
+});
+
+test('blefaroplastia: never offer complete reference for single, alternative, revision, combination or terms',()=>{
+  for (const text of [
+    'Quanto custa a blefaroplastia inferior?',
+    'Qual o valor da blefaroplastia só superior?',
+    'Qual o valor da blefaroplastia superior ou inferior?',
+    'Qual o valor da blefaroplastia revisional superior e inferior?',
+    'Quanto custa blefaroplastia com laser?',
+    'Quanto custa a blefaroplastia com enxerto?',
+    'Quanto custa a blefaroplastia das pálpebras de baixo?',
+    'Quanto custa blefaroplastia e lifting facial?',
+    'Vocês parcelam a blefaroplastia em quantas vezes?',
+  ]) assert.doesNotMatch(planFor(text).reason,/price_range_direct$/,text);
+  assert.doesNotMatch(planFor('E quanto custa?',[patient('Quero blefaroplastia inferior')]).reason,/price_range_direct$/);
+  assert.equal(planFor('E quanto custa?',[patient('Tenho interesse em blefaroplastia superior e inferior')]).replyCode,'BLEFAROPLASTIA-PRICE-RANGE-01');
+});
+
+test('blefaroplastia: existing human reference blocks replay; final gate checks scope even with a stale plan',()=>{
+  const text='Quanto custa a blefaroplastia superior e inferior?';
+  const {action,body}=replyFor(text);
+  const recentConversation=[patient(text),{role:'assistant',source:'equipe_humana',text:'A referência para as duas pálpebras é de R$ 10.000 a R$ 18.000.'}];
+  assert.equal(planFor(text,recentConversation).reason,'blefaroplastia_price_range_already_sent_review');
+  assert.equal(validateOutboundReply({body,currentText:text,conversationAction:action,recentConversation}).reason,'surgical_range_already_sent');
+  for (const currentText of ['Qual o valor só da blefaroplastia inferior?', 'Quanto custa a blefaroplastia com laser?']) {
+    assert.equal(validateOutboundReply({body,currentText,conversationAction:action}).reason,'surgical_range_not_authorized');
+  }
+  for (const edited of [body.replace('10 mil','11 mil'),body.replace('superior e inferior','inferior'),body+' Hospital: R$ 3 mil.']) {
+    assert.equal(validateOutboundReply({body:edited,currentText:text,conversationAction:action}).allowed,false);
   }
 });
