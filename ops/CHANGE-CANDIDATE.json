@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-COERENCIA-LOGICA-2026-11-10",
   "title": "Transparência, continuidade de pendências e versões efetivas",
-  "status": "tested_local",
+  "status": "committed",
   "baseCommit": "e69bf442f51a5652022151d6d7d80cb1c50dd158",
   "authorization": {
     "required": true,
@@ -13,7 +13,7 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "note": "Netlify com efeitos de resposta; Apps Script preparado e testado localmente, sem acesso para publicar. Sem mensagens reais, flags, preços ou migração."
   },
   "scope": {
@@ -27,6 +27,7 @@
       "apps-script/clinica-liv-leads/ConversationArchive.test.mjs",
       "apps-script/clinica-liv-leads/WhatsAppCosts.gs",
       "apps-script/clinica-liv-leads/WhatsAppCosts.test.mjs",
+      "auditorias/bruna-coerencia-logica-2026-11-10/PUBLICACAO.json",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
       "netlify/functions/lib/appointment-review-webhook.test.mjs",
@@ -293,9 +294,7 @@
     }
   },
   "externalChecksPending": [
-    "Netlify: build hospedado e saúde pós-publicação.",
-    "Apps Script: acesso autenticado, comparação de fontes e publicação no deployment canônico.",
-    "Drive: substituir e verificar mesmas projeções documentais."
+    "Apps Script: acesso autenticado, comparação de fontes e publicação no deployment canônico."
   ],
   "rollback": {
     "local": "Reverter somente arquivos do delta após e69bf442.",
@@ -313,5 +312,14 @@
   "baselineCandidateReference": {
     "commit": "83eb9805a7227245ffd66fed7f1ad85c7410e5c6",
     "path": "ops/CHANGE-CANDIDATE.json"
+  },
+  "partialPublication": {
+    "status": "published_verified",
+    "deployId": "6af38567abdf034950290235",
+    "buildId": "6af38567abdf034950290233",
+    "publishedAt": "2026-11-10T21:02:07.825Z",
+    "availableFunctions": 15,
+    "schedules": 6,
+    "hostedModelGate": "Build succeeded with mandatory gate enabled; final scenario counts inferred from committed contract, not read directly from final hosted log."
   }
 }

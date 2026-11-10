@@ -1,8 +1,8 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
-## Candidato 2026-11-10.2 — coerência da lógica
+## Pacote 2026-11-10.2 — Netlify publicado, Apps Script pendente
 
-Implementação autorizada por Daniel. Identidade virtual explícita, proteção contra falsa identidade humana, reuso de obrigação para fragmentos de preço vinculados, mídia sem recibo genérico e telemetria do manifesto embarcado. Testes locais: 2371/2371; arquitetura, escopo e artefato aprovados. Publicação Netlify e projeção Drive pendentes de verificação. Apps Script v167 continua a última versão comprovada; correções administrativas locais aguardam acesso ao editor canônico.
+Implementação autorizada por Daniel. Identidade virtual explícita, proteção contra falsa identidade humana, reuso de obrigação para fragmentos de preço vinculados, mídia sem recibo genérico e telemetria do manifesto embarcado. Testes locais: 2371/2371; arquitetura, escopo e artefato aprovados. Netlify publicado em 10/11 às 18h02 BRT: commit 9de9f447c8888edcd8fc057477e02adad2e50cc9, deploy 6af38567abdf034950290235 READY. Projeções Drive serão verificadas no recibo de publicação parcial. Apps Script v167 continua a última versão comprovada; correções administrativas locais aguardam acesso ao editor canônico.
 
 ## Pendências locais da Bruna — publicadas em 10/11/2026
 

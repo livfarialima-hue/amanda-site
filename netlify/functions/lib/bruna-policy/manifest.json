@@ -18,9 +18,9 @@
   "release": {
     "status": "published",
     "functionalCommit": "a2c25c3d9e4f5d49e267bbb259ec78d0ce475fed",
-    "lastObservedProductionCommit": "a2c25c3d9e4f5d49e267bbb259ec78d0ce475fed",
+    "lastObservedProductionCommit": "9de9f447c8888edcd8fc057477e02adad2e50cc9",
     "functionalDeployId": "6af368511bde0c08349f21d6",
-    "lastObservedProductionDeployId": "6af368511bde0c08349f21d6",
+    "lastObservedProductionDeployId": "6af38567abdf034950290235",
     "rollbackCommit": "83eb9805a7227245ffd66fed7f1ad85c7410e5c6",
     "rollbackDeployId": "6ae09cbdac0c5fed4c97010c",
     "rollbackConstraint": "Novo commit/build restrito para o comportamento anterior, preservando dados, filas, recibos, Apps Script e trabalho paralelo; sem replay.",
@@ -30,18 +30,18 @@
     "candidateChangeId": "BRUNA-PENDENCIAS-LOCAIS-2026-11-10",
     "candidateStatus": "published_verified",
     "bundleVersion": "2026-11-10.1",
-    "appsScriptVersion": 167
+    "appsScriptVersion": 167,
+    "note": "Last complete cross-system release retained; newer Netlify publication described in pendingRelease."
   },
   "documentation": {
     "canonicalLocalPath": "docs/estrategia-abordagem-bruna.md",
     "driveActiveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
     "conversationEvalPath": "netlify/functions/lib/bruna-policy/conversation-evals.jsonl",
-    "driveProjectionSha256": "644737abb0094c549b20888b0e1df8314795e4f4334f5fcfb40df7bd873720d6",
-    "driveProjectionVerifiedAt": "2026-11-10T19:00:35.965Z",
+    "driveProjectionSha256": "a160feb472967899b1f62c76fa903d3f19cd48d433bfefd2a80a36226cc3a2e5",
+    "driveProjectionVerifiedAt": "2026-11-10T21:06:04.029035+00:00",
     "restrictedEvidence": "Archived in the authenticated private workspace; internal folder/document identifiers omitted from public metadata.",
-    "status": "pending_projection",
-    "sourceCommit": "f9d2096551ee70380cfe28168fdc9307be7f5863",
-    "note": "Alterações locais aguardam substituição e verificação das mesmas projeções Drive."
+    "status": "written_verified",
+    "note": "Same Drive files verified byte-for-byte; hashes and plan receipt in auditorias/bruna-coerencia-logica-2026-11-10/PUBLICACAO.json."
   },
   "reliabilityContract": "durable-storage-conditional-writes",
   "siteContinuityContract": "website-conversation-continuity",
@@ -49,7 +49,7 @@
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
     "changeId": "BRUNA-COERENCIA-LOGICA-2026-11-10",
-    "status": "tested_local",
+    "status": "committed",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
@@ -59,6 +59,15 @@
     "baselineAppsScriptVersion": 167,
     "bundleVersion": "2026-11-10.2",
     "note": "Identidade virtual, pendências fragmentadas e versões embarcadas; correções administrativas Apps Script preparadas, publicação bloqueada por acesso ao editor.",
-    "sourceCommit": "a2c25c3d9e4f5d49e267bbb259ec78d0ce475fed"
+    "sourceCommit": "9de9f447c8888edcd8fc057477e02adad2e50cc9",
+    "netlify": {
+      "status": "published_verified",
+      "deployId": "6af38567abdf034950290235",
+      "buildId": "6af38567abdf034950290233",
+      "publishedAt": "2026-11-10T21:02:07.825Z",
+      "availableFunctions": 15,
+      "schedules": 6,
+      "hostedModelGate": "Build succeeded with mandatory gate enabled; final scenario counts inferred from committed contract, not read directly from final hosted log."
+    }
   }
 }

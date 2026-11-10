@@ -1,0 +1,123 @@
+{
+  "changeId": "BRUNA-COERENCIA-LOGICA-2026-11-10",
+  "status": "published_partial",
+  "bundleVersion": "2026-11-10.2",
+  "functionalCommit": "9de9f447c8888edcd8fc057477e02adad2e50cc9",
+  "netlify": {
+    "status": "published_verified",
+    "deployId": "6af38567abdf034950290235",
+    "buildId": "6af38567abdf034950290233",
+    "publishedAt": "2026-11-10T21:02:07.825Z",
+    "availableFunctions": 15,
+    "schedules": 6,
+    "hostedModelGate": "Build succeeded with mandatory gate enabled; final scenario counts inferred from committed contract, not read directly from final hosted log."
+  },
+  "appsScript": {
+    "status": "source_tested_not_deployed",
+    "lastVerifiedVersion": 167,
+    "blocker": "Connected browser lacks originating context; cloud browser not authenticated to canonical editor.",
+    "sources": [
+      "CentralAtendimento.gs",
+      "ConsultasSync.gs",
+      "ConversationArchive.gs",
+      "WhatsAppCosts.gs"
+    ]
+  },
+  "localTests": {
+    "passed": 2371,
+    "total": 2371,
+    "timezone": "America/Sao_Paulo"
+  },
+  "patientMessagesSent": 0,
+  "operationalDataWrites": 0,
+  "documentation": {
+    "status": "written_verified",
+    "sameExistingFiles": true,
+    "method": "Raw authenticated Drive downloads compared byte-for-byte with committed local files.",
+    "verifiedAt": "2026-11-10T21:06:04.029035+00:00",
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "driveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "sha256": "a160feb472967899b1f62c76fa903d3f19cd48d433bfefd2a80a36226cc3a2e5",
+      "bytes": 99015,
+      "equal": true
+    },
+    "plan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "sha256": "aa7669cade19d19aa5c7069551116780224ba33100cfd9ccefdd0e2baee6d752",
+      "bytes": 60188,
+      "equal": true
+    }
+  },
+  "monitoring": "First natural eligible case and 48h through existing supervision; no replay.",
+  "remaining": "Operational reconciliation, alert failure root cause and other unresolved proposals remain in existing executive plan and private checkpoint.",
+  "postReleaseHealth": [
+    {
+      "url": "https://draamandaschroeder.com.br/api/ycloud/webhook",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "ycloud-webhook",
+        "policyVersion": "2026-11-10.2",
+        "promptVersion": "bruna-concierge-2026-11-10.2",
+        "knowledgeSnapshot": "kb-2026-11-10.2",
+        "apiKeyConfigured": true,
+        "signatureProtection": "active",
+        "sheetsWebhookConfigured": true,
+        "sheetsSecretConfigured": true,
+        "openAIConfigured": true,
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled",
+        "reviewAlertConfigured": true,
+        "appointmentReviewEnabled": true,
+        "automationMode": "active",
+        "conversionExperience": "bruna-conversion-v1",
+        "processingMode": "durable_background_intake",
+        "contactPreferencesGuard": "active",
+        "internalPhoneExclusionConfigured": true,
+        "leadDeliveryRetry": "single_idempotent_transient",
+        "leadDeliveryFallback": "acquisition_only",
+        "leadFailureEmailAlert": "required_after_retries",
+        "messageCostObservability": "delivered_event_idempotent"
+      }
+    },
+    {
+      "url": "https://draamandaschroeder.com.br/api/ycloud/webhook",
+      "unsignedPostStatus": 401
+    },
+    {
+      "url": "https://6af38567abdf034950290235--inspiring-sprite-b35ca4.netlify.app/api/ycloud/webhook",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "service": "ycloud-webhook",
+        "policyVersion": "2026-11-10.2",
+        "promptVersion": "bruna-concierge-2026-11-10.2",
+        "knowledgeSnapshot": "kb-2026-11-10.2",
+        "apiKeyConfigured": true,
+        "signatureProtection": "active",
+        "sheetsWebhookConfigured": true,
+        "sheetsSecretConfigured": true,
+        "openAIConfigured": true,
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled",
+        "reviewAlertConfigured": true,
+        "appointmentReviewEnabled": true,
+        "automationMode": "active",
+        "conversionExperience": "bruna-conversion-v1",
+        "processingMode": "durable_background_intake",
+        "contactPreferencesGuard": "active",
+        "internalPhoneExclusionConfigured": true,
+        "leadDeliveryRetry": "single_idempotent_transient",
+        "leadDeliveryFallback": "acquisition_only",
+        "leadFailureEmailAlert": "required_after_retries",
+        "messageCostObservability": "delivered_event_idempotent"
+      }
+    },
+    {
+      "url": "https://6af38567abdf034950290235--inspiring-sprite-b35ca4.netlify.app/api/ycloud/webhook",
+      "unsignedPostStatus": 401
+    }
+  ]
+}
