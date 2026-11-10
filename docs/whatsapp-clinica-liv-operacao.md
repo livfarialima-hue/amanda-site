@@ -1,7 +1,12 @@
 # WhatsApp Clínica LIV — rotina operacional
 
-Correção autorizada de 26/10/2026 em validação: pausa comercial após recusa de agenda ou pedido de tempo, compartilhada por resposta imediata, retomada humana e endpoint de retomada comercial. Pacote 2026-10-26.1; publicação e recibos serão reconciliados após verificação. Apps Script v166 preservado, sem envios de teste.
+## Pendências locais da Bruna — publicadas em 10/11/2026
 
+Commit funcional aprovado a2c25c3d9e4f5d49e267bbb259ec78d0ce475fed; Apps Script v167 no mesmo deployment canônico e Netlify 6af368511bde0c08349f21d6, READY e publicado às 15h57 BRT (2026-11-10T18:57:37.341Z). As duas fontes Apps Script foram recarregadas e coincidiram com o commit. Cabeçalhos de _AGENDAMENTOS_PENDENTES realinhados em A:I; as 32 linhas de dados permaneceram idênticas. A data realizada registrada é preservada e respostas como “não”, “sim” e “ok” deixam de ser aceitas como nome na saudação.
+
+Validação: 2357/2357 testes locais; arquitetura, contrato e artefato aprovados. Log hospedado observado diretamente: 27/27 cenários, dois históricos completos e 3/3 áudios sintéticos. Site e saúde 200 no domínio e URL imutável; POST sem assinatura 401. Apps Script saudável e segredo inválido recusado. Quinze funções e seis programações preservadas. Nenhuma mensagem real de teste ou replay; primeiro caso natural e impacto em conversão ainda não observados.
+
+Rollback: novo commit/build restrito ao comportamento 83eb9805a7227245ffd66fed7f1ad85c7410e5c6 / Netlify 6ae09cbdac0c5fed4c97010c; Apps Script v166 no mesmo deployment. Preservar dados, cabeçalhos alinhados e recibos. Monitorar primeiro caso natural e 48 horas pela supervisão existente. Igualdade das mesmas projeções Drive e fechamento final no recibo auditorias/bruna-pendencias-locais-2026-11-10/PUBLICACAO.json.
 
 ## Lembrete único 24 horas antes — publicado e ativado em 16/10/2026
 

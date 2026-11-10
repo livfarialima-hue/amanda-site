@@ -8,12 +8,12 @@
     "required": true,
     "recording": "external_release_preflight",
     "publicationAuthorizedInCommit": false,
-    "note": "Pedido de implementar localmente. Publicação deste SHA requer autorização específica."
+    "note": "Autorização explícita de Daniel neste chat para publicar a2c25c3d no Apps Script e Netlify, incluindo realinhamento dos cabeçalhos."
   },
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "note": "A seleção continua dependendo de confirmação humana. Não há reparo retroativo de consultas nem envio de teste."
   },
   "scope": {
@@ -22,8 +22,12 @@
       "apps-script/clinica-liv-leads/ConsultasSync.test.mjs",
       "apps-script/clinica-liv-leads/OpportunityStore.gs",
       "apps-script/clinica-liv-leads/OpportunityStore.test.mjs",
+      "apps-script/clinica-liv-leads/README.md",
+      "apps-script/clinica-liv-leads/production-target.json",
+      "auditorias/bruna-pendencias-locais-2026-11-10/PUBLICACAO.json",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
+      "docs/whatsapp-clinica-liv-operacao.md",
       "netlify/functions/lib/bruna-nome-pessoal.integration.test.mjs",
       "netlify/functions/lib/bruna-policy/CHANGELOG.md",
       "netlify/functions/lib/bruna-policy/manifest.json",
@@ -175,8 +179,7 @@
     }
   },
   "externalChecksPending": [
-    "approved_commit",
-    "production_publish_and_readback",
+    "netlify_production_publish_and_readback",
     "same_drive_projections"
   ],
   "rollback": {

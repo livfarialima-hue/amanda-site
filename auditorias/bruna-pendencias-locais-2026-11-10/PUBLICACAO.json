@@ -1,0 +1,96 @@
+{
+  "changeId": "BRUNA-PENDENCIAS-LOCAIS-2026-11-10",
+  "status": "runtime_verified_documentation_pending",
+  "bundleVersion": "2026-11-10.1",
+  "approvedCommit": "a2c25c3d9e4f5d49e267bbb259ec78d0ce475fed",
+  "netlifyDeployId": "6af368511bde0c08349f21d6",
+  "netlifyBuildId": "6af368511bde0c08349f21d4",
+  "appsScriptVersion": 167,
+  "authorization": {
+    "approvedBy": "Daniel",
+    "approvedAt": "2026-11-10",
+    "reference": "current-thread:explicit-a2c25c3d-apps-script-netlify-headers"
+  },
+  "appsScript": {
+    "canonicalDeploymentPreserved": true,
+    "sourceReadback": "Full text after reload equals approved source, LF normalized and trailing whitespace excluded.",
+    "sources": [
+      {
+        "path": "ConsultasSync.gs",
+        "characters": 166979,
+        "fnv1a": "f234923a"
+      },
+      {
+        "path": "OpportunityStore.gs",
+        "characters": 80985,
+        "fnv1a": "e6318e08"
+      }
+    ],
+    "healthStatus": 200,
+    "invalidSecret": "unauthorized"
+  },
+  "headerMigration": {
+    "sheet": "_AGENDAMENTOS_PENDENTES",
+    "range": "A1:J1",
+    "headersAligned": "A:I",
+    "method": "Single updateCells, userEnteredValue only; exact known legacy schema rechecked.",
+    "dataRange": "A2:J1000",
+    "rows": 32,
+    "rowsExactlyPreserved": true,
+    "formulasAndValidationInHeader": false,
+    "hiddenSheetPreserved": true,
+    "visualFit": "not_applicable_hidden_internal_queue"
+  },
+  "patientMessagesSent": 0,
+  "patientDataRowsChanged": 0,
+  "headerRowsChanged": 1,
+  "localTests": {
+    "passed": 2357,
+    "total": 2357,
+    "timezone": "America/Sao_Paulo",
+    "architecture": "passed",
+    "change": "passed",
+    "artifact": "193 files, 54 URLs"
+  },
+  "naturalPostReleaseResponse": {
+    "observed": false,
+    "note": "No replay or artificial patient message."
+  },
+  "documentation": {
+    "status": "pending"
+  },
+  "publishedAt": "2026-11-10T18:57:37.341Z",
+  "verifiedAt": "2026-11-10T18:58:46.566Z",
+  "liveModel": {
+    "status": "passed",
+    "passed": 27,
+    "total": 27,
+    "fullHistoryPassed": 2,
+    "directBuildLogRead": true,
+    "evidenceMethod": "Netlify visible build log BRUNA_MODEL_PREFLIGHT",
+    "checkedAt": "2026-11-10T18:57:21.351Z",
+    "syntheticOnly": true,
+    "patientMessagesSent": 0
+  },
+  "liveAudio": {
+    "status": "passed",
+    "passed": 3,
+    "total": 3,
+    "model": "whisper-1",
+    "directBuildLogRead": true
+  },
+  "runtimeComparison": {
+    "functions": 15,
+    "schedules": 6,
+    "schedulesIdentical": true
+  },
+  "smoke": {
+    "domainPage": 200,
+    "immutablePage": 200,
+    "domainHealth": 200,
+    "immutableHealth": 200,
+    "unsignedPost": 401,
+    "observedAt": "2026-11-10T18:58:46.566Z"
+  },
+  "immutableUrl": "https://6af368511bde0c08349f21d6--inspiring-sprite-b35ca4.netlify.app"
+}
