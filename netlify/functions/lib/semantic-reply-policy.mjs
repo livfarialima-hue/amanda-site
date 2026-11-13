@@ -7,6 +7,33 @@ export const CONTEXT_REOPEN_CODE = "CONTEXT-REOPEN-01";
 export const CONTEXT_CONTINUATION_CODE = "CONTEXT-CONTINUE-01";
 export const COORDINATION_ACKNOWLEDGEMENT_CODE = "COORDINATION-ACK-01";
 
+// A safe first greeting may be approved without the model choosing the routing
+// clarification code. Keep the professional unknown and use only the existing
+// neutral copy; never promote a review, refusal, or a substantive answer.
+export function normalizeUnroutedInitialInquiryAssessment(result, {
+  plan,
+  recentConversation = [],
+  clarificationReply = "",
+} = {}) {
+  const decision = result?.decision;
+  const unknown = (value) => ["", "unknown"].includes(String(value || "").trim().toLowerCase());
+  if (result?.status !== "completed" ||
+      decision?.route !== "standard_reply" ||
+      decision?.automaticAllowed !== true || decision?.confidence !== "high" ||
+      decision?.urgent === true || !unknown(decision?.professional) ||
+      !unknown(decision?.procedure) || recentConversation.length !== 0 ||
+      plan?.route !== "standard_reply" || plan?.automaticAllowed !== true ||
+      !unknown(plan?.professional) || !unknown(plan?.procedure) ||
+      !["simple_greeting", "short_direct_initial_inquiry", "marketing_prefilled_without_procedure"].includes(plan?.reason) ||
+      !String(clarificationReply).trim()) return result;
+
+  return { ...result, decision: { ...decision,
+    replyCode: CONTEXT_CLARIFICATION_CODE,
+    reviewReason: "context_clarification:initial_inquiry",
+    suggestedReply: clarificationReply,
+  } };
+}
+
 // This selects wording only. The confirmed route and the final outbound gate
 // remain authoritative. Exact wording is explicit; codes do not impose style.
 export function selectConfirmedReplyText(semanticResult, approvedResult) {

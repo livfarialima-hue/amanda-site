@@ -1,5 +1,13 @@
 # WhatsApp Clínica LIV — rotina operacional
 
+## Abertura sem profissional identificado — candidato de 13/11/2026
+
+A entrada foi persistida sem profissional e a avaliação semântica terminou, mas a abertura não foi enviada e seguiu para revisão humana. O recibo operacional confirma esse caminho; a decisão bruta original não está disponível. A reprodução sintética demonstra que uma saudação segura aprovada sem o código exato de esclarecimento ficava bloqueada.
+
+`semantic-reply-policy.mjs` normaliza somente a primeira abertura genérica aprovada semanticamente, com alta confiança, sem histórico, profissional ou procedimento. Usa a pergunta neutra já aprovada, preserva o profissional desconhecido e não cria oportunidade por suposição. `ycloud-webhook.mjs` consome a decisão e registra metadados seguros da avaliação. Revisão humana, urgência, ignore, confiança baixa, posse humana, pendências, duplicidade e gate final continuam obrigatórios. O prompt explicita que saudação genérica sem profissional pede esclarecimento, não transferência por esse motivo isolado.
+
+Escopo Netlify; Apps Script v168 e dados operacionais preservados. Daniel autorizou corrigir, publicar e iniciar o atendimento do contato indicado. 2.379/2.379 testes locais, arquitetura, contrato e artefato aprovados. Gate hospedado de 29 cenários, dois históricos completos e três áudios exigido antes de publicar; publicação e envio individual ainda não comprovados. Monitorar primeiro caso natural e 48h pela supervisão existente; reverter somente este delta diante de mensagem duplicada, atendimento indevido ou profissional presumido. Baseline funcional 793a73e5c0031b61a2029fce6a9848ee53bb9a67, deploy 6af3a78c941d4b4d83a68b42.
+
 ## Blefaroplastia — referência privada publicada em 10/11/2026
 
 Publicado e verificado: pacote 2026-11-10.3, commit funcional 793a73e5c0031b61a2029fce6a9848ee53bb9a67, Netlify 6af3a78c941d4b4d83a68b42, publicado em 2026-11-10T23:27:11.802Z. Conteúdo idêntico ao candidato e3753a13b4357f962e4d93caabc13f6708a50a8f aprovado por Daniel; árvore 58698b6e18efde4a45ccd9326dbfb06eb868bc78. 2377/2377 testes locais. Gate hospedado: 28/28 cenários, dois históricos completos e 3/3 áudios sintéticos, conforme log observado. Saúde 200 e POST sem assinatura 401 no domínio e URL imutável; quinze funções e seis programações preservadas. Apps Script v168 preservado por recibo, sem republicação ou nova inspeção do editor. Nenhuma mensagem real de teste, replay ou escrita de dados operacionais. Recibo: auditorias/bruna-faixa-blefaroplastia-2026-11-10/PUBLICACAO.json.

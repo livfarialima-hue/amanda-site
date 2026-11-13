@@ -13,6 +13,8 @@ import { enrichAutomationPlanFromConversation, planAutomation } from '../netlify
 import { validateOutboundReply } from '../netlify/functions/lib/outbound-reply-gate.mjs';
 import { hasApprovedGlobalSurgicalPriceDisclosure } from '../netlify/functions/lib/surgical-price-policy.mjs';
 import { decideConversationAction } from '../netlify/functions/lib/conversation-action-controller.mjs';
+import { buildContextRoutingClarificationReply } from '../netlify/functions/lib/patient-replies.mjs';
+import { normalizeUnroutedInitialInquiryAssessment } from '../netlify/functions/lib/semantic-reply-policy.mjs';
 import {
   BRUNA_MODEL, BRUNA_REASONING_EFFORT, BRUNA_MAX_OUTPUT_TOKENS, BRUNA_TEXT_VERBOSITY,
   BRUNA_CONVERSATION_TIMEOUT_MS, BRUNA_CLASSIFICATION_TIMEOUT_MS, BRUNA_FOLLOWUP_REVIEW_TIMEOUT_MS,
@@ -108,6 +110,8 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
       recentConversation:[], priorInteractionKnown:false },
     { name: 'classification', classification: true },
     { name: 'followup_declined', followup: true },
+    { name: 'first_unrouted_generic_inquiry', unroutedInitial: true,
+      text: 'Olá. Preciso de algumas informações.', recentConversation: [] },
   ];
   const results = [];
   for (const scenario of scenarios) {
@@ -148,6 +152,18 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     } else if (scenario.followup) {
       result = await reviewScheduledFollowupContext({ patientPhone: '+5511900000000', body: 'Ficou alguma dúvida sobre a avaliação?', humanApproved: true,
         recentConversation: [...history, { direction: 'IN', role: 'user', text: 'Prefiro não receber mais mensagens.', at: '2026-10-11T13:02:00Z' }] }, options);
+    } else if (scenario.unroutedInitial) {
+      const plan = planAutomation({text:scenario.text,messageType:'text',reference:'WHATSAPP-DIRETO-SEM-CODIGO'});
+      const action = decideConversationAction({text:scenario.text,plan,recentConversation:[],conversionExperienceEnabled:true});
+      result = await runOpenAIShadow({phone:'+5511900000000',opportunityId:'',professional:'unknown',
+        text:scenario.text,recentConversation:[],priorInteractionKnown:false,
+        patientRelationship:{knownPatient:false,state:'unknown',hasPendingHumanTask:false},
+        policyHints:{...plan,semanticRoutePending:true},replyContract:action.replyContract},options);
+      result = normalizeUnroutedInitialInquiryAssessment(result,{plan,recentConversation:[],
+        clarificationReply:buildContextRoutingClarificationReply({introduceBruna:true})});
+      selectedReply = result.decision?.suggestedReply || '';
+      gate = validateOutboundReply({body:selectedReply,currentText:scenario.text,recentConversation:[],
+        conversationAction:buildSemanticReplyConversationAction(action,result.decision)});
     } else {
       // Reuse the actual owner of the reply contract. A hand-written partial
       // contract normalizes to risk=red/allowedResponseKind=none in the adapter.
@@ -194,6 +210,11 @@ export async function checkBrunaModelLive({ env = process.env, manifest, fetchIm
     const procedureMatches = result.decision?.procedure === scenario.procedure ||
       (scenario.knowledge === true && scenario.procedure === 'unknown' && result.decision?.procedure === '');
     const behaviorPassed = scenario.classification ? true : scenario.followup ? result.allowed === false :
+      scenario.unroutedInitial ? gate?.allowed === true && result.decision?.route === 'standard_reply' &&
+        result.decision?.automaticAllowed === true && result.decision?.confidence === 'high' && result.decision?.urgent !== true &&
+        ['', 'unknown'].includes(result.decision?.professional || '') && ['', 'unknown'].includes(result.decision?.procedure || '') &&
+        result.decision?.replyCode === 'CONTEXT-CLARIFY-01' && /assistente virtual/.test(selectedReply) &&
+        (selectedReply.match(/\?/g) || []).length === 1 && !/Amanda|Daniel|R\$|https?:|agendad|confirmad/i.test(selectedReply) :
       scenario.lipoAssociation ? result.decision?.route === 'human_review' && result.decision?.automaticAllowed === false &&
         !/R\$|\d[\d.,\s]*(?:mil|reais)|LIPO-PAPADA-PRICE-RANGE-01/i.test((result.decision?.suggestedReply || '')+' '+(result.decision?.replyCode || '')) :
       scenario.remoteAssessment ? gate?.allowed === true && result.decision?.route === 'standard_reply' && result.decision?.automaticAllowed === true &&

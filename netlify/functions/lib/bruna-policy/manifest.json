@@ -1,8 +1,8 @@
 {
-  "bundleVersion": "2026-11-10.3",
-  "promptVersion": "bruna-concierge-2026-11-10.3",
+  "bundleVersion": "2026-11-13.1",
+  "promptVersion": "bruna-concierge-2026-11-13.1",
   "schemaVersion": "lead-opportunity-v1",
-  "knowledgeSnapshot": "kb-2026-11-10.3",
+  "knowledgeSnapshot": "kb-2026-11-13.1",
   "identityRole": "assistente_virtual_da_clinica_liv",
   "regressionBaselinePath": "netlify/functions/lib/bruna-policy/regression-baseline.json",
   "regressionBaselineVersion": "2026-09-14.1",
@@ -48,17 +48,16 @@
   "replyContinuityContract": "reply-continuity",
   "followupCopyContract": "followup-message-copy",
   "pendingRelease": {
-    "changeId": "BRUNA-FAIXA-BLEFAROPLASTIA-2026-11-10",
-    "status": "published_verified",
+    "changeId": "BRUNA-ABERTURA-SEM-ROTA-2026-11-13",
+    "status": "tested_local",
     "liveModelCheckRequired": true,
     "audioTranscriptionCheckRequired": true,
     "fullHistoryCheckRequired": true,
-    "liveModelScenarioCount": 28,
-    "baselineCommit": "cc13d12ad0bc836740250d740b6ca8f24ccdd2f5",
-    "baselineDeployId": "6af38567abdf034950290235",
+    "liveModelScenarioCount": 29,
+    "baselineCommit": "8521ab45780f63c6524ac706b93924cc428993e1",
+    "baselineDeployId": "6af3a78c941d4b4d83a68b42",
     "baselineAppsScriptVersion": 168,
-    "bundleVersion": "2026-11-10.3",
-    "note": "Approved identical content tree published and verified.",
-    "sourceCommit": "793a73e5c0031b61a2029fce6a9848ee53bb9a67"
+    "bundleVersion": "2026-11-13.1",
+    "note": "Neutral first-contact clarification only; no professional assigned. Actual deployment and individual send pending."
   }
 }

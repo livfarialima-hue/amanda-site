@@ -189,6 +189,7 @@ async function syntheticResponse(url, request) {
           : hints?.deterministicReplyPreview || '', reviewReason: unknown ? 'unknown_digest:equipamento_lifting' : urgent ? 'possible_urgent_symptoms' : '',
         conversationState: { activeTopic: 'consulta', patientAct: 'question', refersToEventId: '', lastClinicQuestion: '', lastClinicOffer: '',
           unresolvedQuestions: unknown ? ['Qual equipamento específico é usado?'] : [], factsAlreadyProvided: [], owner: unknown ? 'human_team' : 'bruna', nextExpectedAction: unknown ? 'Equipe confirmar equipamento' : 'aguardar', ambiguity: '', contextConfidence: 'high' } };
+      if (hints?.semanticRoutePending) Object.assign(decision,{professional:'unknown',procedure:'',replyCode:'',reviewReason:'',suggestedReply:'Olá! Quais informações você procura?'});
       if (association) Object.assign(decision,{route:'human_review',automaticAllowed:false,replyCode:'UNKNOWN-REVIEW-01',suggestedReply:'',reviewReason:'procedure_price_association'});
       if (unknown) decision.partialAnswer = { knowledgeIds: ['SYNTHETIC-PARKING'], pendingQuestion: 'Qual equipamento específico é usado?' };
       if (remote) Object.assign(decision,{route:'standard_reply',automaticAllowed:true,replyCode:'',reviewReason:'',suggestedReply:'A Dra. Amanda atende por consulta online, inclusive quem está no exterior. A teleconsulta custa R$ 500. O orçamento individual da cirurgia depende da avaliação.'});
@@ -217,15 +218,15 @@ async function syntheticResponse(url, request) {
     return new Response(JSON.stringify({ model: 'gpt-6.1-sol', status: 'completed', output_text: JSON.stringify(decision) }));
 }
 
-test('all twenty-eight synthetic scenarios use the real adapters and pass the outbound protections', async () => {
+test('all twenty-nine synthetic scenarios use the real adapters and pass the outbound protections', async () => {
   const fixtureErrors = [];
   const result = await checkBrunaModelLive({ env, manifest, fetchImpl: async (...args) => {
     try { return await syntheticResponse(...args); } catch (error) { fixtureErrors.push(error.message); throw error; }
   } });
   assert.deepEqual(fixtureErrors, []);
   assert.equal(result.status, 'passed', JSON.stringify(result));
-  assert.equal(result.results.length, 28);
-  assert.deepEqual(result.results.map(r => r.timeoutMs), [...Array(26).fill(20000), 15000, 12000]);
+  assert.equal(result.results.length, 29);
+  assert.deepEqual(result.results.map(r => r.timeoutMs), [...Array(26).fill(20000), 15000, 12000, 20000]);
   assert.equal(result.maxOutputTokens, 4096);
   assert.equal(result.verbosity, 'low');
   assert.equal(result.patientMessagesSent, 0);
@@ -393,7 +394,7 @@ test('administrative knowledge accepts an empty unspecified procedure from the r
     return Response.json(data);
   } });
   assert.equal(result.status, 'passed');
-  assert.equal(result.results.length, 28);
+  assert.equal(result.results.length, 29);
   assert.equal(result.results.find(r => r.name === 'semantic_approved_knowledge').passed, true);
   assert.equal(result.patientMessagesSent, 0);
 });
@@ -414,7 +415,7 @@ test('remote live gate accepts legitimate budget and availability boundaries bes
       return Response.json(data);
     }});
     assert.equal(result.status,'passed');
-    assert.equal(result.results.length,28);
+    assert.equal(result.results.length,29);
     assert.equal(result.patientMessagesSent,0);
   }
 });

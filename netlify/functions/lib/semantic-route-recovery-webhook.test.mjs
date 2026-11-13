@@ -590,3 +590,88 @@ test("route recovery reevaluates the reply after discovering a former patient", 
     assert.match(patientRequests[0].text.body, /falar com você novamente/i);
   });
 });
+
+test("a first generic inquiry with a semantically approved uncoded greeting is answered without routing", async () => {
+  await withWebhookEnvironment(async () => {
+    const requests = [];
+    globalThis.fetch = async (url, options) => {
+      requests.push({ url, options });
+      if (url === process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+        const body = JSON.parse(options.body);
+        if (body.action === "append_lead") {
+          return new Response(JSON.stringify({
+            ok: true,
+            inserted: false,
+            updated: false,
+            routed: false,
+            routeStatus: "pending",
+            professional: "unknown",
+            humanTakeoverToday: false,
+            patientRelationship: {
+              found: false,
+              relationshipState: "unknown",
+            },
+          }), { status: 200 });
+        }
+        if (body.action === "get_conversation_context") {
+          return new Response('{"ok":true,"opportunityId":"","professional":"","turns":[]}', { status: 200 });
+        }
+        if (body.action === "get_bot_knowledge_context") {
+          return new Response('{"ok":true,"candidates":[],"pendingQuestion":null}', { status: 200 });
+        }
+        return new Response('{"ok":true}', { status: 200 });
+      }
+      if (url === "https://api.openai.com/v1/responses") {
+        return new Response(JSON.stringify(openAIResponse(semanticDecision({
+          professional: "unknown",
+          procedure: "",
+          replyCode: "",
+          suggestedReply:
+            "Quero entender direitinho para te orientar. Você pode me explicar um pouco melhor qual atendimento ou dúvida gostaria de tratar conosco?",
+          reviewReason: "",
+          conversationState: conversationState({
+            activeTopic: "atendimento não identificado",
+            patientAct: "unknown",
+            refersToEventId: "",
+            lastClinicQuestion: "",
+            nextExpectedAction: "pedir esclarecimento",
+            ambiguity: "profissional e assunto não identificados",
+            contextConfidence: "low",
+          }),
+        }))), { status: 200 });
+      }
+      if (url === "https://api.ycloud.com/v2/whatsapp/messages") {
+        return new Response('{"status":"accepted"}', { status: 200 });
+      }
+      throw new Error(`unexpected destination: ${url}`);
+    };
+
+    const payload = patientPayload({
+      eventId: "evt-synthetic-initial-uncoded",
+      phone: "+5511900000872",
+      text: "Olá. Preciso de algumas informações.",
+    });
+    const response = await webhook(
+      signedRequest(payload, process.env.YCLOUD_WEBHOOK_SECRET),
+    );
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.leadRouted, false);
+    assert.equal(body.semanticRouteRecovered, false);
+    assert.equal(body.semanticRouteClarificationQueued, true);
+    assert.equal(body.semanticRouteClarificationSent, true);
+    assert.equal(body.automaticWorkFinished, true);
+
+    const patientRequests = requests
+      .filter(
+        (request) =>
+          request.url === "https://api.ycloud.com/v2/whatsapp/messages",
+      )
+      .map((request) => JSON.parse(request.options.body))
+      .filter((message) => message.to === payload.whatsappInboundMessage.from);
+    assert.equal(patientRequests.length, 1);
+    assert.match(patientRequests[0].text.body, /explicar um pouco melhor/i);
+    assert.equal((patientRequests[0].text.body.match(/\?/g) || []).length, 1);
+  });
+});

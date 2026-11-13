@@ -1,5 +1,13 @@
 # Diretrizes ativas da Bruna — atendimento e conversão no WhatsApp
 
+## Abertura sem profissional identificado — candidato de 13/11/2026
+
+A entrada foi persistida sem profissional e a avaliação semântica terminou, mas a abertura não foi enviada e seguiu para revisão humana. O recibo operacional confirma esse caminho; a decisão bruta original não está disponível. A reprodução sintética demonstra que uma saudação segura aprovada sem o código exato de esclarecimento ficava bloqueada.
+
+`semantic-reply-policy.mjs` normaliza somente a primeira abertura genérica aprovada semanticamente, com alta confiança, sem histórico, profissional ou procedimento. Usa a pergunta neutra já aprovada, preserva o profissional desconhecido e não cria oportunidade por suposição. `ycloud-webhook.mjs` consome a decisão e registra metadados seguros da avaliação. Revisão humana, urgência, ignore, confiança baixa, posse humana, pendências, duplicidade e gate final continuam obrigatórios. O prompt explicita que saudação genérica sem profissional pede esclarecimento, não transferência por esse motivo isolado.
+
+Escopo Netlify; Apps Script v168 e dados operacionais preservados. Daniel autorizou corrigir, publicar e iniciar o atendimento do contato indicado. 2.379/2.379 testes locais, arquitetura, contrato e artefato aprovados. Gate hospedado de 29 cenários, dois históricos completos e três áudios exigido antes de publicar; publicação e envio individual ainda não comprovados. Monitorar primeiro caso natural e 48h pela supervisão existente; reverter somente este delta diante de mensagem duplicada, atendimento indevido ou profissional presumido. Baseline funcional 793a73e5c0031b61a2029fce6a9848ee53bb9a67, deploy 6af3a78c941d4b4d83a68b42.
+
 ## Pacote 2026-11-10.3 — blefaroplastia publicada
 
 Pedido explícito de preço de blefaroplastia genérica ou de pálpebras superiores e inferiores pode receber, uma vez, referência **para a blefaroplastia superior e inferior juntas** entre R$ 10 mil e R$ 18 mil, sem preço individual prévio. Ressalva canônica no mesmo envio: valor global de referência, não orçamento fechado; equipe, hospital, anestesia, materiais e itens discriminados após avaliação. Explicar o propósito da consulta e oferecer explicação da avaliação uma vez, quando pertinente. Não agendar nem oferecer turno sem intenção de agenda. Para variante isolada, revisão ou combinação, não atribuir a faixa; termos específicos exigem verificação. Sem envio proativo, faixa no site ou em anúncio, mudança das outras faixas ou reprocessamento.
@@ -154,7 +162,7 @@ O histórico documental integral anterior foi arquivado em área restrita. Esta 
 
 > **Fonte canônica:** este arquivo versionado é o único manual ativo do comportamento da Bruna. O Drive contém somente uma projeção de leitura deste conteúdo. Estratégia de aquisição e estado vivo seguem suas fontes próprias.
 
-**Versão:** 2026-11-10.3
+**Versão:** 2026-11-13.1
 
 Projeção ativa: 17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF. O identificador não concede acesso; as permissões existentes são preservadas.
 

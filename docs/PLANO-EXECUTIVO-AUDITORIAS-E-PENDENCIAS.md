@@ -1,5 +1,13 @@
 # Plano executivo — auditorias, pendências e prazos
 
+## Abertura sem profissional identificado — candidato de 13/11/2026
+
+A entrada foi persistida sem profissional e a avaliação semântica terminou, mas a abertura não foi enviada e seguiu para revisão humana. O recibo operacional confirma esse caminho; a decisão bruta original não está disponível. A reprodução sintética demonstra que uma saudação segura aprovada sem o código exato de esclarecimento ficava bloqueada.
+
+`semantic-reply-policy.mjs` normaliza somente a primeira abertura genérica aprovada semanticamente, com alta confiança, sem histórico, profissional ou procedimento. Usa a pergunta neutra já aprovada, preserva o profissional desconhecido e não cria oportunidade por suposição. `ycloud-webhook.mjs` consome a decisão e registra metadados seguros da avaliação. Revisão humana, urgência, ignore, confiança baixa, posse humana, pendências, duplicidade e gate final continuam obrigatórios. O prompt explicita que saudação genérica sem profissional pede esclarecimento, não transferência por esse motivo isolado.
+
+Escopo Netlify; Apps Script v168 e dados operacionais preservados. Daniel autorizou corrigir, publicar e iniciar o atendimento do contato indicado. 2.379/2.379 testes locais, arquitetura, contrato e artefato aprovados. Gate hospedado de 29 cenários, dois históricos completos e três áudios exigido antes de publicar; publicação e envio individual ainda não comprovados. Monitorar primeiro caso natural e 48h pela supervisão existente; reverter somente este delta diante de mensagem duplicada, atendimento indevido ou profissional presumido. Baseline funcional 793a73e5c0031b61a2029fce6a9848ee53bb9a67, deploy 6af3a78c941d4b4d83a68b42.
+
 ## Blefaroplastia — referência privada solicitada em 10/11/2026
 
 Candidato BRUNA-FAIXA-BLEFAROPLASTIA-2026-11-10, somente Netlify. Daniel solicitou automatizar a referência de R$ 10 mil a R$ 18 mil; a resposta humana de referência da mesma data especifica blefaroplastia superior e inferior juntas. Explicar composição do valor global, orçamento individual após avaliação e oferecer uma única continuação informativa. Não aplicar a pálpebra isolada, revisão ou associação; não repetir referência já enviada, presumir indicação ou oferecer horário sem iniciativa. Site, Ads, preços dos demais procedimentos, Apps Script v168 e dados vivos permanecem.

@@ -1,5 +1,13 @@
 # Arquitetura da jornada da paciente
 
+## Abertura sem profissional identificado — candidato de 13/11/2026
+
+A entrada foi persistida sem profissional e a avaliação semântica terminou, mas a abertura não foi enviada e seguiu para revisão humana. O recibo operacional confirma esse caminho; a decisão bruta original não está disponível. A reprodução sintética demonstra que uma saudação segura aprovada sem o código exato de esclarecimento ficava bloqueada.
+
+`semantic-reply-policy.mjs` normaliza somente a primeira abertura genérica aprovada semanticamente, com alta confiança, sem histórico, profissional ou procedimento. Usa a pergunta neutra já aprovada, preserva o profissional desconhecido e não cria oportunidade por suposição. `ycloud-webhook.mjs` consome a decisão e registra metadados seguros da avaliação. Revisão humana, urgência, ignore, confiança baixa, posse humana, pendências, duplicidade e gate final continuam obrigatórios. O prompt explicita que saudação genérica sem profissional pede esclarecimento, não transferência por esse motivo isolado.
+
+Escopo Netlify; Apps Script v168 e dados operacionais preservados. Daniel autorizou corrigir, publicar e iniciar o atendimento do contato indicado. 2.379/2.379 testes locais, arquitetura, contrato e artefato aprovados. Gate hospedado de 29 cenários, dois históricos completos e três áudios exigido antes de publicar; publicação e envio individual ainda não comprovados. Monitorar primeiro caso natural e 48h pela supervisão existente; reverter somente este delta diante de mensagem duplicada, atendimento indevido ou profissional presumido. Baseline funcional 793a73e5c0031b61a2029fce6a9848ee53bb9a67, deploy 6af3a78c941d4b4d83a68b42.
+
 ## Silêncio comercial e logística direta — publicado em 16/10/2026
 
 Ofertas de marketing, vendas e fornecedores conhecidos permanecem ignoradas, inclusive após conteúdo indisponível; uma nova procura pessoal explícita é reavaliada. Estacionamento pago no local e proximidade da estação Pinheiros do metrô foram confirmados por Daniel em 16/10/2026. Perguntas administrativas independentes com fatos aprovados recebem resposta direta, sem confirmação intermediária de recebimento ou promessa de retorno. Não inventar tarifa, gratuidade, reserva, distância, horário ou acessibilidade. Posse humana, espera vigente, urgência, veto semântico, preços e confirmação de agenda permanecem. Registro técnico de publicação abaixo e no recibo do pacote.

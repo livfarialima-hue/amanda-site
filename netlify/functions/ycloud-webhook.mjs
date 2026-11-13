@@ -199,6 +199,7 @@ import {
   semanticDecisionConfirmsDeterministicReply,
   selectConfirmedReplyText,
   deterministicReplyCoversPatientQuestions,
+  normalizeUnroutedInitialInquiryAssessment,
 } from "./lib/semantic-reply-policy.mjs";
 export { semanticDecisionConfirmsDeterministicReply };
 import {
@@ -5352,6 +5353,18 @@ export async function handleYCloudWebhook(
       },
       "route_recovery",
     );
+    semanticRouteAssessment = normalizeUnroutedInitialInquiryAssessment(
+      semanticRouteAssessment,
+      {
+        plan: semanticRoutePlan,
+        recentConversation: conversationHistory,
+        clarificationReply: buildContextRoutingClarificationReply({
+          patientName: patientDisplayName,
+          introduceBruna: !priorInteractionKnown,
+        }),
+      },
+    );
+    logOpenAIResult(String(eventId), semanticRouteAssessment, "route_recovery");
     if (automationMode === "active") {
       await persistSemanticAssessmentState({
         phone,

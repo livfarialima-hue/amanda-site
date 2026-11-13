@@ -3,12 +3,45 @@ import test from "node:test";
 
 import { buildSemanticReplyConversationAction, prepareSemanticContextContinuationAction } from "./semantic-reply-policy.mjs";
 import { selectConfirmedReplyText } from "./semantic-reply-policy.mjs";
+import { normalizeUnroutedInitialInquiryAssessment } from "./semantic-reply-policy.mjs";
+import { buildContextRoutingClarificationReply } from "./patient-replies.mjs";
 import { validateOutboundReply } from "./outbound-reply-gate.mjs";
 import { SURGICAL_PRICE_DISCLOSURE } from "./surgical-price-policy.mjs";
 
 const approved = { status: "completed", decision: { route: "standard_reply", confidence: "high",
   automaticAllowed: true, urgent: false, professional: "amanda", procedure: "lifting_facial",
   replyCode: "AMANDA-CONSULTA-INFO-01", suggestedReply: "A consulta presencial custa R$ 500." } };
+
+test("unrouted first greeting uses the neutral clarification contract without assigning a professional", () => {
+  const result = { status: "completed", decision: { route: "standard_reply", confidence: "high",
+    automaticAllowed: true, urgent: false, professional: "unknown", procedure: "", replyCode: "",
+    reviewReason: "", suggestedReply: "Olá! Que informações você procura?" } };
+  const options = { plan: { route: "standard_reply", automaticAllowed: true,
+    reason: "short_direct_initial_inquiry", professional: null, procedure: null },
+    recentConversation: [], clarificationReply: buildContextRoutingClarificationReply({ introduceBruna: true }) };
+  const normalized = normalizeUnroutedInitialInquiryAssessment(result, options);
+  assert.equal(normalized.decision.professional, "unknown");
+  assert.equal(normalized.decision.procedure, "");
+  assert.equal(normalized.decision.replyCode, "CONTEXT-CLARIFY-01");
+  assert.equal(normalized.decision.suggestedReply, options.clarificationReply);
+  const action = buildSemanticReplyConversationAction({ action: "respond", replyContract: { maxQuestions: 1,
+    maxLinks: 0, allowCta: false, allowAppointmentConfirmation: false } }, normalized.decision);
+  assert.equal(validateOutboundReply({ body: normalized.decision.suggestedReply,
+    currentText: "Olá, preciso de informações", recentConversation: [], conversationAction: action }).allowed, true);
+
+  for (const changes of [{ route: "human_review" }, { route: "ignore" }, { automaticAllowed: false },
+    { urgent: true }, { confidence: "low" }, { professional: "amanda" }, { professional: "daniel" },
+    { professional: "external" }, { procedure: "lifting_facial" }]) {
+    const vetoed = { ...result, decision: { ...result.decision, ...changes } };
+    assert.equal(normalizeUnroutedInitialInquiryAssessment(vetoed, options), vetoed);
+  }
+  for (const changes of [{ recentConversation: [{ role: "user", text: "Oferta comercial sintética" }] },
+    { clarificationReply: "" }, { plan: { ...options.plan, reason: "ai_safety_triage" } },
+    { plan: { ...options.plan, route: "human_review" } },
+    { plan: { ...options.plan, professional: "amanda" } }]) {
+    assert.equal(normalizeUnroutedInitialInquiryAssessment(result, { ...options, ...changes }), result);
+  }
+});
 function contextual(text, changes = {}) {
   return { status: "completed", decision: { ...approved.decision, replyWording: "contextual", suggestedReply: text, ...changes } };
 }
