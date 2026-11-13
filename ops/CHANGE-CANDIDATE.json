@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "changeId": "BRUNA-ABERTURA-SEM-ROTA-2026-11-13",
   "title": "Acolhimento neutro para primeiro contato sem rota profissional",
-  "status": "tested_local",
+  "status": "published_verified",
   "baseCommit": "8521ab45780f63c6524ac706b93924cc428993e1",
   "authorization": {
     "required": true,
@@ -13,11 +13,12 @@
   "risk": {
     "level": "high",
     "patientEffects": true,
-    "externalWritesPerformed": false,
+    "externalWritesPerformed": true,
     "note": "First-contact clarification through existing outbound gates; no new endpoint, flags or provider."
   },
   "scope": {
     "files": [
+      "auditorias/bruna-abertura-sem-rota-2026-11-13/PUBLICACAO.json",
       "docs/ARQUITETURA-JORNADA-PACIENTE.md",
       "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
       "docs/estrategia-abordagem-bruna.md",
@@ -192,13 +193,11 @@
       "siteBuild": "passed",
       "siteCheck": "passed",
       "diffCheck": "passed",
-      "opsCheck": "SYNC_PENDING expected before publication",
-      "hostedLiveGate": "pending"
+      "hostedLiveGate": "passed_29_of_29_plus_3_audio",
+      "productionHealth": "passed_domain_and_immutable_url"
     }
   },
-  "externalChecksPending": [
-    "Hosted model and audio gate; production deploy readback; existing Drive projections; individual response/receipt"
-  ],
+  "externalChecksPending": [],
   "rollback": {
     "local": "Discard only this isolated branch.",
     "production": "Revert this delta with a new build preserving data, receipts, Apps Script v168 and parallel changes."
@@ -210,5 +209,40 @@
       "Zero duplicate messages, professional guesses or overridden human/clinical decisions.",
       "Eligible generic first inquiries receive one neutral clarification."
     ]
+  },
+  "release": {
+    "approvedCommit": "8132af4d6d52d932988c25d5936af4593b44a333",
+    "originalApprovedCommit": "86b904d67575e48393596b1aa3dbe12a85546551",
+    "approvedTree": "f22ccb4bb0eb4b2e0f44f36fb522ce4f5df760e1",
+    "netlifyDeployId": "6af71c6d3423efc08b1cfc0b",
+    "appsScriptVersion": 168,
+    "verifiedAt": "2026-11-13T14:27:26.628599+00:00",
+    "drivePlanSha256": "ee5a0b4683ac7824b71e89683095cc8a928359e2fc174d945270296f3ed1f43e",
+    "liveModel": {
+      "status": "passed",
+      "passed": 29,
+      "total": 29,
+      "fullHistoryPassed": 2,
+      "firstUnroutedGenericInquiry": {
+        "passed": true,
+        "gateAllowed": true,
+        "replyCode": "CONTEXT-CLARIFY-01",
+        "modelRequests": 1
+      },
+      "checkedAt": "2026-11-13T14:23:12.809Z",
+      "evidence": "Final production build log observed directly in Netlify."
+    },
+    "liveAudio": {
+      "status": "passed",
+      "passed": 3,
+      "total": 3,
+      "evidence": "Final production build log observed directly in Netlify."
+    },
+    "receipt": "auditorias/bruna-abertura-sem-rota-2026-11-13/PUBLICACAO.json"
+  },
+  "individualFollowup": {
+    "status": "human_response_observed_before_release_no_duplicate_send",
+    "automaticResponseConfirmed": false,
+    "note": "Existing human-resume owner and ten-minute preference retained; no replay, new job or takeover reset."
   }
 }

@@ -1,0 +1,161 @@
+{
+  "changeId": "BRUNA-ABERTURA-SEM-ROTA-2026-11-13",
+  "status": "published_verified",
+  "bundleVersion": "2026-11-13.1",
+  "functionalCommit": "8132af4d6d52d932988c25d5936af4593b44a333",
+  "approvedCommit": "8132af4d6d52d932988c25d5936af4593b44a333",
+  "originalApprovedCommit": "86b904d67575e48393596b1aa3dbe12a85546551",
+  "approvedTree": "f22ccb4bb0eb4b2e0f44f36fb522ce4f5df760e1",
+  "netlifyDeployId": "6af71c6d3423efc08b1cfc0b",
+  "appsScriptVersion": 168,
+  "verifiedAt": "2026-11-13T14:27:26.628599+00:00",
+  "liveModel": {
+    "status": "passed",
+    "passed": 29,
+    "total": 29,
+    "fullHistoryPassed": 2,
+    "firstUnroutedGenericInquiry": {
+      "passed": true,
+      "gateAllowed": true,
+      "replyCode": "CONTEXT-CLARIFY-01",
+      "modelRequests": 1
+    },
+    "checkedAt": "2026-11-13T14:23:12.809Z",
+    "evidence": "Final production build log observed directly in Netlify."
+  },
+  "liveAudio": {
+    "status": "passed",
+    "passed": 3,
+    "total": 3,
+    "evidence": "Final production build log observed directly in Netlify."
+  },
+  "netlify": {
+    "status": "published_verified",
+    "deployId": "6af71c6d3423efc08b1cfc0b",
+    "buildId": "6af71c6d3423efc08b1cfc09",
+    "publishedAt": "2026-11-13T14:23:28.158Z",
+    "availableFunctions": 15,
+    "schedules": 6
+  },
+  "approval": {
+    "by": "Daniel",
+    "reference": "Explicit confirmation in current conversation of public publication of corrected code and operational documentation without patient data."
+  },
+  "appsScript": {
+    "version": 168,
+    "status": "unchanged_from_previous_verified_release",
+    "evidence": "auditorias/bruna-coerencia-logica-2026-11-10/PUBLICACAO.json"
+  },
+  "localTests": {
+    "passed": 2379,
+    "total": 2379
+  },
+  "postReleaseHealth": [
+    {
+      "origin": "https://draamandaschroeder.com.br",
+      "verifiedAt": "2026-11-13T14:24:31.885385+00:00",
+      "siteStatus": 200,
+      "getStatus": 200,
+      "body": {
+        "ok": true,
+        "service": "ycloud-webhook",
+        "policyVersion": "2026-11-13.1",
+        "promptVersion": "bruna-concierge-2026-11-13.1",
+        "knowledgeSnapshot": "kb-2026-11-13.1",
+        "apiKeyConfigured": true,
+        "signatureProtection": "active",
+        "sheetsWebhookConfigured": true,
+        "sheetsSecretConfigured": true,
+        "openAIConfigured": true,
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled",
+        "reviewAlertConfigured": true,
+        "appointmentReviewEnabled": true,
+        "automationMode": "active",
+        "conversionExperience": "bruna-conversion-v1",
+        "processingMode": "durable_background_intake",
+        "contactPreferencesGuard": "active",
+        "internalPhoneExclusionConfigured": true,
+        "leadDeliveryRetry": "single_idempotent_transient",
+        "leadDeliveryFallback": "acquisition_only",
+        "leadFailureEmailAlert": "required_after_retries",
+        "messageCostObservability": "delivered_event_idempotent"
+      },
+      "unsignedPostStatus": 401
+    },
+    {
+      "origin": "https://6af71c6d3423efc08b1cfc0b--inspiring-sprite-b35ca4.netlify.app",
+      "verifiedAt": "2026-11-13T14:24:56.232804+00:00",
+      "siteStatus": 200,
+      "getStatus": 200,
+      "body": {
+        "ok": true,
+        "service": "ycloud-webhook",
+        "policyVersion": "2026-11-13.1",
+        "promptVersion": "bruna-concierge-2026-11-13.1",
+        "knowledgeSnapshot": "kb-2026-11-13.1",
+        "apiKeyConfigured": true,
+        "signatureProtection": "active",
+        "sheetsWebhookConfigured": true,
+        "sheetsSecretConfigured": true,
+        "openAIConfigured": true,
+        "audioTranscription": "enabled",
+        "conversationArchive": "enabled",
+        "reviewAlertConfigured": true,
+        "appointmentReviewEnabled": true,
+        "automationMode": "active",
+        "conversionExperience": "bruna-conversion-v1",
+        "processingMode": "durable_background_intake",
+        "contactPreferencesGuard": "active",
+        "internalPhoneExclusionConfigured": true,
+        "leadDeliveryRetry": "single_idempotent_transient",
+        "leadDeliveryFallback": "acquisition_only",
+        "leadFailureEmailAlert": "required_after_retries",
+        "messageCostObservability": "delivered_event_idempotent"
+      },
+      "unsignedPostStatus": 401
+    }
+  ],
+  "documentation": {
+    "manual": {
+      "path": "docs/estrategia-abordagem-bruna.md",
+      "driveFileId": "17eOwn4Z7v7josBnnPJhBHn31wY-2P1YF",
+      "equal": true,
+      "modifiedAt": "2026-11-13T14:26:32.671Z",
+      "bytes": 103335,
+      "sha256": "77146ba8ea070c0f2c7f1ab816e269b08a76378f8d1a6fcdfddcd80ac422b162"
+    },
+    "plan": {
+      "path": "docs/PLANO-EXECUTIVO-AUDITORIAS-E-PENDENCIAS.md",
+      "driveFileId": "18iUqY6HttJwPusSAA1VGmrMqqRluyjTO",
+      "equal": true,
+      "modifiedAt": "2026-11-13T14:26:36.628Z",
+      "bytes": 64846,
+      "sha256": "ee5a0b4683ac7824b71e89683095cc8a928359e2fc174d945270296f3ed1f43e"
+    },
+    "status": "written_verified",
+    "sameExistingFiles": true,
+    "method": "Raw authenticated downloads compared byte for byte.",
+    "verifiedAt": "2026-11-13T14:27:26.628599+00:00"
+  },
+  "patientMessagesSent": 0,
+  "operationalDataWrites": 0,
+  "individualFollowup": {
+    "status": "human_response_observed_before_release_no_duplicate_send",
+    "automaticResponseConfirmed": false,
+    "note": "Existing human-resume owner and ten-minute preference retained; no replay, new job or takeover reset."
+  },
+  "monitoring": {
+    "firstNaturalCase": "pending",
+    "integrityReview": "2026-11-15",
+    "mechanism": "Existing supervision; no new automation",
+    "conversionEffect": "N/D"
+  },
+  "rollback": {
+    "method": "Forward corrective commit/build preserving operational records, no replay",
+    "functionalCommit": "793a73e5c0031b61a2029fce6a9848ee53bb9a67",
+    "deployId": "6af3a78c941d4b4d83a68b42",
+    "appsScriptVersion": 168
+  },
+  "drivePlanSha256": "ee5a0b4683ac7824b71e89683095cc8a928359e2fc174d945270296f3ed1f43e"
+}
