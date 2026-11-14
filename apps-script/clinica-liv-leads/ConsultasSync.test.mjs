@@ -957,13 +957,13 @@ test("maps legacy headers that were saved with UTF-8 mojibake", () => {
   assert.equal(columns["Data da situação"], 2);
 });
 
-test("record origin prefers the lead origin over sync metadata", () => {
+test("record origin uses sync metadata and preserves acquisition origin", () => {
   const columns = context.mapearCabecalhosConsultas_([
     "Fonte da sincronização",
     "Origem do lead",
   ]);
 
-  assert.equal(columns["Origem do registro"], 1);
+  assert.equal(columns["Origem do registro"], 0);
 });
 
 test("classifies the patient journey without exposing clinical detail", () => {
@@ -1117,4 +1117,41 @@ test("iCalUID suffix does not make an existing event conflict with itself", () =
   assert.equal(result.ok, true);
   assert.equal(result.room, "Sala 1");
   assert.equal(result.roomConflict, false);
+});
+
+test("receipt context requires live calendar, future confirmed booking and contact permission", () => {
+  const sandbox = vm.createContext({ Date, console });
+  vm.runInContext(source, sandbox);
+  const headers = ["Telefone (E.164)", "Nome do paciente", "Opportunity ID", "Profissional", "Data agendada", "Horário agendado", "Status", "Local / modalidade", "Tipo de consulta", "Sala", "ID da agenda Google", "ID do evento Google", "Sincronização Google Agenda", "Erro Google Agenda", "Consentimento para contato", "Motivo de supressão", "Duração (min)"];
+  const calendarId = "257c2b41ddae349c5187ad3e422a19bd57b515435f14fa7ac4f933cdac8cb164@group.calendar.google.com";
+  const row = ["+5511999990000", "Maria Exemplo", "synthetic-opportunity", "Dra. Amanda", "2099-11-16", "10:00", "Confirmada", "Clínica LIV", "Primeira consulta", "Sala 1", calendarId, "synthetic-event", "Sincronizado", "", "Sim", "", "60"];
+  const columns = sandbox.mapearCabecalhosConsultas_(headers);
+  sandbox.CalendarApp = { getCalendarById: () => ({}) };
+  sandbox.assinaturaVinculoComprovante_ = () => "synthetic-binding";
+  sandbox.localizarEventoConsulta_ = () => ({ getTag: () => "synthetic-binding", getTitle: () => "Consulta — Dra. Amanda", getStartTime: () => new Date(0), getEndTime: () => new Date(3600000) });
+  sandbox.obterPreferenciasContatoLeads_ = () => ({ neverBotReply: false });
+  sandbox.consentimentoPermiteLembreteConsulta_ = value => value !== "Não";
+  let verified = true;
+  sandbox.validarVinculoAgendaLembreteConsulta_ = input => {
+    assert.equal(input.appointmentKey, "2099-11-16 10:00");
+    assert.equal(input.calendarEventId, "synthetic-event");
+    return { ok: verified, mode: "in_person" };
+  };
+  const read = () => sandbox.contextoComprovanteConsulta_(row, columns, {});
+  assert.equal(read().eligible, true);
+  verified = false; assert.equal(read().eligible, false); verified = true;
+  const validEvent = sandbox.localizarEventoConsulta_();
+  for (const patch of [
+    { getTag: undefined }, { getTag: () => "" }, { getTag: () => "another-opportunity" },
+    { getTitle: () => "Consulta — Dr. Daniel" }, { getEndTime: () => new Date(1800000) },
+  ]) {
+    sandbox.localizarEventoConsulta_ = () => ({ ...validEvent, ...patch });
+    assert.equal(read().eligible, false);
+  }
+  sandbox.localizarEventoConsulta_ = () => validEvent;
+  for (const [index, value] of [[6, "Cancelada"], [6, "Realizada"], [9, "Sala 2"], [2, ""], [1, ""], [14, "Não"], [15, "Não contatar"]]) {
+    const previous = row[index]; row[index] = value; assert.equal(read().eligible, false); row[index] = previous;
+  }
+  sandbox.obterPreferenciasContatoLeads_ = () => ({ neverBotReply: true });
+  assert.equal(read().eligible, false);
 });

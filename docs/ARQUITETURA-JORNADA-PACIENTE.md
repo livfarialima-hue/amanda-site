@@ -408,3 +408,15 @@ conversation-archive-outbox.mjs é proprietário da captura imutável de texto a
 ## API essencial publicada — 15/10/2026
 
 `scripts/check-bruna-model-live.mjs` conserva cenários, prazos e asserções, mas deixa de repetir a requisição paga após timeout apenas para medir diagnóstico. A falha original permanece reprovada; logs limitados e redigidos e o gate independente de áudio são preservados. `scheduled-followup.mjs` verifica configuração de transporte antes da revisão semântica, depois dos gates determinísticos e da janela; ausência bloqueia, e template só é exigido na modalidade correspondente. A revisão não pode reparar uma configuração ausente. Nenhum consumidor ganha autorização de envio, novo retry ou bypass de contexto. Publicado e verificado em produção pelo commit 3b66195b8b13a896ccdd63740e3f67398f7d7d4c, deploy 6ad0c377e0be1096575458ca, em 2026-10-15T12:18:04.837Z. Gates 21/21, dois históricos e 3/3 áudios preservados; fechamento documental e recibos em `auditorias/bruna-api-essencial-2026-10-15/PUBLICACAO.json`.
+
+## Comprovante após agendamento — candidato de 13/11/2026
+
+Implementado localmente; não publicado nem ativado. `APPOINTMENT_STRUCTURED_RECEIPT_ENABLED` é opt-in e requer modo WhatsApp ativo. O proprietário `appointment-receipt.mjs` atende acordo humano reconhecido, confirmação manual e aprovação pelo link. Escolha ainda não aprovada continua pendente.
+
+A reserva existente permanece responsável por Consultas, oportunidade/LEADS, sala e Google Agenda. A fonte operacional utiliza Fonte da sincronização, preservando Origem do lead. O comprovante usa nome, data, horário, profissional, endereço/modalidade e os fatos financeiros aprovados da primeira consulta; retornos/procedimentos não herdam preço de primeira consulta.
+
+Antes da mensagem, get_appointment com receiptContext relê identidade, preferências, estado, evento vivo, sala, título e duração. Novas sincronizações gravam tag privada livBooking com hash da oportunidade; eventos antigos sem tag exigem revisão, sem migração em lote. A mensagem usa claim por oportunidade/profissional/horário, janela de 24h, histórico e controle humano relidos antes do transporte. Comprovante humano reconhecido é preservado; resultado incerto exige revisão e nunca repetição automática.
+
+O lembrete continua no único proprietário existente, 24h antes, na janela 09–19h, incluindo domingo. Não há novo trigger, fila ou automação. Configuração e execução efetivas devem ser verificadas no preflight de ativação; reserva não é evidência de lembrete enviado.
+
+Ativar somente após Apps Script canônico atualizado, verificações vivas de flags/lembrete/Calendar e Netlify compatível. Rollback imediato: desligar APPOINTMENT_STRUCTURED_RECEIPT_ENABLED; preservar reservas, mensagens, claims e recibos existentes. Acompanhar primeiro agendamento natural e 48h, sem replay de pacientes.

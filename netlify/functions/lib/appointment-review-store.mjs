@@ -38,17 +38,16 @@ function normalizeAppointment(input = {}) {
   return {
     appointmentId: String(input.appointmentId || "").trim(),
     eventId: String(input.eventId || "").trim(),
+    opportunityId: String(input.opportunityId || "").trim(),
     phone: String(input.phone || "").trim(),
     name: String(input.name || "").trim().slice(0, 120),
     professional:
-      String(input.professional || "").trim() || "Dra. Amanda",
+      String(input.professional || "").trim(),
     consultationType:
-      String(input.consultationType || "").trim() ||
-      "Consulta presencial",
+      String(input.consultationType || "").trim(),
     topic: String(input.topic || "").trim().slice(0, 160),
     location:
-      String(input.location || "").trim() ||
-      "Clínica LIV Faria Lima",
+      String(input.location || "").trim(),
     scheduledDate: String(input.scheduledDate || "").trim(),
     scheduledTime: String(input.scheduledTime || "").trim(),
     status: "Consulta agendada",

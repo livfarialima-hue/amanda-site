@@ -1256,6 +1256,9 @@ function obterConsultaPorId_(input) {
       columns,
       CONSULTAS_SYNC_HEADERS.room,
     ),
+    ...(input.receiptContext === true ? {
+      receipt: contextoComprovanteConsulta_(row, columns, spreadsheet),
+    } : {}),
     calendarSynced: Boolean(calendarId && calendarEventId),
     roomConflict: /conflito/i.test(String(calendarSyncStatus || "")),
     calendarError: valorDaLinhaConsultas_(
@@ -1264,6 +1267,61 @@ function obterConsultaPorId_(input) {
       CONSULTAS_SYNC_HEADERS.calendarSyncError,
     ),
   };
+}
+
+function assinaturaVinculoComprovante_(opportunityId) {
+  return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(opportunityId))
+    .map(function (byte) { return ("0" + ((byte + 256) % 256).toString(16)).slice(-2); }).join("");
+}
+
+// Read-only context for the single WhatsApp receipt owner. Never repairs IDs,
+// preferences, consent, reminder receipts or appointments while authorizing send.
+function contextoComprovanteConsulta_(row, columns, spreadsheet) {
+  const get = function (key) { return valorDaLinhaConsultas_(row, columns, CONSULTAS_SYNC_HEADERS[key]); };
+  const blocked = function (reason) { return { eligible: false, reason: reason }; };
+  try {
+    const professional = get("professional");
+    const key = chaveProfissionalConsulta_(professional);
+    if (!["amanda", "daniel"].includes(key)) return blocked("unsupported_professional");
+    if (!["Agendada", "Confirmada"].includes(statusCanonicoConsultas_(get("status")))) return blocked("inactive_appointment");
+    const scheduledDate = extrairDataConsultasSync_(get("scheduledDate"));
+    const scheduledTime = extrairHorarioConsultasSync_(get("scheduledTime"));
+    const phone = normalizarTelefoneConsultasSync_(get("phone"));
+    const name = textoConsultasSync_(get("name"), 120);
+    const opportunityId = textoConsultasSync_(get("opportunityId"), 180);
+    if (!phone || !name || !opportunityId || !scheduledDate || !scheduledTime) return blocked("identity_incomplete");
+    const startsAt = new Date(scheduledDate + "T" + scheduledTime + ":00-03:00").getTime();
+    if (!Number.isFinite(startsAt) || startsAt <= Date.now()) return blocked("past_appointment");
+    if (typeof obterPreferenciasContatoLeads_ !== "function" || typeof validarVinculoAgendaLembreteConsulta_ !== "function") return blocked("verification_unavailable");
+    const preferences = obterPreferenciasContatoLeads_(spreadsheet, phone);
+    if (!preferences || preferences.neverBotReply === true || get("suppressionReason") || !consentimentoPermiteLembreteConsulta_(get("consent"))) return blocked("contact_suppressed");
+    const location = get("location");
+    const consultationType = get("consultationType");
+    const calendarId = get("calendarId");
+    const calendarEventId = get("calendarEventId");
+    const verified = validarVinculoAgendaLembreteConsulta_({
+      appointmentKey: scheduledDate + " " + scheduledTime,
+      location: location, consultationType: consultationType,
+      calendarId: calendarId, calendarEventId: calendarEventId,
+      calendarSyncStatus: get("calendarSyncStatus"),
+    }, CalendarApp);
+    if (!verified.ok || get("calendarSyncError")) return blocked("calendar_unverified");
+    const room = get("room");
+    if (verified.mode !== "remote" && (room !== (key === "amanda" ? "Sala 1" : "Sala 2") || CONSULTAS_SYNC_CONFIG.roomCalendars[room] !== calendarId)) return blocked("room_mismatch");
+    if (verified.mode !== "remote") {
+      const event = localizarEventoConsulta_(CalendarApp.getCalendarById(calendarId), calendarEventId);
+      const duration = Number(get("durationMinutes"));
+      if (!event || typeof event.getTag !== "function" ||
+          event.getTag("livBooking") !== assinaturaVinculoComprovante_(opportunityId) ||
+          event.getTitle() !== rotuloAgendaTipoConsulta_(consultationType) + " — " + professional ||
+          !Number.isFinite(duration) || duration <= 0 ||
+          event.getEndTime().getTime() - event.getStartTime().getTime() !== duration * 60000) return blocked("calendar_identity_mismatch");
+    }
+    return { eligible: true, phone: phone, name: name, opportunityId: opportunityId,
+      professional: professional, scheduledDate: scheduledDate, scheduledTime: scheduledTime,
+      consultationType: consultationType, location: location, room: room,
+      remote: verified.mode === "remote", calendarId: calendarId, calendarEventId: calendarEventId };
+  } catch (error) { return blocked("verification_failed"); }
 }
 
 function obterRelacionamentoPaciente_(input, spreadsheetOverride) {
@@ -2621,7 +2679,10 @@ function upsertConsulta_(sheet, input) {
     const column = columns[header];
     if (column === undefined) return;
     if (!allowEmpty && (value === undefined || value === "")) return;
-    next[column] = valorCanonicoCampoConsulta_(header, value);
+    next[column] = header === CONSULTAS_SYNC_HEADERS.source &&
+      normalizarCabecalhoConsultas_(headers[column]) === "fonte da sincronizacao"
+      ? (/whatsapp/i.test(String(value || "")) ? "WhatsApp" : "Manual")
+      : valorCanonicoCampoConsulta_(header, value);
   };
 
   defineNext(CONSULTAS_SYNC_HEADERS.id, appointmentId);
@@ -3173,6 +3234,10 @@ function sincronizarConsultaComAgendaNaLinha_(
       event.setTime(selection.start, selection.end);
       event.setDescription(description);
       event.setLocation(eventLocation);
+    }
+
+    if (typeof event.setTag === "function") {
+      event.setTag("livBooking", assinaturaVinculoComprovante_(opportunityId));
     }
 
     definirValorConsulta_(
@@ -6000,7 +6065,6 @@ function mapearCabecalhosConsultas_(headers) {
 
   const aliases = {
     [CONSULTAS_SYNC_HEADERS.source]: [
-      "origem do lead",
       "fonte da sincronizacao",
     ],
     [CONSULTAS_SYNC_HEADERS.notes]: [

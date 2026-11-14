@@ -1,3 +1,4 @@
+import { completeAppointmentReceipt } from "./lib/appointment-receipt.mjs";
 import {
   getAppointmentReview,
   updateAppointmentReview,
@@ -177,6 +178,7 @@ export async function handleAppointmentReview(
   {
     env = process.env,
     fetchImpl = fetch,
+    completeAppointmentReceiptImpl = completeAppointmentReceipt,
     getAppointmentReviewImpl = getAppointmentReview,
     updateAppointmentReviewImpl = updateAppointmentReview,
     verifyTokenImpl = verifyAppointmentReviewToken,
@@ -279,9 +281,14 @@ export async function handleAppointmentReview(
     );
   }
 
+  const receipt = await completeAppointmentReceiptImpl({ ...appointment,
+    appointmentId: reservation.responseData?.appointmentId || appointment.appointmentId,
+  }, { env, deliverSheetsActionImpl: (action, payload) => deliverSheetsAction(action, payload, { env, fetchImpl }) });
+
   await updateAppointmentReviewImpl(review.id, {
     status: "approved",
     approvedAt: new Date().toISOString(),
+    receiptStatus: receipt.status,
   });
   await deliverSheetsAction(
     "send_review_alert_email",
@@ -295,6 +302,7 @@ export async function handleAppointmentReview(
           `Data: ${appointment.scheduledDate}`,
           `Horário: ${appointment.scheduledTime}`,
           "A consulta foi registrada e a agenda foi atualizada.",
+          `Comprovante WhatsApp: ${receipt.status}. Se pendente, confira o histórico antes de enviar manualmente.`,
         ].join("\n"),
       },
     },

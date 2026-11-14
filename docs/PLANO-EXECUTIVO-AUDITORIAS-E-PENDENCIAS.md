@@ -297,3 +297,15 @@ Observar a primeira confirmação natural e revisar após 48 horas. Esperado: ze
 Este é o painel executivo ativo. Após execução, atualizar estado, evidência e próxima ação no mesmo arquivo; substituir a projeção existente no Drive e registrar a igualdade. O histórico restrito é uma cópia fechada de evidência, não um segundo planejamento editável. Não criar CRM, fila, calendário ou planejamento concorrente.
 
 Contratos: docs/CONTRATO-DE-ALTERACAO-SEGURA.md e docs/ARQUITETURA-JORNADA-PACIENTE.md. Recibos deste pacote: auditorias/bruna-confirmacao-modalidade-2026-10-14/. Informações de pacientes e decisões individuais permanecem nas fontes privadas.
+
+## Comprovante após agendamento — candidato de 13/11/2026
+
+Implementado localmente; não publicado nem ativado. `APPOINTMENT_STRUCTURED_RECEIPT_ENABLED` é opt-in e requer modo WhatsApp ativo. O proprietário `appointment-receipt.mjs` atende acordo humano reconhecido, confirmação manual e aprovação pelo link. Escolha ainda não aprovada continua pendente.
+
+A reserva existente permanece responsável por Consultas, oportunidade/LEADS, sala e Google Agenda. A fonte operacional utiliza Fonte da sincronização, preservando Origem do lead. O comprovante usa nome, data, horário, profissional, endereço/modalidade e os fatos financeiros aprovados da primeira consulta; retornos/procedimentos não herdam preço de primeira consulta.
+
+Antes da mensagem, get_appointment com receiptContext relê identidade, preferências, estado, evento vivo, sala, título e duração. Novas sincronizações gravam tag privada livBooking com hash da oportunidade; eventos antigos sem tag exigem revisão, sem migração em lote. A mensagem usa claim por oportunidade/profissional/horário, janela de 24h, histórico e controle humano relidos antes do transporte. Comprovante humano reconhecido é preservado; resultado incerto exige revisão e nunca repetição automática.
+
+O lembrete continua no único proprietário existente, 24h antes, na janela 09–19h, incluindo domingo. Não há novo trigger, fila ou automação. Configuração e execução efetivas devem ser verificadas no preflight de ativação; reserva não é evidência de lembrete enviado.
+
+Ativar somente após Apps Script canônico atualizado, verificações vivas de flags/lembrete/Calendar e Netlify compatível. Rollback imediato: desligar APPOINTMENT_STRUCTURED_RECEIPT_ENABLED; preservar reservas, mensagens, claims e recibos existentes. Acompanhar primeiro agendamento natural e 48h, sem replay de pacientes.

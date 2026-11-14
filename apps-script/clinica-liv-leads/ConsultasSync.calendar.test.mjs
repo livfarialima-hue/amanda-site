@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import vm from "node:vm";
@@ -19,6 +20,8 @@ function loadCalendarSync() {
     Set,
     String,
     Utilities: {
+      DigestAlgorithm: { SHA_256: "sha256" },
+      computeDigest: (algorithm, value) => [...createHash(algorithm).update(value).digest()],
       formatDate() {
         return "04/08/2026 09:00";
       },
@@ -93,12 +96,13 @@ test("creates an Amanda procedure only in Sala 1 without patient data", () => {
   });
   const writes = [];
   const created = [];
+  const tags = [];
   const calendar = {
     getEvents: () => [],
     getEventById: () => null,
     createEvent(title, start, end, options) {
       created.push({ title, start, end, options });
-      return { getId: () => "calendar-event-1" };
+      return { getId: () => "calendar-event-1", setTag: (key, value) => tags.push([key, value]) };
     },
   };
   context.CalendarApp = {
@@ -115,6 +119,7 @@ test("creates an Amanda procedure only in Sala 1 without patient data", () => {
   assert.equal(result.ok, true);
   assert.equal(result.room, "Sala 1");
   assert.equal(created.length, 1);
+  assert.deepEqual(tags, [["livBooking", createHash("sha256").update("opp-amanda-1").digest("hex")]]);
   assert.equal(created[0].title, "Procedimento — Dra. Amanda");
   assert.equal(created[0].options.location.endsWith("Sala 1"), true);
   assert.equal(
