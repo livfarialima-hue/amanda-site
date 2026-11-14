@@ -184,13 +184,14 @@ export async function markHumanTakeover(
 
 export async function getHumanResumeControl(
   phone,
-  { getStoreImpl = getStore } = {},
+  { getStoreImpl = getStore, throwOnError = false } = {},
 ) {
   if (!normalizedPhone(phone)) return null;
 
   try {
     return await readControl(phone, getStoreImpl);
-  } catch {
+  } catch (error) {
+    if (throwOnError) throw error;
     return null;
   }
 }

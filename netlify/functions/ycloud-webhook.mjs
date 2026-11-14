@@ -1,3 +1,4 @@
+import { appointmentReceiptsEnabled, completeAppointmentReceipt } from "./lib/appointment-receipt.mjs";
 import { BRUNA_RUNTIME_VERSION } from "./lib/bruna-runtime-version.mjs";
 import { archiveEnabled, archiveRecordFromEnvelope, queueConversationArchive } from "./lib/conversation-archive-outbox.mjs";
 import { isReactionMessageType } from "./lib/inbound-message-kind.mjs";
@@ -1767,6 +1768,7 @@ export async function completeSelectedAppointment(
   },
   {
     getHumanResumeControlImpl = getHumanResumeControl,
+    completeAppointmentReceiptImpl = completeAppointmentReceipt,
     deliverSheetsActionImpl = deliverSheetsAction,
     completeReviewAlertImpl = completeReviewAlert,
     sendAppointmentEmailImpl = sendAppointmentEmailNotification,
@@ -1918,6 +1920,20 @@ export async function completeSelectedAppointment(
   }
 
   await cancelPendingHumanResumeImpl(patientPhone);
+
+  if (appointmentReceiptsEnabled()) {
+    const receipt = await completeAppointmentReceiptImpl({
+      ...appointmentSelection,
+      appointmentId: reservation.responseData?.appointmentId || `whatsapp-${messageId || eventId}`,
+      phone: patientPhone, name: patientName, opportunityId, professional: selectedProfessional,
+    }, { deliverSheetsActionImpl });
+    if (!["completed", "duplicate", "already_sent", "already_sent_by_human"].includes(receipt.status)) {
+      await completeReviewAlertImpl({ from, eventId: `${eventId}-receipt-review`, patientName, patientPhone,
+        messageText: `Consulta reservada; comprovante requer revisão (${receipt.status}). Confira antes de enviar manualmente para evitar duplicidade.`,
+      });
+    }
+    return { status: receipt.status, reserved: true, confirmationSent: receipt.status === "completed", receipt };
+  }
 
   if (silentConfirmation) {
     return {
@@ -3667,6 +3683,7 @@ export async function completeManualAppointmentDetection(
     detection,
   },
   {
+    completeAppointmentReceiptImpl = completeAppointmentReceipt,
     deliverSheetsActionImpl = deliverSheetsAction,
     sendAppointmentEmailImpl = sendAppointmentEmailNotification,
     createAppointmentReviewImpl = createAppointmentReview,
@@ -3840,7 +3857,20 @@ export async function completeManualAppointmentDetection(
       );
     }
 
+    const receipt = reserved && !roomConflict && appointmentReceiptsEnabled()
+      ? await completeAppointmentReceiptImpl({ ...appointmentPayload,
+          appointmentId: reservation.responseData?.appointmentId || appointmentId,
+        }, { deliverSheetsActionImpl })
+      : null;
+
+    if (receipt && !["completed", "duplicate", "already_sent", "already_sent_by_human"].includes(receipt.status)) {
+      await sendAppointmentEmailImpl({ eventId: `${eventId}-receipt-review`, patientName: resolvedPatientName, patientPhone,
+        messageText: `Consulta reservada; comprovante requer revisão (${receipt.status}). Confira o WhatsApp antes de enviar manualmente.`,
+      }, { deliverSheetsActionImpl });
+    }
+
     return {
+      receipt,
       status: reserved
         ? roomConflict
           ? "completed_with_room_conflict"
